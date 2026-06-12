@@ -1,0 +1,1973 @@
+{
+  "id": "db",
+  "label": "DB",
+  "icon": "🗄",
+  "gradient": "linear-gradient(135deg,#0c4a6e,#0369a1)",
+  "accent": "#0369a1",
+  "title": "🗄 [②DB] 모델링 · SQL · 트랜잭션 · 성능 · 데이터관리",
+  "subtitle": "설계(모델링·정규화) → 구현(SQL·인덱스) → 처리(트랜잭션·동시성·회복) → 운영(튜닝·분산) → 데이터관리(NoSQL·품질)",
+  "mermaidTitle": "0. DB 토픽 지도 (설계 → 구현 → 처리 → 운영 → 관리)",
+  "mermaid": "flowchart LR\n  M[\"① 모델링·설계<br/>모델링·ERD·정규화\"]\n  S[\"② SQL·질의<br/>관계대수·JOIN·인덱스·옵티마이저\"]\n  T[\"③ 트랜잭션·무결성<br/>ACID·동시성·회복\"]\n  P[\"④ 성능·확장<br/>튜닝·파티셔닝·분산\"]\n  D[\"⑤ 신유형·데이터관리<br/>NoSQL·품질·가치\"]\n  M ==> S ==> T ==> P ==> D\n  P -. 성능 피드백 .-> M\n\n  classDef model fill:#e8f1ff,stroke:#3b82f6,color:#111;\n  classDef sql fill:#eafff0,stroke:#22c55e,color:#111;\n  classDef tx fill:#fff4e6,stroke:#f59e0b,color:#111;\n  classDef perf fill:#f3e8ff,stroke:#a855f7,color:#111;\n  classDef data fill:#fce7f3,stroke:#ec4899,color:#111;\n  class M model; class S sql; class T tx; class P perf; class D data;\n    ",
+  "legend": "색: <b style=\"color:#3b82f6\">모델링·설계</b> · <b style=\"color:#22c55e\">SQL·질의</b> · <b style=\"color:#f59e0b\">트랜잭션·무결성</b> · <b style=\"color:#a855f7\">성능·확장</b> · <b style=\"color:#ec4899\">신유형·데이터관리</b>",
+  "categories": [
+    {
+      "id": "model",
+      "label": "모델링·설계",
+      "color": "#3b82f6",
+      "bg": "#e8f1ff",
+      "tagColor": "#1d4ed8"
+    },
+    {
+      "id": "sql",
+      "label": "SQL·질의",
+      "color": "#22c55e",
+      "bg": "#eafff0",
+      "tagColor": "#15803d"
+    },
+    {
+      "id": "tx",
+      "label": "트랜잭션·무결성",
+      "color": "#f59e0b",
+      "bg": "#fff4e6",
+      "tagColor": "#b45309"
+    },
+    {
+      "id": "perf",
+      "label": "성능·확장",
+      "color": "#a855f7",
+      "bg": "#f3e8ff",
+      "tagColor": "#7e22ce"
+    },
+    {
+      "id": "data",
+      "label": "신유형·데이터관리",
+      "color": "#ec4899",
+      "bg": "#fce7f3",
+      "tagColor": "#be185c"
+    }
+  ],
+  "sections": [
+    {
+      "id": "model",
+      "title": "① 데이터 모델링 · 설계",
+      "desc": "현실을 추상화해 정규화된 구조로 설계. ERD·함수종속·정규화가 토대."
+    },
+    {
+      "id": "sql",
+      "title": "② SQL · 질의 처리",
+      "desc": "관계대수 기반 질의를 옵티마이저가 인덱스·조인으로 최적 실행."
+    },
+    {
+      "id": "tx",
+      "title": "③ 트랜잭션 · 무결성 · 구조",
+      "desc": "ACID·동시성·회복으로 일관성 보장. 무결성·3층 구조가 기반."
+    },
+    {
+      "id": "perf",
+      "title": "④ 성능 · 확장",
+      "desc": "튜닝·파티셔닝·분산으로 대용량·고부하 환경의 성능과 가용성 확보."
+    },
+    {
+      "id": "data",
+      "title": "⑤ 신유형 DB · 데이터 관리",
+      "desc": "NoSQL·특수목적 DB와 데이터 품질·가치 등 데이터 거버넌스 영역."
+    }
+  ],
+  "cards": [
+    {
+      "category": "model",
+      "title": "데이터 모델링",
+      "tag": "모델링·설계",
+      "keyword": "개념·논리·물리",
+      "keywords": "데이터 모델링 3단계 개념 논리 물리 기본원칙 추상화",
+      "def": "\"개념·논리·물리\" 현실 세계 데이터를 추상화하여 개념→논리→물리 3단계로 정제, DBMS 구현 가능한 구조로 변환하는 설계 활동.",
+      "diagram": "[현실세계] →추상화→ [개념모델(ERD)]\n                        ↓ 정규화\n                  [논리모델(스키마)]\n                        ↓ 물리변환\n                  [물리모델(테이블·인덱스)]",
+      "diagramNote": "※ 개념→논리→물리 단계적 상세화",
+      "table": {
+        "head": [
+          "단계",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "개념",
+            "엔티티",
+            "관리 대상 식별"
+          ],
+          [
+            "개념",
+            "관계",
+            "엔티티 간 연관"
+          ],
+          [
+            "논리",
+            "속성·키",
+            "제약·정규화 정의"
+          ],
+          [
+            "논리",
+            "정규화",
+            "이상현상 제거"
+          ],
+          [
+            "물리",
+            "테이블·타입",
+            "저장 구조 확정"
+          ],
+          [
+            "원칙",
+            "기본원칙",
+            "중복배제·무결성·확장성"
+          ]
+        ]
+      },
+      "note": "※ 완전성·중복배제·업무규칙·독립성 원칙 준수. ERD로 개념모델 표현."
+    },
+    {
+      "category": "model",
+      "title": "ERD",
+      "tag": "모델링·설계",
+      "keyword": "엔티티·관계",
+      "keywords": "ERD entity relationship diagram 카디널리티 관계형 모델 학생 수강신청",
+      "def": "\"엔티티·관계\" 엔티티·속성·관계로 데이터 구조를 시각적으로 표현하는 개념적 데이터 모델 표기법.",
+      "diagram": "[학생] ──(수강신청)──< [수강신청서]\n  1                        N\n □엔티티 ◇관계 ○속성 — 카디널리티 표기",
+      "diagramNote": "※ N:M은 교차(연결)엔티티로 해소",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "구성",
+            "엔티티(□)",
+            "관리 대상"
+          ],
+          [
+            "구성",
+            "속성(○)",
+            "엔티티 특성"
+          ],
+          [
+            "구성",
+            "관계(◇)",
+            "엔티티 간 연관"
+          ],
+          [
+            "관계",
+            "카디널리티",
+            "1:1·1:N·N:M"
+          ],
+          [
+            "관계",
+            "선택성",
+            "필수·선택 참여"
+          ],
+          [
+            "표기",
+            "Chen·IE·바커",
+            "표기법 종류"
+          ]
+        ]
+      },
+      "note": "※ N:M 관계는 교차엔티티로 분해 후 관계형 모델(테이블·FK)로 변환."
+    },
+    {
+      "category": "model",
+      "title": "암스트롱 공리",
+      "tag": "모델링·설계",
+      "keyword": "FD 추론규칙",
+      "keywords": "암스트롱 공리 Armstrong axioms 반사 첨가 이행 폐포 closure 추론규칙",
+      "def": "\"FD 추론규칙\" 함수종속성(FD)의 완전한 추론 규칙 집합으로, 주어진 FD로부터 유도 가능한 모든 FD를 도출하는 공리.",
+      "diagram": "[기본 공리]\n ├ 반사: Y⊆X ⇒ X→Y\n ├ 첨가: X→Y ⇒ XZ→YZ\n └ 이행: X→Y, Y→Z ⇒ X→Z\n[추가 규칙] 합집합·분해·의사이행",
+      "diagramNote": "※ 속성 폐포(X⁺) 계산의 기반",
+      "table": {
+        "head": [
+          "구분",
+          "규칙",
+          "의미"
+        ],
+        "rows": [
+          [
+            "기본",
+            "반사율",
+            "Y⊆X면 X→Y"
+          ],
+          [
+            "기본",
+            "첨가율",
+            "X→Y면 XZ→YZ"
+          ],
+          [
+            "기본",
+            "이행율",
+            "X→Y,Y→Z면 X→Z"
+          ],
+          [
+            "추가",
+            "합집합율",
+            "X→Y,X→Z면 X→YZ"
+          ],
+          [
+            "추가",
+            "분해율",
+            "X→YZ면 X→Y"
+          ],
+          [
+            "추가",
+            "의사이행율",
+            "X→Y,WY→Z면 WX→Z"
+          ]
+        ]
+      },
+      "note": "※ 속성 폐포(X⁺)로 후보키·정규형을 판정하는 정규화의 이론적 토대."
+    },
+    {
+      "category": "model",
+      "title": "함수 종속성 (FD)",
+      "tag": "모델링·설계",
+      "keyword": "X→Y 결정",
+      "keywords": "함수 종속성 functional dependency FD 완전 부분 이행 다치종속 결정자",
+      "def": "\"X→Y 결정\" 속성집합 X의 값이 Y의 값을 유일하게 결정하는(X→Y) 속성 간 의존 관계.",
+      "diagram": "X ──결정──> Y  (X:결정자, Y:종속자)\n ├ 완전 FD : 후보키 전체에 종속\n ├ 부분 FD : 후보키 일부에 종속\n └ 이행 FD : X→Y→Z",
+      "diagramNote": "※ 정규화 분해의 판단 기준",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "유형",
+            "완전 FD",
+            "키 전체 결정"
+          ],
+          [
+            "유형",
+            "부분 FD",
+            "키 일부 결정(2NF↓)"
+          ],
+          [
+            "유형",
+            "이행 FD",
+            "간접 종속(3NF↓)"
+          ],
+          [
+            "개념",
+            "결정자",
+            "좌변(X)"
+          ],
+          [
+            "개념",
+            "종속자",
+            "우변(Y)"
+          ],
+          [
+            "확장",
+            "다치종속(MVD)",
+            "4NF 기준"
+          ]
+        ]
+      },
+      "note": "※ 암스트롱 공리로 FD 추론, 후보키·정규형 도출의 토대."
+    },
+    {
+      "category": "model",
+      "title": "정규화",
+      "tag": "모델링·설계",
+      "keyword": "무손실 분해",
+      "keywords": "정규화 normalization 이상현상 anomaly 1NF 2NF 3NF BCNF 4NF 5NF 무손실 분해",
+      "def": "\"무손실 분해\" 함수종속성에 따라 릴레이션을 무손실 분해하여 이상현상(Anomaly)을 제거하는 데이터 설계 기법.",
+      "diagram": "[비정규] →원자값→ [1NF]\n →부분FD 제거→ [2NF]\n →이행FD 제거→ [3NF]\n →결정자=후보키→ [BCNF]\n →다치종속→[4NF] →조인종속→[5NF]",
+      "diagramNote": "※ 무손실·종속성 보존 분해",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "이상",
+            "삽입이상",
+            "불필요 데이터 강제"
+          ],
+          [
+            "이상",
+            "삭제이상",
+            "연쇄 소실"
+          ],
+          [
+            "이상",
+            "갱신이상",
+            "부분 갱신 불일치"
+          ],
+          [
+            "정규형",
+            "1NF~3NF",
+            "원자·부분·이행 제거"
+          ],
+          [
+            "정규형",
+            "BCNF",
+            "결정자=후보키"
+          ],
+          [
+            "정규형",
+            "4NF·5NF",
+            "다치·조인종속 제거"
+          ]
+        ]
+      },
+      "note": "※ 과도 정규화는 조인↑ → 성능 위해 반정규화 병행(연결함정도 점검)."
+    },
+    {
+      "category": "model",
+      "title": "반정규화 (역정규화)",
+      "tag": "모델링·설계",
+      "keyword": "의도적 중복",
+      "keywords": "반정규화 역정규화 denormalization 중복 파생 컬럼 테이블 병합 OLTP OLAP",
+      "def": "\"의도적 중복\" 정규화된 모델에 의도적 중복을 도입하여 조인 감소·조회 성능을 향상시키는 물리 설계 기법.",
+      "diagram": "[정규화 모델(3NF)] →성능분석→ [반정규화 대상]\n ├ 테이블 병합/분할\n ├ 중복 컬럼·파생 컬럼\n └ 통계·이력 테이블",
+      "diagramNote": "※ 무결성은 트리거·배치로 보완",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "테이블",
+            "병합",
+            "1:1·1:N 통합"
+          ],
+          [
+            "테이블",
+            "분할",
+            "수평·수직 분할"
+          ],
+          [
+            "컬럼",
+            "중복 컬럼",
+            "조인 대체"
+          ],
+          [
+            "컬럼",
+            "파생 컬럼",
+            "사전 집계 저장"
+          ],
+          [
+            "관계",
+            "중복 관계",
+            "조인 경로 단축"
+          ],
+          [
+            "보완",
+            "트리거·배치",
+            "정합성 유지"
+          ]
+        ]
+      },
+      "note": "※ OLTP=최소 반정규화, OLAP=적극 반정규화로 전략 분리."
+    },
+    {
+      "category": "model",
+      "compare": true,
+      "title": "정규화 / 역정규화",
+      "tag": "모델링·설계",
+      "keyword": "중복 제거 ↔ 의도적 중복",
+      "keywords": "정규화 normalization 역정규화 반정규화 denormalization 무손실 분해 이상현상 중복 성능 OLTP OLAP 비교",
+      "defTable": {
+        "head": [
+          "정규화",
+          "역정규화(반정규화)"
+        ],
+        "rows": [
+          [
+            "함수종속에 따라 릴레이션을 무손실 분해해",
+            "정규화된 모델에 의도적 중복을 도입해"
+          ],
+          [
+            "데이터 중복·이상현상을 제거하는",
+            "조인을 줄이고 조회 성능을 높이는"
+          ],
+          [
+            "논리 설계 기법",
+            "물리 설계 기법"
+          ]
+        ]
+      },
+      "diagramNote": "※ 무결성(정규화) ↔ 성능(역정규화) 트레이드오프",
+      "table": {
+        "head": [
+          "구분",
+          "정규화",
+          "역정규화"
+        ],
+        "rows": [
+          [
+            "목적",
+            "중복·이상현상 제거",
+            "조인 감소·성능 향상"
+          ],
+          [
+            "방향",
+            "분해(1NF~BCNF)",
+            "병합·중복 도입"
+          ],
+          [
+            "설계 단계",
+            "논리 설계",
+            "물리 설계"
+          ],
+          [
+            "무결성",
+            "구조적 보장",
+            "트리거·배치 보완"
+          ],
+          [
+            "성능",
+            "조인↑ 가능",
+            "조회↑·저장공간↑"
+          ],
+          [
+            "적합",
+            "OLTP",
+            "OLAP·조회 집약"
+          ]
+        ]
+      },
+      "note": "※ OLTP=정규화 우선, OLAP=역정규화 적극 — 용도별 전략 분리."
+    },
+    {
+      "category": "model",
+      "title": "연결함정",
+      "tag": "모델링·설계",
+      "keyword": "경로 모호성",
+      "keywords": "연결함정 connection trap fan trap chasm trap 부채꼴 균열 경로",
+      "def": "\"경로 모호성\" ERD 관계 설정 오류로 엔티티 간 경로 해석이 모호·단절되어 잘못된 질의 결과를 낳는 모델링 함정.",
+      "diagram": "부채꼴(Fan): A ─1:N→ B ←1:N─ C  (경로 모호)\n균열(Chasm): A ─ B ─ C, 선택참여로 경로 단절",
+      "diagramNote": "※ 관계 재정의·교차엔티티로 해소",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "유형",
+            "부채꼴 함정",
+            "Fan·경로 모호"
+          ],
+          [
+            "유형",
+            "균열 함정",
+            "Chasm·경로 단절"
+          ],
+          [
+            "원인",
+            "관계 오설정",
+            "1:N 중첩"
+          ],
+          [
+            "원인",
+            "선택적 참여",
+            "optional 관계"
+          ],
+          [
+            "해결",
+            "관계 재배치",
+            "직접 관계 추가"
+          ],
+          [
+            "해결",
+            "교차 엔티티",
+            "경로 명확화"
+          ]
+        ]
+      },
+      "note": "※ 모델 검증 단계에서 엔티티 간 경로 추적으로 사전 식별."
+    },
+    {
+      "category": "model",
+      "title": "슈퍼타입 / 서브타입",
+      "tag": "모델링·설계",
+      "keyword": "IS-A 일반화",
+      "keywords": "슈퍼타입 서브타입 supertype subtype 일반화 상세화 IS-A 배타 포괄 변환",
+      "compare": true,
+      "defTable": {
+        "head": [
+          "슈퍼타입",
+          "서브타입"
+        ],
+        "rows": [
+          [
+            "공통 속성을 추출해 일반화한",
+            "차이 속성만 분리해 상세화한"
+          ],
+          [
+            "상위(부모) 엔티티로서",
+            "하위(자식) 엔티티로서"
+          ],
+          [
+            "IS-A 관계의 일반화 기준",
+            "IS-A 관계의 상세화 결과"
+          ]
+        ]
+      },
+      "diagramNote": "※ 변환: One Table / Plus Table / Single",
+      "table": {
+        "head": [
+          "구분",
+          "슈퍼타입",
+          "서브타입"
+        ],
+        "rows": [
+          [
+            "속성",
+            "공통 속성",
+            "개별·차이 속성"
+          ],
+          [
+            "위치",
+            "상위 엔티티",
+            "하위 엔티티"
+          ],
+          [
+            "관계",
+            "일반화",
+            "상세화"
+          ],
+          [
+            "참여",
+            "포괄(inclusive)",
+            "배타(exclusive)"
+          ],
+          [
+            "변환",
+            "One Table 통합",
+            "Single 개별화"
+          ],
+          [
+            "선택기준",
+            "공통성·조회↑",
+            "서브 차이·데이터량↑"
+          ]
+        ]
+      },
+      "note": "※ 트랜잭션 패턴·데이터량을 고려해 OneTable/PlusTable/Single 중 선택."
+    },
+    {
+      "category": "model",
+      "title": "식별자 / 비식별자 관계",
+      "tag": "모델링·설계",
+      "keyword": "강·약 관계",
+      "keywords": "식별자 비식별자 관계 identifying non-identifying PK FK 상속 강한 약한 종속",
+      "compare": true,
+      "defTable": {
+        "head": [
+          "식별 관계",
+          "비식별 관계"
+        ],
+        "rows": [
+          [
+            "부모의 PK를 자식의 PK에",
+            "부모의 PK를 자식의 일반속성(FK)으로만"
+          ],
+          [
+            "포함해 상속하는",
+            "받아 참조하는"
+          ],
+          [
+            "강한 종속(실선) 관계",
+            "약한 종속(점선) 관계"
+          ]
+        ]
+      },
+      "diagramNote": "※ PK 상속 여부가 구분 기준",
+      "table": {
+        "head": [
+          "구분",
+          "식별 관계",
+          "비식별 관계"
+        ],
+        "rows": [
+          [
+            "PK 상속",
+            "부모 PK→자식 PK",
+            "FK 일반속성(PK 제외)"
+          ],
+          [
+            "종속성",
+            "강한 종속",
+            "약한 종속"
+          ],
+          [
+            "존재",
+            "부모 없이 불가",
+            "독립 존재 가능"
+          ],
+          [
+            "표기",
+            "실선",
+            "점선"
+          ],
+          [
+            "한계",
+            "PK 과다·전파",
+            "조인 복잡·성능↓"
+          ],
+          [
+            "적용",
+            "강한 업무 의존",
+            "느슨한 참조"
+          ]
+        ]
+      },
+      "note": "※ 업무 의존성·PK 길이를 고려해 식별/비식별을 혼합 적용."
+    },
+    {
+      "category": "sql",
+      "title": "관계대수",
+      "tag": "SQL·질의",
+      "keyword": "절차적 질의",
+      "keywords": "관계대수 relational algebra 순수관계연산 일반집합연산 select project join division 관계해석",
+      "def": "\"절차적 질의\" 릴레이션을 입력받아 릴레이션을 출력하는 절차적 질의 언어로, 순수·일반집합 연산으로 구성.",
+      "diagram": "[순수 관계연산] σ Select·π Project·⋈ Join·÷ Division\n[일반 집합연산] ∪ 합·∩ 교·− 차·× 곱",
+      "diagramNote": "※ 관계해석(비절차)과 표현력 동등",
+      "table": {
+        "head": [
+          "구분",
+          "연산",
+          "역할"
+        ],
+        "rows": [
+          [
+            "순수",
+            "Select(σ)",
+            "행 선택(조건)"
+          ],
+          [
+            "순수",
+            "Project(π)",
+            "열 추출"
+          ],
+          [
+            "순수",
+            "Join(⋈)",
+            "릴레이션 결합"
+          ],
+          [
+            "순수",
+            "Division(÷)",
+            "'for all' 질의"
+          ],
+          [
+            "집합",
+            "합·교·차",
+            "합병가능 릴레이션"
+          ],
+          [
+            "집합",
+            "곱(×)",
+            "카티션 곱"
+          ]
+        ]
+      },
+      "note": "※ 관계해석=무엇(비절차), 관계대수=어떻게(절차)로 표현력은 동등."
+    },
+    {
+      "category": "sql",
+      "title": "동적 SQL",
+      "tag": "SQL·질의",
+      "keyword": "런타임 생성",
+      "keywords": "동적 SQL dynamic 정적 static 바인드 변수 prepared statement injection 파싱",
+      "def": "\"런타임 생성\" 실행 시점에 SQL 문자열을 생성·컴파일·실행하는 방식으로, 가변 조건 질의에 유연하게 대응.",
+      "diagram": "[App] →런타임 SQL 생성→ [Parse→Bind→Execute]\n정적: 컴파일 시 고정 / 동적: 실행 시 결정",
+      "diagramNote": "※ 유연성↑ vs 파싱 비용·SQL Injection",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "유형",
+            "정적 SQL",
+            "사전 컴파일·고정"
+          ],
+          [
+            "유형",
+            "동적 SQL",
+            "런타임 생성"
+          ],
+          [
+            "장점",
+            "유연성",
+            "가변 조건 대응"
+          ],
+          [
+            "단점",
+            "성능",
+            "매 파싱 오버헤드"
+          ],
+          [
+            "단점",
+            "보안",
+            "SQL Injection"
+          ],
+          [
+            "대응",
+            "바인드 변수",
+            "재사용·주입 방지"
+          ]
+        ]
+      },
+      "note": "※ 바인드 변수·Prepared Statement로 파싱 비용·보안을 동시 보완."
+    },
+    {
+      "category": "sql",
+      "title": "JOIN",
+      "tag": "SQL·질의",
+      "keyword": "테이블 결합",
+      "keywords": "JOIN 조인 inner outer nested loop sort merge hash 동작원리 성능",
+      "def": "\"테이블 결합\" 둘 이상의 테이블을 연결 조건으로 결합하여 하나의 결과집합을 생성하는 연산.",
+      "diagram": "[논리] Inner·Outer(L/R/Full)·Cross·Self\n[물리] Nested Loop(소량·인덱스)\n       Sort Merge(대량·범위·정렬)\n       Hash Join(대량·등가)",
+      "diagramNote": "※ 옵티마이저가 물리 방식 선택",
+      "table": {
+        "head": [
+          "구분",
+          "방식",
+          "유리 조건"
+        ],
+        "rows": [
+          [
+            "논리",
+            "Inner",
+            "교집합 결합"
+          ],
+          [
+            "논리",
+            "Outer",
+            "미매칭 포함(NULL)"
+          ],
+          [
+            "물리",
+            "Nested Loop",
+            "소량·인덱스"
+          ],
+          [
+            "물리",
+            "Sort Merge",
+            "대량·범위·정렬"
+          ],
+          [
+            "물리",
+            "Hash Join",
+            "대량·등가 조인"
+          ],
+          [
+            "튜닝",
+            "인덱스·통계",
+            "조인순서 최적화"
+          ]
+        ]
+      },
+      "note": "※ 데이터량·조인조건·인덱스 유무에 따라 옵티마이저가 방식 결정."
+    },
+    {
+      "category": "sql",
+      "title": "옵티마이저",
+      "tag": "SQL·질의",
+      "keyword": "CBO 실행계획",
+      "keywords": "옵티마이저 optimizer CBO RBO 통계 실행계획 카디널리티 힌트 hint",
+      "def": "\"CBO 실행계획\" SQL의 최적 실행계획을 통계·비용 기반으로 산출하는 DBMS 핵심 엔진.",
+      "diagram": "[SQL]→[Parser]→[Transformer]\n                 뷰병합·Unnest\n[통계]→[Estimator] 카디널리티·비용\n        ↓\n[Plan Generator]→[최적 실행계획]",
+      "diagramNote": "※ CBO: 비용 최소 경로 선택",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "유형",
+            "RBO",
+            "규칙 기반"
+          ],
+          [
+            "유형",
+            "CBO",
+            "비용 기반(통계)"
+          ],
+          [
+            "입력",
+            "통계정보",
+            "히스토그램·카디널리티"
+          ],
+          [
+            "처리",
+            "Transformer",
+            "질의 변환"
+          ],
+          [
+            "처리",
+            "Estimator",
+            "비용 산정"
+          ],
+          [
+            "제어",
+            "힌트(Hint)",
+            "실행계획 강제"
+          ]
+        ]
+      },
+      "note": "※ 통계 최신성(ANALYZE)이 최적화 전제, 힌트로 실행계획 보정."
+    },
+    {
+      "category": "sql",
+      "title": "인덱스",
+      "tag": "SQL·질의",
+      "keyword": "B-Tree 탐색",
+      "keywords": "인덱스 index B-Tree bitmap hash 스캔 range unique skip 복합 커버링 튜닝",
+      "def": "\"B-Tree 탐색\" 테이블 데이터의 위치를 별도 자료구조로 관리하여 검색 성능을 높이는 객체.",
+      "diagram": "[B-Tree] Root→Branch→Leaf(정렬)→ROWID→Table\n스캔: Range·Unique·Full·Skip",
+      "diagramNote": "※ 조회↑·DML 시 인덱스 갱신 비용",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "구조",
+            "B-Tree",
+            "범위·등가 검색"
+          ],
+          [
+            "구조",
+            "Bitmap",
+            "낮은 카디널리티"
+          ],
+          [
+            "구조",
+            "Hash",
+            "등가 검색"
+          ],
+          [
+            "스캔",
+            "Range/Unique",
+            "범위·단일"
+          ],
+          [
+            "스캔",
+            "Full/Skip",
+            "전체·선두 건너뜀"
+          ],
+          [
+            "튜닝",
+            "복합·커버링",
+            "결합·인덱스 only"
+          ]
+        ]
+      },
+      "note": "※ 과다 인덱스는 DML 저하 → 선택도·접근패턴 기반 설계."
+    },
+    {
+      "category": "tx",
+      "title": "트랜잭션",
+      "tag": "트랜잭션·무결성",
+      "keyword": "ACID",
+      "keywords": "트랜잭션 transaction ACID 원자성 일관성 격리성 영속성 commit rollback saga 2PC",
+      "def": "\"ACID\" ACID를 보장하는 논리적 작업 단위로, DB 일관성을 유지하는 연산의 최소 실행 묶음.",
+      "diagram": "[Active]→[Partially Committed]→[Committed](REDO)\n   ↓ 오류\n[Failed]→[Aborted] (UNDO 롤백)",
+      "diagramNote": "※ ACID(원자·일관·격리·영속)",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "ACID",
+            "Atomicity",
+            "All or Nothing(UNDO)"
+          ],
+          [
+            "ACID",
+            "Consistency",
+            "무결성 유지"
+          ],
+          [
+            "ACID",
+            "Isolation",
+            "격리(MVCC/Lock)"
+          ],
+          [
+            "ACID",
+            "Durability",
+            "영속(REDO/WAL)"
+          ],
+          [
+            "상태",
+            "Commit/Rollback",
+            "확정·취소"
+          ],
+          [
+            "분산",
+            "2PC·Saga",
+            "분산 트랜잭션"
+          ]
+        ]
+      },
+      "note": "※ 분산환경은 2PC·Saga로 확장, 격리수준으로 동시성 조절."
+    },
+    {
+      "category": "tx",
+      "title": "2단계 커밋 (2PC)",
+      "tag": "트랜잭션·무결성",
+      "keyword": "분산 원자성",
+      "keywords": "2PC two phase commit 2단계 커밋 분산 트랜잭션 조정자 coordinator participant prepare commit blocking 3PC saga",
+      "def": "\"분산 원자성\" 분산 트랜잭션에서 다수 참여 노드의 커밋 여부를 조정자가 준비·확정 2단계로 합의시켜 원자성을 보장하는 프로토콜.",
+      "diagram": "[조정자(Coordinator)]\n 1.Prepare 요청 → [참여자 N]\n   ← Ready/Abort 투표(로그 기록)\n 2.전원 Ready→Commit / 1개라도 No→Rollback",
+      "diagramNote": "※ 전원 Ready→Commit, 1개라도 No→Rollback",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "주체",
+            "조정자",
+            "커밋 조정·전역 결정"
+          ],
+          [
+            "주체",
+            "참여자",
+            "작업·투표·반영"
+          ],
+          [
+            "1단계",
+            "Prepare/투표",
+            "Ready/Abort 결정"
+          ],
+          [
+            "2단계",
+            "Commit/Rollback",
+            "전역 확정·취소"
+          ],
+          [
+            "보장",
+            "원자성",
+            "All-or-Nothing"
+          ],
+          [
+            "한계",
+            "Blocking",
+            "조정자 장애 시 대기"
+          ]
+        ]
+      },
+      "note": "※ 조정자 단일장애·Blocking 한계 → 3PC·Paxos/Raft·Saga로 보완."
+    },
+    {
+      "category": "tx",
+      "title": "동시성 제어",
+      "tag": "트랜잭션·무결성",
+      "keyword": "락·MVCC",
+      "keywords": "동시성제어 concurrency lock 2PL MVCC timestamp 낙관적 lost update dirty read phantom deadlock",
+      "def": "\"락·MVCC\" 다중 트랜잭션 동시 실행 시 상호 간섭으로 인한 이상현상을 방지하여 일관성을 보장하는 기법.",
+      "diagram": "[이상] Lost Update·Dirty Read·Unrepeatable·Phantom\n[기법] Lock(2PL)·Timestamp·MVCC·낙관적",
+      "diagramNote": "※ 직렬가능성(Serializability) 보장",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "이상",
+            "Lost Update",
+            "갱신 손실"
+          ],
+          [
+            "이상",
+            "Dirty Read",
+            "미완료 읽기"
+          ],
+          [
+            "이상",
+            "Phantom",
+            "유령 행"
+          ],
+          [
+            "기법",
+            "Locking(2PL)",
+            "잠금·직렬화"
+          ],
+          [
+            "기법",
+            "MVCC",
+            "다중버전·읽기일관성"
+          ],
+          [
+            "기법",
+            "Timestamp/낙관",
+            "순서·검증 기반"
+          ]
+        ]
+      },
+      "note": "※ 교착상태(Deadlock)는 예방·회피·탐지·회복으로 관리."
+    },
+    {
+      "category": "tx",
+      "title": "Isolation Level",
+      "tag": "트랜잭션·무결성",
+      "keyword": "격리 4단계",
+      "keywords": "isolation level 격리수준 read uncommitted committed repeatable read serializable",
+      "def": "\"격리 4단계\" 트랜잭션 간 격리 정도를 4단계로 규정하여 동시성과 일관성을 trade-off하는 표준 수준.",
+      "diagram": "Read Uncommitted → Read Committed\n → Repeatable Read → Serializable\n (동시성↑/일관성↓)  →  (일관성↑/동시성↓)",
+      "diagramNote": "※ 단계별 허용 이상현상 차등",
+      "table": {
+        "head": [
+          "수준",
+          "구성요소",
+          "차단"
+        ],
+        "rows": [
+          [
+            "L0",
+            "Read Uncommitted",
+            "Dirty 허용"
+          ],
+          [
+            "L1",
+            "Read Committed",
+            "Dirty 차단"
+          ],
+          [
+            "L2",
+            "Repeatable Read",
+            "Unrepeatable 차단"
+          ],
+          [
+            "L3",
+            "Serializable",
+            "Phantom 차단"
+          ],
+          [
+            "이상",
+            "Dirty/Phantom",
+            "단계별 차단"
+          ],
+          [
+            "구현",
+            "MVCC/Lock",
+            "수준별 메커니즘"
+          ]
+        ]
+      },
+      "note": "※ 높을수록 일관성↑·동시성↓ → 업무 특성에 맞춰 선택."
+    },
+    {
+      "category": "tx",
+      "title": "회복기법",
+      "tag": "트랜잭션·무결성",
+      "keyword": "REDO·UNDO",
+      "keywords": "회복기법 recovery REDO UNDO 로그 checkpoint 그림자페이지 ARIES WAL 미디어",
+      "def": "\"REDO·UNDO\" 장애 발생 시 트랜잭션 로그 기반으로 DB를 일관된 상태로 복구하는 기법.",
+      "diagram": "[로그] →장애→ [REDO 재실행] + [UNDO 취소]\n기법: 즉시·지연갱신·Checkpoint·\n      그림자페이지·ARIES",
+      "diagramNote": "※ WAL: 로그 먼저 기록 후 반영",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "연산",
+            "REDO",
+            "완료분 재실행"
+          ],
+          [
+            "연산",
+            "UNDO",
+            "미완료분 취소"
+          ],
+          [
+            "기법",
+            "로그 기반",
+            "즉시·지연 갱신"
+          ],
+          [
+            "기법",
+            "Checkpoint",
+            "회복 범위 단축"
+          ],
+          [
+            "기법",
+            "그림자 페이지",
+            "페이지 복제"
+          ],
+          [
+            "기법",
+            "ARIES",
+            "Analysis·Redo·Undo"
+          ]
+        ]
+      },
+      "note": "※ WAL 원칙 준수, 미디어 장애는 백업+로그(아카이브)로 복구."
+    },
+    {
+      "category": "tx",
+      "title": "데이터 무결성",
+      "tag": "트랜잭션·무결성",
+      "keyword": "제약조건",
+      "keywords": "데이터 무결성 integrity 개체 참조 도메인 사용자정의 제약 PK FK check 트리거",
+      "def": "\"제약조건\" 데이터의 정확성·일관성을 보장하기 위해 부적합한 값의 입력·갱신을 제약하는 규칙.",
+      "diagram": "[개체] PK Not Null·Unique\n[참조] FK = 부모 PK or NULL\n[도메인] 타입·범위·CHECK\n[사용자정의] 업무규칙(트리거)",
+      "diagramNote": "※ 제약·트리거·앱 계층으로 구현",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "유형",
+            "개체 무결성",
+            "PK 유일·Not Null"
+          ],
+          [
+            "유형",
+            "참조 무결성",
+            "FK 정합성"
+          ],
+          [
+            "유형",
+            "도메인 무결성",
+            "값 범위·타입"
+          ],
+          [
+            "유형",
+            "사용자정의",
+            "업무 규칙"
+          ],
+          [
+            "구현",
+            "제약조건",
+            "PK/FK/Unique/Check"
+          ],
+          [
+            "구현",
+            "트리거·앱",
+            "복합 규칙"
+          ]
+        ]
+      },
+      "note": "※ 참조 무결성은 CASCADE·RESTRICT·SET NULL 옵션으로 제어."
+    },
+    {
+      "category": "tx",
+      "title": "ANSI/SPARC 3층 구조",
+      "tag": "트랜잭션·무결성",
+      "keyword": "데이터 독립성",
+      "keywords": "데이터베이스 구조 ANSI SPARC 3 level 외부 개념 내부 스키마 매핑 데이터 독립성",
+      "def": "\"데이터 독립성\" DB를 외부·개념·내부 3단계 스키마로 분리하고 매핑으로 데이터 독립성을 확보하는 표준 구조.",
+      "diagram": "[외부 스키마] 사용자 뷰\n   ↕ 외부/개념 매핑 (논리적 독립성)\n[개념 스키마] 통합 논리 구조\n   ↕ 개념/내부 매핑 (물리적 독립성)\n[내부 스키마] 물리 저장",
+      "diagramNote": "※ 매핑이 변경 파급 차단",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "스키마",
+            "외부",
+            "사용자별 뷰"
+          ],
+          [
+            "스키마",
+            "개념",
+            "전체 논리 구조"
+          ],
+          [
+            "스키마",
+            "내부",
+            "물리 저장 구조"
+          ],
+          [
+            "독립성",
+            "논리적",
+            "개념 변경 무영향"
+          ],
+          [
+            "독립성",
+            "물리적",
+            "저장 변경 무영향"
+          ],
+          [
+            "관리",
+            "데이터 사전",
+            "메타·매핑 정보"
+          ]
+        ]
+      },
+      "note": "※ 논리+물리 독립성 확보가 유지보수 비용 최소화의 핵심."
+    },
+    {
+      "category": "perf",
+      "title": "DB 튜닝",
+      "tag": "성능·확장",
+      "keyword": "응답·TPS 개선",
+      "keywords": "DB 튜닝 tuning 분석 이행 평가 설계 application server system AWR ASH 실행계획",
+      "def": "\"응답·TPS 개선\" SQL·인덱스·메모리·구조를 분석·개선하여 응답시간 단축과 처리량(TPS)을 극대화하는 최적화 활동.",
+      "diagram": "[설계] 모델·파티션\n   ↓\n[SQL/Application] 실행계획·인덱스\n   ↓\n[Server/System] SGA·I/O·OS\n 절차: 분석→이행→평가",
+      "diagramNote": "※ AWR/ASH 병목 식별 후 단계별",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "절차",
+            "분석",
+            "병목 진단(AWR)"
+          ],
+          [
+            "절차",
+            "이행",
+            "개선 적용"
+          ],
+          [
+            "절차",
+            "평가",
+            "효과 검증"
+          ],
+          [
+            "대상",
+            "설계",
+            "모델·파티션"
+          ],
+          [
+            "대상",
+            "SQL/App",
+            "실행계획·인덱스"
+          ],
+          [
+            "대상",
+            "Server/System",
+            "메모리·I/O"
+          ]
+        ]
+      },
+      "note": "※ 상위(설계)→하위(SQL) Top-Down, 통계·계측 기반 접근."
+    },
+    {
+      "category": "perf",
+      "title": "파티셔닝",
+      "tag": "성능·확장",
+      "keyword": "단일 DB 분할",
+      "keywords": "파티셔닝 partitioning range hash list composite partition pruning 분할키 로컬인덱스 단일 인스턴스",
+      "def": "\"단일 DB 분할\" 대용량 테이블을 Range·Hash·List 기준으로 단일 인스턴스 내에서 나누어 검색·관리 성능을 높이는 분할 기법.",
+      "diagram": "[애플리케이션]\n   ↓ 파티션키(분할 기준)\n[단일 DB 인스턴스]\n ├[P1:Range] ├[P2:Hash] └[P3:List]\n ⇒ Partition Pruning: 대상 분할만 스캔",
+      "diagramNote": "※ 단일 DB 내 논리 분할, Pruning으로 I/O↓",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "유형",
+            "Range",
+            "범위(날짜·번호) 분할"
+          ],
+          [
+            "유형",
+            "Hash",
+            "해시 균등 분산"
+          ],
+          [
+            "유형",
+            "List·Composite",
+            "목록·복합 분할"
+          ],
+          [
+            "최적화",
+            "Partition Pruning",
+            "대상 분할만 스캔"
+          ],
+          [
+            "운영",
+            "로컬 인덱스",
+            "분할별 인덱스 관리"
+          ],
+          [
+            "한계",
+            "분할키 편중",
+            "데이터 스큐·재분할"
+          ]
+        ]
+      },
+      "note": "※ 샤딩·리플리케이션의 기반 → 분할키 설계가 성능 좌우."
+    },
+    {
+      "category": "perf",
+      "title": "샤딩",
+      "tag": "성능·확장",
+      "keyword": "노드 수평 분산",
+      "keywords": "샤딩 sharding shard key range hash directory shared nothing scale out 노드 수평 분산 리밸런싱 크로스샤드",
+      "def": "\"노드 수평 분산\" 데이터를 샤드키 기준으로 여러 DB 노드에 수평 분산 저장해 무공유(Shared-Nothing) 확장성을 확보하는 분산 기법.",
+      "diagram": "[라우팅 계층 / 샤드키 매핑]\n   ↓ 샤드키 해시·범위\n ┌────┬────┬────┐\n[Shard1][Shard2][Shard3]  (Shared-Nothing)\n ⇒ 노드 추가 수평 확장(Scale-Out)",
+      "diagramNote": "※ 노드 간 물리 분산, 조인·글로벌 Tx 난제",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "방식",
+            "Range 샤딩",
+            "범위 기준 노드 배치"
+          ],
+          [
+            "방식",
+            "Hash 샤딩",
+            "해시 균등 분산"
+          ],
+          [
+            "방식",
+            "Directory 샤딩",
+            "매핑 테이블 라우팅"
+          ],
+          [
+            "핵심",
+            "샤드키",
+            "분산 균등·라우팅 기준"
+          ],
+          [
+            "확장",
+            "Scale-Out",
+            "노드 추가 수평 확장"
+          ],
+          [
+            "한계",
+            "크로스샤드 조인",
+            "글로벌 Tx·리밸런싱"
+          ]
+        ]
+      },
+      "note": "※ 파티셔닝의 노드 확장형 → 샤드키 설계가 성패 좌우."
+    },
+    {
+      "category": "perf",
+      "title": "분산 DB",
+      "tag": "성능·확장",
+      "keyword": "분산 투명성",
+      "keywords": "분산 DB distributed database 투명성 transparency 2PC two phase commit 위치 중복 분할",
+      "def": "\"분산 투명성\" 물리적으로 분산된 여러 DB를 논리적으로 단일 DB처럼 사용하게 하는 시스템.",
+      "diagram": "[전역 스키마] ─논리 단일화→ 분산 투명성\n[노드1][노드2][노드3] (지역 DB)\n분산 트랜잭션: 2PC(Prepare→Commit)",
+      "diagramNote": "※ 투명성: 위치·중복·분할·장애·병행",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "투명성",
+            "위치",
+            "위치 은닉"
+          ],
+          [
+            "투명성",
+            "중복/분할",
+            "복제·단편 은닉"
+          ],
+          [
+            "투명성",
+            "장애/병행",
+            "회복·동시성 은닉"
+          ],
+          [
+            "커밋",
+            "2PC",
+            "Prepare·Commit"
+          ],
+          [
+            "장점",
+            "지역 자율·가용성",
+            "분산 처리"
+          ],
+          [
+            "단점",
+            "복잡성·통신비용",
+            "설계·관리 부담"
+          ]
+        ]
+      },
+      "note": "※ 2PC는 Blocking 단점 → 3PC·Saga로 보완."
+    },
+    {
+      "category": "perf",
+      "compare": true,
+      "title": "쿼리 오프로딩 / 리플리케이션",
+      "tag": "성능·확장",
+      "keyword": "읽기 분산",
+      "keywords": "쿼리 오프로딩 query offloading 리플리케이션 replication 읽기 분산 R/W split master slave 복제지연 가용성 비교",
+      "defTable": {
+        "head": [
+          "쿼리 오프로딩",
+          "리플리케이션"
+        ],
+        "rows": [
+          [
+            "읽기 질의를 Replica로 분리하고",
+            "데이터셋을 다중 노드에 복제하고"
+          ],
+          [
+            "R/W Split로 라우팅하여",
+            "동기·비동기로 동기화하여"
+          ],
+          [
+            "Primary 부하를 줄이는 기법",
+            "가용성·DR을 확보하는 기법"
+          ]
+        ]
+      },
+      "diagramNote": "※ 공통=읽기 확장, 분리(라우팅) vs 복제(데이터)로 분기",
+      "table": {
+        "head": [
+          "구분",
+          "쿼리 오프로딩",
+          "리플리케이션"
+        ],
+        "rows": [
+          [
+            "목적",
+            "읽기 부하 경감",
+            "복제·가용성 확보"
+          ],
+          [
+            "단위",
+            "질의(Query) 분리",
+            "데이터셋 복제"
+          ],
+          [
+            "",
+            "R/W 라우팅",
+            "인스턴스 단위"
+          ],
+          [
+            "방식",
+            "R/W Split",
+            "동기 복제"
+          ],
+          [
+            "",
+            "읽기→Replica",
+            "비동기 복제"
+          ],
+          [
+            "",
+            "쓰기→Primary",
+            "반동기 복제"
+          ],
+          [
+            "일관성",
+            "복제지연 허용",
+            "동기=강/비동기=약"
+          ],
+          [
+            "",
+            "Stale Read",
+            "충돌 해소 필요"
+          ],
+          [
+            "한계",
+            "정합성 난제",
+            "복제 지연"
+          ],
+          [
+            "",
+            "라우팅 정책",
+            "저장공간↑"
+          ],
+          [
+            "",
+            "캐시 무효화",
+            "관리 부담"
+          ]
+        ]
+      },
+      "note": "※ 오프로딩은 리플리케이션 기반으로 구현 → 복제지연·라우팅 정책이 관건."
+    },
+    {
+      "category": "perf",
+      "compare": true,
+      "title": "CAP / PACELC 정리",
+      "tag": "성능·확장",
+      "keyword": "분산 정합성",
+      "keywords": "CAP PACELC 정리 theorem 분산 일관성 가용성 분단 partition latency consistency Cassandra Dynamo 비교 트레이드오프",
+      "defTable": {
+        "head": [
+          "CAP",
+          "PACELC"
+        ],
+        "rows": [
+          [
+            "분단 시 C·A 택1",
+            "정상 시 L·C 확장"
+          ],
+          [
+            "C·A·P 3중 택2",
+            "P→A/C·E→L/C"
+          ],
+          [
+            "분단 내성 설계",
+            "지연 반영 설계"
+          ]
+        ]
+      },
+      "diagramNote": "※ 공통=분산 트레이드오프, PACELC=CAP의 정상시 확장",
+      "table": {
+        "head": [
+          "구분",
+          "CAP",
+          "PACELC"
+        ],
+        "rows": [
+          [
+            "대상시점",
+            "분단(P) 시점만",
+            "분단+정상(E) 모두"
+          ],
+          [
+            "변수",
+            "C·A·P",
+            "C·A·P+E·L"
+          ],
+          [
+            "",
+            "3중 택2",
+            "시점별 분기"
+          ],
+          [
+            "정상 시",
+            "미규정",
+            "L↔C 선택"
+          ],
+          [
+            "",
+            "가정 안함",
+            "지연·일관성 균형"
+          ],
+          [
+            "선택지",
+            "CP 또는 AP",
+            "PA/PC"
+          ],
+          [
+            "",
+            "CA(분단 무시)",
+            "EL/EC"
+          ],
+          [
+            "",
+            "—",
+            "PA/EL 등 조합"
+          ],
+          [
+            "적용",
+            "AP:Cassandra",
+            "PA/EL:Dynamo"
+          ],
+          [
+            "",
+            "CP:HBase",
+            "PC/EC:RDB"
+          ],
+          [
+            "",
+            "분단 내성 설계",
+            "지연까지 반영"
+          ]
+        ]
+      },
+      "note": "※ CAP는 분단 시점 한정 → PACELC가 정상 시 지연까지 포괄해 실무 설계에 적합."
+    },
+    {
+      "category": "perf",
+      "title": "DB 용량산정",
+      "tag": "성능·확장",
+      "keyword": "HW 규모 산정",
+      "keywords": "DB 용량산정 capacity sizing 하드웨어 저장용량 TPS 동시사용자 증가율 여유율",
+      "def": "\"HW 규모 산정\" 데이터 증가량·트랜잭션·성능 요건을 기반으로 적정 HW(저장·메모리·CPU) 규모를 산출하는 활동.",
+      "diagram": "[기초자료] 건수·행 길이·증가율·보존기간\n   ↓\n[저장] Σ(행수×행길이×인덱스×여유율)\n[처리] TPS·동시사용자 → CPU·메모리",
+      "diagramNote": "※ 피크부하·증가추세 반영",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "입력",
+            "데이터량",
+            "건수·행 길이"
+          ],
+          [
+            "입력",
+            "증가율·보존",
+            "증가추세·기간"
+          ],
+          [
+            "산정",
+            "저장 용량",
+            "데이터+인덱스+여유"
+          ],
+          [
+            "산정",
+            "처리 용량",
+            "TPS·동시사용자"
+          ],
+          [
+            "산정",
+            "CPU/메모리",
+            "부하 기반"
+          ],
+          [
+            "보정",
+            "여유율·피크",
+            "안전계수 반영"
+          ]
+        ]
+      },
+      "note": "※ 과다=비용, 과소=장애 → 주기적 재산정·모니터링 필요."
+    },
+    {
+      "category": "data",
+      "title": "NoSQL / NewSQL",
+      "tag": "신유형·데이터관리",
+      "keyword": "CAP·확장성",
+      "keywords": "NoSQL NewSQL key value document column graph CAP PACELC BASE spanner",
+      "def": "\"CAP·확장성\" 비정형·대용량·분산에 대응하는 비관계형 DB(NoSQL)와, RDBMS의 ACID에 확장성을 결합한 NewSQL.",
+      "diagram": "[NoSQL] Key-Value·Document·Column·Graph\n   ↑ CAP(C·A·P 중 2)·BASE\n[NewSQL] 분산 + ACID (예: Spanner)",
+      "diagramNote": "※ RDBMS=ACID, NoSQL=확장성/BASE",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "예"
+        ],
+        "rows": [
+          [
+            "유형",
+            "Key-Value",
+            "Redis·DynamoDB"
+          ],
+          [
+            "유형",
+            "Document",
+            "MongoDB"
+          ],
+          [
+            "유형",
+            "Column",
+            "Cassandra·HBase"
+          ],
+          [
+            "유형",
+            "Graph",
+            "Neo4j"
+          ],
+          [
+            "이론",
+            "CAP·PACELC",
+            "일관·가용·분단"
+          ],
+          [
+            "진화",
+            "NewSQL",
+            "분산+ACID"
+          ]
+        ]
+      },
+      "note": "※ CAP은 분단 시 C/A 택1, PACELC는 정상 시 지연/일관 trade-off."
+    },
+    {
+      "category": "data",
+      "title": "특수목적 DB (In-memory·Graph·Vector)",
+      "tag": "신유형·데이터관리",
+      "keyword": "메모리·그래프·벡터",
+      "keywords": "특수목적 DB in-memory graph vector 인메모리 redis 임베딩 ANN HNSW milvus RAG",
+      "def": "\"메모리·그래프·벡터\" 특정 워크로드에 최적화된 DB — 메모리 상주(In-memory)·관계 탐색(Graph)·유사도 검색(Vector).",
+      "diagram": "[In-memory] RAM 상주 → 초저지연 (Redis)\n[Graph]   노드·엣지 → 관계 탐색 (Neo4j)\n[Vector]  임베딩 → 유사도(ANN) 검색 (Milvus)",
+      "diagramNote": "※ 워크로드 특성별 선택",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "In-memory",
+            "RAM 상주",
+            "초저지연·캐시"
+          ],
+          [
+            "In-memory",
+            "영속화",
+            "AOF·스냅샷"
+          ],
+          [
+            "Graph",
+            "노드·엣지",
+            "관계 탐색"
+          ],
+          [
+            "Graph",
+            "Cypher",
+            "그래프 질의"
+          ],
+          [
+            "Vector",
+            "임베딩",
+            "고차원 벡터"
+          ],
+          [
+            "Vector",
+            "ANN 인덱스",
+            "유사도 검색(HNSW)"
+          ]
+        ]
+      },
+      "note": "※ Vector DB는 RAG·생성형 AI의 핵심 검색 인프라로 부상."
+    },
+    {
+      "category": "data",
+      "title": "공간 데이터베이스",
+      "tag": "신유형·데이터관리",
+      "keyword": "GIS·위상",
+      "keywords": "공간 데이터베이스 spatial GIS point line polygon MBR R-Tree 다차원 색인 quad kd OGC",
+      "def": "\"GIS·위상\" 점·선·면 등 공간 객체와 위상 관계를 저장·질의·분석하는 DB(GIS 기반).",
+      "diagram": "[객체] Point·Line·Polygon (MBR)\n[연산] Overlap·Contain·Distance·Buffer\n[색인] R-Tree·R+·R*·Quad·KD",
+      "diagramNote": "※ MBR 1차 필터 → 정밀 연산(정제)",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "객체",
+            "Point/Line/Polygon",
+            "공간 도형"
+          ],
+          [
+            "표현",
+            "MBR",
+            "최소경계사각형"
+          ],
+          [
+            "연산",
+            "위상/거리",
+            "Contain·Distance"
+          ],
+          [
+            "색인",
+            "R-Tree 계열",
+            "R·R+·R*"
+          ],
+          [
+            "색인",
+            "다차원",
+            "Quad·KD·Grid"
+          ],
+          [
+            "표준",
+            "OGC·SQL/MM",
+            "공간 표준"
+          ]
+        ]
+      },
+      "note": "※ MBR 기반 2단계 질의(필터→정제)로 공간 검색 성능 확보."
+    },
+    {
+      "category": "data",
+      "title": "데이터 품질관리",
+      "tag": "신유형·데이터관리",
+      "keyword": "정확·완전·일관",
+      "keywords": "데이터 품질관리 quality 프로파일링 정제 표준화 ISO 8000 DQ 인증 정합성 마이그레이션",
+      "def": "\"정확·완전·일관\" 데이터의 정확성·완전성·일관성을 진단·개선하여 신뢰도를 확보하는 관리 체계.",
+      "diagram": "[기준] 정확·완전·일관·유효·유일·적시\n[진단] 프로파일링→업무규칙→측정\n[개선] 정제→표준화→ISO 8000 / DQ 인증",
+      "diagramNote": "※ 데이터 생명주기 전반 관리",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "기준",
+            "정확·완전",
+            "값·누락"
+          ],
+          [
+            "기준",
+            "일관·유일",
+            "정합·중복"
+          ],
+          [
+            "진단",
+            "프로파일링",
+            "값 분석"
+          ],
+          [
+            "개선",
+            "정제·표준화",
+            "오류 교정"
+          ],
+          [
+            "표준",
+            "ISO 8000",
+            "품질 국제표준"
+          ],
+          [
+            "인증",
+            "DQ 인증",
+            "품질 수준 평가"
+          ]
+        ]
+      },
+      "note": "※ 데이터 통합·마이그레이션 시 정합성·검증 테스트가 필수."
+    },
+    {
+      "category": "data",
+      "title": "공공데이터 품질",
+      "tag": "신유형·데이터관리",
+      "keyword": "생명주기 진단",
+      "keywords": "공공데이터 품질 public data 생명주기 수준평가 평가등급 평가지표 표준화 지침 매뉴얼",
+      "def": "\"생명주기 진단\" 공공데이터의 신뢰성 확보를 위해 생명주기별 품질관리·진단·수준평가를 수행하는 제도(품질관리 매뉴얼).",
+      "diagram": "[생명주기] 계획→구축→운영→활용→폐기\n[진단·개선] 측정→원인분석→개선\n[수준평가] 평가등급·평가지표",
+      "diagramNote": "※ 공공데이터 품질관리 매뉴얼 V2.0",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "생명주기",
+            "단계별 활동",
+            "구축~활용 관리"
+          ],
+          [
+            "진단",
+            "품질 측정",
+            "지표 기반 진단"
+          ],
+          [
+            "개선",
+            "원인·정제",
+            "오류 개선"
+          ],
+          [
+            "평가",
+            "평가등급",
+            "수준평가 등급"
+          ],
+          [
+            "평가",
+            "평가지표",
+            "정확·완전 등"
+          ],
+          [
+            "표준",
+            "표준화 지침",
+            "테이블 정의서"
+          ]
+        ]
+      },
+      "note": "※ DB 표준화 지침·테이블 정의서로 일관된 품질 관리 수행."
+    },
+    {
+      "category": "data",
+      "title": "데이터 가치평가",
+      "tag": "신유형·데이터관리",
+      "keyword": "정량·정성 평가",
+      "keywords": "데이터 가치평가 value 데이터 기본법 산업법 원가 시장 수익 접근법 자산화 거래",
+      "def": "\"정량·정성 평가\" 데이터의 경제적·전략적 가치를 정량·정성 기법으로 산정하는 제도(데이터산업법 기반).",
+      "diagram": "[제도] 데이터산업법·평가기관 지정\n[기법] 원가 / 시장 / 수익 접근법\n[절차] 대상선정→분석→평가→검증",
+      "diagramNote": "※ 데이터 거래·자산화의 기반",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "의미"
+        ],
+        "rows": [
+          [
+            "제도",
+            "평가 제도",
+            "데이터산업법 근거"
+          ],
+          [
+            "기법",
+            "원가 접근",
+            "구축 비용 기반"
+          ],
+          [
+            "기법",
+            "시장 접근",
+            "거래 사례 비교"
+          ],
+          [
+            "기법",
+            "수익 접근",
+            "미래 수익 환산"
+          ],
+          [
+            "절차",
+            "대상선정·분석",
+            "평가 준비"
+          ],
+          [
+            "절차",
+            "평가·검증",
+            "가치 산정·확인"
+          ]
+        ]
+      },
+      "note": "※ 데이터 자산화·거래·마이데이터 활성화의 제도적 기반."
+    }
+  ]
+}
