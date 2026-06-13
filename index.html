@@ -9,18 +9,26 @@
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">🎓 정보관리기술사<small>1교시 토픽 통합</small></div>
-  <div class="tabs" id="tabs"></div>
-</div>
+<header class="appbar">
+  <div class="topbar">
+    <div class="brand">🎓 정보관리기술사<small>1교시 토픽 통합</small></div>
+    <input id="globalSearch" class="gsearch" type="text" placeholder="🔍 전 과목 통합 검색 — 토픽·키워드" />
+    <span class="count" id="count"></span>
+  </div>
+  <div class="facets">
+    <div class="facet-row" id="domFacet" aria-label="과목 필터"></div>
+    <div class="facet-row" id="secFacet" aria-label="단원 필터"></div>
+  </div>
+</header>
 
-<div id="domains"></div>
+<div id="content"></div>
 
 <footer>
-  기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) · 도메인별 토픽 카드 통합 뷰<br/>
-  데이터: <code>data/*.json</code> 분리 · 렌더 <code>index.html</code> (수정: JSON 편집 후 <code>build_bundle.py</code> 재실행)
+  기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) · 전 과목 통합 검색 + 과목·단원 필터<br/>
+  데이터: <code>data/*.json</code> 분리 (수정: JSON 편집 후 <code>python build.py</code> 재실행) · 자세한 구조는 <code>AGENTS.md</code>
 </footer>
 
+<script src="assets/render.js"></script>
 <script src="data/bundle.js"></script>
 <script src="assets/app.js"></script>
 </body>
