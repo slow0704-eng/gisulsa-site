@@ -64,10 +64,43 @@ table td:first-child{white-space:nowrap;font-weight:600;color:#475569;background
 footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:40px;padding:0 16px;}
 .loaderr{max-width:760px;margin:60px auto;padding:24px;background:#fff;border:1px solid var(--line);border-radius:12px;color:#475569;font-size:14px;line-height:1.7;}
 
+/* ===== 뷰 스위처(카드/관계도/정의시트) ===== */
+.viewsw{display:inline-flex;border:1px solid #334155;border-radius:10px;overflow:hidden;}
+.viewsw button{border:none;background:#1e293b;color:#cbd5e1;padding:8px 12px;font-size:13px;font-weight:700;cursor:pointer;border-right:1px solid #334155;}
+.viewsw button:last-child{border-right:none;}
+.viewsw button:hover{color:#fff;}
+.viewsw button.active{background:#38bdf8;color:#04293a;}
+
+/* ===== 관계도(그래프) 뷰 ===== */
+#graph{max-width:1180px;margin:0 auto;padding:14px 18px 80px;}
+.graph-tools,.sheet-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;}
+.graph-tools button{cursor:pointer;border:1px solid #cbd5e1;background:#fff;padding:6px 12px;border-radius:8px;font-size:13px;font-weight:600;color:#475569;}
+.graph-tools button:hover{border-color:#94a3b8;color:#1e293b;}
+.tool-hint{font-size:12px;color:var(--muted);}
+.graph-err{padding:24px;color:#b91c1c;font-size:14px;}
+#graphCanvas{height:76vh;min-height:460px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+
+/* ===== 정의 시트 뷰 ===== */
+#sheet{max-width:1180px;margin:0 auto;padding:14px 18px 90px;}
+.sheet-tools label{font-size:13.5px;font-weight:600;color:#334155;cursor:pointer;}
+.sheet-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;}
+.sheet-table td{border-top:1px solid var(--line);padding:8px 12px;vertical-align:top;font-size:13.5px;}
+.sheet-dom td{background:#0f172a;color:#fff;font-weight:800;font-size:14.5px;padding:9px 12px;}
+.sheet-sec td{background:#f1f5f9;color:#334155;font-weight:700;font-size:13px;}
+.sheet-row .st-title{width:30%;font-weight:700;color:#1e293b;white-space:normal;}
+.sheet-row .st-def{color:#334155;}
+.sheet-row:hover{background:#f8fafc;}
+.st-badge{display:inline-block;font-size:10px;font-weight:700;color:#7e22ce;background:#f3e8ff;border-radius:5px;padding:0 5px;margin-left:4px;vertical-align:middle;}
+/* 가리기(암기) 모드 — 정의 블러, 행 클릭 시 해당 행만 공개 */
+#sheetBody.masked .st-def{filter:blur(5px);user-select:none;transition:filter .12s;}
+#sheetBody.masked .sheet-row{cursor:pointer;}
+#sheetBody.masked .sheet-row.reveal .st-def{filter:none;}
+
 @media print{
-  .appbar,.topbar,.facets{display:none;}
+  .appbar,.topbar,.facets,.viewsw,.graph-tools,.sheet-tools{display:none;}
   .dom-head{color:#000;background:none !important;box-shadow:none;padding:6px 0;}
-  .mapcard{display:none;}
+  .mapcard,#graph{display:none;}
   .card{break-inside:avoid;box-shadow:none;}
+  #sheetBody.masked .st-def{filter:none;}
   body{background:#fff;}
 }

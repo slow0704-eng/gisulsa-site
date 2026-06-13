@@ -28,8 +28,8 @@
 
   mermaid.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
 
-  // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId)
-  var state = { q:'', dom:'all', sec:'all' };
+  // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet')
+  var state = { q:'', dom:'all', sec:'all', view:'cards' };
   var domById = {}, catMapByDom = {}, mapDone = {};
   DOMAINS.forEach(function(d){
     domById[d.id] = d;
@@ -85,8 +85,8 @@
       ch.addEventListener('click', function(){
         state.dom = ch.getAttribute('data-dom');
         state.sec = 'all';
-        buildDomFacet(); buildSecFacet(); applyFilter();
-        if(state.dom!=='all'){ scrollToGroup(state.dom); }
+        buildDomFacet(); buildSecFacet(); applyActiveFilter();
+        if(state.view==='cards' && state.dom!=='all'){ scrollToGroup(state.dom); }
       });
     });
   }
@@ -109,7 +109,7 @@
     secFacetEl.querySelectorAll('.chip.sec').forEach(function(ch){
       ch.addEventListener('click', function(){
         state.sec = ch.getAttribute('data-sec');
-        buildSecFacet(); applyFilter();
+        buildSecFacet(); applyActiveFilter();
       });
     });
   }
@@ -164,10 +164,90 @@
     if(g) window.scrollTo({ top: g.offsetTop - 110, behavior:'smooth' });
   }
 
-  // ---- 검색(전역) ----
+  // ---- 정의 시트(모든 토픽의 정의문만) ----
+  var sheetEl     = document.getElementById('sheet');
+  var sheetBody   = document.getElementById('sheetBody');
+  var graphEl     = document.getElementById('graph');
+  var graphCanvas = document.getElementById('graphCanvas');
+  var facetsEl    = document.querySelector('.facets');
+  var sheetBuilt  = false;
+
+  function buildSheet(){
+    if(sheetBuilt) return;
+    sheetBody.innerHTML = GS.sheetHTML(DOMAINS, catMapByDom);
+    // 가리기 모드일 때 행 클릭 → 그 행 정의만 펼쳐보기(암기 자가확인)
+    sheetBody.addEventListener('click', function(e){
+      var r = e.target && e.target.closest ? e.target.closest('.sheet-row') : null;
+      if(r) r.classList.toggle('reveal');
+    });
+    sheetBuilt = true;
+  }
+
+  function applySheetFilter(){
+    var q = state.q, shown = 0;
+    var rows = sheetBody.querySelectorAll('.sheet-row');
+    rows.forEach(function(r){
+      var domOk = state.dom==='all' || r.getAttribute('data-dom')===state.dom;
+      var secOk = state.sec==='all' || r.getAttribute('data-cat')===state.sec;
+      var ok = domOk && secOk;
+      if(ok && q){ var t=(r.getAttribute('data-k')+' '+r.textContent).toLowerCase(); ok = t.indexOf(q)>=0; }
+      r.classList.toggle('hidden', !ok);
+      if(ok) shown++;
+    });
+    sheetBody.querySelectorAll('.sheet-sec').forEach(function(s){
+      var dom=s.getAttribute('data-dom'), cat=s.getAttribute('data-cat');
+      var any = Array.prototype.some.call(rows, function(r){
+        return r.getAttribute('data-dom')===dom && r.getAttribute('data-cat')===cat && !r.classList.contains('hidden'); });
+      s.classList.toggle('hidden', !any);
+    });
+    sheetBody.querySelectorAll('.sheet-dom').forEach(function(s){
+      var dom=s.getAttribute('data-dom');
+      var any = Array.prototype.some.call(rows, function(r){
+        return r.getAttribute('data-dom')===dom && !r.classList.contains('hidden'); });
+      s.classList.toggle('hidden', !any);
+    });
+    countEl.textContent = '표시 ' + shown + ' / ' + totalCards();
+  }
+
+  // 활성 뷰에 맞춰 검색·필터 적용(관계도는 필터 미적용)
+  function applyActiveFilter(){
+    if(state.view==='sheet') applySheetFilter();
+    else if(state.view==='cards') applyFilter();
+  }
+
+  // ---- 뷰 전환: 카드 / 관계도 / 정의 시트 ----
+  function setView(v){
+    state.view = v;
+    contentEl.classList.toggle('hidden', v!=='cards');
+    graphEl.classList.toggle('hidden', v!=='graph');
+    sheetEl.classList.toggle('hidden', v!=='sheet');
+    if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph');  // 관계도는 과목/단원 facet 미적용
+    document.querySelectorAll('#viewsw button').forEach(function(b){
+      b.classList.toggle('active', b.getAttribute('data-v')===v); });
+
+    if(v==='graph' && window.GSGraph){
+      var ok = window.GSGraph.build(graphCanvas, DOMAINS, { onTopicClick:function(title){
+        searchEl.value = title; state.q = String(title).toLowerCase();
+        state.dom='all'; state.sec='all'; buildDomFacet(); buildSecFacet();
+        setView('cards'); window.scrollTo(0,0);
+      }});
+      if(ok) window.GSGraph.fit();
+    } else if(v==='sheet'){
+      buildSheet(); applySheetFilter();
+    } else if(v==='cards'){
+      applyFilter();
+    }
+  }
+  document.querySelectorAll('#viewsw button').forEach(function(b){
+    b.addEventListener('click', function(){ setView(b.getAttribute('data-v')); });
+  });
+  var maskDef = document.getElementById('maskDef');
+  if(maskDef){ maskDef.addEventListener('change', function(){ sheetBody.classList.toggle('masked', maskDef.checked); }); }
+
+  // ---- 검색(전역, 활성 뷰에 적용) ----
   searchEl.addEventListener('input', function(){
     state.q = searchEl.value.trim().toLowerCase();
-    applyFilter();
+    applyActiveFilter();
   });
 
   // ---- init ----

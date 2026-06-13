@@ -61,8 +61,42 @@
     '</div>';
   }
 
+  // 정의 시트: 토픽의 "정의문"만 표로. 행=토픽, data-dom/data-cat/data-k 로 필터.
+  function defText(card){
+    if(card.def) return card.def;
+    if(card.compare && card.defTable && card.defTable.head) return '[비교] ' + card.defTable.head.join(' ↔ ');
+    return '';
+  }
+  function sheetHTML(domains, catMapByDom){
+    var h = '<table class="sheet-table"><tbody>';
+    domains.forEach(function(d){
+      var catMap = catMapByDom[d.id] || {};
+      var secIds = (d.sections || []).map(function(s){ return s.id; });
+      h += '<tr class="sheet-dom" data-dom="'+escAttr(d.id)+'"><td colspan="2">'+escHTML((d.icon||'')+' '+d.label)+'</td></tr>';
+      function rowsFor(catId){
+        return (d.cards || []).filter(function(c){ return c.category === catId; }).map(function(c){
+          return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-k="'+escAttr(c.keywords)+'">'+
+            '<td class="st-title">'+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+'</td>'+
+            '<td class="st-def">'+escHTML(defText(c))+'</td></tr>';
+        }).join('');
+      }
+      (d.sections || []).forEach(function(s){
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(s.id)+'"><td colspan="2">'+escHTML(s.title)+'</td></tr>';
+        h += rowsFor(s.id);
+      });
+      var orphan = {};
+      (d.cards || []).forEach(function(c){ if(secIds.indexOf(c.category) < 0) orphan[c.category] = 1; });
+      Object.keys(orphan).forEach(function(catId){
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(catId)+'"><td colspan="2">기타</td></tr>';
+        h += rowsFor(catId);
+      });
+    });
+    return h + '</tbody></table>';
+  }
+
   GS.escHTML  = escHTML;
   GS.escAttr  = escAttr;
   GS.tableHTML = tableHTML;
   GS.cardHTML = cardHTML;
+  GS.sheetHTML = sheetHTML;
 })();
