@@ -43,22 +43,26 @@
     {
       "id": "plan",
       "title": "① 정보화 기획 · 전략",
-      "desc": "경영전략과 정렬해 정보화 비전·아키텍처·이행계획 수립. 발주의 근거."
+      "desc": "경영전략과 정렬해 정보화 비전·아키텍처·이행계획 수립. 발주의 근거.",
+      "mermaid": "flowchart LR\n  ISP[\"ISP<br/>정보화전략계획\"] --> ISMP[\"ISMP<br/>마스터플랜\"]\n  ISP --> EA[\"EA(TOGAF ADM)\"]\n  EA --> BPR[\"BPR<br/>프로세스 재설계\"]\n  BPR --> ISMP"
     },
     {
       "id": "proc",
       "title": "② 발주 · 조달 · 계약",
-      "desc": "RFP·제안평가·대가산정으로 적정 사업자 선정. SW 제값받기·공정성."
+      "desc": "RFP·제안평가·대가산정으로 적정 사업자 선정. SW 제값받기·공정성.",
+      "mermaid": "flowchart LR\n  RFP[\"RFP\"] --> ORD[\"발주제도<br/>분리·분할발주\"]\n  ORD --> EVAL[\"제안평가<br/>기술성·협상\"]\n  EVAL --> COST[\"대가산정<br/>FP·COCOMO·LOC\"]\n  COST --> SLA[\"SLA·검수\"]"
     },
     {
       "id": "req",
       "title": "③ 요구사항 관리",
-      "desc": "도출·분석·명세·검증 + 추적성·변경통제. 발주·검수의 기준선."
+      "desc": "도출·분석·명세·검증 + 추적성·변경통제. 발주·검수의 기준선.",
+      "mermaid": "flowchart LR\n  RE[\"요구공학\"] --> SPEC[\"요건기술서\"]\n  SPEC --> RTM[\"추적성(RTM)\"]\n  RTM --> CCB[\"변경관리(CCB)\"]"
     },
     {
       "id": "gov",
       "title": "④ 거버넌스 · 감리",
-      "desc": "전 과정을 통제·점검하는 우산. IT거버넌스·감리·PMO."
+      "desc": "전 과정을 통제·점검하는 우산. IT거버넌스·감리·PMO.",
+      "mermaid": "flowchart LR\n  GOV[\"IT 거버넌스<br/>COBIT·ISO 38500\"] --> AUD[\"정보시스템 감리\"]\n  GOV --> PMO[\"PMO\"]\n  PMO --> AUD"
     }
   ],
   "cards": [

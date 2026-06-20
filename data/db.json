@@ -50,27 +50,32 @@
     {
       "id": "model",
       "title": "① 데이터 모델링 · 설계",
-      "desc": "현실을 추상화해 정규화된 구조로 설계. ERD·함수종속·정규화가 토대."
+      "desc": "현실을 추상화해 정규화된 구조로 설계. ERD·함수종속·정규화가 토대.",
+      "mermaid": "flowchart LR\n  DM[\"데이터 모델링\"] --> ERD[\"ERD\"]\n  ERD --> FD[\"함수종속·암스트롱공리\"]\n  FD --> NF[\"정규화\"]\n  NF <--> DN[\"반정규화<br/>(성능)\"]\n  ERD --> ID[\"식별자·슈퍼/서브타입\"]"
     },
     {
       "id": "sql",
       "title": "② SQL · 질의 처리",
-      "desc": "관계대수 기반 질의를 옵티마이저가 인덱스·조인으로 최적 실행."
+      "desc": "관계대수 기반 질의를 옵티마이저가 인덱스·조인으로 최적 실행.",
+      "mermaid": "flowchart LR\n  RA[\"관계대수\"] --> SQL[\"SQL·동적SQL\"]\n  SQL --> OPT[\"옵티마이저\"]\n  OPT --> IDX[\"인덱스\"]\n  OPT --> JOIN[\"JOIN\"]"
     },
     {
       "id": "tx",
       "title": "③ 트랜잭션 · 무결성 · 구조",
-      "desc": "ACID·동시성·회복으로 일관성 보장. 무결성·3층 구조가 기반."
+      "desc": "ACID·동시성·회복으로 일관성 보장. 무결성·3층 구조가 기반.",
+      "mermaid": "flowchart LR\n  TX[\"트랜잭션(ACID)\"] --> CC[\"동시성 제어\"]\n  CC --> ISO[\"Isolation Level\"]\n  TX --> REC[\"회복기법\"]\n  INT[\"무결성\"] --> ARCH[\"ANSI/SPARC 3층\"]"
     },
     {
       "id": "perf",
       "title": "④ 성능 · 확장",
-      "desc": "튜닝·파티셔닝·분산으로 대용량·고부하 환경의 성능과 가용성 확보."
+      "desc": "튜닝·파티셔닝·분산으로 대용량·고부하 환경의 성능과 가용성 확보.",
+      "mermaid": "flowchart LR\n  TUN[\"DB 튜닝\"] --> PART[\"파티셔닝\"]\n  PART --> SHARD[\"샤딩\"]\n  SHARD --> DIST[\"분산 DB\"]\n  TUN --> CAP[\"용량산정\"]"
     },
     {
       "id": "data",
       "title": "⑤ 신유형 DB · 데이터 관리",
-      "desc": "NoSQL·특수목적 DB와 데이터 품질·가치 등 데이터 거버넌스 영역."
+      "desc": "NoSQL·특수목적 DB와 데이터 품질·가치 등 데이터 거버넌스 영역.",
+      "mermaid": "flowchart LR\n  RDB[\"RDBMS\"] --> NO[\"NoSQL\"]\n  NO --> NEW[\"NewSQL\"]\n  NO --> SP[\"특수목적DB<br/>In-memory·Graph·Vector\"]\n  QUAL[\"데이터 품질\"] --> VAL[\"가치평가\"]"
     }
   ],
   "cards": [

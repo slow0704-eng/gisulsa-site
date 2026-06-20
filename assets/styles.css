@@ -45,6 +45,12 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",
 .sec h2{margin:0;font-size:18px;}
 .sec p{margin:3px 0 0;font-size:13px;color:var(--muted);}
 
+/* 소단원(섹션) 토픽 관계도 — 섹션 헤더 안에 표시 */
+.secmap{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:10px 14px 12px;box-shadow:0 1px 3px rgba(0,0,0,.05);overflow-x:auto;}
+.secmap-h{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.3px;margin-bottom:4px;}
+.secmap .mermaid{text-align:center;}
+
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;}
 .card{background:#fff;border:1px solid var(--line);border-top:4px solid #cbd5e1;border-radius:12px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;flex-direction:column;}
 .card h3{margin:0 0 2px;font-size:17px;}

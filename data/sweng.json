@@ -64,37 +64,44 @@
     {
       "id": "life",
       "title": "① 생명주기 모델 — 프로세스 골격",
-      "desc": "단계를 어떻게 배열할까. 전통(예측·확정) → 현대(적응·반복)로 진화."
+      "desc": "단계를 어떻게 배열할까. 전통(예측·확정) → 현대(적응·반복)로 진화.",
+      "mermaid": "flowchart LR\n  W[\"폭포수\"] --> V[\"V-Model<br/>검증·확인 강화\"]\n  P[\"프로토타입\"] --> S[\"나선형<br/>위험기반 반복\"]\n  I[\"증분형\"] --> E[\"진화형\"]\n  V --> A[\"애자일<br/>반복·점증\"]\n  S --> A\n  E --> A"
     },
     {
       "id": "meth",
       "title": "② 개발 방법론 — 실천 방법",
-      "desc": "무엇으로 만들까. 구조적·IE → OOAD·CBD → 애자일 실천 → DevOps → Platform Eng."
+      "desc": "무엇으로 만들까. 구조적·IE → OOAD·CBD → 애자일 실천 → DevOps → Platform Eng.",
+      "mermaid": "flowchart LR\n  ST[\"구조적\"] --> IE[\"정보공학(IE)\"] --> OO[\"객체지향(OOAD)\"]\n  OO --> CBD[\"CBD\"] --> MDA[\"MDA\"]\n  AG[\"Agile Manifesto\"] --> SC[\"Scrum·XP·Kanban\"]\n  SC --> TDD[\"TDD·리팩토링\"]\n  SC --> DO[\"DevOps·DevSecOps\"]\n  OO --> SC"
     },
     {
       "id": "arch",
       "title": "③ 아키텍처 — 구조 설계 (산출물)",
-      "desc": "어떤 구조로 만들까. 주도·기술(드라이버·뷰) → 설계원칙(토대) → 스타일 → API/통신."
+      "desc": "어떤 구조로 만들까. 주도·기술(드라이버·뷰) → 설계원칙(토대) → 스타일 → API/통신.",
+      "mermaid": "flowchart TD\n  QA[\"품질속성<br/>(ASR·드라이버)\"] --> STY[\"아키텍처 스타일·패턴\"]\n  STY --> L[\"Layered·모놀리식\"]\n  STY --> M[\"SOA→MSA·EDA\"]\n  PR[\"설계원칙<br/>SOLID·모듈화·응집/결합\"] --> STY\n  STY --> DOC[\"4+1 View·SAD 문서화\"]"
     },
     {
       "id": "eval",
       "title": "③-2 아키텍처 평가 — 품질속성 검증",
-      "desc": "설계 아키텍처가 드라이버·품질속성을 충족하는지 평가. Utility Tree로 우선순위화 → ATAM(트레이드오프) → CBAM(비용편익)."
+      "desc": "설계 아키텍처가 드라이버·품질속성을 충족하는지 평가. Utility Tree로 우선순위화 → ATAM(트레이드오프) → CBAM(비용편익).",
+      "mermaid": "flowchart LR\n  U[\"Utility Tree<br/>품질속성 우선순위\"] --> AT[\"ATAM<br/>트레이드오프 분석\"]\n  AT --> CB[\"CBAM<br/>비용·편익\"]\n  AT --> AR[\"ARID<br/>초기설계 검토\"]"
     },
     {
       "id": "oop",
       "title": "⑤ 객체지향 설계",
-      "desc": "객체로 추상화하는 설계 원리·관계·다형성. SOLID로 구조 품질 확보."
+      "desc": "객체로 추상화하는 설계 원리·관계·다형성. SOLID로 구조 품질 확보.",
+      "mermaid": "flowchart LR\n  S[\"SOLID 5원칙\"] --> POLY[\"다형성\"]\n  POLY --> IF[\"인터페이스·추상클래스\"]\n  IF --> REL[\"관계<br/>집합·포함·위임\"]\n  REL --> UML[\"UML 표현\"]"
     },
     {
       "id": "pat",
       "title": "⑥ 디자인 패턴 · 프레임워크",
-      "desc": "반복되는 설계 문제의 검증된 해법. GoF·MVC·프레임워크."
+      "desc": "반복되는 설계 문제의 검증된 해법. GoF·MVC·프레임워크.",
+      "mermaid": "flowchart LR\n  DP[\"디자인 패턴<br/>(GoF)\"] --> MVC[\"MVC 패턴\"]\n  MVC --> SP[\"스프링 프레임워크<br/>IoC·DI·AOP\"]"
     },
     {
       "id": "cross",
       "title": "④ 횡단 관심사 — 전 과정 공통 거버넌스",
-      "desc": "요구공학·품질·형상관리·PM이 생명주기·방법론·아키텍처 전 단계를 관통."
+      "desc": "요구공학·품질·형상관리·PM이 생명주기·방법론·아키텍처 전 단계를 관통.",
+      "mermaid": "flowchart LR\n  RE[\"요구공학\"] --> Q[\"품질(ISO 25010)\"]\n  RE --> SCM[\"형상관리(SCM)\"]\n  RE --> PM[\"프로젝트관리(PMBOK 7)\"]\n  SCM --> PM"
     }
   ],
   "cards": [

@@ -52,8 +52,11 @@
       (d.sections||[]).forEach(function(sec){
         var col = (catMap[sec.id]||{}).color || '#cbd5e1';
         var cards = (d.cards||[]).filter(function(c){ return c.category===sec.id; });
+        var secmap = sec.mermaid ?
+          '<div class="secmap" data-dom="'+d.id+'" data-sec="'+sec.id+'">'+
+            '<div class="secmap-h">🔗 소단원 토픽 관계도</div><div class="mermaid"></div></div>' : '';
         html += '<div class="sec" data-dom="'+d.id+'" data-sec="'+sec.id+'" style="border-color:'+col+'">'+
-                '<h2>'+sec.title+'</h2><p>'+(sec.desc||'')+'</p></div>'+
+                '<h2>'+sec.title+'</h2><p>'+(sec.desc||'')+'</p>'+secmap+'</div>'+
                 '<div class="grid">'+ cards.map(function(c){ return GS.cardHTML(c, catMap, d.id); }).join('') +'</div>';
       });
       var orphan = (d.cards||[]).filter(function(c){ return secIds.indexOf(c.category)<0; });
@@ -68,7 +71,23 @@
     DOMAINS.forEach(function(d){
       var el = contentEl.querySelector('.mapcard[data-map="'+d.id+'"] .mermaid');
       if(el) el.textContent = d.mermaid;
+      // 소단원 관계도 소스 주입
+      (d.sections||[]).forEach(function(sec){
+        if(!sec.mermaid) return;
+        var sm = contentEl.querySelector('.secmap[data-dom="'+d.id+'"][data-sec="'+sec.id+'"] .mermaid');
+        if(sm) sm.textContent = sec.mermaid;
+      });
     });
+  }
+
+  // ---- 소단원 관계도(섹션 mermaid) 렌더 — 카드 뷰 표시 시 1회 ----
+  var secMapsDone = false;
+  function renderSectionMaps(){
+    if(secMapsDone) return;
+    var els = contentEl.querySelectorAll('.secmap .mermaid');
+    if(!els.length){ secMapsDone = true; return; }
+    try{ mermaid.run({ nodes: Array.prototype.slice.call(els) }); }catch(e){ /* ignore */ }
+    secMapsDone = true;
   }
 
   // ---- 과목 facet (단일 선택: 전체 또는 한 과목) ----
@@ -150,6 +169,7 @@
       }
     });
     countEl.textContent = '표시 ' + shown + ' / ' + totalCards();
+    renderSectionMaps();
   }
 
   function renderMap(domId){
