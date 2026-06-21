@@ -86,11 +86,11 @@
     if(secMapsDone) return;
     var els = contentEl.querySelectorAll('.secmap .mermaid');
     if(!els.length){ secMapsDone = true; return; }
-    // 다이어그램별 개별 렌더(하나가 실패해도 나머지는 정상 표시)
-    Array.prototype.forEach.call(els, function(el){
-      try{ mermaid.run({ nodes:[el] }); }catch(e){ /* 개별 실패 무시 */ }
-    });
     secMapsDone = true;
+    // 한 번의 배치 호출로 전부 렌더(개별 동시호출 시 mermaid 내부 상태 충돌로 일부 깨짐).
+    // suppressErrors: 특정 다이어그램 오류가 나머지를 막지 않도록.
+    try{ mermaid.run({ nodes: Array.prototype.slice.call(els), suppressErrors:true }); }
+    catch(e){ /* ignore */ }
   }
 
   // ---- 과목 facet (단일 선택: 전체 또는 한 과목) ----
