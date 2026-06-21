@@ -206,7 +206,7 @@
       (d.sections||[]).forEach(function(s){ secLabel[s.id]=s.title; });
       (d.cards||[]).forEach(function(c){
         if(state.sec!=='all' && c.category!==state.sec) return;
-        items.push({ card:c, domId:d.id, domLabel:d.label, secLabel:secLabel[c.category]||'기타',
+        items.push({ card:c, domId:d.id, domLabel:d.label, secId:c.category, secLabel:secLabel[c.category]||'기타',
           color:(catMap[c.category]||{}).color||'#64748b' });
       });
     });

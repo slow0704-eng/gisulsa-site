@@ -58,6 +58,7 @@
     items.forEach(function(it){
       var c=it.card;
       var ex={title:c.title, dom:it.domLabel, sec:it.secLabel,
+        secKey:it.domId+'::'+(it.secId||it.secLabel),
         def:(c.compare?compareDef(c):(c.def||'')), color:it.color, compare:!!c.compare};
       var exTitle={}; exTitle[c.title]=1;
       // 1) 토픽 → 리드키워드
@@ -129,11 +130,24 @@
     }
     // 이 범위에서 생성된 문제 유형 목록
     var allTypes = TYPE_ORDER.filter(function(t){ return fullBank.some(function(q){return q.type===t;}); });
-    var st={ n:20, idx:0, score:0, total:0, q:[], answered:false, types:{} };
-    allTypes.forEach(function(t){ st.types[t]=true; });   // 기본: 전체 유형
+    // 이 범위의 단원(섹션) 목록 — items 순서 유지, 중복 제거
+    var secList=[], secSeen={}, domSet={};
+    (items||[]).forEach(function(it){
+      domSet[it.domId]=1;
+      var k=it.domId+'::'+(it.secId||it.secLabel);
+      if(!secSeen[k]){ secSeen[k]=1; secList.push({key:k, label:it.secLabel, dom:it.domLabel}); }
+    });
+    var multiDom = Object.keys(domSet).length>1;   // 과목 2개 이상이면 단원칩에 과목 표기
+
+    var st={ n:20, idx:0, score:0, total:0, q:[], answered:false, types:{}, secs:{} };
+    allTypes.forEach(function(t){ st.types[t]=true; });        // 기본: 전체 유형
+    secList.forEach(function(s){ st.secs[s.key]=true; });      // 기본: 전체 단원
 
     function selTypes(){ return allTypes.filter(function(t){ return st.types[t]; }); }
-    function filteredBank(){ return fullBank.filter(function(q){ return st.types[q.type]; }); }
+    function selSecs(){ return secList.filter(function(s){ return st.secs[s.key]; }); }
+    function filteredBank(){
+      return fullBank.filter(function(q){ return st.types[q.type] && st.secs[q.ex.secKey]; });
+    }
 
     function pick(){
       var pool=filteredBank();
@@ -158,14 +172,25 @@
       }).join('');
       return h;
     }
+    function secChips(){
+      var all = secList.every(function(s){ return st.secs[s.key]; });
+      var h='<button class="qs'+(all?' active':'')+'" data-s="__all">전체 단원</button>';
+      h+=secList.map(function(s){
+        var label = (multiDom ? (s.dom+' · ') : '') + s.label;
+        return '<button class="qs'+(st.secs[s.key]?' active':'')+'" data-s="'+esc(s.key)+'">'+esc(label)+'</button>';
+      }).join('');
+      return h;
+    }
     function header(){
-      return '<div class="quiz-top">'+
+      var h='<div class="quiz-top">'+
         '<div class="qn-set">'+counts()+'</div>'+
         '<div class="quiz-score">점수 <b>'+st.score+'</b> / '+st.total+
           ' <span class="quiz-prog">('+Math.min(st.idx+1,st.q.length)+'/'+st.q.length+')</span></div>'+
         '<button class="quiz-reset">↻ 새 문제</button>'+
         '</div>'+
         '<div class="qt-set"><span class="qt-lbl">유형</span>'+typeChips()+'</div>';
+      if(secList.length>1){ h+='<div class="qt-set qs-set"><span class="qt-lbl">단원</span>'+secChips()+'</div>'; }
+      return h;
     }
     function render(){
       if(!st.q.length){
@@ -241,6 +266,17 @@
           else {
             st.types[t]=!st.types[t];
             if(selTypes().length===0) st.types[t]=true;   // 최소 1개 유지
+          }
+          pick(); render();
+        });
+      });
+      container.querySelectorAll('.qs').forEach(function(b){
+        b.addEventListener('click', function(){
+          var k=b.getAttribute('data-s');
+          if(k==='__all'){ secList.forEach(function(s){ st.secs[s.key]=true; }); }
+          else {
+            st.secs[k]=!st.secs[k];
+            if(selSecs().length===0) st.secs[k]=true;     // 최소 1개 유지
           }
           pick(); render();
         });
