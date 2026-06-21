@@ -197,25 +197,25 @@
   var facetsEl    = document.querySelector('.facets');
   var sheetBuilt  = false;
 
-  // ---- 퀴즈: 현재 과목/단원 범위의 카드 묶음 ----
-  function scopedItems(){
+  // ---- 퀴즈: 전 과목 카드 묶음(퀴즈 자체 과목/단원/유형 필터로 제어) ----
+  function allItems(){
     var items=[];
     DOMAINS.forEach(function(d){
-      if(state.dom!=='all' && state.dom!==d.id) return;
       var catMap=catMapByDom[d.id], secLabel={};
       (d.sections||[]).forEach(function(s){ secLabel[s.id]=s.title; });
       (d.cards||[]).forEach(function(c){
-        if(state.sec!=='all' && c.category!==state.sec) return;
         items.push({ card:c, domId:d.id, domLabel:d.label, secId:c.category, secLabel:secLabel[c.category]||'기타',
           color:(catMap[c.category]||{}).color||'#64748b' });
       });
     });
     return items;
   }
+  var quizBuilt=false;
   function startQuiz(){
     if(!window.GSQuiz || !quizBody){ return; }
-    window.GSQuiz.start(quizBody, scopedItems());
-    countEl.textContent = '퀴즈 범위 ' + scopedItems().length + ' 토픽';
+    window.GSQuiz.start(quizBody, allItems());
+    quizBuilt=true;
+    countEl.textContent = '🧩 퀴즈';
   }
 
   function buildSheet(){
@@ -259,7 +259,7 @@
   function applyActiveFilter(){
     if(state.view==='sheet') applySheetFilter();
     else if(state.view==='cards') applyFilter();
-    else if(state.view==='quiz') startQuiz();   // 과목/단원 범위 변경 시 새 문제
+    // 퀴즈는 자체 과목/단원/유형/난이도 필터로 제어 — 상단 facet·검색에 반응하지 않음
   }
 
   // ---- 뷰 전환: 카드 / 관계도 / 정의 시트 / 퀴즈 ----
@@ -269,7 +269,8 @@
     graphEl.classList.toggle('hidden', v!=='graph');
     sheetEl.classList.toggle('hidden', v!=='sheet');
     if(quizEl) quizEl.classList.toggle('hidden', v!=='quiz');
-    if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph');  // 관계도는 과목/단원 facet 미적용
+    // 관계도·퀴즈는 상단 과목/단원 facet 미적용(퀴즈는 자체 필터 보유)
+    if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph' || v==='quiz');
     document.querySelectorAll('#viewsw button').forEach(function(b){
       b.classList.toggle('active', b.getAttribute('data-v')===v); });
 
@@ -283,7 +284,7 @@
     } else if(v==='sheet'){
       buildSheet(); applySheetFilter();
     } else if(v==='quiz'){
-      startQuiz();
+      if(!quizBuilt) startQuiz();   // 한 번만 생성(다시 들어와도 진행/필터 유지)
     } else if(v==='cards'){
       applyFilter();
     }

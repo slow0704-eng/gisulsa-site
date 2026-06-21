@@ -128,6 +128,14 @@ footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:40px;pad
 .qs.active{background:#0d9488;color:#fff;border-color:transparent;}
 .qs[data-s="__all"]{color:#475569;border-color:#cbd5e1;}
 .qs[data-s="__all"].active{background:#334155;color:#fff;}
+/* 난이도(단일 선택) */
+.qd{cursor:pointer;border:1px solid #fde68a;background:#fff;padding:5px 13px;border-radius:999px;font-size:12px;font-weight:700;color:#b45309;}
+.qd.active{background:#f59e0b;color:#fff;border-color:transparent;}
+/* 과목 필터(다중 선택) */
+.qm{cursor:pointer;border:1px solid #bfdbfe;background:#fff;padding:5px 11px;border-radius:999px;font-size:12px;font-weight:700;color:#1d4ed8;}
+.qm.active{background:#2563eb;color:#fff;border-color:transparent;}
+.qm[data-m="__all"]{color:#475569;border-color:#cbd5e1;}
+.qm[data-m="__all"].active{background:#334155;color:#fff;}
 /* 구성도(다이어그램) 문제 — 보기/문항 내 ASCII */
 .qdiag{margin:0;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:9px 11px;font-size:11px;line-height:1.45;
   overflow-x:auto;font-family:"D2Coding","Consolas","Courier New",monospace;white-space:pre;}
