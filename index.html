@@ -18,6 +18,7 @@
       <button data-v="cards" class="active">🗂 카드</button>
       <button data-v="graph">🗺 관계도</button>
       <button data-v="sheet">📋 정의 시트</button>
+      <button data-v="quiz">🧩 퀴즈</button>
     </div>
     <span class="count" id="count"></span>
   </div>
@@ -47,6 +48,13 @@
   <div id="sheetBody"></div>
 </div>
 
+<div id="quiz" class="hidden">
+  <div class="quiz-tools">
+    <span class="tool-hint">🧩 토픽 카드 요소(리드키워드·정의·구성요소·역할)로 자동 생성된 다지선다 — 상단 <b>과목/단원</b> 필터로 출제 범위 조절(검색어는 미적용)</span>
+  </div>
+  <div id="quizBody"></div>
+</div>
+
 <footer>
   기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) · 전 과목 통합 검색 + 과목·단원 필터<br/>
   데이터: <code>data/*.json</code> 분리 (수정: JSON 편집 후 <code>python build.py</code> 재실행) · 자세한 구조는 <code>AGENTS.md</code>
@@ -55,6 +63,7 @@
 <script src="assets/render.js"></script>
 <script src="data/bundle.js"></script>
 <script src="assets/graph.js"></script>
+<script src="assets/quiz.js"></script>
 <script src="assets/app.js"></script>
 </body>
 </html>

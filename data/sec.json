@@ -51,31 +51,31 @@
       "id": "crypto",
       "title": "① 암호 · 인증",
       "desc": "대칭/비대칭·해시·ECC·동형·양자암호와 전자서명/PKI.",
-      "mermaid": "flowchart LR\n  S[\"대칭/비대칭 암호\"] --> H[\"해시·키스트레칭\"]\n  S --> E[\"전자서명·PKI\"]\n  S --> EC[\"타원곡선 ECC\"]\n  HE[\"동형암호\"] --> Q[\"양자암호 QKD·PQC\"]\n  EC --> Q"
+      "mermaid": "flowchart LR\n  S([\"① 암호 · 인증\"]):::hub\n  n0[\"대칭키 / 비대칭키 암호\"] --> n1[\"해시함수·키스트레칭\"] --> n2[\"타원곡선 암호\"] --> n3[\"동형암호\"] --> n4[\"양자암호 QKD / PQC\"] --> n5[\"전자서명·PKI\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n0,n4 cmp;"
     },
     {
       "id": "threat",
       "title": "② 공격 · 악성코드",
       "desc": "랜섬웨어·계정도용·사회공학·공급망·APT 등 위협.",
-      "mermaid": "flowchart LR\n  P[\"피싱·스미싱·큐싱\"] --> M[\"악성코드<br/>인포스틸러\"]\n  CS[\"크리덴셜 스터핑\"] --> A[\"APT·공격체계\"]\n  M --> R[\"랜섬웨어·RaaS\"]\n  SC[\"공급망 공격\"] --> A\n  M --> A"
+      "mermaid": "flowchart LR\n  S([\"② 공격 · 악성코드\"]):::hub\n  n0[\"랜섬웨어·RaaS\"] --> n1[\"크리덴셜 스터핑\"] --> n2[\"피싱·스미싱·큐싱\"] --> n3[\"악성코드\"] --> n4[\"공급망 공격\"] --> n5[\"APT·공격체계\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "aisec",
       "title": "③ AI 보안",
       "desc": "적대적 공격·프롬프트 인젝션·모델 탈취·딥페이크 등 AI 특화 위협.",
-      "mermaid": "flowchart LR\n  AD[\"적대적 공격\"] --> EX[\"모델 추출·전도\"]\n  PI[\"프롬프트 인젝션\"] --> OW[\"OWASP LLM Top10\"]\n  AD --> OW\n  DF[\"딥페이크\"] --> GS[\"생성형 AI 보안\"]\n  PI --> GS"
+      "mermaid": "flowchart LR\n  S([\"③ AI 보안\"]):::hub\n  n0[\"적대적 공격\"] --> n1[\"프롬프트 인젝션\"] --> n2[\"모델 추출·전도 공격\"] --> n3[\"OWASP LLM Top 10\"] --> n4[\"딥페이크\"] --> n5[\"생성형 AI 보안\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "netsec",
       "title": "④ 시스템 · 네트워크 보안",
       "desc": "제로트러스트·SIEM/SOAR·접근통제·TLS·포렌식·ICS 보안.",
-      "mermaid": "flowchart LR\n  ZT[\"제로 트러스트\"] --> AC[\"접근통제\"]\n  AC --> TLS[\"전송계층 보안 TLS1.3\"]\n  SS[\"SIEM·SOAR\"] --> F[\"디지털 포렌식\"]\n  ZT --> SS\n  ICS[\"산업제어시스템 보안\"]"
+      "mermaid": "flowchart LR\n  S([\"④ 시스템 · 네트워크 보안\"]):::hub\n  n0[\"제로 트러스트\"] --> n1[\"SIEM / SOAR\"] --> n2[\"접근통제\"] --> n3[\"전송계층 보안\"] --> n4[\"디지털 포렌식\"] --> n5[\"산업제어시스템 보안\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n1 cmp;"
     },
     {
       "id": "mgmt",
       "title": "⑤ 관리체계 · 개인정보",
       "desc": "ISMS-P·CC 인증과 개인정보보호법·PET·PbD·가명정보.",
-      "mermaid": "flowchart LR\n  I[\"ISMS-P\"] --> CC[\"공통평가기준 CC\"]\n  L[\"개인정보보호법·안전성\"] --> PET[\"프라이버시 강화기술\"]\n  PBD[\"Privacy by Design\"] --> L\n  PET --> AN[\"가명/익명정보\"]\n  L --> AN"
+      "mermaid": "flowchart LR\n  S([\"⑤ 관리체계 · 개인정보\"]):::hub\n  n0[\"ISMS-P\"] --> n1[\"공통평가기준\"] --> n2[\"개인정보보호법·안전성확보조치\"] --> n3[\"프라이버시 강화기술\"] --> n4[\"Privacy by Design\"] --> n5[\"가명정보 / 익명정보\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n5 cmp;"
     }
   ],
   "cards": [

@@ -58,37 +58,37 @@
       "id": "arch",
       "title": "① 컴퓨터 구조",
       "desc": "폰노이만 구조 위에서 CPU가 명령 사이클을 수행, 파이프라인·인터럽트로 성능·응답 확보.",
-      "mermaid": "flowchart LR\n  VN[\"폰노이만 구조\"] --> CPU[\"CPU 구조<br/>ALU·CU·레지스터\"]\n  CPU --> CYC[\"명령어 사이클\"]\n  CYC --> PIPE[\"파이프라인\"]\n  CPU --> ISA[\"RISC·CISC\"]\n  CYC --> INT[\"인터럽트\"]"
+      "mermaid": "flowchart LR\n  S([\"① 컴퓨터 구조\"]):::hub\n  n0[\"폰노이만 구조\"] --> n1[\"CPU 구조\"] --> n2[\"명령어 사이클\"] --> n3[\"파이프라인\"] --> n4[\"RISC·CISC\"] --> n5[\"인터럽트\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "mem",
       "title": "② 기억장치 · 메모리",
       "desc": "메모리 계층 위에서 지역성으로 캐시·가상메모리가 동작, 페이징·교체로 공간 관리.",
-      "mermaid": "flowchart LR\n  H[\"메모리 계층구조\"] --> LOC[\"지역성·매핑\"]\n  LOC --> CACHE[\"캐시 메모리\"]\n  H --> VM[\"가상 메모리\"]\n  VM --> PG[\"페이징·세그먼테이션\"]\n  PG --> RP[\"페이지 교체\"]"
+      "mermaid": "flowchart LR\n  S([\"② 기억장치 · 메모리\"]):::hub\n  n0[\"메모리 계층구조\"] --> n1[\"캐시 메모리\"] --> n2[\"지역성·매핑\"] --> n3[\"가상 메모리\"] --> n4[\"페이징·세그먼테이션\"] --> n5[\"페이지 교체\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "proc",
       "title": "③ 프로세스 · 스케줄링",
       "desc": "프로세스·스레드를 스케줄러가 CPU에 배정, 문맥교환·IPC로 병행 실행·협력.",
-      "mermaid": "flowchart LR\n  PR[\"프로세스(PCB)\"] --> TH[\"스레드\"]\n  TH --> SCH[\"CPU 스케줄링\"]\n  SCH --> ALG[\"스케줄링 알고리즘\"]\n  SCH --> CS[\"문맥교환\"]\n  PR --> IPC[\"IPC 통신\"]"
+      "mermaid": "flowchart LR\n  S([\"③ 프로세스 · 스케줄링\"]):::hub\n  n0[\"프로세스\"] --> n1[\"스레드\"] --> n2[\"CPU 스케줄링\"] --> n3[\"스케줄링 알고리즘\"] --> n4[\"문맥교환\"] --> n5[\"IPC\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "sync",
       "title": "④ 동기화 · 교착",
       "desc": "임계구역 상호배제를 세마포어·모니터로 구현, 교착·경쟁·기아를 예방·해결.",
-      "mermaid": "flowchart LR\n  CR[\"임계구역·상호배제\"] --> SEM[\"세마포어\"]\n  SEM --> MON[\"모니터\"]\n  CR --> DL[\"교착상태\"]\n  DL --> SOL[\"교착 해결\"]\n  CR --> RACE[\"경쟁상태·기아\"]"
+      "mermaid": "flowchart LR\n  S([\"④ 동기화 · 교착\"]):::hub\n  n0[\"임계구역·상호배제\"] --> n1[\"세마포어\"] --> n2[\"모니터\"] --> n3[\"교착상태\"] --> n4[\"교착 해결\"] --> n5[\"경쟁상태·기아\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "io",
       "title": "⑤ 파일 · 입출력 · 가상화",
       "desc": "파일시스템·디스크 스케줄링·RAID로 저장 관리, DMA·가상화로 입출력·자원 효율화.",
-      "mermaid": "flowchart LR\n  FS[\"파일 시스템\"] --> DS[\"디스크 스케줄링\"]\n  DS --> RAID[\"RAID\"]\n  FS --> IO[\"I/O 관리(DMA)\"]\n  IO --> FRAG[\"단편화·메모리할당\"]\n  IO --> VIRT[\"가상화 VM·컨테이너\"]"
+      "mermaid": "flowchart LR\n  S([\"⑤ 파일 · 입출력 · 가상화\"]):::hub\n  n0[\"파일 시스템\"] --> n1[\"디스크 스케줄링\"] --> n2[\"RAID\"] --> n3[\"I/O 관리\"] --> n4[\"단편화·메모리할당\"] --> n5[\"가상화\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "algo",
       "title": "⑥ 자료구조 · 알고리즘",
       "desc": "선형·비선형 자료구조와 정렬·탐색·복잡도 등 알고리즘 기초(기출 빈출).",
-      "mermaid": "flowchart LR\n  DS[\"자료구조<br/>선형·비선형\"] --> TR[\"트리·BST\"]\n  DS --> HS[\"해싱\"]\n  TR --> SO[\"정렬 알고리즘\"]\n  DS --> GR[\"그래프·탐색\"]\n  SO --> BO[\"복잡도 Big-O\"]\n  GR --> BO"
+      "mermaid": "flowchart LR\n  S([\"⑥ 자료구조 · 알고리즘\"]):::hub\n  n0[\"자료구조\"] --> n1[\"트리·이진탐색트리\"] --> n2[\"정렬 알고리즘\"] --> n3[\"해싱\"] --> n4[\"그래프·탐색\"] --> n5[\"알고리즘 복잡도\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     }
   ],
   "cards": [

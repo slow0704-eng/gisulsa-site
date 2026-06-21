@@ -58,37 +58,37 @@
       "id": "scm",
       "title": "① 형상관리 (SCM)",
       "desc": "산출물의 변경을 식별·통제·기록. 단일 진실원천(Git)으로 무결성 보장.",
-      "mermaid": "flowchart LR\n  V[\"Git·SVN<br/>버전관리\"] --> BR[\"브랜칭 전략\"]\n  BR --> BL[\"Baseline\"]\n  BL --> CH[\"변경관리(CCB)\"]\n  BR --> GO[\"GitOps<br/>선언적 배포\"]"
+      "mermaid": "flowchart LR\n  S([\"① 형상관리 (SCM)\"]):::hub\n  n0[\"형상관리 (SCM)\"] --> n1[\"Git 브랜칭 전략\"] --> n2[\"GitOps\"] --> n3[\"Baseline (베이스라인)\"] --> n4[\"변경관리 (Change Management)\"] --> n5[\"SVN (Subversion)\"]\n  S --> n0\n  n6[\"Git\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "ops",
       "title": "② DevOps · CI/CD",
       "desc": "개발·운영 통합 자동화로 배포주기 단축. 보안 좌측 이동(Shift-Left).",
-      "mermaid": "flowchart LR\n  DO[\"DevOps<br/>문화·자동화\"] --> CI[\"CI/CD 파이프라인\"]\n  CI --> DS[\"DevSecOps<br/>Shift-Left\"]\n  CI --> DEP[\"배포 전략<br/>Blue-Green·Canary\"]\n  CI --> IAC[\"IaC\"]"
+      "mermaid": "flowchart LR\n  S([\"② DevOps · CI/CD\"]):::hub\n  n0[\"DevOps\"] --> n1[\"CI/CD 파이프라인\"] --> n2[\"쿠버네티스 (Kubernetes)\"] --> n3[\"DevSecOps (Shift-Left)\"] --> n4[\"배포 전략\"] --> n5[\"IaC (코드형 인프라)\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "qual",
       "title": "③ 품질",
       "desc": "제품 품질을 정의·측정·인증·관리. 표준(ISO 25000)·품질비용·QA/QC·메트릭.",
-      "mermaid": "flowchart LR\n  STD[\"ISO 25000/25010\"] --> MAT[\"CMMI·TMMi 성숙도\"]\n  STD --> QAC[\"QA · QC\"]\n  QAC --> MET[\"품질척도(Metrics)\"]\n  MAT --> GS[\"GS인증\"]"
+      "mermaid": "flowchart LR\n  S([\"③ 품질\"]):::hub\n  n0[\"SW 품질 (ISO 25010)\"] --> n1[\"CMMI (성숙도 모델)\"] --> n2[\"SW 품질인증 (GS인증)\"] --> n3[\"SW 품질표준 (ISO 25000)\"] --> n4[\"SW 품질관리체계 (QMS)\"] --> n5[\"SW 품질비용 (CoQ)\"]\n  S --> n0\n  n6[\"품질보증 (QA)\"] --> n7[\"품질통제 (QC)\"] --> n8[\"SW 품질척도 (Metrics)\"] --> n9[\"품질속성 시나리오 (QA Scenario)\"] --> n10[\"임베디드 SW 품질메트릭\"] --> n11[\"SW 시각화 품질지표 (SW Viz)\"]\n  S --> n6\n  n12[\"QC 7가지 도구\"] --> n13[\"품질속성 유틸리티 트리 (Utility Tree)\"]\n  S --> n12\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "test",
       "title": "④ 테스트",
       "desc": "결함을 단계·기법별로 검증. 단위~인수·성능·품질평가 시험.",
-      "mermaid": "flowchart TD\n  LV[\"레벨<br/>단위→통합→시스템→인수\"] --> TECH[\"기법<br/>블랙박스·화이트박스\"]\n  TECH --> COV[\"커버리지<br/>코드·MC/DC\"]\n  LV --> TOOL[\"도구<br/>드라이버·스텁·더블\"]\n  TECH --> AUTO[\"자동화·회귀\"]"
+      "mermaid": "flowchart LR\n  S([\"④ 테스트\"]):::hub\n  n0[\"테스트 기법\"] --> n1[\"테스트 레벨 (V-Model)\"] --> n2[\"성능 테스트\"] --> n3[\"품질·성능 평가시험\"] --> n4[\"단위테스트 (Unit Test)\"] --> n5[\"상향식 통합테스트 (Bottom-Up)\"]\n  S --> n0\n  n6[\"하향식 통합테스트 (Top-Down)\"] --> n7[\"시스템테스트 (System Test)\"] --> n8[\"회귀테스트 (Regression)\"] --> n9[\"스모크테스트 (Smoke Test)\"] --> n10[\"새너티테스트 (Sanity Test)\"] --> n11[\"블랙박스 테스트 (Black-Box)\"]\n  S --> n6\n  n12[\"화이트박스 테스트 (White-Box)\"] --> n13[\"동등 분할 (Equivalence)\"] --> n14[\"경계값 분석 (BVA)\"] --> n15[\"페어와이즈 (Pairwise)\"] --> n16[\"명세 기반 테스트 (Spec-Based)\"] --> n17[\"경험 기반 테스트 (Experience)\"]\n  S --> n12\n  n18[\"탐색적 테스트 (Exploratory)\"] --> n19[\"유스케이스 테스트 (Use Case)\"] --> n20[\"모델 기반 테스트 (MBT)\"] --> n21[\"스크립트 테스트 (Scripted)\"] --> n22[\"위험 기반 테스트 (RBT)\"] --> n23[\"정적 테스트 (Static)\"]\n  S --> n18\n  n24[\"인스펙션 (Inspection)\"] --> n25[\"사용성 테스트 (Usability)\"] --> n26[\"A/B 테스트\"] --> n27[\"카오스 테스트 (Chaos)\"] --> n28[\"침투 테스트 (Penetration)\"] --> n29[\"벤치마킹 테스트 (Benchmark)\"]\n  S --> n24\n  n30[\"기기 호환성 테스트 (Compatibility)\"] --> n31[\"모바일 앱 테스트 (Mobile)\"] --> n32[\"임베디드 SW 테스트 (Embedded)\"] --> n33[\"몽키 테스트 (Monkey)\"] --> n34[\"고릴라 테스트 (Gorilla)\"] --> n35[\"백투백 테스트 (Back-to-Back)\"]\n  S --> n30\n  n36[\"테스트 드라이버 (Driver)\"] --> n37[\"테스트 스텁 (Stub)\"] --> n38[\"테스트 더블 (Test Double)\"] --> n39[\"테스트 오라클 (Oracle)\"] --> n40[\"테스트 케이스 기반 테스팅\"] --> n41[\"테스트 커버리지 (Coverage)\"]\n  S --> n36\n  n42[\"코드 커버리지 (Code Coverage)\"] --> n43[\"MC/DC 커버리지\"] --> n44[\"맥케이브 순환복잡도\"] --> n45[\"뮤테이션 테스트 (Mutation)\"] --> n46[\"테스트 완료조건 (Exit Criteria)\"] --> n47[\"리틀의 법칙 (Little's Law)\"]\n  S --> n42\n  n48[\"살충제 패러독스 (Pesticide)\"] --> n49[\"오류 부재의 궤변 (Absence of Errors)\"] --> n50[\"SW 테스트 성숙도 (TMMi)\"] --> n51[\"준거성 테스트 (Compliance)\"] --> n52[\"실증성 테스트 (Substantive)\"]\n  S --> n48\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "run",
       "title": "⑤ 운영 (Operations)",
       "desc": "안정적 서비스 운영·장애 대응. SRE·관측가능성·ITSM.",
-      "mermaid": "flowchart LR\n  SRE[\"SRE<br/>SLO·에러버짓\"] --> OBS[\"관측가능성<br/>로그·메트릭·추적\"]\n  OBS --> ITSM[\"ITSM\"]\n  ITSM --> INC[\"장애관리·포스트모템\"]"
+      "mermaid": "flowchart LR\n  S([\"⑤ 운영 (Operations)\"]):::hub\n  n0[\"SRE (사이트 신뢰성 공학)\"] --> n1[\"관측가능성 (Observability)\"] --> n2[\"ITSM (IT 서비스 관리)\"] --> n3[\"장애관리 · 포스트모템\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "risk",
       "title": "⑥ 위험관리",
       "desc": "위험·이슈를 식별·분석·대응·감시. 정성/정량 분석·ETA·ERM으로 통제.",
-      "mermaid": "flowchart LR\n  ID[\"위험 식별\"] --> AN[\"분석<br/>정성·정량\"]\n  AN --> TECH[\"FMEA·FTA·HAZOP·ETA\"]\n  TECH --> RES[\"대응\"]\n  RES --> ERM[\"전사위험관리(ERM)\"]"
+      "mermaid": "flowchart LR\n  S([\"⑥ 위험관리\"]):::hub\n  n0[\"위험관리 (Risk Management)\"] --> n1[\"이슈관리 (Issue Management)\"] --> n2[\"위험성평가기법 ETA\"] --> n3[\"부정적 위험 (Threat)\"] --> n4[\"종합위험관리시스템 (ERM)\"] --> n5[\"정성적 위험분석 (Qualitative)\"]\n  S --> n0\n  n6[\"정량적 위험분석 (Quantitative)\"] --> n7[\"FMEA (고장모드 영향분석)\"] --> n8[\"FTA (결함수목 분석)\"] --> n9[\"HAZOP (위험·운전분석)\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     }
   ],
   "cards": [

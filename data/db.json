@@ -51,31 +51,31 @@
       "id": "model",
       "title": "① 데이터 모델링 · 설계",
       "desc": "현실을 추상화해 정규화된 구조로 설계. ERD·함수종속·정규화가 토대.",
-      "mermaid": "flowchart LR\n  DM[\"데이터 모델링\"] --> ERD[\"ERD\"]\n  ERD --> FD[\"함수종속·암스트롱공리\"]\n  FD --> NF[\"정규화\"]\n  NF <--> DN[\"반정규화<br/>(성능)\"]\n  ERD --> ID[\"식별자·슈퍼/서브타입\"]"
+      "mermaid": "flowchart LR\n  S([\"① 데이터 모델링 · 설계\"]):::hub\n  n0[\"데이터 모델링\"] --> n1[\"ERD\"] --> n2[\"암스트롱 공리\"] --> n3[\"함수 종속성 (FD)\"] --> n4[\"이상현상\"] --> n5[\"정규화\"]\n  S --> n0\n  n6[\"제5정규화 (5NF)\"] --> n7[\"반정규화 (역정규화)\"] --> n8[\"정규화 / 역정규화\"] --> n9[\"연결함정\"] --> n10[\"슈퍼타입 / 서브타입\"] --> n11[\"식별자 / 비식별자 관계\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n8,n10,n11 cmp;"
     },
     {
       "id": "sql",
       "title": "② SQL · 질의 처리",
       "desc": "관계대수 기반 질의를 옵티마이저가 인덱스·조인으로 최적 실행.",
-      "mermaid": "flowchart LR\n  RA[\"관계대수\"] --> SQL[\"SQL·동적SQL\"]\n  SQL --> OPT[\"옵티마이저\"]\n  OPT --> IDX[\"인덱스\"]\n  OPT --> JOIN[\"JOIN\"]"
+      "mermaid": "flowchart LR\n  S([\"② SQL · 질의 처리\"]):::hub\n  n0[\"관계대수\"] --> n1[\"동적 SQL\"] --> n2[\"JOIN\"] --> n3[\"옵티마이저\"] --> n4[\"인덱스\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "tx",
       "title": "③ 트랜잭션 · 무결성 · 구조",
       "desc": "ACID·동시성·회복으로 일관성 보장. 무결성·3층 구조가 기반.",
-      "mermaid": "flowchart LR\n  TX[\"트랜잭션(ACID)\"] --> CC[\"동시성 제어\"]\n  CC --> ISO[\"Isolation Level\"]\n  TX --> REC[\"회복기법\"]\n  INT[\"무결성\"] --> ARCH[\"ANSI/SPARC 3층\"]"
+      "mermaid": "flowchart LR\n  S([\"③ 트랜잭션 · 무결성 · 구조\"]):::hub\n  n0[\"트랜잭션\"] --> n1[\"2단계 커밋 (2PC)\"] --> n2[\"동시성 제어\"] --> n3[\"Isolation Level\"] --> n4[\"회복기법\"] --> n5[\"로그기반 회복기법\"]\n  S --> n0\n  n6[\"체크포인트 회복기법\"] --> n7[\"REDO / UNDO\"] --> n8[\"데이터 무결성\"] --> n9[\"ANSI/SPARC 3층 구조\"] --> n10[\"데이터베이스 독립성\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n7 cmp;"
     },
     {
       "id": "perf",
       "title": "④ 성능 · 확장",
       "desc": "튜닝·파티셔닝·분산으로 대용량·고부하 환경의 성능과 가용성 확보.",
-      "mermaid": "flowchart LR\n  TUN[\"DB 튜닝\"] --> PART[\"파티셔닝\"]\n  PART --> SHARD[\"샤딩\"]\n  SHARD --> DIST[\"분산 DB\"]\n  TUN --> CAP[\"용량산정\"]"
+      "mermaid": "flowchart LR\n  S([\"④ 성능 · 확장\"]):::hub\n  n0[\"DB 튜닝\"] --> n1[\"파티셔닝\"] --> n2[\"샤딩\"] --> n3[\"분산 DB\"] --> n4[\"쿼리 오프로딩 / 리플리케이션\"] --> n5[\"CAP / PACELC 정리\"]\n  S --> n0\n  n6[\"DB 용량산정\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n4,n5 cmp;"
     },
     {
       "id": "data",
       "title": "⑤ 신유형 DB · 데이터 관리",
       "desc": "NoSQL·특수목적 DB와 데이터 품질·가치 등 데이터 거버넌스 영역.",
-      "mermaid": "flowchart LR\n  RDB[\"RDBMS\"] --> NO[\"NoSQL\"]\n  NO --> NEW[\"NewSQL\"]\n  NO --> SP[\"특수목적DB<br/>In-memory·Graph·Vector\"]\n  QUAL[\"데이터 품질\"] --> VAL[\"가치평가\"]"
+      "mermaid": "flowchart LR\n  S([\"⑤ 신유형 DB · 데이터 관리\"]):::hub\n  n0[\"NoSQL / NewSQL\"] --> n1[\"특수목적 DB (In-memory·Graph·Vector)\"] --> n2[\"인메모리 데이터베이스 (IMDB)\"] --> n3[\"Graph DB (그래프 DB)\"] --> n4[\"공간 데이터베이스\"] --> n5[\"데이터 품질관리\"]\n  S --> n0\n  n6[\"공공데이터 품질\"] --> n7[\"데이터 가치평가\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     }
   ],
   "cards": [

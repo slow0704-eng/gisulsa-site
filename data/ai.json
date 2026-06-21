@@ -51,31 +51,31 @@
       "id": "ml",
       "title": "① 머신러닝 기초",
       "desc": "학습 패러다임·신경망·최적화·과적합 등 ML/DL의 토대.",
-      "mermaid": "flowchart LR\n  T[\"학습 유형<br/>지도·비지도·강화\"] --> N[\"인공신경망\"]\n  N --> O[\"최적화 알고리즘\"]\n  N --> F[\"과적합·정규화\"]\n  T --> D[\"차원 축소\"]\n  N --> MD[\"머신러닝/딥러닝\"]"
+      "mermaid": "flowchart LR\n  S([\"① 머신러닝 기초\"]):::hub\n  n0[\"머신러닝 / 딥러닝\"] --> n1[\"학습 유형\"] --> n2[\"인공신경망\"] --> n3[\"최적화 알고리즘\"] --> n4[\"차원 축소\"] --> n5[\"과적합·정규화\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n0 cmp;"
     },
     {
       "id": "algo",
       "title": "② 학습 알고리즘 · 모델",
       "desc": "군집·트리·SVM·앙상블·GNN 등 대표 학습 모델.",
-      "mermaid": "flowchart LR\n  CL[\"군집화<br/>K-Means·DBSCAN\"] --> EV[\"군집평가(실루엣)\"]\n  DT[\"의사결정나무\"] --> EN[\"앙상블<br/>RF·부스팅\"]\n  SVM[\"SVM\"] --> EN\n  GNN[\"그래프 신경망\"]\n  AR[\"연관규칙\"]"
+      "mermaid": "flowchart LR\n  S([\"② 학습 알고리즘 · 모델\"]):::hub\n  n0[\"군집화\"] --> n1[\"의사결정나무\"] --> n2[\"서포트 벡터 머신\"] --> n3[\"앙상블 학습\"] --> n4[\"그래프 신경망\"] --> n5[\"연관규칙 분석\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "gen",
       "title": "③ 생성형 AI · LLM",
       "desc": "트랜스포머 기반 LLM과 RAG·프롬프트·에이전트·생성모델.",
-      "mermaid": "flowchart LR\n  TR[\"트랜스포머<br/>어텐션·MoE\"] --> LLM[\"거대 언어모델\"]\n  LLM --> RAG[\"검색증강생성\"]\n  LLM --> PE[\"프롬프트 엔지니어링\"]\n  PE --> AG[\"에이전틱 AI·MCP\"]\n  RAG --> AG\n  GEN[\"생성 모델<br/>GAN·Diffusion\"]"
+      "mermaid": "flowchart LR\n  S([\"③ 생성형 AI · LLM\"]):::hub\n  n0[\"트랜스포머\"] --> n1[\"거대 언어모델\"] --> n2[\"검색증강생성\"] --> n3[\"프롬프트 엔지니어링\"] --> n4[\"에이전틱 AI\"] --> n5[\"생성 모델\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "stat",
       "title": "④ 통계 · 데이터분석",
       "desc": "가설검정·추정·회귀·분류 성능평가 등 분석 통계.",
-      "mermaid": "flowchart LR\n  D[\"확률분포\"] --> H[\"가설검정<br/>t·z·CLT\"]\n  D --> E[\"추정<br/>점·구간\"]\n  H --> R[\"회귀분석\"]\n  R --> PF[\"분류 성능평가<br/>혼동행렬·ROC\"]\n  PF --> CL[\"군집평가·이상치\"]"
+      "mermaid": "flowchart LR\n  S([\"④ 통계 · 데이터분석\"]):::hub\n  n0[\"가설검정\"] --> n1[\"확률분포\"] --> n2[\"추정\"] --> n3[\"회귀분석\"] --> n4[\"분류 성능평가\"] --> n5[\"군집평가·이상치\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "gov",
       "title": "⑤ AI 거버넌스 · MLOps",
       "desc": "AI 윤리·위험관리·법제도와 모델 운영(MLOps)·품질검증.",
-      "mermaid": "flowchart LR\n  E[\"AI 윤리·거버넌스\"] --> R[\"AI 위험관리<br/>RMF·ISO42001\"]\n  R --> L[\"인공지능기본법\"]\n  Q[\"AI 학습데이터 품질\"] --> V[\"AI 신뢰성·검증\"]\n  M[\"MLOps\"] --> V\n  E --> V"
+      "mermaid": "flowchart LR\n  S([\"⑤ AI 거버넌스 · MLOps\"]):::hub\n  n0[\"AI 윤리·거버넌스\"] --> n1[\"AI 위험관리\"] --> n2[\"인공지능기본법\"] --> n3[\"MLOps\"] --> n4[\"AI 학습데이터 품질\"] --> n5[\"AI 신뢰성·품질검증\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     }
   ],
   "cards": [

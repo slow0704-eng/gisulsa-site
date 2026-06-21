@@ -86,7 +86,10 @@
     if(secMapsDone) return;
     var els = contentEl.querySelectorAll('.secmap .mermaid');
     if(!els.length){ secMapsDone = true; return; }
-    try{ mermaid.run({ nodes: Array.prototype.slice.call(els) }); }catch(e){ /* ignore */ }
+    // 다이어그램별 개별 렌더(하나가 실패해도 나머지는 정상 표시)
+    Array.prototype.forEach.call(els, function(el){
+      try{ mermaid.run({ nodes:[el] }); }catch(e){ /* 개별 실패 무시 */ }
+    });
     secMapsDone = true;
   }
 
@@ -189,8 +192,31 @@
   var sheetBody   = document.getElementById('sheetBody');
   var graphEl     = document.getElementById('graph');
   var graphCanvas = document.getElementById('graphCanvas');
+  var quizEl      = document.getElementById('quiz');
+  var quizBody    = document.getElementById('quizBody');
   var facetsEl    = document.querySelector('.facets');
   var sheetBuilt  = false;
+
+  // ---- 퀴즈: 현재 과목/단원 범위의 카드 묶음 ----
+  function scopedItems(){
+    var items=[];
+    DOMAINS.forEach(function(d){
+      if(state.dom!=='all' && state.dom!==d.id) return;
+      var catMap=catMapByDom[d.id], secLabel={};
+      (d.sections||[]).forEach(function(s){ secLabel[s.id]=s.title; });
+      (d.cards||[]).forEach(function(c){
+        if(state.sec!=='all' && c.category!==state.sec) return;
+        items.push({ card:c, domId:d.id, domLabel:d.label, secLabel:secLabel[c.category]||'기타',
+          color:(catMap[c.category]||{}).color||'#64748b' });
+      });
+    });
+    return items;
+  }
+  function startQuiz(){
+    if(!window.GSQuiz || !quizBody){ return; }
+    window.GSQuiz.start(quizBody, scopedItems());
+    countEl.textContent = '퀴즈 범위 ' + scopedItems().length + ' 토픽';
+  }
 
   function buildSheet(){
     if(sheetBuilt) return;
@@ -233,14 +259,16 @@
   function applyActiveFilter(){
     if(state.view==='sheet') applySheetFilter();
     else if(state.view==='cards') applyFilter();
+    else if(state.view==='quiz') startQuiz();   // 과목/단원 범위 변경 시 새 문제
   }
 
-  // ---- 뷰 전환: 카드 / 관계도 / 정의 시트 ----
+  // ---- 뷰 전환: 카드 / 관계도 / 정의 시트 / 퀴즈 ----
   function setView(v){
     state.view = v;
     contentEl.classList.toggle('hidden', v!=='cards');
     graphEl.classList.toggle('hidden', v!=='graph');
     sheetEl.classList.toggle('hidden', v!=='sheet');
+    if(quizEl) quizEl.classList.toggle('hidden', v!=='quiz');
     if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph');  // 관계도는 과목/단원 facet 미적용
     document.querySelectorAll('#viewsw button').forEach(function(b){
       b.classList.toggle('active', b.getAttribute('data-v')===v); });
@@ -254,6 +282,8 @@
       if(ok) window.GSGraph.fit();
     } else if(v==='sheet'){
       buildSheet(); applySheetFilter();
+    } else if(v==='quiz'){
+      startQuiz();
     } else if(v==='cards'){
       applyFilter();
     }
@@ -267,6 +297,7 @@
   // ---- 검색(전역, 활성 뷰에 적용) ----
   searchEl.addEventListener('input', function(){
     state.q = searchEl.value.trim().toLowerCase();
+    if(state.view==='quiz') return;   // 퀴즈는 검색어 미사용(매 입력마다 재출제 방지)
     applyActiveFilter();
   });
 

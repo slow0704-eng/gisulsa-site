@@ -44,25 +44,25 @@
       "id": "plan",
       "title": "① 정보화 기획 · 전략",
       "desc": "경영전략과 정렬해 정보화 비전·아키텍처·이행계획 수립. 발주의 근거.",
-      "mermaid": "flowchart LR\n  ISP[\"ISP<br/>정보화전략계획\"] --> ISMP[\"ISMP<br/>마스터플랜\"]\n  ISP --> EA[\"EA(TOGAF ADM)\"]\n  EA --> BPR[\"BPR<br/>프로세스 재설계\"]\n  BPR --> ISMP"
+      "mermaid": "flowchart LR\n  S([\"① 정보화 기획 · 전략\"]):::hub\n  n0[\"ISP (정보화전략계획)\"] --> n1[\"ISP의 절차\"] --> n2[\"ISP 최종산출물 검토\"] --> n3[\"ISP 공동가이드 (제4판)\"] --> n4[\"ISP·ISMP 공통가이드 (제7판)\"] --> n5[\"ISP 필수 공통구성항목\"]\n  S --> n0\n  n6[\"ISP·ISMP 수립 제외 유형\"] --> n7[\"ISP·ISMP 산출물 검토 분야\"] --> n8[\"ISMP (정보시스템 마스터플랜)\"] --> n9[\"ISMP 수행방법론 (체계·절차)\"] --> n10[\"EA (전사 아키텍처)\"] --> n11[\"EA 프레임워크\"]\n  S --> n6\n  n12[\"TOGAF (ADM)\"] --> n13[\"범정부 EA (참조모델)\"] --> n14[\"EA 성숙도모델 v3.0\"] --> n15[\"공공부문 EA 성과평가\"] --> n16[\"범정부 참조모형(RM) 종류\"] --> n17[\"범정부 EA 메타모델\"]\n  S --> n12\n  n18[\"EAMS (EA 관리시스템)\"] --> n19[\"BPR (업무 프로세스 재설계)\"]\n  S --> n18\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "proc",
       "title": "② 발주 · 조달 · 계약",
       "desc": "RFP·제안평가·대가산정으로 적정 사업자 선정. SW 제값받기·공정성.",
-      "mermaid": "flowchart LR\n  RFP[\"RFP\"] --> ORD[\"발주제도<br/>분리·분할발주\"]\n  ORD --> EVAL[\"제안평가<br/>기술성·협상\"]\n  EVAL --> COST[\"대가산정<br/>FP·COCOMO·LOC\"]\n  COST --> SLA[\"SLA·검수\"]"
+      "mermaid": "flowchart LR\n  S([\"② 발주 · 조달 · 계약\"]):::hub\n  n0[\"RFP (제안요청서)\"] --> n1[\"RFP 요구사항 작성 가이드\"] --> n2[\"ISO/IEC 12207 발주 프로세스\"] --> n3[\"발주·공급 관행 문제점·개선\"] --> n4[\"MAS (다수공급자계약)\"] --> n5[\"대형SW 사업 전문평가제도\"]\n  S --> n0\n  n6[\"제안서 평가 (기술성평가)\"] --> n7[\"제안서 평가방법·기술성 기준\"] --> n8[\"협상계약 제안평가 세부항목\"] --> n9[\"제안팀 구성형태·역할\"] --> n10[\"제안 PM의 주요 역할\"] --> n11[\"제안 접수~제안설명회 과정\"]\n  S --> n6\n  n12[\"분리발주\"] --> n13[\"SW 분할발주\"] --> n14[\"SW사업 단계별 발주제도\"] --> n15[\"SW사업대가 (FP)\"] --> n16[\"기능점수 간이법·정통법\"] --> n17[\"LOC (코드라인 기반)\"]\n  S --> n12\n  n18[\"COCOMO\"] --> n19[\"ISMP 수립비 산정 (투입공수)\"] --> n20[\"프로젝트 원가산정\"] --> n21[\"원가산정기법 (4종+)\"] --> n22[\"SW Metrics 유형·대상 분류\"] --> n23[\"SLA (서비스수준협약)\"]\n  S --> n18\n  n24[\"검수 · 하자보수\"]\n  S --> n24\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "req",
       "title": "③ 요구사항 관리",
       "desc": "도출·분석·명세·검증 + 추적성·변경통제. 발주·검수의 기준선.",
-      "mermaid": "flowchart LR\n  RE[\"요구공학\"] --> SPEC[\"요건기술서\"]\n  SPEC --> RTM[\"추적성(RTM)\"]\n  RTM --> CCB[\"변경관리(CCB)\"]"
+      "mermaid": "flowchart LR\n  S([\"③ 요구사항 관리\"]):::hub\n  n0[\"요구공학\"] --> n1[\"요건 기술서 포함 요구사항\"] --> n2[\"요구사항 추적성 (RTM)\"] --> n3[\"요구사항 변경관리 (CCB)\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "gov",
       "title": "④ 거버넌스 · 감리",
       "desc": "전 과정을 통제·점검하는 우산. IT거버넌스·감리·PMO.",
-      "mermaid": "flowchart LR\n  GOV[\"IT 거버넌스<br/>COBIT·ISO 38500\"] --> AUD[\"정보시스템 감리\"]\n  GOV --> PMO[\"PMO\"]\n  PMO --> AUD"
+      "mermaid": "flowchart LR\n  S([\"④ 거버넌스 · 감리\"]):::hub\n  n0[\"정보시스템 감리\"] --> n1[\"ISP 사업 감리 프레임워크\"] --> n2[\"PMO (사업관리조직)\"] --> n3[\"정보시스템 감리 / 사업관리위탁\"] --> n4[\"IT 거버넌스 (COBIT·ISO38500)\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n3 cmp;"
     }
   ],
   "cards": [

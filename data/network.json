@@ -51,31 +51,31 @@
       "id": "layer",
       "title": "① 계층·기초 — 프로토콜 골격",
       "desc": "통신을 계층으로 분할(OSI·TCP/IP). 캡슐화·이더넷·ARP·오류제어가 토대.",
-      "mermaid": "flowchart LR\n  OSI[\"OSI 7계층\"] --> TCPIP[\"TCP/IP 4계층\"]\n  TCPIP --> ENC[\"캡슐화·PDU\"]\n  ENC --> ETH[\"이더넷(L2)\"]\n  ETH --> ARP[\"ARP IP↔MAC\"]\n  ETH --> EC[\"오류·흐름 제어\"]"
+      "mermaid": "flowchart LR\n  S([\"① 계층·기초 — 프로토콜 골격\"]):::hub\n  n0[\"OSI 7계층\"] --> n1[\"TCP/IP 4계층\"] --> n2[\"캡슐화·PDU\"] --> n3[\"이더넷\"] --> n4[\"ARP\"] --> n5[\"오류·흐름 제어\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "route",
       "title": "② IP · 라우팅 · 스위칭",
       "desc": "IP 주소로 식별, 서브네팅·라우팅으로 경로 결정, 스위칭·NAT로 전달.",
-      "mermaid": "flowchart LR\n  IP[\"IP 주소체계<br/>IPv4·IPv6\"] --> SUB[\"서브네팅·CIDR\"]\n  SUB --> RT[\"라우팅<br/>OSPF·BGP\"]\n  IP --> SW[\"스위칭·VLAN(L2)\"]\n  RT --> NAT[\"NAT\"]\n  IP --> ICMP[\"ICMP 진단\"]"
+      "mermaid": "flowchart LR\n  S([\"② IP · 라우팅 · 스위칭\"]):::hub\n  n0[\"IP 주소체계\"] --> n1[\"서브네팅·CIDR\"] --> n2[\"라우팅 프로토콜\"] --> n3[\"스위칭·VLAN\"] --> n4[\"NAT\"] --> n5[\"ICMP\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "trans",
       "title": "③ 전송 · 품질",
       "desc": "TCP·UDP로 종단 전달, 혼잡·흐름제어와 QoS로 신뢰성·품질 확보.",
-      "mermaid": "flowchart LR\n  TCP[\"TCP<br/>연결·신뢰\"] --> CC[\"혼잡 제어\"]\n  TCP --> FC[\"흐름 제어<br/>슬라이딩윈도우\"]\n  UDP[\"UDP<br/>비연결\"] --> QOS[\"QoS\"]\n  CC --> QOS\n  PORT[\"포트·소켓\"] --> TCP\n  PORT --> UDP"
+      "mermaid": "flowchart LR\n  S([\"③ 전송 · 품질\"]):::hub\n  n0[\"TCP\"] --> n1[\"UDP\"] --> n2[\"혼잡 제어\"] --> n3[\"흐름 제어\"] --> n4[\"QoS\"] --> n5[\"포트·소켓\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "wireless",
       "title": "④ 무선 · 이동통신",
       "desc": "Wi-Fi·5G·LTE·BLE·LPWAN으로 무선 접속. 거리·전력·속도로 기술 선택.",
-      "mermaid": "flowchart LR\n  WIFI[\"무선LAN<br/>Wi-Fi\"] --> SEC[\"무선 보안<br/>WPA3\"]\n  G5[\"5G\"] --> LTE[\"LTE 이동통신\"]\n  BLE[\"블루투스·BLE\"] --> LPWAN[\"LPWAN<br/>LoRa·NB-IoT\"]\n  WIFI --> G5\n  LTE --> LPWAN"
+      "mermaid": "flowchart LR\n  S([\"④ 무선 · 이동통신\"]):::hub\n  n0[\"무선 LAN\"] --> n1[\"5G\"] --> n2[\"6G\"] --> n3[\"LTE/이동통신\"] --> n4[\"블루투스·BLE\"] --> n5[\"LPWAN\"]\n  S --> n0\n  n6[\"무선 보안\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "nsec",
       "title": "⑤ 네트워크 보안 · 신기술",
       "desc": "방화벽·VPN·IPsec로 보호, SDN·NFV·CDN으로 유연·확장 인프라 구성.",
-      "mermaid": "flowchart LR\n  FW[\"방화벽\"] --> VPN[\"VPN\"]\n  VPN --> IPSEC[\"IPsec\"]\n  SDN[\"SDN<br/>제어·전달 분리\"] --> NFV[\"NFV<br/>기능 가상화\"]\n  NFV --> CDN[\"CDN·로드밸런싱\"]\n  FW --> SDN"
+      "mermaid": "flowchart LR\n  S([\"⑤ 네트워크 보안 · 신기술\"]):::hub\n  n0[\"방화벽\"] --> n1[\"VPN\"] --> n2[\"IPsec\"] --> n3[\"SDN\"] --> n4[\"NFV\"] --> n5[\"CDN·로드밸런싱\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     }
   ],
   "cards": [
