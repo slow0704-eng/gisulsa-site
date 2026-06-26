@@ -36,12 +36,51 @@
     return '<table>'+h+'</table>';
   }
 
+  // 2교시 논술 카드 — 한 블록(개요 도식+개념+※) / 상세(표·구성도+※) 골격을 절(節)별로 렌더.
+  // 절 스키마: { no, title, overview:{diagram,concepts[],note}, detail:{title,table,diagram,note}, conclusion[] }
+  function essayBlock(b){
+    if(!b) return '';
+    var h = '';
+    if(b.diagram)  h += '<pre class="diagram">'+escHTML(b.diagram)+'</pre>';
+    if(b.concepts) b.concepts.forEach(function(t){ h += '<div class="def">'+escHTML(t)+'</div>'; });
+    if(b.table)    h += tableHTML(b.table);
+    if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
+    return h;
+  }
+  function essayHTML(card){
+    var p = card.problem || {};
+    var html = '<div class="es-prob"><div class="es-pq">문제'+(p.no?' '+escHTML(p.no):'')+'. '+escHTML(p.topic||card.title)+'</div>';
+    if(p.reqs && p.reqs.length){
+      html += '<ul class="es-reqs">'+p.reqs.map(function(r){ return '<li>'+escHTML(r)+'</li>'; }).join('')+'</ul>';
+    }
+    html += '</div>';
+    if(card.intro){
+      html += '<div class="es-sec es-intro"><div class="es-h">개요</div>'+essayBlock(card.intro)+'</div>';
+    }
+    html += '<div class="es-body">';
+    (card.sections||[]).forEach(function(s){
+      html += '<div class="es-sec"><div class="es-h">'+escHTML((s.no?s.no+'. ':'')+(s.title||''))+'</div>';
+      if(s.overview){ html += '<div class="es-sub">1. 개요</div>'+essayBlock(s.overview); }
+      if(s.detail){ html += '<div class="es-sub">'+escHTML(s.detail.title||'2. 상세')+'</div>'+essayBlock(s.detail); }
+      if(s.conclusion){ s.conclusion.forEach(function(t){ html += '<div class="def es-concl">'+escHTML(t)+'</div>'; }); }
+      if(s.note){ html += '<div class="note">'+escHTML(s.note)+'</div>'; }
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
   function cardHTML(card, catMap, domId){
     var c = catMap[card.category] || {color:'#cbd5e1',bg:'#f1f5f9',tagColor:'#475569'};
     var dnote = card.diagramNote ? '<div class="note">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
     var diag = card.diagram ? '<pre class="diagram">'+escHTML(card.diagram)+'</pre>' : '';
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag" style="background:'+c.bg+';color:'+c.tagColor+'">'+escHTML(card.tag)+'</span>';
+    if(card.essay){
+      return '<div class="card essay" data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-k="'+escAttr(card.keywords)+'" style="border-top-color:'+c.color+'">'+
+        head+essayHTML(card)+
+      '</div>';
+    }
     var body;
     if(card.compare){
       // 비교형(A vs B): 1교시 비교형 골격 — I.정의 비교(2열표 A|B, 헤더1+본문3행) → II.상세 비교(3열표 구분|A|B)
@@ -63,6 +102,7 @@
 
   // 정의 시트: 토픽의 "정의문"만 표로. 행=토픽, data-dom/data-cat/data-k 로 필터.
   function defText(card){
+    if(card.essay) return '[2교시 논술] ' + ((card.problem && card.problem.topic) || card.title);
     if(card.def) return card.def;
     if(card.compare && card.defTable && card.defTable.head) return '[비교] ' + card.defTable.head.join(' ↔ ');
     return '';
@@ -76,7 +116,7 @@
       function rowsFor(catId){
         return (d.cards || []).filter(function(c){ return c.category === catId; }).map(function(c){
           return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-k="'+escAttr(c.keywords)+'">'+
-            '<td class="st-title">'+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+'</td>'+
+            '<td class="st-title">'+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+(c.essay?' <span class="st-badge st-essay">2교시</span>':'')+'</td>'+
             '<td class="st-def">'+escHTML(defText(c))+'</td></tr>';
         }).join('');
       }

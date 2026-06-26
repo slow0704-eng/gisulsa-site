@@ -204,6 +204,7 @@
       var catMap=catMapByDom[d.id], secLabel={};
       (d.sections||[]).forEach(function(s){ secLabel[s.id]=s.title; });
       (d.cards||[]).forEach(function(c){
+        if(c.essay) return;   // 2교시 논술 카드는 자동 다지선다 대상에서 제외
         items.push({ card:c, domId:d.id, domLabel:d.label, secId:c.category, secLabel:secLabel[c.category]||'기타',
           color:(catMap[c.category]||{}).color||'#64748b' });
       });
