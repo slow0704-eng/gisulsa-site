@@ -55,6 +55,14 @@
   <div id="quizBody"></div>
 </div>
 
+<div id="cardModal" class="cmodal hidden" aria-hidden="true">
+  <div class="cmodal-bg" data-close="1"></div>
+  <div class="cmodal-box">
+    <button class="cmodal-x" data-close="1" title="닫기 (Esc)">✕</button>
+    <div class="cmodal-body"></div>
+  </div>
+</div>
+
 <footer>
   기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) · 전 과목 통합 검색 + 과목·단원 필터<br/>
   데이터: <code>data/*.json</code> 분리 (수정: JSON 편집 후 <code>python build.py</code> 재실행) · 자세한 구조는 <code>AGENTS.md</code>

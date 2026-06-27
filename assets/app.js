@@ -296,6 +296,41 @@
   var maskDef = document.getElementById('maskDef');
   if(maskDef){ maskDef.addEventListener('change', function(){ sheetBody.classList.toggle('masked', maskDef.checked); }); }
 
+  // ---- 카드 확대 모달(카드 클릭 시 크게 보기) ----
+  var modalEl  = document.getElementById('cardModal');
+  var modalBody = modalEl ? modalEl.querySelector('.cmodal-body') : null;
+  function openCardModal(cardEl){
+    if(!modalEl || !modalBody) return;
+    var clone = cardEl.cloneNode(true);
+    clone.classList.remove('hidden');
+    modalBody.innerHTML = '';
+    modalBody.appendChild(clone);
+    modalEl.classList.remove('hidden');
+    modalEl.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCardModal(){
+    if(!modalEl) return;
+    modalEl.classList.add('hidden');
+    modalEl.setAttribute('aria-hidden','true');
+    if(modalBody) modalBody.innerHTML = '';
+    document.body.style.overflow = '';
+  }
+  if(modalEl){
+    contentEl.addEventListener('click', function(e){
+      // 텍스트 드래그 선택 중에는 모달 열지 않음
+      if(window.getSelection && String(window.getSelection()).length) return;
+      var card = e.target && e.target.closest ? e.target.closest('.card') : null;
+      if(card) openCardModal(card);
+    });
+    modalEl.addEventListener('click', function(e){
+      if(e.target && e.target.getAttribute && e.target.getAttribute('data-close')) closeCardModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key==='Escape' && !modalEl.classList.contains('hidden')) closeCardModal();
+    });
+  }
+
   // ---- 검색(전역, 활성 뷰에 적용) ----
   searchEl.addEventListener('input', function(){
     state.q = searchEl.value.trim().toLowerCase();

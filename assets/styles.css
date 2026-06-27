@@ -52,7 +52,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:"Malgun Gothic",
 .secmap .mermaid{text-align:center;}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;}
-.card{background:#fff;border:1px solid var(--line);border-top:4px solid #cbd5e1;border-radius:12px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;flex-direction:column;}
+.card{background:#fff;border:1px solid var(--line);border-top:4px solid #cbd5e1;border-radius:12px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;flex-direction:column;min-width:0;cursor:pointer;position:relative;transition:box-shadow .12s,transform .12s;}
+.card:hover{box-shadow:0 4px 14px rgba(0,0,0,.12);transform:translateY(-1px);}
+.card::after{content:"⤢";position:absolute;top:10px;right:12px;font-size:13px;color:#cbd5e1;opacity:0;transition:opacity .12s;}
+.card:hover::after{opacity:1;}
 .card h3{margin:0 0 2px;font-size:17px;}
 .card .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;margin-bottom:10px;}
 .blk{margin-top:10px;}
@@ -72,13 +75,32 @@ table td:first-child{white-space:nowrap;font-weight:600;color:#475569;background
 .es-pq{font-weight:800;font-size:15px;letter-spacing:-.2px;}
 .es-reqs{margin:7px 0 0;padding-left:18px;font-size:13px;color:#cbd5e1;}
 .es-reqs li{margin:2px 0;}
-.es-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px 22px;margin-top:10px;}
-.es-sec{border-left:3px solid #c7d2fe;padding-left:12px;}
+.es-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px 22px;margin-top:10px;min-width:0;}
+.es-sec{border-left:3px solid #c7d2fe;padding-left:12px;min-width:0;}
 .es-intro{margin:8px 0 2px;border-left-color:#6366f1;}
 .es-h{font-size:15px;font-weight:800;color:#1e293b;margin-bottom:6px;}
 .es-sub{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.3px;margin:11px 0 4px;}
 .es-concl{background:#f8fafc;border-radius:6px;padding:5px 9px;margin-top:5px;font-size:13px;}
 .st-essay{color:#4338ca;background:#eef2ff;}
+
+/* ===== 카드 확대 모달(클릭 시 크게 보기) ===== */
+.cmodal{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;}
+.cmodal-bg{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(2px);}
+.cmodal-box{position:relative;z-index:1;width:100%;max-width:940px;margin:auto;}
+.cmodal-x{position:absolute;top:-34px;right:0;z-index:2;cursor:pointer;border:none;background:rgba(255,255,255,.9);color:#0f172a;
+  width:30px;height:30px;border-radius:50%;font-size:15px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.cmodal-x:hover{background:#fff;}
+/* 모달 안의 카드 — 크게(폰트·다이어그램 확대), 클릭/확대 affordance 제거 */
+.cmodal-body .card{cursor:default;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3);transform:none;border-top-width:5px;}
+.cmodal-body .card:hover{transform:none;}
+.cmodal-body .card::after{display:none;}
+.cmodal-body .card h3{font-size:20px;}
+.cmodal-body .def,.cmodal-body .es-concl{font-size:14.5px;}
+.cmodal-body table{font-size:13.5px;}
+.cmodal-body table th,.cmodal-body table td{padding:7px 10px;}
+.cmodal-body pre.diagram{font-size:13px;line-height:1.6;padding:14px 16px;}
+.cmodal-body .note{font-size:13.5px;}
+.cmodal-body .es-h{font-size:16.5px;}
 
 .hidden{display:none !important;}
 footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:40px;padding:0 16px;}
