@@ -14,6 +14,16 @@
   var secFacetEl = document.getElementById('secFacet');
   var searchEl   = document.getElementById('globalSearch');
   var countEl    = document.getElementById('count');
+  var emptyEl    = document.getElementById('emptyState');
+
+  // 검색·필터 결과 0건 시 빈 상태 안내 표시(카드·시트 뷰)
+  function toggleEmpty(show){ if(emptyEl) emptyEl.classList.toggle('hidden', !show); }
+  // 과목·단원·검색어 초기화 후 재적용(빈 상태의 '필터 초기화' 버튼)
+  function resetFilters(){
+    state.q=''; state.dom='all'; state.sec='all';
+    if(searchEl) searchEl.value='';
+    buildDomFacet(); buildSecFacet(); applyActiveFilter();
+  }
 
   if(!DOMAINS || !DOMAINS.length){
     contentEl.innerHTML = '<div class="loaderr"><b>데이터를 불러오지 못했습니다.</b><br/>'+
@@ -26,15 +36,16 @@
     return;
   }
 
-  mermaid.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
+  // mermaid 는 CDN 로드(전역). 차단·오프라인이어도 사이트 전체가 죽지 않도록 가드.
+  var MERMAID = (typeof mermaid !== 'undefined') ? mermaid : null;
+  if(MERMAID) MERMAID.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
 
-  // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet')
+  // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
   var state = { q:'', dom:'all', sec:'all', view:'cards' };
   var domById = {}, catMapByDom = {}, mapDone = {};
   DOMAINS.forEach(function(d){
     domById[d.id] = d;
-    var m = {}; (d.categories||[]).forEach(function(c){ m[c.id]=c; });
-    catMapByDom[d.id] = m;
+    catMapByDom[d.id] = GS.buildCatMap(d);
   });
   function totalCards(){ var n=0; DOMAINS.forEach(function(d){ n+=(d.cards||[]).length; }); return n; }
 
@@ -87,20 +98,21 @@
     var els = contentEl.querySelectorAll('.secmap .mermaid');
     if(!els.length){ secMapsDone = true; return; }
     secMapsDone = true;
+    if(!MERMAID) return;   // mermaid 미로드 — 관계도만 생략(나머지 화면은 정상)
     // 한 번의 배치 호출로 전부 렌더(개별 동시호출 시 mermaid 내부 상태 충돌로 일부 깨짐).
     // suppressErrors: 특정 다이어그램 오류가 나머지를 막지 않도록.
-    try{ mermaid.run({ nodes: Array.prototype.slice.call(els), suppressErrors:true }); }
+    try{ MERMAID.run({ nodes: Array.prototype.slice.call(els), suppressErrors:true }); }
     catch(e){ /* ignore */ }
   }
 
   // ---- 과목 facet (단일 선택: 전체 또는 한 과목) ----
   function buildDomFacet(){
-    var html = '<span class="chip dom'+(state.dom==='all'?' active':'')+'" data-dom="all">전체 과목 <b>'+totalCards()+'</b></span>';
+    var html = '<button type="button" class="chip dom'+(state.dom==='all'?' active':'')+'" aria-pressed="'+(state.dom==='all')+'" data-dom="all">전체 과목 <b>'+totalCards()+'</b></button>';
     DOMAINS.forEach(function(d){
       var on = state.dom===d.id;
       var style = on ? ('background:'+d.accent+';border-color:transparent;color:#fff') : '';
-      html += '<span class="chip dom'+(on?' active':'')+'" data-dom="'+d.id+'" style="'+style+'">'+
-              '<span class="ic">'+d.icon+'</span>'+d.label+' <b>'+(d.cards||[]).length+'</b></span>';
+      html += '<button type="button" class="chip dom'+(on?' active':'')+'" aria-pressed="'+on+'" data-dom="'+d.id+'" style="'+style+'">'+
+              '<span class="ic">'+d.icon+'</span>'+d.label+' <b>'+(d.cards||[]).length+'</b></button>';
     });
     domFacetEl.innerHTML = html;
     domFacetEl.querySelectorAll('.chip.dom').forEach(function(ch){
@@ -120,12 +132,12 @@
       return;
     }
     var d = domById[state.dom], catMap = catMapByDom[d.id];
-    var html = '<span class="chip sec'+(state.sec==='all'?' active':'')+'" data-sec="all">전체 단원</span>';
+    var html = '<button type="button" class="chip sec'+(state.sec==='all'?' active':'')+'" aria-pressed="'+(state.sec==='all')+'" data-sec="all">전체 단원</button>';
     (d.sections||[]).forEach(function(sec){
       var col = (catMap[sec.id]||{}).color || '#334155';
       var on = state.sec===sec.id;
       var style = on ? ('background:'+col+';border-color:transparent;color:#fff') : '';
-      html += '<span class="chip sec'+(on?' active':'')+'" data-sec="'+sec.id+'" style="'+style+'">'+sec.title+'</span>';
+      html += '<button type="button" class="chip sec'+(on?' active':'')+'" aria-pressed="'+on+'" data-sec="'+sec.id+'" style="'+style+'">'+sec.title+'</button>';
     });
     secFacetEl.innerHTML = html;
     secFacetEl.querySelectorAll('.chip.sec').forEach(function(ch){
@@ -141,15 +153,10 @@
     var q = state.q, shown = 0;
     contentEl.querySelectorAll('.dom-group').forEach(function(g){
       var domId = g.getAttribute('data-dom');
-      var domOk = state.dom==='all' || state.dom===domId;
       var groupVisible = false;
       g.querySelectorAll('.card').forEach(function(c){
-        var secOk = state.sec==='all' || c.getAttribute('data-cat')===state.sec;
-        var ok = domOk && secOk;
-        if(ok && q){
-          var text = (c.getAttribute('data-k')+' '+c.textContent).toLowerCase();
-          ok = text.indexOf(q) >= 0;
-        }
+        var text = q ? (c.getAttribute('data-k')+' '+c.textContent).toLowerCase() : '';
+        var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec);
         c.classList.toggle('hidden', !ok);
         if(ok){ shown++; groupVisible = true; }
       });
@@ -172,14 +179,15 @@
       }
     });
     countEl.textContent = '표시 ' + shown + ' / ' + totalCards();
+    toggleEmpty(shown===0);
     renderSectionMaps();
   }
 
   function renderMap(domId){
-    if(mapDone[domId]) return;
+    if(mapDone[domId] || !MERMAID) return;
     var el = contentEl.querySelector('.mapcard[data-map="'+domId+'"] .mermaid');
     if(!el) return;
-    try{ mermaid.run({ nodes:[el] }); mapDone[domId] = true; }catch(e){ /* ignore */ }
+    try{ MERMAID.run({ nodes:[el] }); mapDone[domId] = true; }catch(e){ /* ignore */ }
   }
 
   function scrollToGroup(domId){
@@ -234,10 +242,8 @@
     var q = state.q, shown = 0;
     var rows = sheetBody.querySelectorAll('.sheet-row');
     rows.forEach(function(r){
-      var domOk = state.dom==='all' || r.getAttribute('data-dom')===state.dom;
-      var secOk = state.sec==='all' || r.getAttribute('data-cat')===state.sec;
-      var ok = domOk && secOk;
-      if(ok && q){ var t=(r.getAttribute('data-k')+' '+r.textContent).toLowerCase(); ok = t.indexOf(q)>=0; }
+      var text = q ? (r.getAttribute('data-k')+' '+r.textContent).toLowerCase() : '';
+      var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec);
       r.classList.toggle('hidden', !ok);
       if(ok) shown++;
     });
@@ -254,6 +260,7 @@
       s.classList.toggle('hidden', !any);
     });
     countEl.textContent = '표시 ' + shown + ' / ' + totalCards();
+    toggleEmpty(shown===0);
   }
 
   // 활성 뷰에 맞춰 검색·필터 적용(관계도는 필터 미적용)
@@ -273,7 +280,18 @@
     // 관계도·퀴즈는 상단 과목/단원 facet 미적용(퀴즈는 자체 필터 보유)
     if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph' || v==='quiz');
     document.querySelectorAll('#viewsw button').forEach(function(b){
-      b.classList.toggle('active', b.getAttribute('data-v')===v); });
+      var on = b.getAttribute('data-v')===v;
+      b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
+
+    // 검색은 카드·시트 뷰에서만 적용 — 관계도·퀴즈에선 입력 비활성화로 적용범위를 명시
+    var searchable = (v==='cards' || v==='sheet');
+    if(searchEl){
+      searchEl.disabled = !searchable;
+      searchEl.placeholder = searchable ? '🔍 전 과목 통합 검색 — 토픽·키워드'
+        : (v==='graph' ? '관계도 뷰 — 검색 미적용' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절');
+    }
+    if(v==='graph' || v==='quiz') toggleEmpty(false);
+    if(v==='graph') countEl.textContent = '🗺 관계도';
 
     if(v==='graph' && window.GSGraph){
       var ok = window.GSGraph.build(graphCanvas, DOMAINS, { onTopicClick:function(title){
@@ -296,18 +314,24 @@
   var maskDef = document.getElementById('maskDef');
   if(maskDef){ maskDef.addEventListener('change', function(){ sheetBody.classList.toggle('masked', maskDef.checked); }); }
 
-  // ---- 카드 확대 모달(카드 클릭 시 크게 보기) ----
+  // ---- 카드 확대 모달(카드 클릭/Enter 시 크게 보기) ----
   var modalEl  = document.getElementById('cardModal');
   var modalBody = modalEl ? modalEl.querySelector('.cmodal-body') : null;
+  var modalCloseBtn = modalEl ? modalEl.querySelector('.cmodal-x') : null;
+  var lastFocused = null;
   function openCardModal(cardEl){
     if(!modalEl || !modalBody) return;
+    lastFocused = document.activeElement;       // 닫을 때 포커스 복귀용
     var clone = cardEl.cloneNode(true);
     clone.classList.remove('hidden');
+    clone.removeAttribute('tabindex');          // 모달 안에선 카드 자체 포커스 불필요
     modalBody.innerHTML = '';
     modalBody.appendChild(clone);
+    modalEl.setAttribute('aria-label', (cardEl.getAttribute('aria-label')||'카드') + ' 확대 보기');
     modalEl.classList.remove('hidden');
     modalEl.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
+    if(modalCloseBtn) modalCloseBtn.focus();    // 포커스를 모달로 이동
   }
   function closeCardModal(){
     if(!modalEl) return;
@@ -315,21 +339,40 @@
     modalEl.setAttribute('aria-hidden','true');
     if(modalBody) modalBody.innerHTML = '';
     document.body.style.overflow = '';
+    if(lastFocused && lastFocused.focus) lastFocused.focus();   // 트리거로 포커스 복귀
+    lastFocused = null;
   }
+  function modalOpen(){ return modalEl && !modalEl.classList.contains('hidden'); }
   if(modalEl){
+    // 카드 클릭으로 열기(텍스트 드래그 선택 중에는 무시)
     contentEl.addEventListener('click', function(e){
-      // 텍스트 드래그 선택 중에는 모달 열지 않음
       if(window.getSelection && String(window.getSelection()).length) return;
       var card = e.target && e.target.closest ? e.target.closest('.card') : null;
       if(card) openCardModal(card);
+    });
+    // 카드 키보드(Enter/Space)로 열기 — 카드는 role=button tabindex=0
+    contentEl.addEventListener('keydown', function(e){
+      if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
+      var card = e.target && e.target.closest ? e.target.closest('.card') : null;
+      if(card){ e.preventDefault(); openCardModal(card); }
     });
     modalEl.addEventListener('click', function(e){
       if(e.target && e.target.getAttribute && e.target.getAttribute('data-close')) closeCardModal();
     });
     document.addEventListener('keydown', function(e){
-      if(e.key==='Escape' && !modalEl.classList.contains('hidden')) closeCardModal();
+      if(!modalOpen()) return;
+      if(e.key==='Escape'){ closeCardModal(); return; }
+      if(e.key==='Tab'){   // 포커스 트랩 — 모달 내부 포커스 가능 요소 순환
+        var f = modalEl.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+        if(!f.length) return;
+        var first=f[0], last=f[f.length-1];
+        if(e.shiftKey && document.activeElement===first){ e.preventDefault(); last.focus(); }
+        else if(!e.shiftKey && document.activeElement===last){ e.preventDefault(); first.focus(); }
+      }
     });
   }
+  // 빈 상태의 '필터 초기화' 버튼
+  if(emptyEl){ var rb = emptyEl.querySelector('[data-reset]'); if(rb) rb.addEventListener('click', resetFilters); }
 
   // ---- 검색(전역, 활성 뷰에 적용) ----
   searchEl.addEventListener('input', function(){

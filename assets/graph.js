@@ -1,6 +1,6 @@
 // 토픽 관계도 — 과목 → 단원 → 토픽 상하관계를 계층형 노드 그래프로 시각화(접기/펼치기).
 // 의존: vis-network(CDN, 전역 vis). 데이터: window.GISULSA.
-// 공개: window.GSGraph = { build, fit, expandAll, collapseAll, isBuilt }
+// 공개: window.GSGraph = { build, fit, expandAll, collapseAll }
 // 초기엔 root→과목→단원만 표시(토픽 접힘). 단원 노드 클릭 시 그 토픽을 펼침/접음.
 (function(){
   var GSGraph = (window.GSGraph = window.GSGraph || {});
@@ -8,8 +8,6 @@
   var topicsBySec = {}, expanded = {}, onTopicClick = null;
 
   function trunc(s, n){ s = String(s == null ? '' : s); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
-
-  GSGraph.isBuilt = function(){ return built; };
 
   GSGraph.build = function(container, DOMAINS, opts){
     if(built) return true;

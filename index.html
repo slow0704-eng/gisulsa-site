@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>[정보관리기술사] 1교시 토픽 통합 — SW공학·SW운영·정보화전략·DB·네트워크·컴퓨터구조/OS</title>
+<title>[정보관리기술사] 1·2교시 토픽 통합 — SW공학·SW운영·정보화전략·DB·네트워크·컴퓨터구조/OS·AI·보안</title>
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
 <link rel="stylesheet" href="assets/styles.css" />
@@ -12,7 +12,7 @@
 
 <header class="appbar">
   <div class="topbar">
-    <div class="brand">🎓 정보관리기술사<small>1교시 토픽 통합</small></div>
+    <div class="brand">🎓 정보관리기술사<small>1·2교시 토픽 통합</small></div>
     <input id="globalSearch" class="gsearch" type="text" placeholder="🔍 전 과목 통합 검색 — 토픽·키워드" />
     <div class="viewsw" id="viewsw">
       <button data-v="cards" class="active">🗂 카드</button>
@@ -20,7 +20,7 @@
       <button data-v="sheet">📋 정의 시트</button>
       <button data-v="quiz">🧩 퀴즈</button>
     </div>
-    <span class="count" id="count"></span>
+    <span class="count" id="count" aria-live="polite"></span>
   </div>
   <div class="facets">
     <div class="facet-row" id="domFacet" aria-label="과목 필터"></div>
@@ -29,6 +29,12 @@
 </header>
 
 <div id="content"></div>
+
+<div id="emptyState" class="empty-state hidden">
+  <p class="es-icon">🔍</p>
+  <p class="es-msg">검색·필터에 맞는 토픽이 없습니다.</p>
+  <button type="button" class="es-reset" data-reset="1">필터 초기화</button>
+</div>
 
 <div id="graph" class="hidden">
   <div class="graph-tools">
@@ -55,7 +61,7 @@
   <div id="quizBody"></div>
 </div>
 
-<div id="cardModal" class="cmodal hidden" aria-hidden="true">
+<div id="cardModal" class="cmodal hidden" role="dialog" aria-modal="true" aria-label="카드 확대 보기" aria-hidden="true">
   <div class="cmodal-bg" data-close="1"></div>
   <div class="cmodal-box">
     <button class="cmodal-x" data-close="1" title="닫기 (Esc)">✕</button>
@@ -64,7 +70,7 @@
 </div>
 
 <footer>
-  기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) · 전 과목 통합 검색 + 과목·단원 필터<br/>
+  기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) + 2교시 논술 카드 · 전 과목 통합 검색 + 과목·단원 필터 · 카드 클릭 시 확대<br/>
   데이터: <code>data/*.json</code> 분리 (수정: JSON 편집 후 <code>python build.py</code> 재실행) · 자세한 구조는 <code>AGENTS.md</code>
 </footer>
 

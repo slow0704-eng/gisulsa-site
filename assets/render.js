@@ -5,10 +5,26 @@
 (function(){
   var GS = (window.GS = window.GS || {});
 
-  function esc(s){ return (s==null?'':String(s)); }
+  function toStr(s){ return (s==null?'':String(s)); }
   // HTML 텍스트 이스케이프(<,>,& 가 태그·엔티티로 해석돼 카드가 깨지는 것 방지)
-  function escHTML(s){ return esc(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escHTML(s){ return toStr(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escAttr(s){ return escHTML(s).replace(/"/g,'&quot;'); }
+
+  // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
+  function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
+  // 카드/시트 행 공용 필터 술어(순수). 과목·단원·검색어(소문자 q) 일치 여부.
+  function cardMatches(domId, catId, text, q, selDom, selSec){
+    if(selDom!=='all' && selDom!==domId) return false;
+    if(selSec!=='all' && selSec!==catId) return false;
+    if(q && String(text).indexOf(q) < 0) return false;
+    return true;
+  }
+  // 카드 공통 속성(접근성: 클릭/Enter 로 확대 모달 — role·tabindex·aria-label)
+  function cardAttrs(card, domId, extraClass){
+    return 'class="card'+(extraClass?' '+extraClass:'')+'" role="button" tabindex="0"'+
+      ' aria-label="'+escAttr(card.title)+' — 카드 확대(클릭 또는 Enter)"'+
+      ' data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-k="'+escAttr(card.keywords)+'"';
+  }
 
   function tableHTML(t){
     if(!t) return '';
@@ -77,7 +93,7 @@
     var diag = card.diagram ? '<pre class="diagram">'+escHTML(card.diagram)+'</pre>' : '';
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag" style="background:'+c.bg+';color:'+c.tagColor+'">'+escHTML(card.tag)+'</span>';
     if(card.essay){
-      return '<div class="card essay" data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-k="'+escAttr(card.keywords)+'" style="border-top-color:'+c.color+'">'+
+      return '<div '+cardAttrs(card, domId, 'essay')+' style="border-top-color:'+c.color+'">'+
         head+essayHTML(card)+
       '</div>';
     }
@@ -95,7 +111,7 @@
         '<div class="blk"><div class="lbl">2. 구성요소</div>'+tableHTML(card.table)+'</div>'+
         fnote;
     }
-    return '<div class="card" data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-k="'+escAttr(card.keywords)+'" style="border-top-color:'+c.color+'">'+
+    return '<div '+cardAttrs(card, domId)+' style="border-top-color:'+c.color+'">'+
       head+body+
     '</div>';
   }
@@ -139,4 +155,6 @@
   GS.tableHTML = tableHTML;
   GS.cardHTML = cardHTML;
   GS.sheetHTML = sheetHTML;
+  GS.buildCatMap = buildCatMap;
+  GS.cardMatches = cardMatches;
 })();
