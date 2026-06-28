@@ -25,7 +25,7 @@
     DOMAINS.forEach(function(d){
       var dom = 'D:' + d.id;
       N.push({ id:dom, label:(d.icon || '') + ' ' + d.label, level:1,
-        color:{ background:d.accent || '#334155', border:d.accent || '#334155' }, font:{ color:'#fff', size:15 } });
+        color:{ background:d.accent || '#334155', border:d.accent || '#334155' }, font:{ color:'#fff', size:16 } });
       E.push({ id:'e_root_' + dom, from:'root', to:dom });
 
       var cm = {}; (d.categories || []).forEach(function(c){ cm[c.id] = c; });
@@ -33,7 +33,7 @@
         var sec = dom + '/S:' + s.id;
         var col = (cm[s.id] || {}).color || '#64748b';
         N.push({ id:sec, label:trunc(s.title, 24), level:2, borderWidth:2, _sec:true,
-          color:{ background:'#ffffff', border:col }, font:{ color:'#1e293b', size:13 } });
+          color:{ background:'#ffffff', border:col }, font:{ color:'#1e293b', size:14 } });
         E.push({ id:'e_' + dom + '_' + sec, from:dom, to:sec });
 
         // 토픽 노드/엣지는 미리 준비만 하고 DataSet 에는 미추가(접힘 상태)
@@ -41,7 +41,7 @@
           var cid = sec + '/C:' + i;
           return {
             node:{ id:cid, label:trunc(c.title, 18), level:3, _topic:true, _title:c.title, _dom:d.id,
-                   color:{ background:'#f8fafc', border:col }, font:{ color:'#334155', size:11 } },
+                   color:{ background:'#f8fafc', border:col }, font:{ color:'#334155', size:13 } },
             edge:{ id:'e_' + cid, from:sec, to:cid, color:{ color:'#cbd5e1' } }
           };
         });

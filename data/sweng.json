@@ -159,9 +159,9 @@
       "category": "life",
       "title": "V-Model",
       "tag": "생명주기",
-      "keyword": "V&amp;V 검증",
+      "keyword": "V&V 검증",
       "keywords": "V-Model 브이모델 검증 확인 verification validation 테스트",
-      "def": "\"V&amp;V 검증\" 폭포수 각 개발단계에 대응 테스트 단계를 좌우 대칭 배치하여 검증(V&amp;V)을 강화한 생명주기 모델.",
+      "def": "\"V&V 검증\" 폭포수 각 개발단계에 대응 테스트 단계를 좌우 대칭 배치하여 검증(V&V)을 강화한 생명주기 모델.",
       "diagram": "[요구분석]━━━━━━━━━[인수테스트]\n [기본설계]━━━━━━[시스템테스트]\n  [상세설계]━━━[통합테스트]\n   [구현]━━━[단위테스트]",
       "diagramNote": "※ 좌(개발)·우(검증) 단계별 매핑",
       "table": {
@@ -1461,7 +1461,7 @@
       "tag": "방법론",
       "keyword": "KPT 개선",
       "keywords": "회고 retrospective 스크럼 KPT inspect adapt 지속개선 4Ls 스프린트 점검 개선",
-      "def": "\"KPT 개선\" 스프린트 종료 시 팀이 프로세스·협업을 점검하고 개선안을 도출하는 스크럼의 지속 개선 이벤트(Inspect &amp; Adapt).",
+      "def": "\"KPT 개선\" 스프린트 종료 시 팀이 프로세스·협업을 점검하고 개선안을 도출하는 스크럼의 지속 개선 이벤트(Inspect & Adapt).",
       "diagram": "[분위기 조성]→[자료 수집]→[통찰 도출]\n                              ↓\n[마무리]←──────[개선안 결정(Action)]\n   ※ KPT: Keep·Problem·Try",
       "diagramNote": "※ 5단계로 사실→통찰→실행안 도출",
       "table": {
@@ -1473,7 +1473,7 @@
         "rows": [
           [
             "목적",
-            "Inspect &amp; Adapt",
+            "Inspect & Adapt",
             "지속 개선"
           ],
           [
@@ -1803,7 +1803,7 @@
           ]
         ]
       },
-      "note": "※ GDPR 제25조(Data Protection by Design&amp;Default)로 법제화. DevSecOps·PIA와 연계."
+      "note": "※ GDPR 제25조(Data Protection by Design&Default)로 법제화. DevSecOps·PIA와 연계."
     },
     {
       "category": "meth",
