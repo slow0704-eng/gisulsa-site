@@ -33,6 +33,15 @@
       h += '<tr>'+t.head.map(function(c){return '<th>'+escHTML(c)+'</th>';}).join('')+'</tr>';
     }
     var rows = t.rows||[];
+    // 정의 비교(cmp2): 각 열의 여러 행을 한 셀로 합쳐 복사 용이(칸 분할 없음 — 줄바꿈만).
+    if(cls==='cmp2'){
+      var nc = (t.head&&t.head.length) || (rows[0]?rows[0].length:0), mg=[];
+      for(var ci=0; ci<nc; ci++){
+        mg.push(rows.map(function(r){ return r[ci]; }).filter(function(x){ return x!=null && x!==''; }).join(' '));
+      }
+      h += '<tr>'+mg.map(function(c){ return '<td>'+escHTML(c)+'</td>'; }).join('')+'</tr>';
+      return '<table class="cmp2">'+h+'</table>';
+    }
     // 비교형 구분 그룹화: 1열이 ""인 행은 위 구분 셀에 rowspan 병합(빈 구분 셀은 렌더 생략).
     // 기존 표는 빈 1열이 없어 동작 불변(하위호환).
     rows.forEach(function(r, ri){
