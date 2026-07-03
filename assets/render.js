@@ -26,7 +26,7 @@
       ' data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-k="'+escAttr(card.keywords)+'"';
   }
 
-  function tableHTML(t){
+  function tableHTML(t, cls){
     if(!t) return '';
     var h = '';
     if(t.head && t.head.length){
@@ -49,7 +49,7 @@
       });
       h += '<tr>'+cells+'</tr>';
     });
-    return '<table>'+h+'</table>';
+    return '<table'+(cls?' class="'+cls+'"':'')+'>'+h+'</table>';
   }
 
   // 2교시 논술 카드 — 한 블록(개요 도식+개념+※) / 상세(표·구성도+※) 골격을 절(節)별로 렌더.
@@ -101,7 +101,7 @@
     if(card.compare){
       // 비교형(A vs B): 1교시 비교형 골격 — I.정의 비교(2열표 A|B, 헤더1+본문3행) → II.상세 비교(3열표 구분|A|B)
       body =
-        '<div class="blk"><div class="lbl">I. 정의 비교</div>'+tableHTML(card.defTable)+dnote+'</div>'+
+        '<div class="blk"><div class="lbl">I. 정의 비교</div>'+tableHTML(card.defTable, 'cmp2')+dnote+'</div>'+
         '<div class="blk"><div class="lbl ink">II. 상세 비교</div>'+tableHTML(card.table)+fnote+'</div>';
     } else {
       body =

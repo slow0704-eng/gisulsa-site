@@ -115,6 +115,10 @@ table{width:100%;border-collapse:collapse;font-size:var(--fs-1);}
 table th,table td{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top;}
 table th{background:var(--surface-3);font-weight:700;color:var(--ink-600);}
 table td:first-child{white-space:nowrap;font-weight:600;color:var(--ink-600);background:var(--surface-2);}
+/* 정의 비교(2열 A|B) — 구분 라벨 열 없음: 좌우 동일 폭·동일 스타일(색 구분 제거) */
+table.cmp2{table-layout:fixed;}
+table.cmp2 th,table.cmp2 td{width:50%;}
+table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;background:transparent;}
 .note{margin-top:11px;font-size:var(--fs-1);color:var(--ink-600);background:#fffbeb;border-left:3px solid var(--warn);padding:7px 10px;border-radius:0 var(--r-sm) var(--r-sm) 0;}
 
 /* ===== 2교시 논술 카드(전체폭) ===== */
