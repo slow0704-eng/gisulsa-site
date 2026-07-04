@@ -313,12 +313,93 @@
   });
   var maskDef = document.getElementById('maskDef');
   if(maskDef){ maskDef.addEventListener('change', function(){ sheetBody.classList.toggle('masked', maskDef.checked); }); }
+  // 구성도/구성요소표 원래대로(펼침) 토글 — 시트 셀의 1줄(st-flat) ↔ 원본(st-orig) 전환
+  var diagOrig = document.getElementById('diagOrig');
+  if(diagOrig){ diagOrig.addEventListener('change', function(){ sheetBody.classList.toggle('diag-orig', diagOrig.checked); }); }
+  var tblOrig = document.getElementById('tblOrig');
+  if(tblOrig){ tblOrig.addEventListener('change', function(){ sheetBody.classList.toggle('tbl-orig', tblOrig.checked); }); }
+
+  // ---- 정의 시트 내보내기(CSV / Excel) — 현재 검색·과목·단원 필터 반영 ----
+  var EXP_COLS = ['과목','단원','토픽','유형','리드키워드','정의','구성도','구성요소'];
+  function sheetExportRows(){
+    var q = state.q, rows = [];
+    DOMAINS.forEach(function(d){
+      var catLabel = {}, secTitle = {};
+      (d.categories||[]).forEach(function(x){ catLabel[x.id] = x.label; });
+      (d.sections||[]).forEach(function(s){ secTitle[s.id] = s.title; });
+      (d.cards||[]).forEach(function(c){
+        var def = GS.defText ? GS.defText(c) : (c.def || '');
+        var text = q ? (c.keywords + ' ' + c.title + ' ' + def).toLowerCase() : '';
+        if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec)) return;
+        rows.push({
+          '과목': d.label,
+          '단원': secTitle[c.category] || catLabel[c.category] || '기타',
+          '토픽': c.title,
+          '유형': c.essay ? '2교시 논술' : (c.compare ? '비교' : '일반'),
+          '리드키워드': c.keyword || '',
+          '정의': def,
+          '구성도': GS.flatDiagram ? GS.flatDiagram(c) : '',
+          '구성요소': GS.flatTable ? GS.flatTable(c.table) : ''
+        });
+      });
+    });
+    return rows;
+  }
+  function expStamp(){ var d = new Date(), p = function(n){ return (n<10?'0':'')+n; }; return '' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()); }
+  function expDownload(blob, name){
+    var url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 120);
+  }
+  function exportCsv(){
+    var rows = sheetExportRows();
+    if(!rows.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    var esc = function(v){ v = String(v==null?'':v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; };
+    var lines = [EXP_COLS.join(',')].concat(rows.map(function(r){ return EXP_COLS.map(function(k){ return esc(r[k]); }).join(','); }));
+    var blob = new Blob(['﻿' + lines.join('\r\n')], { type:'text/csv;charset=utf-8;' });   // BOM: Excel 한글 호환
+    expDownload(blob, '정의시트_' + expStamp() + '.csv');
+  }
+  function exportXlsx(){
+    var rows = sheetExportRows();
+    if(!rows.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    var btn = document.getElementById('exportXlsx');
+    function go(){
+      if(btn) btn.disabled = false;
+      var ws = XLSX.utils.json_to_sheet(rows, { header:EXP_COLS });
+      ws['!cols'] = [{wch:16},{wch:22},{wch:26},{wch:10},{wch:18},{wch:60},{wch:50},{wch:60}];
+      var wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, '정의시트');
+      XLSX.writeFile(wb, '정의시트_' + expStamp() + '.xlsx');
+    }
+    if(window.XLSX) return go();
+    if(btn) btn.disabled = true;   // SheetJS(~1MB) 최초 클릭 시 지연 로드
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload = go;
+    s.onerror = function(){ if(btn) btn.disabled = false; alert('Excel 모듈(SheetJS) 로드 실패 — 네트워크 확인 후 재시도.'); };
+    document.head.appendChild(s);
+  }
+  var _expCsv = document.getElementById('exportCsv'); if(_expCsv) _expCsv.addEventListener('click', exportCsv);
+  var _expXlsx = document.getElementById('exportXlsx'); if(_expXlsx) _expXlsx.addEventListener('click', exportXlsx);
 
   // ---- 카드 확대 모달(카드 클릭/Enter 시 크게 보기) ----
   var modalEl  = document.getElementById('cardModal');
   var modalBody = modalEl ? modalEl.querySelector('.cmodal-body') : null;
   var modalCloseBtn = modalEl ? modalEl.querySelector('.cmodal-x') : null;
   var lastFocused = null;
+  // 카드 DOM(data-dom + h3 제목)으로 원본 카드 데이터 조회 — 답안지 뷰 생성용
+  function findCardData(el){
+    if(!el || !DOMAINS) return null;
+    var dom = el.getAttribute('data-dom');
+    var h3 = el.querySelector('h3');
+    var title = h3 ? h3.textContent : '';
+    var found = null;
+    DOMAINS.forEach(function(d){
+      if(found || d.id !== dom) return;
+      (d.cards||[]).forEach(function(c){ if(!found && c.title === title) found = c; });
+    });
+    return found;
+  }
   function openCardModal(cardEl){
     if(!modalEl || !modalBody) return;
     lastFocused = document.activeElement;       // 닫을 때 포커스 복귀용
@@ -326,7 +407,29 @@
     clone.classList.remove('hidden');
     clone.removeAttribute('tabindex');          // 모달 안에선 카드 자체 포커스 불필요
     modalBody.innerHTML = '';
+    modalBody.classList.remove('as-on');
+    // 1교시 카드(일반·비교)면 '답안 모드' 토글 제공 — 카드를 골격 01~22줄 답안지로 전환(모든 줄 왼쪽 줄번호)
+    var cdata = findCardData(cardEl);
+    var canSheet = cdata && GS.answerSheetHTML;
+    if(canSheet){
+      var abtn = document.createElement('button');
+      abtn.type = 'button';
+      abtn.className = 'cmodal-answer';
+      abtn.setAttribute('aria-pressed','false');
+      abtn.textContent = '📑 답안 모드 (골격 '+(cdata.essay ? '01~66줄·3페이지' : '01~22줄')+')';
+      abtn.addEventListener('click', function(){
+        var on = modalBody.classList.toggle('as-on');
+        abtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      modalBody.appendChild(abtn);
+    }
     modalBody.appendChild(clone);
+    if(canSheet){
+      var wrap = document.createElement('div');
+      wrap.className = 'asheet-wrap';
+      wrap.innerHTML = GS.answerSheetHTML(cdata);
+      modalBody.appendChild(wrap);
+    }
     modalEl.setAttribute('aria-label', (cardEl.getAttribute('aria-label')||'카드') + ' 확대 보기');
     modalEl.classList.remove('hidden');
     modalEl.setAttribute('aria-hidden','false');
@@ -335,6 +438,7 @@
   }
   function closeCardModal(){
     if(!modalEl) return;
+    if(modalBody) modalBody.classList.remove('as-on');
     modalEl.classList.add('hidden');
     modalEl.setAttribute('aria-hidden','true');
     if(modalBody) modalBody.innerHTML = '';
@@ -386,4 +490,5 @@
   buildDomFacet();
   buildSecFacet();
   applyFilter();
+  if(window.lucide) lucide.createIcons();   // 정적 [data-lucide] 아이콘(앱바·뷰스위처·툴·모달) 렌더
 })();

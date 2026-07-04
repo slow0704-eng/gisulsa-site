@@ -22,8 +22,8 @@
   --fs-1:12px; --fs-2:13px; --fs-3:15px; --fs-4:17px; --fs-5:20px; --fs-6:26px;
   --fw-normal:400; --fw-semibold:600; --fw-bold:800;
   --lh-body:1.55; --lh-title:1.3;
-  --font-sans:"Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
-  --font-mono:"D2Coding","Consolas","Courier New",monospace;
+  --font-sans:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"D2Coding",ui-monospace,"Consolas","Courier New",monospace;
 
   /* 간격(4px 베이스) — 4·8·12·16·24·32 */
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
@@ -60,6 +60,34 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans)
 .gsearch::placeholder{color:var(--ink-400);}
 .gsearch:focus{border-color:var(--brand);background:#162033;box-shadow:0 0 0 3px rgba(56,189,248,.18);}
 .topbar .count{font-size:var(--fs-1);color:var(--ink-300);white-space:nowrap;}
+
+/* ===== 외부 아이콘(Lucide) 사이징 · 검색 아이콘 · 타이포 폴리시 ===== */
+svg.lucide{width:1.05em;height:1.05em;stroke-width:2;vertical-align:-.16em;flex:none;}
+.brand-mark{display:inline-flex;align-items:center;}
+.brand-mark svg.lucide{width:22px;height:22px;color:var(--brand);}
+.gsearch-wrap{position:relative;display:flex;align-items:center;flex:1 1 280px;min-width:180px;}
+.gsearch-ic{position:absolute;left:12px;display:flex;color:var(--ink-400);pointer-events:none;}
+.gsearch-ic svg.lucide{width:16px;height:16px;}
+.gsearch-wrap .gsearch{flex:1 1 auto;width:100%;padding-left:36px;}
+.viewsw button{display:inline-flex;align-items:center;justify-content:center;gap:5px;}
+.viewsw button svg.lucide{width:15px;height:15px;vertical-align:middle;}
+.viewsw button.active svg.lucide{stroke-width:2.4;}
+.graph-tools button{display:inline-flex;align-items:center;gap:5px;}
+.graph-tools button svg.lucide{width:14px;height:14px;}
+.cmodal-x{display:inline-flex;align-items:center;justify-content:center;}
+.cmodal-x svg.lucide{width:18px;height:18px;stroke-width:2.4;}
+.empty-state .es-icon{display:flex;justify-content:center;}
+.empty-state .es-icon svg.lucide{width:38px;height:38px;stroke-width:1.5;color:var(--ink-400);}
+/* Pretendard 타이포 폴리시 — 제목 자간·안티에일리어싱·상단바 미세 그라데이션 */
+h1,h2,h3,.brand-name,.dom-head h2{letter-spacing:-.02em;}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+.topbar{background:linear-gradient(180deg,var(--ink-900),var(--ink-800));}
+/* 정의 시트 내보내기 버튼(CSV/Excel) */
+.sheet-export{display:inline-flex;gap:6px;}
+.exp-btn{cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--surface);padding:5px 11px;border-radius:var(--r-sm);font-size:var(--fs-2);font-weight:700;color:var(--ink-600);font-family:inherit;transition:all .12s;}
+.exp-btn:hover{border-color:var(--brand-strong);color:var(--ink);background:var(--ink-50);}
+.exp-btn:disabled{opacity:.55;cursor:progress;}
+.exp-btn svg.lucide{width:14px;height:14px;}
 
 .facets{background:var(--surface-3);padding:var(--sp-2) var(--sp-4);display:flex;flex-direction:column;gap:6px;}
 .facet-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
@@ -127,12 +155,14 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 .es-pq{font-weight:800;font-size:var(--fs-3);letter-spacing:-.2px;}
 .es-reqs{margin:7px 0 0;padding-left:18px;font-size:var(--fs-2);color:#cbd5e1;}
 .es-reqs li{margin:2px 0;}
-.es-body{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px 22px;margin-top:10px;min-width:0;}
+.es-body{display:grid;grid-template-columns:1fr;gap:14px 22px;margin-top:10px;min-width:0;}   /* 2교시 답안: I→II→III→IV 단일 열 세로 흐름(답안 읽기 순서 유지) */
 .es-sec{border-left:3px solid #c7d2fe;padding-left:12px;min-width:0;}
 .es-intro{margin:8px 0 2px;border-left-color:#6366f1;}
 .es-h{font-size:var(--fs-3);font-weight:800;color:#1e293b;margin-bottom:6px;}
 .es-sub{font-size:var(--fs-1);font-weight:800;color:var(--muted);letter-spacing:.3px;margin:11px 0 4px;}
 .es-concl{background:#f8fafc;border-radius:6px;padding:5px 9px;margin-top:5px;font-size:var(--fs-2);}
+.es-pagetag{grid-column:1/-1;font-size:11px;font-weight:800;color:#8b5cf6;letter-spacing:1.5px;text-align:center;margin:16px 0 6px;border-top:2px dashed #ede9fe;padding-top:9px;}   /* 2교시 66줄/3페이지 구분선 */
+.es-pagetag.first{border-top:none;margin-top:4px;padding-top:0;}
 .st-essay{color:#4338ca;background:#eef2ff;}
 
 /* ===== 카드 확대 모달(클릭 시 크게 보기) ===== */
@@ -153,6 +183,44 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 .cmodal-body pre.diagram{font-size:13px;line-height:1.6;padding:14px 16px;}
 .cmodal-body .note{font-size:var(--fs-2);}
 .cmodal-body .es-h{font-size:var(--fs-4);}
+/* 모달 '답안 모드' 토글 — 카드를 골격 01~22줄 답안지로 전환(모든 줄 왼쪽 줄번호) */
+.cmodal-answer{cursor:pointer;border:1px solid #c7d2fe;background:#eef2ff;color:#4338ca;font-weight:800;font-size:12px;padding:6px 12px;border-radius:8px;margin:0 0 10px;}
+.cmodal-answer[aria-pressed="true"]{background:#4338ca;color:#fff;border-color:#4338ca;}
+.asheet-wrap{display:none;}
+.cmodal-body.as-on .card{display:none;}
+.cmodal-body.as-on .asheet-wrap{display:block;}
+/* 답안지: 모든 줄 [줄번호 거터 | 내용] */
+.asheet{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:6px 4px;box-shadow:0 12px 40px rgba(0,0,0,.3);}
+.asl{display:grid;grid-template-columns:2.4em 1fr;align-items:start;gap:10px;min-height:1.9em;border-bottom:1px dashed var(--surface-3);padding:4px 10px;}
+.asl:last-child{border-bottom:none;}
+.asn{color:var(--ink-400);font:700 .82em/1.8 ui-monospace,SFMono-Regular,Menlo,monospace;text-align:right;user-select:none;}
+.asc{font-size:var(--fs-2);color:var(--ink);min-width:0;line-height:1.6;}
+.asl.h .asc{font-weight:800;color:var(--ink);}
+.asl.h2 .asc{font-weight:700;color:var(--ink-600);}
+.asl.q .asc{font-weight:800;background:#0f172a;color:#fff;border-radius:6px;padding:3px 9px;}
+.asl.note .asc{color:#92400e;}
+.asl.empty{min-height:1.5em;}
+.asheet .asdiag{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre-wrap;color:var(--ink);}
+.asheet .astbl{display:grid;gap:8px;}
+.asheet .astbl.col3{grid-template-columns:4.6em 1fr 1fr;}
+.asheet .astbl.col2{grid-template-columns:1fr 1fr;}
+.asheet .astbl span{min-width:0;overflow-wrap:anywhere;}
+.asheet .astbl.thead span{font-weight:700;color:var(--ink-600);}
+.asheet .astbl.col3 span:first-child{font-weight:600;color:var(--ink-600);}
+/* 2교시 답안지 페이지 구분선(22줄마다) */
+.asheet .aspage{text-align:center;font:800 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:1.5px;color:#8b5cf6;background:#f5f3ff;border-top:2px dashed #ede9fe;border-bottom:2px dashed #ede9fe;padding:7px 0;margin:6px 0;}
+/* 2교시 답안지: 3페이지를 가로 3열로 나열(실제 답안지 펼침처럼) */
+.asheet-essay{display:flex;gap:12px;align-items:flex-start;overflow-x:auto;background:transparent;border:none;box-shadow:none;padding:2px;}
+.asheet-essay .aspg{flex:1 1 0;min-width:280px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);box-shadow:var(--sh-1);padding:6px 6px 8px;}
+.asheet-essay .aspage{margin:0 0 6px;border-top:none;border-radius:6px;padding:6px 0;}
+.asheet-essay .asl{padding:3px 4px;min-height:1.7em;}
+.asheet-essay .asc{font-size:12px;}
+.asheet-essay .asn{font-size:.74em;}
+.asheet-essay .astbl{gap:4px;}
+.asheet-essay .astbl.col3{grid-template-columns:3.6em 1fr 1fr;}
+.asheet-essay .asdiag{font-size:11px;}
+/* essay 답안 모드일 때만 모달 폭 확대(3열 여유) */
+.cmodal-box:has(.cmodal-body.as-on .asheet-essay){max-width:1180px;}
 
 .hidden{display:none !important;}
 footer{text-align:center;color:var(--muted);font-size:var(--fs-1);margin-top:40px;padding:0 16px;}
@@ -181,14 +249,30 @@ footer{text-align:center;color:var(--muted);font-size:var(--fs-1);margin-top:40p
 .sheet-table td{border-top:1px solid var(--line);padding:8px 12px;vertical-align:top;font-size:var(--fs-2);}
 .sheet-dom td{background:var(--surface-dark);color:var(--surface);font-weight:800;font-size:var(--fs-3);padding:9px 12px;}
 .sheet-sec td{background:var(--surface-3);color:var(--ink-700);font-weight:700;font-size:var(--fs-2);}
-.sheet-row .st-title{width:30%;font-weight:700;color:var(--ink);white-space:normal;}
-.sheet-row .st-def{color:var(--ink-700);}
+.sheet-head th{background:var(--ink-700);color:#fff;font-size:var(--fs-1);font-weight:800;text-align:left;padding:7px 12px;letter-spacing:.2px;white-space:nowrap;}
+.sheet-row .st-title{width:15%;font-weight:700;color:var(--ink);white-space:normal;}
+.sheet-row .st-kw{width:11%;color:var(--brand-strong);font-weight:700;font-size:var(--fs-1);white-space:normal;}
+.sheet-row .st-def{width:28%;color:var(--ink-700);}
+.sheet-row .st-diag,.sheet-row .st-tbl{font-size:11px;color:var(--ink-600);line-height:1.5;white-space:normal;word-break:break-word;}
+.sheet-row .st-diag{width:22%;}
+.sheet-row .st-tbl{width:24%;}
+/* 구성도/구성요소 '원래대로' 토글 — 1줄(st-flat) ↔ 원본(st-orig) */
+.st-orig{display:none;}
+#sheetBody.diag-orig .st-diag .st-flat{display:none;}
+#sheetBody.diag-orig .st-diag .st-orig{display:block;}
+#sheetBody.tbl-orig .st-tbl .st-flat{display:none;}
+#sheetBody.tbl-orig .st-tbl .st-orig{display:block;}
+.st-orig-diag{margin:0;font-family:var(--font-mono);font-size:11px;line-height:1.5;white-space:pre-wrap;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:6px 8px;color:var(--ink-700);}
+.st-tbl .st-orig table{width:100%;margin:0;}
+.st-tbl .st-orig th,.st-tbl .st-orig td{padding:3px 6px;border:1px solid var(--line);font-size:11px;white-space:normal;background:none;color:var(--ink-700);font-weight:400;vertical-align:top;}
+.st-tbl .st-orig th{background:var(--surface-3);font-weight:700;color:var(--ink-600);}
+.st-tbl .st-orig td:first-child{background:var(--surface-2);font-weight:600;color:var(--ink-600);white-space:nowrap;}
 .sheet-row:hover{background:var(--surface-2);}
 .st-badge{display:inline-block;font-size:10px;font-weight:700;color:#7e22ce;background:#f3e8ff;border-radius:5px;padding:0 5px;margin-left:4px;vertical-align:middle;}
 /* 가리기(암기) 모드 — 정의 블러, 행 클릭 시 해당 행만 공개 */
-#sheetBody.masked .st-def{filter:blur(5px);user-select:none;transition:filter .12s;}
+#sheetBody.masked .st-kw,#sheetBody.masked .st-def{filter:blur(5px);user-select:none;transition:filter .12s;}
 #sheetBody.masked .sheet-row{cursor:pointer;}
-#sheetBody.masked .sheet-row.reveal .st-def{filter:none;}
+#sheetBody.masked .sheet-row.reveal .st-kw,#sheetBody.masked .sheet-row.reveal .st-def{filter:none;}
 
 /* ===== 퀴즈 뷰 ===== */
 #quiz{max-width:900px;margin:0 auto;padding:14px 18px 90px;}
@@ -292,7 +376,7 @@ footer{text-align:center;color:var(--muted);font-size:var(--fs-1);margin-top:40p
   .dom-head{color:#000;background:none !important;box-shadow:none;padding:6px 0;}
   .mapcard,#graph{display:none;}
   .card{break-inside:avoid;box-shadow:none;border:1px solid var(--ink-400);}
-  #sheetBody.masked .st-def{filter:none;}
+  #sheetBody.masked .st-kw,#sheetBody.masked .st-def{filter:none;}
   body{background:#fff;}
   /* 다크 블록(구성도·문제박스)을 밝게 — 인쇄 시 배경 미출력으로 글자가 사라지는 것 방지 */
   pre.diagram,.qdiag,.es-prob{background:#fff !important;color:#000 !important;border:1px solid var(--ink-400);}

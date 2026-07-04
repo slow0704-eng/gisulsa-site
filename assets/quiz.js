@@ -243,17 +243,17 @@
         st.diff=b.getAttribute('data-d'); rebuild(); pick(); render(); }); });
       container.querySelectorAll('.qt').forEach(function(b){ b.addEventListener('click', function(){
         var t=b.getAttribute('data-t');
-        if(t==='__all'){ allTypes.forEach(function(x){st.types[x]=true;}); }
+        if(t==='__all'){ var on=allTypes.every(function(x){return st.types[x];}); allTypes.forEach(function(x){st.types[x]=!on;}); }   // 전체 토글: 다 켜졌으면 전부 해제
         else { st.types[t]=!st.types[t]; if(selTypes().length===0) st.types[t]=true; }
         pick(); render(); }); });
       container.querySelectorAll('.qm').forEach(function(b){ b.addEventListener('click', function(){
         var m=b.getAttribute('data-m');
-        if(m==='__all'){ domList.forEach(function(d){st.doms[d.id]=true;}); }
+        if(m==='__all'){ var on=domList.every(function(d){return st.doms[d.id];}); domList.forEach(function(d){st.doms[d.id]=!on;}); }   // 전체 토글: 다 켜졌으면 전부 해제
         else { st.doms[m]=!st.doms[m]; if(selDoms().length===0) st.doms[m]=true; }
         pick(); render(); }); });
       container.querySelectorAll('.qs').forEach(function(b){ b.addEventListener('click', function(){
         var k=b.getAttribute('data-s');
-        if(k==='__all'){ visSecs().forEach(function(s){st.secs[s.key]=true;}); }
+        if(k==='__all'){ var vs=visSecs(); var on=vs.every(function(s){return st.secs[s.key];}); vs.forEach(function(s){st.secs[s.key]=!on;}); }   // 전체 토글: 다 켜졌으면 전부 해제
         else { st.secs[k]=!st.secs[k]; if(selSecs().length===0) st.secs[k]=true; }
         pick(); render(); }); });
       var r=container.querySelector('.quiz-reset');

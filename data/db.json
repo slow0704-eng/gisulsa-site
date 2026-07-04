@@ -85,7 +85,7 @@
       "tag": "모델링·설계",
       "keyword": "개념·논리·물리",
       "keywords": "데이터 모델링 3단계 개념 논리 물리 기본원칙 추상화",
-      "def": "\"개념·논리·물리\" 현실 세계 데이터를 추상화하여 개념→논리→물리 3단계로 정제, DBMS 구현 가능한 구조로 변환하는 설계 활동.",
+      "def": "현실 세계 데이터를 추상화하여 개념→논리→물리 3단계로 정제, DBMS 구현 가능한 구조로 변환하는 설계 활동.",
       "diagram": "[현실세계] →추상화→ [개념모델(ERD)]\n                        ↓ 정규화\n                  [논리모델(스키마)]\n                        ↓ 물리변환\n                  [물리모델(테이블·인덱스)]",
       "diagramNote": "※ 개념→논리→물리 단계적 상세화",
       "table": {
@@ -135,7 +135,7 @@
       "tag": "모델링·설계",
       "keyword": "엔티티·관계",
       "keywords": "ERD entity relationship diagram 카디널리티 관계형 모델 학생 수강신청",
-      "def": "\"엔티티·관계\" 엔티티·속성·관계로 데이터 구조를 시각적으로 표현하는 개념적 데이터 모델 표기법.",
+      "def": "엔티티·속성·관계로 데이터 구조를 시각적으로 표현하는 개념적 데이터 모델 표기법.",
       "diagram": "[학생] ──(수강신청)──< [수강신청서]\n  1                        N\n □엔티티 ◇관계 ○속성 — 카디널리티 표기",
       "diagramNote": "※ N:M은 교차(연결)엔티티로 해소",
       "table": {
@@ -185,7 +185,7 @@
       "tag": "모델링·설계",
       "keyword": "FD 추론규칙",
       "keywords": "암스트롱 공리 Armstrong axioms 반사 첨가 이행 폐포 closure 추론규칙",
-      "def": "\"FD 추론규칙\" 함수종속성(FD)의 완전한 추론 규칙 집합으로, 주어진 FD로부터 유도 가능한 모든 FD를 도출하는 공리.",
+      "def": "함수종속성(FD)의 완전한 추론 규칙 집합으로, 주어진 FD로부터 유도 가능한 모든 FD를 도출하는 공리.",
       "diagram": "[기본 공리]\n ├ 반사: Y⊆X ⇒ X→Y\n ├ 첨가: X→Y ⇒ XZ→YZ\n └ 이행: X→Y, Y→Z ⇒ X→Z\n[추가 규칙] 합집합·분해·의사이행",
       "diagramNote": "※ 속성 폐포(X⁺) 계산의 기반",
       "table": {
@@ -235,7 +235,7 @@
       "tag": "모델링·설계",
       "keyword": "X→Y 결정",
       "keywords": "함수 종속성 functional dependency FD 완전 부분 이행 다치종속 결정자",
-      "def": "\"X→Y 결정\" 속성집합 X의 값이 Y의 값을 유일하게 결정하는(X→Y) 속성 간 의존 관계.",
+      "def": "속성집합 X의 값이 Y의 값을 유일하게 결정하는(X→Y) 속성 간 의존 관계.",
       "diagram": "X ──결정──> Y  (X:결정자, Y:종속자)\n ├ 완전 FD : 후보키 전체에 종속\n ├ 부분 FD : 후보키 일부에 종속\n └ 이행 FD : X→Y→Z",
       "diagramNote": "※ 정규화 분해의 판단 기준",
       "table": {
@@ -285,7 +285,7 @@
       "tag": "모델링·설계",
       "keyword": "삽입·갱신·삭제",
       "keywords": "이상현상 anomaly 삽입이상 갱신이상 삭제이상 정규화 함수종속 중복 비정규",
-      "def": "\"삽입·갱신·삭제\" 정규화되지 않은 릴레이션에서 데이터 중복으로 삽입·갱신·삭제 시 발생하는 부작용.",
+      "def": "정규화되지 않은 릴레이션에서 데이터 중복으로 삽입·갱신·삭제 시 발생하는 부작용.",
       "diagram": "[비정규 릴레이션] = 중복 다수\n ├ 삽입이상: 불필요 데이터 강요\n ├ 갱신이상: 중복 일부만 변경→불일치\n └ 삭제이상: 연쇄 정보 손실",
       "diagramNote": "※ 함수종속 위반→중복→이상현상",
       "table": {
@@ -335,7 +335,7 @@
       "tag": "모델링·설계",
       "keyword": "무손실 분해",
       "keywords": "정규화 normalization 이상현상 anomaly 1NF 2NF 3NF BCNF 4NF 5NF 무손실 분해",
-      "def": "\"무손실 분해\" 함수종속성에 따라 릴레이션을 무손실 분해하여 이상현상(Anomaly)을 제거하는 데이터 설계 기법.",
+      "def": "함수종속성에 따라 릴레이션을 무손실 분해하여 이상현상(Anomaly)을 제거하는 데이터 설계 기법.",
       "diagram": "[비정규] →원자값→ [1NF]\n →부분FD 제거→ [2NF]\n →이행FD 제거→ [3NF]\n →결정자=후보키→ [BCNF]\n →다치종속→[4NF] →조인종속→[5NF]",
       "diagramNote": "※ 무손실·종속성 보존 분해",
       "table": {
@@ -385,7 +385,7 @@
       "tag": "모델링·설계",
       "keyword": "조인종속 제거",
       "keywords": "제5정규화 5NF PJNF 조인종속 join dependency 무손실 분해 다중 분해 후보키 정규형",
-      "def": "\"조인종속 제거\" 조인종속(JD)을 제거해 더 이상 무손실 분해가 불가능한 상태로, 모든 조인종속이 후보키에 의해 함의되는 최종 정규형(PJNF).",
+      "def": "조인종속(JD)을 제거해 더 이상 무손실 분해가 불가능한 상태로, 모든 조인종속이 후보키에 의해 함의되는 최종 정규형(PJNF).",
       "diagram": "[4NF: 다치종속 제거]\n →조인종속(JD) 제거→ [5NF/PJNF]\n R = R1 ⋈ R2 ⋈ R3 (무손실)\n 모든 JD ← 후보키 함의",
       "diagramNote": "※ 3개 이상 분해로만 무손실인 경우 대상",
       "table": {
@@ -435,7 +435,7 @@
       "tag": "모델링·설계",
       "keyword": "의도적 중복",
       "keywords": "반정규화 역정규화 denormalization 중복 파생 컬럼 테이블 병합 OLTP OLAP",
-      "def": "\"의도적 중복\" 정규화된 모델에 의도적 중복을 도입하여 조인 감소·조회 성능을 향상시키는 물리 설계 기법.",
+      "def": "정규화된 모델에 의도적 중복을 도입하여 조인 감소·조회 성능을 향상시키는 물리 설계 기법.",
       "diagram": "[정규화 모델(3NF)] →성능분석→ [반정규화 대상]\n ├ 테이블 병합/분할\n ├ 중복 컬럼·파생 컬럼\n └ 통계·이력 테이블",
       "diagramNote": "※ 무결성은 트리거·배치로 보완",
       "table": {
@@ -520,29 +520,54 @@
             "조인 감소·성능 향상"
           ],
           [
-            "방향",
+            "",
+            "데이터 정확성",
+            "조회 응답성"
+          ],
+          [
+            "방법",
             "분해(1NF~BCNF)",
             "병합·중복 도입"
           ],
           [
-            "설계 단계",
-            "논리 설계",
-            "물리 설계"
+            "",
+            "함수종속 제거",
+            "파생·이력 컬럼"
+          ],
+          [
+            "",
+            "논리 설계 단계",
+            "물리 설계 단계"
           ],
           [
             "무결성",
             "구조적 보장",
+            "중복 갱신 위험"
+          ],
+          [
+            "",
+            "제약으로 유지",
             "트리거·배치 보완"
           ],
           [
             "성능",
-            "조인↑ 가능",
-            "조회↑·저장공간↑"
+            "조인 증가 우려",
+            "조회 속도 향상"
           ],
           [
-            "적합",
-            "OLTP",
-            "OLAP·조회 집약"
+            "",
+            "저장공간 절감",
+            "저장공간 증가"
+          ],
+          [
+            "적용",
+            "OLTP 트랜잭션",
+            "OLAP 분석·조회"
+          ],
+          [
+            "",
+            "갱신 빈번 환경",
+            "조회 집약 환경"
           ]
         ]
       },
@@ -554,7 +579,7 @@
       "tag": "모델링·설계",
       "keyword": "경로 모호성",
       "keywords": "연결함정 connection trap fan trap chasm trap 부채꼴 균열 경로",
-      "def": "\"경로 모호성\" ERD 관계 설정 오류로 엔티티 간 경로 해석이 모호·단절되어 잘못된 질의 결과를 낳는 모델링 함정.",
+      "def": "ERD 관계 설정 오류로 엔티티 간 경로 해석이 모호·단절되어 잘못된 질의 결과를 낳는 모델링 함정.",
       "diagram": "부채꼴(Fan): A ─1:N→ B ←1:N─ C  (경로 모호)\n균열(Chasm): A ─ B ─ C, 선택참여로 경로 단절",
       "diagramNote": "※ 관계 재정의·교차엔티티로 해소",
       "table": {
@@ -634,24 +659,34 @@
         ],
         "rows": [
           [
-            "속성",
-            "공통 속성",
-            "개별·차이 속성"
+            "개념",
+            "공통 상위 엔티티",
+            "개별 하위 엔티티"
           ],
           [
-            "위치",
-            "상위 엔티티",
-            "하위 엔티티"
+            "",
+            "일반화·추상화",
+            "상세화·구체화"
+          ],
+          [
+            "속성",
+            "공통 속성 보유",
+            "고유·차이 속성"
+          ],
+          [
+            "",
+            "상위에 정의",
+            "하위에 정의"
           ],
           [
             "관계",
-            "일반화",
-            "상세화"
+            "IS-A 부모",
+            "IS-A 자식"
           ],
           [
-            "참여",
-            "포괄(inclusive)",
-            "배타(exclusive)"
+            "",
+            "전체 집합",
+            "부분 집합"
           ],
           [
             "변환",
@@ -659,9 +694,24 @@
             "Single 개별화"
           ],
           [
+            "",
+            "슈퍼 단일 테이블",
+            "서브별 테이블"
+          ],
+          [
             "선택기준",
-            "공통성·조회↑",
-            "서브 차이·데이터량↑"
+            "공통성 높음",
+            "개별성 높음"
+          ],
+          [
+            "",
+            "공통 조회 위주",
+            "서브 차이 큼"
+          ],
+          [
+            "",
+            "데이터량 적음",
+            "데이터량 많음"
           ]
         ]
       },
@@ -703,9 +753,14 @@
         ],
         "rows": [
           [
-            "PK 상속",
+            "PK 전파",
             "부모 PK→자식 PK",
-            "FK 일반속성(PK 제외)"
+            "부모 PK→일반속성"
+          ],
+          [
+            "",
+            "FK가 PK 구성",
+            "FK는 PK 제외"
           ],
           [
             "종속성",
@@ -713,24 +768,44 @@
             "약한 종속"
           ],
           [
-            "존재",
+            "",
             "부모 없이 불가",
             "독립 존재 가능"
           ],
           [
+            "",
+            "생명주기 종속",
+            "생명주기 독립"
+          ],
+          [
             "표기",
-            "실선",
-            "점선"
+            "IE 실선",
+            "IE 점선"
+          ],
+          [
+            "",
+            "자식 원형(의존)",
+            "자식 사각(독립)"
           ],
           [
             "한계",
-            "PK 과다·전파",
-            "조인 복잡·성능↓"
+            "PK 과다 전파",
+            "조인 복잡 증가"
+          ],
+          [
+            "",
+            "키 길이 증가",
+            "성능 저하 우려"
           ],
           [
             "적용",
             "강한 업무 의존",
             "느슨한 참조"
+          ],
+          [
+            "",
+            "소유·이력 관계",
+            "선택적 관계"
           ]
         ]
       },
@@ -742,7 +817,7 @@
       "tag": "SQL·질의",
       "keyword": "절차적 질의",
       "keywords": "관계대수 relational algebra 순수관계연산 일반집합연산 select project join division 관계해석",
-      "def": "\"절차적 질의\" 릴레이션을 입력받아 릴레이션을 출력하는 절차적 질의 언어로, 순수·일반집합 연산으로 구성.",
+      "def": "릴레이션을 입력받아 릴레이션을 출력하는 절차적 질의 언어로, 순수·일반집합 연산으로 구성.",
       "diagram": "[순수 관계연산] σ Select·π Project·⋈ Join·÷ Division\n[일반 집합연산] ∪ 합·∩ 교·− 차·× 곱",
       "diagramNote": "※ 관계해석(비절차)과 표현력 동등",
       "table": {
@@ -792,7 +867,7 @@
       "tag": "SQL·질의",
       "keyword": "런타임 생성",
       "keywords": "동적 SQL dynamic 정적 static 바인드 변수 prepared statement injection 파싱",
-      "def": "\"런타임 생성\" 실행 시점에 SQL 문자열을 생성·컴파일·실행하는 방식으로, 가변 조건 질의에 유연하게 대응.",
+      "def": "실행 시점에 SQL 문자열을 생성·컴파일·실행하는 방식으로, 가변 조건 질의에 유연하게 대응.",
       "diagram": "[App] →런타임 SQL 생성→ [Parse→Bind→Execute]\n정적: 컴파일 시 고정 / 동적: 실행 시 결정",
       "diagramNote": "※ 유연성↑ vs 파싱 비용·SQL Injection",
       "table": {
@@ -842,7 +917,7 @@
       "tag": "SQL·질의",
       "keyword": "테이블 결합",
       "keywords": "JOIN 조인 inner outer nested loop sort merge hash 동작원리 성능",
-      "def": "\"테이블 결합\" 둘 이상의 테이블을 연결 조건으로 결합하여 하나의 결과집합을 생성하는 연산.",
+      "def": "둘 이상의 테이블을 연결 조건으로 결합하여 하나의 결과집합을 생성하는 연산.",
       "diagram": "[논리] Inner·Outer(L/R/Full)·Cross·Self\n[물리] Nested Loop(소량·인덱스)\n       Sort Merge(대량·범위·정렬)\n       Hash Join(대량·등가)",
       "diagramNote": "※ 옵티마이저가 물리 방식 선택",
       "table": {
@@ -892,7 +967,7 @@
       "tag": "SQL·질의",
       "keyword": "CBO 실행계획",
       "keywords": "옵티마이저 optimizer CBO RBO 통계 실행계획 카디널리티 힌트 hint",
-      "def": "\"CBO 실행계획\" SQL의 최적 실행계획을 통계·비용 기반으로 산출하는 DBMS 핵심 엔진.",
+      "def": "SQL의 최적 실행계획을 통계·비용 기반으로 산출하는 DBMS 핵심 엔진.",
       "diagram": "[SQL]→[Parser]→[Transformer]\n                 뷰병합·Unnest\n[통계]→[Estimator] 카디널리티·비용\n        ↓\n[Plan Generator]→[최적 실행계획]",
       "diagramNote": "※ CBO: 비용 최소 경로 선택",
       "table": {
@@ -942,7 +1017,7 @@
       "tag": "SQL·질의",
       "keyword": "B-Tree 탐색",
       "keywords": "인덱스 index B-Tree bitmap hash 스캔 range unique skip 복합 커버링 튜닝",
-      "def": "\"B-Tree 탐색\" 테이블 데이터의 위치를 별도 자료구조로 관리하여 검색 성능을 높이는 객체.",
+      "def": "테이블 데이터의 위치를 별도 자료구조로 관리하여 검색 성능을 높이는 객체.",
       "diagram": "[B-Tree] Root→Branch→Leaf(정렬)→ROWID→Table\n스캔: Range·Unique·Full·Skip",
       "diagramNote": "※ 조회↑·DML 시 인덱스 갱신 비용",
       "table": {
@@ -992,7 +1067,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "ACID",
       "keywords": "트랜잭션 transaction ACID 원자성 일관성 격리성 영속성 commit rollback saga 2PC",
-      "def": "\"ACID\" ACID를 보장하는 논리적 작업 단위로, DB 일관성을 유지하는 연산의 최소 실행 묶음.",
+      "def": "ACID를 보장하는 논리적 작업 단위로, DB 일관성을 유지하는 연산의 최소 실행 묶음.",
       "diagram": "[Active]→[Partially Committed]→[Committed](REDO)\n   ↓ 오류\n[Failed]→[Aborted] (UNDO 롤백)",
       "diagramNote": "※ ACID(원자·일관·격리·영속)",
       "table": {
@@ -1042,7 +1117,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "분산 원자성",
       "keywords": "2PC two phase commit 2단계 커밋 분산 트랜잭션 조정자 coordinator participant prepare commit blocking 3PC saga",
-      "def": "\"분산 원자성\" 분산 트랜잭션에서 다수 참여 노드의 커밋 여부를 조정자가 준비·확정 2단계로 합의시켜 원자성을 보장하는 프로토콜.",
+      "def": "분산 트랜잭션에서 다수 참여 노드의 커밋 여부를 조정자가 준비·확정 2단계로 합의시켜 원자성을 보장하는 프로토콜.",
       "diagram": "[조정자(Coordinator)]\n 1.Prepare 요청 → [참여자 N]\n   ← Ready/Abort 투표(로그 기록)\n 2.전원 Ready→Commit / 1개라도 No→Rollback",
       "diagramNote": "※ 전원 Ready→Commit, 1개라도 No→Rollback",
       "table": {
@@ -1092,7 +1167,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "락·MVCC",
       "keywords": "동시성제어 concurrency lock 2PL MVCC timestamp 낙관적 lost update dirty read phantom deadlock",
-      "def": "\"락·MVCC\" 다중 트랜잭션 동시 실행 시 상호 간섭으로 인한 이상현상을 방지하여 일관성을 보장하는 기법.",
+      "def": "다중 트랜잭션 동시 실행 시 상호 간섭으로 인한 이상현상을 방지하여 일관성을 보장하는 기법.",
       "diagram": "[이상] Lost Update·Dirty Read·Unrepeatable·Phantom\n[기법] Lock(2PL)·Timestamp·MVCC·낙관적",
       "diagramNote": "※ 직렬가능성(Serializability) 보장",
       "table": {
@@ -1142,7 +1217,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "격리 4단계",
       "keywords": "isolation level 격리수준 read uncommitted committed repeatable read serializable",
-      "def": "\"격리 4단계\" 트랜잭션 간 격리 정도를 4단계로 규정하여 동시성과 일관성을 trade-off하는 표준 수준.",
+      "def": "트랜잭션 간 격리 정도를 4단계로 규정하여 동시성과 일관성을 trade-off하는 표준 수준.",
       "diagram": "Read Uncommitted → Read Committed\n → Repeatable Read → Serializable\n (동시성↑/일관성↓)  →  (일관성↑/동시성↓)",
       "diagramNote": "※ 단계별 허용 이상현상 차등",
       "table": {
@@ -1192,7 +1267,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "REDO·UNDO",
       "keywords": "회복기법 recovery REDO UNDO 로그 checkpoint 그림자페이지 ARIES WAL 미디어",
-      "def": "\"REDO·UNDO\" 장애 발생 시 트랜잭션 로그 기반으로 DB를 일관된 상태로 복구하는 기법.",
+      "def": "장애 발생 시 트랜잭션 로그 기반으로 DB를 일관된 상태로 복구하는 기법.",
       "diagram": "[로그] →장애→ [REDO 재실행] + [UNDO 취소]\n기법: 즉시·지연갱신·Checkpoint·\n      그림자페이지·ARIES",
       "diagramNote": "※ WAL: 로그 먼저 기록 후 반영",
       "table": {
@@ -1242,7 +1317,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "즉시·지연 갱신",
       "keywords": "로그 기반 회복 recovery deferred immediate update wal redo undo 트랜잭션 로그",
-      "def": "\"즉시·지연 갱신\" 트랜잭션 변경을 로그에 먼저 기록하고 장애 시 REDO·UNDO로 복구하는 회복기법.",
+      "def": "트랜잭션 변경을 로그에 먼저 기록하고 장애 시 REDO·UNDO로 복구하는 회복기법.",
       "diagram": "변경 → [로그 기록(WAL)] → DB 반영\n장애 → 로그 스캔 → REDO / UNDO\n 지연갱신: UNDO 불필요(미반영)",
       "diagramNote": "※ WAL: 로그 선기록 후 DB 반영",
       "table": {
@@ -1292,7 +1367,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "회복범위 단축",
       "keywords": "체크포인트 checkpoint 회복 recovery 로그 redo undo 회복시간 단축 일관점 fuzzy",
-      "def": "\"회복범위 단축\" 주기적으로 메모리 버퍼를 디스크에 반영·표시해 장애 시 회복 대상 로그 범위를 줄이는 기법.",
+      "def": "주기적으로 메모리 버퍼를 디스크에 반영·표시해 장애 시 회복 대상 로그 범위를 줄이는 기법.",
       "diagram": "로그: …─[Checkpoint]─…─[장애]\n CP 이전 완료분: 회복 불필요\n CP 이후 구간만 REDO / UNDO",
       "diagramNote": "※ CP 시점에 더티버퍼 일괄 반영",
       "table": {
@@ -1377,9 +1452,19 @@
             "미완료분"
           ],
           [
-            "방향",
+            "",
+            "Commit 로그 존재",
+            "시작~미완료"
+          ],
+          [
+            "연산",
             "재실행(전진)",
             "취소(후진)"
+          ],
+          [
+            "",
+            "변경 재반영",
+            "변경 되돌림"
           ],
           [
             "이미지",
@@ -1387,19 +1472,34 @@
             "Before Image"
           ],
           [
+            "",
+            "갱신 후 값",
+            "갱신 전 값"
+          ],
+          [
             "목적",
             "갱신손실 복구",
             "불완전변경 제거"
           ],
           [
-            "로그",
-            "Commit 존재",
-            "시작~미완료"
+            "",
+            "영속성 보장",
+            "원자성 보장"
           ],
           [
             "상황",
             "지연갱신 손실",
             "즉시갱신 미완료"
+          ],
+          [
+            "",
+            "미디어 장애 복구",
+            "트랜잭션 롤백"
+          ],
+          [
+            "",
+            "ARIES Redo 단계",
+            "ARIES Undo 단계"
           ]
         ]
       },
@@ -1411,7 +1511,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "제약조건",
       "keywords": "데이터 무결성 integrity 개체 참조 도메인 사용자정의 제약 PK FK check 트리거",
-      "def": "\"제약조건\" 데이터의 정확성·일관성을 보장하기 위해 부적합한 값의 입력·갱신을 제약하는 규칙.",
+      "def": "데이터의 정확성·일관성을 보장하기 위해 부적합한 값의 입력·갱신을 제약하는 규칙.",
       "diagram": "[개체] PK Not Null·Unique\n[참조] FK = 부모 PK or NULL\n[도메인] 타입·범위·CHECK\n[사용자정의] 업무규칙(트리거)",
       "diagramNote": "※ 제약·트리거·앱 계층으로 구현",
       "table": {
@@ -1461,7 +1561,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "데이터 독립성",
       "keywords": "데이터베이스 구조 ANSI SPARC 3 level 외부 개념 내부 스키마 매핑 데이터 독립성",
-      "def": "\"데이터 독립성\" DB를 외부·개념·내부 3단계 스키마로 분리하고 매핑으로 데이터 독립성을 확보하는 표준 구조.",
+      "def": "DB를 외부·개념·내부 3단계 스키마로 분리하고 매핑으로 데이터 독립성을 확보하는 표준 구조.",
       "diagram": "[외부 스키마] 사용자 뷰\n   ↕ 외부/개념 매핑 (논리적 독립성)\n[개념 스키마] 통합 논리 구조\n   ↕ 개념/내부 매핑 (물리적 독립성)\n[내부 스키마] 물리 저장",
       "diagramNote": "※ 매핑이 변경 파급 차단",
       "table": {
@@ -1511,7 +1611,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "논리·물리 독립",
       "keywords": "데이터베이스 독립성 data independence 논리적 물리적 스키마 매핑 사상 ansi sparc",
-      "def": "\"논리·물리 독립\" 상위 스키마가 하위 스키마 변경에 영향받지 않도록 매핑으로 보장하는 DB 핵심 속성.",
+      "def": "상위 스키마가 하위 스키마 변경에 영향받지 않도록 매핑으로 보장하는 DB 핵심 속성.",
       "diagram": "[외부 스키마]\n   ↕ 논리적 독립성 (개념 변경 무영향)\n[개념 스키마]\n   ↕ 물리적 독립성 (저장 변경 무영향)\n[내부 스키마]",
       "diagramNote": "※ 3층 구조·매핑이 독립성 토대",
       "table": {
@@ -1561,7 +1661,7 @@
       "tag": "성능·확장",
       "keyword": "응답·TPS 개선",
       "keywords": "DB 튜닝 tuning 분석 이행 평가 설계 application server system AWR ASH 실행계획",
-      "def": "\"응답·TPS 개선\" SQL·인덱스·메모리·구조를 분석·개선하여 응답시간 단축과 처리량(TPS)을 극대화하는 최적화 활동.",
+      "def": "SQL·인덱스·메모리·구조를 분석·개선하여 응답시간 단축과 처리량(TPS)을 극대화하는 최적화 활동.",
       "diagram": "[설계] 모델·파티션\n   ↓\n[SQL/Application] 실행계획·인덱스\n   ↓\n[Server/System] SGA·I/O·OS\n 절차: 분석→이행→평가",
       "diagramNote": "※ AWR/ASH 병목 식별 후 단계별",
       "table": {
@@ -1611,7 +1711,7 @@
       "tag": "성능·확장",
       "keyword": "단일 DB 분할",
       "keywords": "파티셔닝 partitioning range hash list composite partition pruning 분할키 로컬인덱스 단일 인스턴스",
-      "def": "\"단일 DB 분할\" 대용량 테이블을 Range·Hash·List 기준으로 단일 인스턴스 내에서 나누어 검색·관리 성능을 높이는 분할 기법.",
+      "def": "대용량 테이블을 Range·Hash·List 기준으로 단일 인스턴스 내에서 나누어 검색·관리 성능을 높이는 분할 기법.",
       "diagram": "[애플리케이션]\n   ↓ 파티션키(분할 기준)\n[단일 DB 인스턴스]\n ├[P1:Range] ├[P2:Hash] └[P3:List]\n ⇒ Partition Pruning: 대상 분할만 스캔",
       "diagramNote": "※ 단일 DB 내 논리 분할, Pruning으로 I/O↓",
       "table": {
@@ -1661,7 +1761,7 @@
       "tag": "성능·확장",
       "keyword": "노드 수평 분산",
       "keywords": "샤딩 sharding shard key range hash directory shared nothing scale out 노드 수평 분산 리밸런싱 크로스샤드",
-      "def": "\"노드 수평 분산\" 데이터를 샤드키 기준으로 여러 DB 노드에 수평 분산 저장해 무공유(Shared-Nothing) 확장성을 확보하는 분산 기법.",
+      "def": "데이터를 샤드키 기준으로 여러 DB 노드에 수평 분산 저장해 무공유(Shared-Nothing) 확장성을 확보하는 분산 기법.",
       "diagram": "[라우팅 계층 / 샤드키 매핑]\n   ↓ 샤드키 해시·범위\n ┌────┬────┬────┐\n[Shard1][Shard2][Shard3]  (Shared-Nothing)\n ⇒ 노드 추가 수평 확장(Scale-Out)",
       "diagramNote": "※ 노드 간 물리 분산, 조인·글로벌 Tx 난제",
       "table": {
@@ -1711,7 +1811,7 @@
       "tag": "성능·확장",
       "keyword": "분산 투명성",
       "keywords": "분산 DB distributed database 투명성 transparency 2PC two phase commit 위치 중복 분할",
-      "def": "\"분산 투명성\" 물리적으로 분산된 여러 DB를 논리적으로 단일 DB처럼 사용하게 하는 시스템.",
+      "def": "물리적으로 분산된 여러 DB를 논리적으로 단일 DB처럼 사용하게 하는 시스템.",
       "diagram": "[전역 스키마] ─논리 단일화→ 분산 투명성\n[노드1][노드2][노드3] (지역 DB)\n분산 트랜잭션: 2PC(Prepare→Commit)",
       "diagramNote": "※ 투명성: 위치·중복·분할·장애·병행",
       "table": {
@@ -1949,7 +2049,7 @@
       "tag": "성능·확장",
       "keyword": "HW 규모 산정",
       "keywords": "DB 용량산정 capacity sizing 하드웨어 저장용량 TPS 동시사용자 증가율 여유율",
-      "def": "\"HW 규모 산정\" 데이터 증가량·트랜잭션·성능 요건을 기반으로 적정 HW(저장·메모리·CPU) 규모를 산출하는 활동.",
+      "def": "데이터 증가량·트랜잭션·성능 요건을 기반으로 적정 HW(저장·메모리·CPU) 규모를 산출하는 활동.",
       "diagram": "[기초자료] 건수·행 길이·증가율·보존기간\n   ↓\n[저장] Σ(행수×행길이×인덱스×여유율)\n[처리] TPS·동시사용자 → CPU·메모리",
       "diagramNote": "※ 피크부하·증가추세 반영",
       "table": {
@@ -1999,7 +2099,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "CAP·확장성",
       "keywords": "NoSQL NewSQL key value document column graph CAP PACELC BASE spanner",
-      "def": "\"CAP·확장성\" 비정형·대용량·분산에 대응하는 비관계형 DB(NoSQL)와, RDBMS의 ACID에 확장성을 결합한 NewSQL.",
+      "def": "비정형·대용량·분산에 대응하는 비관계형 DB(NoSQL)와, RDBMS의 ACID에 확장성을 결합한 NewSQL.",
       "diagram": "[NoSQL] Key-Value·Document·Column·Graph\n   ↑ CAP(C·A·P 중 2)·BASE\n[NewSQL] 분산 + ACID (예: Spanner)",
       "diagramNote": "※ RDBMS=ACID, NoSQL=확장성/BASE",
       "table": {
@@ -2049,7 +2149,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "메모리·그래프·벡터",
       "keywords": "특수목적 DB in-memory graph vector 인메모리 redis 임베딩 ANN HNSW milvus RAG",
-      "def": "\"메모리·그래프·벡터\" 특정 워크로드에 최적화된 DB — 메모리 상주(In-memory)·관계 탐색(Graph)·유사도 검색(Vector).",
+      "def": "특정 워크로드에 최적화된 DB — 메모리 상주(In-memory)·관계 탐색(Graph)·유사도 검색(Vector).",
       "diagram": "[In-memory] RAM 상주 → 초저지연 (Redis)\n[Graph]   노드·엣지 → 관계 탐색 (Neo4j)\n[Vector]  임베딩 → 유사도(ANN) 검색 (Milvus)",
       "diagramNote": "※ 워크로드 특성별 선택",
       "table": {
@@ -2099,7 +2199,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "RAM 상주",
       "keywords": "인메모리 데이터베이스 in-memory database IMDB redis memcached SAP HANA 초저지연 영속화 AOF 스냅샷 캐시 HTAP",
-      "def": "\"RAM 상주\" 데이터를 디스크가 아닌 주기억장치(RAM)에 상주시켜 디스크 I/O를 제거하고 초저지연·고처리량을 제공하는 DB.",
+      "def": "데이터를 디스크가 아닌 주기억장치(RAM)에 상주시켜 디스크 I/O를 제거하고 초저지연·고처리량을 제공하는 DB.",
       "diagram": "[디스크 DB] I/O 병목\n →RAM 상주→ [In-Memory DB]\n 초저지연·고TPS (Redis·HANA)\n 영속화: AOF·스냅샷·복제",
       "diagramNote": "※ 휘발성 보완 위해 영속화·복제 필수",
       "table": {
@@ -2149,7 +2249,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "노드·엣지 관계",
       "keywords": "graph db 그래프 데이터베이스 노드 엣지 property graph cypher gremlin neo4j 관계 탐색 추천 소셜 지식그래프 사기탐지",
-      "def": "\"노드·엣지 관계\" 데이터를 노드(정점)와 엣지(관계)로 표현해 복잡한 관계 탐색을 조인 없이 고속 수행하는 NoSQL DB.",
+      "def": "데이터를 노드(정점)와 엣지(관계)로 표현해 복잡한 관계 탐색을 조인 없이 고속 수행하는 NoSQL DB.",
       "diagram": "[정점Node]──엣지Edge──>[정점Node]\n 속성(Property) 보유\n 질의: Cypher·Gremlin\n 강점: 다단계 관계 탐색",
       "diagramNote": "※ 관계를 1급 객체로 저장(인접 무인덱스 탐색)",
       "table": {
@@ -2199,7 +2299,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "GIS·위상",
       "keywords": "공간 데이터베이스 spatial GIS point line polygon MBR R-Tree 다차원 색인 quad kd OGC",
-      "def": "\"GIS·위상\" 점·선·면 등 공간 객체와 위상 관계를 저장·질의·분석하는 DB(GIS 기반).",
+      "def": "점·선·면 등 공간 객체와 위상 관계를 저장·질의·분석하는 DB(GIS 기반).",
       "diagram": "[객체] Point·Line·Polygon (MBR)\n[연산] Overlap·Contain·Distance·Buffer\n[색인] R-Tree·R+·R*·Quad·KD",
       "diagramNote": "※ MBR 1차 필터 → 정밀 연산(정제)",
       "table": {
@@ -2249,7 +2349,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "정확·완전·일관",
       "keywords": "데이터 품질관리 quality 프로파일링 정제 표준화 ISO 8000 DQ 인증 정합성 마이그레이션",
-      "def": "\"정확·완전·일관\" 데이터의 정확성·완전성·일관성을 진단·개선하여 신뢰도를 확보하는 관리 체계.",
+      "def": "데이터의 정확성·완전성·일관성을 진단·개선하여 신뢰도를 확보하는 관리 체계.",
       "diagram": "[기준] 정확·완전·일관·유효·유일·적시\n[진단] 프로파일링→업무규칙→측정\n[개선] 정제→표준화→ISO 8000 / DQ 인증",
       "diagramNote": "※ 데이터 생명주기 전반 관리",
       "table": {
@@ -2299,7 +2399,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "생명주기 진단",
       "keywords": "공공데이터 품질 public data 생명주기 수준평가 평가등급 평가지표 표준화 지침 매뉴얼",
-      "def": "\"생명주기 진단\" 공공데이터의 신뢰성 확보를 위해 생명주기별 품질관리·진단·수준평가를 수행하는 제도(품질관리 매뉴얼).",
+      "def": "공공데이터의 신뢰성 확보를 위해 생명주기별 품질관리·진단·수준평가를 수행하는 제도(품질관리 매뉴얼).",
       "diagram": "[생명주기] 계획→구축→운영→활용→폐기\n[진단·개선] 측정→원인분석→개선\n[수준평가] 평가등급·평가지표",
       "diagramNote": "※ 공공데이터 품질관리 매뉴얼 V2.0",
       "table": {
@@ -2349,7 +2449,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "정량·정성 평가",
       "keywords": "데이터 가치평가 value 데이터 기본법 산업법 원가 시장 수익 접근법 자산화 거래",
-      "def": "\"정량·정성 평가\" 데이터의 경제적·전략적 가치를 정량·정성 기법으로 산정하는 제도(데이터산업법 기반).",
+      "def": "데이터의 경제적·전략적 가치를 정량·정성 기법으로 산정하는 제도(데이터산업법 기반).",
       "diagram": "[제도] 데이터산업법·평가기관 지정\n[기법] 원가 / 시장 / 수익 접근법\n[절차] 대상선정→분석→평가→검증",
       "diagramNote": "※ 데이터 거래·자산화의 기반",
       "table": {

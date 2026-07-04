@@ -26,6 +26,7 @@
       ' data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-k="'+escAttr(card.keywords)+'"';
   }
 
+  function _p2(n){ return n<10 ? '0'+n : ''+n; }
   function tableHTML(t, cls){
     if(!t) return '';
     var h = '';
@@ -72,9 +73,19 @@
     if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
     return h;
   }
+  // 2교시 66줄/3페이지 고정: 절에 page(1~3) 필드가 있으면 "── N페이지 (01~22) ──" 구분선 삽입.
+  function essayPageTag(pg, first){
+    var a = (pg-1)*22+1, b = pg*22;
+    var aa = a<10 ? '0'+a : ''+a;
+    return '<div class="es-pagetag'+(first?' first':'')+'">── '+pg+'페이지 ('+aa+'~'+b+') ──</div>';
+  }
   function essayHTML(card){
     var p = card.problem || {};
-    var html = '<div class="es-prob"><div class="es-pq">문제'+(p.no?' '+escHTML(p.no):'')+'. '+escHTML(p.topic||card.title)+'</div>';
+    var secs = card.sections || [];
+    var hasPages = secs.some(function(s){ return s.page; });   // page 필드 있을 때만 페이지 구분(기존 카드 무영향)
+    var html = '';
+    if(hasPages) html += essayPageTag(1, true);
+    html += '<div class="es-prob"><div class="es-pq">문제'+(p.no?' '+escHTML(p.no):'')+'. '+escHTML(p.topic||card.title)+'</div>';
     if(p.reqs && p.reqs.length){
       html += '<ul class="es-reqs">'+p.reqs.map(function(r){ return '<li>'+escHTML(r)+'</li>'; }).join('')+'</ul>';
     }
@@ -83,7 +94,12 @@
       html += '<div class="es-sec es-intro"><div class="es-h">개요</div>'+essayBlock(card.intro)+'</div>';
     }
     html += '<div class="es-body">';
-    (card.sections||[]).forEach(function(s){
+    var curPage = 1;
+    secs.forEach(function(s){
+      if(hasPages){
+        var pg = s.page || curPage;
+        if(pg !== curPage){ html += essayPageTag(pg, false); curPage = pg; }
+      }
       html += '<div class="es-sec"><div class="es-h">'+escHTML((s.no?s.no+'. ':'')+(s.title||''))+'</div>';
       if(s.overview){ html += '<div class="es-sub">1. 개요</div>'+essayBlock(s.overview); }
       if(s.detail){ html += '<div class="es-sub">'+escHTML(s.detail.title||'2. 상세')+'</div>'+essayBlock(s.detail); }
@@ -108,13 +124,15 @@
     }
     var body;
     if(card.compare){
-      // 비교형(A vs B): 1교시 비교형 골격 — I.정의 비교(2열표 A|B, 헤더1+본문3행) → II.상세 비교(3열표 구분|A|B)
       body =
         '<div class="blk"><div class="lbl">I. 정의 비교</div>'+tableHTML(card.defTable, 'cmp2')+dnote+'</div>'+
         '<div class="blk"><div class="lbl ink">II. 상세 비교</div>'+tableHTML(card.table)+fnote+'</div>';
     } else {
+      // I. 정의: 리드 키워드+토픽을 헤더로(골격 03줄), 정의문 본문은 아래(04·05)
+      var defLead = card.keyword ? 'I. "'+escHTML(card.keyword)+'" '+escHTML(card.title)+'의 정의'
+                                 : 'I. '+escHTML(card.title)+'의 정의';
       body =
-        '<div class="blk"><div class="lbl">I. 정의</div><div class="def">'+escHTML(card.def)+'</div></div>'+
+        '<div class="blk"><div class="lbl">'+defLead+'</div><div class="def">'+escHTML(_stripLeadKw(card.def))+'</div></div>'+
         '<div class="blk"><div class="lbl ink">II. 구성도 및 구성요소</div></div>'+
         '<div class="blk"><div class="lbl">1. 구성도</div>'+diag+dnote+'</div>'+
         '<div class="blk"><div class="lbl">2. 구성요소</div>'+tableHTML(card.table)+'</div>'+
@@ -132,38 +150,174 @@
     if(card.compare && card.defTable && card.defTable.head) return '[비교] ' + card.defTable.head.join(' ↔ ');
     return '';
   }
+  // 구성도(다이어그램)·구성요소 표를 시트/내보내기용 1줄 문자열로 직렬화(1차원화)
+  function flatDiagram(card){
+    var g = (card && card.diagram) || '';
+    return g.split('\n').map(function(s){ return s.trim(); }).filter(Boolean).join('  /  ');
+  }
+  function flatTable(t){
+    if(!t || !t.rows || !t.rows.length) return '';
+    var parts = [];
+    if(t.head && t.head.length) parts.push(t.head.join(' | '));
+    t.rows.forEach(function(r){ parts.push(r.map(function(x){ return (x === '' ? '〃' : x); }).join(' | ')); });   // 셀=" | ", 빈 구분셀(병합)은 〃
+    return parts.join('  ‖  ');   // 행 구분 = "‖"
+  }
   function sheetHTML(domains, catMapByDom){
-    var h = '<table class="sheet-table"><tbody>';
+    var h = '<table class="sheet-table"><thead><tr class="sheet-head">'+
+      '<th>토픽</th><th>리드키워드</th><th>정의</th><th>구성도</th><th>구성요소</th></tr></thead><tbody>';
     domains.forEach(function(d){
       var catMap = catMapByDom[d.id] || {};
       var secIds = (d.sections || []).map(function(s){ return s.id; });
-      h += '<tr class="sheet-dom" data-dom="'+escAttr(d.id)+'"><td colspan="2">'+escHTML((d.icon||'')+' '+d.label)+'</td></tr>';
+      h += '<tr class="sheet-dom" data-dom="'+escAttr(d.id)+'"><td colspan="5">'+escHTML((d.icon||'')+' '+d.label)+'</td></tr>';
       function rowsFor(catId){
         return (d.cards || []).filter(function(c){ return c.category === catId; }).map(function(c){
+          // 구성도·구성요소는 1줄 직렬화(st-flat)와 원본(st-orig)을 함께 렌더 → 체크박스로 CSS 전환
+          var origD = c.diagram ? '<pre class="st-orig st-orig-diag">'+escHTML(c.diagram)+'</pre>' : '';
+          var origT = (c.table && c.table.rows && c.table.rows.length) ? '<div class="st-orig">'+tableHTML(c.table)+'</div>' : '';
           return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-k="'+escAttr(c.keywords)+'">'+
             '<td class="st-title">'+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+(c.essay?' <span class="st-badge st-essay">2교시</span>':'')+'</td>'+
-            '<td class="st-def">'+escHTML(defText(c))+'</td></tr>';
+            '<td class="st-kw">'+escHTML(c.keyword||'')+'</td>'+
+            '<td class="st-def">'+escHTML(defText(c))+'</td>'+
+            '<td class="st-diag"><span class="st-flat">'+escHTML(flatDiagram(c))+'</span>'+origD+'</td>'+
+            '<td class="st-tbl"><span class="st-flat">'+escHTML(flatTable(c.table))+'</span>'+origT+'</td></tr>';
         }).join('');
       }
       (d.sections || []).forEach(function(s){
-        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(s.id)+'"><td colspan="2">'+escHTML(s.title)+'</td></tr>';
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(s.id)+'"><td colspan="5">'+escHTML(s.title)+'</td></tr>';
         h += rowsFor(s.id);
       });
       var orphan = {};
       (d.cards || []).forEach(function(c){ if(secIds.indexOf(c.category) < 0) orphan[c.category] = 1; });
       Object.keys(orphan).forEach(function(catId){
-        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(catId)+'"><td colspan="2">기타</td></tr>';
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(catId)+'"><td colspan="5">기타</td></tr>';
         h += rowsFor(catId);
       });
     });
     return h + '</tbody></table>';
   }
 
+  // 정의문 앞의 리드 키워드("...") 제거 — 03줄 헤더에 이미 쓰므로 04·05엔 본문만.
+  function _stripLeadKw(def){ return (def||'').replace(/^\s*"[^"]*"\s*/, '').trim(); }
+  // 문자열을 중앙에서 가장 가까운 공백 기준 2조각으로 분할(04·05 배분용).
+  function _splitTwo(s){
+    s = (s||'').trim();
+    if(!s) return ['',''];
+    var mid = Math.floor(s.length/2);
+    var l = s.lastIndexOf(' ', mid), r = s.indexOf(' ', mid), pos;
+    if(l < 0) pos = r; else if(r < 0) pos = l; else pos = (mid - l <= r - mid) ? l : r;
+    if(pos < 0) return [s, ''];
+    return [s.slice(0, pos), s.slice(pos + 1)];
+  }
+  // 1교시 답안지 뷰: 카드를 골격 01~22줄에 배치, 모든 줄 왼쪽에 줄번호(거터). 표는 grid 정렬(표 안 번호 없음).
+  function answerSheetHTML(card){
+    if(card.essay) return answerSheetEssayHTML(card);   // 2교시(essay)는 66줄/3페이지 답안지
+    var L = {};
+    function set(n, html, cls){ L[n] = { c: html || '', cls: cls || '' }; }
+    function trow(cells, cls){
+      return '<div class="astbl '+(cls||'')+'">'+(cells||[]).map(function(x){ return '<span>'+escHTML(x)+'</span>'; }).join('')+'</div>';
+    }
+    var title = card.title || '';
+    if(card.compare){
+      var dt = card.defTable || {}, tb = card.table || {};
+      set(1, '문제 : '+escHTML(title)+' 비교', 'q');
+      set(2, '답)');
+      set(3, 'I. 정의 비교', 'h');
+      set(4, trow(dt.head, 'col2 thead'));
+      for(var i=0;i<3;i++){ set(5+i, (dt.rows||[])[i] ? trow(dt.rows[i], 'col2') : ''); }
+      set(8, card.diagramNote ? escHTML(card.diagramNote) : '', 'note');
+      set(9, 'II. 상세 비교', 'h');
+      set(10, trow(tb.head, 'col3 thead'));
+      for(var j=0;j<11;j++){ set(11+j, (tb.rows||[])[j] ? trow(tb.rows[j], 'col3') : ''); }
+      set(22, card.note ? escHTML(card.note) : '', 'note');
+    } else {
+      var gb = card.table || {}, dl = (card.diagram || '').split('\n');
+      set(1, '문제 : '+escHTML(title), 'q');
+      set(2, '답)');
+      set(3, (card.keyword ? 'I. "'+escHTML(card.keyword)+'" '+escHTML(title)+'의 정의'
+                           : 'I. '+escHTML(title)+'의 정의'), 'h');
+      var dp = _splitTwo(_stripLeadKw(card.def));   // 정의문을 04·05로 분할(리드 키워드는 03에)
+      set(4, escHTML(dp[0]));
+      set(5, escHTML(dp[1]));
+      set(6, 'II. 구성도 및 구성요소', 'h');
+      set(7, '1. 구성도', 'h2');
+      for(var k=0;k<5;k++){
+        var dline = (k < 4) ? (dl[k] || '') : dl.slice(4).join('  ');
+        set(8+k, dline ? '<pre class="asdiag">'+escHTML(dline)+'</pre>' : '');
+      }
+      set(13, card.diagramNote ? escHTML(card.diagramNote) : '', 'note');
+      set(14, '2. 구성요소', 'h2');
+      set(15, trow(gb.head, 'col3 thead'));
+      for(var m=0;m<6;m++){ set(16+m, (gb.rows||[])[m] ? trow(gb.rows[m], 'col3') : ''); }
+      set(22, card.note ? escHTML(card.note) : '', 'note');
+    }
+    var out = '';
+    for(var n=1;n<=22;n++){
+      var e = L[n] || { c:'', cls:'' };
+      out += '<div class="asl '+e.cls+(e.c?'':' empty')+'"><b class="asn">'+_p2(n)+'</b><div class="asc">'+e.c+'</div></div>';
+    }
+    return '<div class="asheet">'+out+'</div>';
+  }
+
+  // 2교시 답안지: essay 카드를 66줄/3페이지에 배치. 절을 section.page 버킷에 담아 각 페이지를 22줄로 채움
+  // → 대목차·소목차가 페이지 경계(22/44)에 걸치지 않음(2교시 답안구조 v5.0 페이지 정합).
+  function answerSheetEssayHTML(card){
+    var secs = card.sections || [];
+    // 페이지 배정: section.page 우선, 없으면 개수 기준 기본(4절=1·1·2·3 / 3절=1·2·3)
+    var defMap = secs.length >= 4 ? [1,1,2,3] : [1,2,3];
+    var pages = { 1: [], 2: [], 3: [] };
+    function push(pg, html, cls){ (pages[pg] || pages[3]).push({ c: html || '', cls: cls || '' }); }
+    function pushDiag(pg, d){ (d || '').split('\n').forEach(function(x){ push(pg, x ? '<pre class="asdiag">'+escHTML(x)+'</pre>' : ''); }); }
+    function trow(cells, cls){ return '<div class="astbl '+(cls||'')+'">'+(cells||[]).map(function(x){ return '<span>'+escHTML(x)+'</span>'; }).join('')+'</div>'; }
+    function tcls(head){ return (head && head.length===2) ? 'col2' : 'col3'; }
+    var p = card.problem || {};
+    push(1, '문제 : '+escHTML(p.topic || card.title), 'q');
+    (p.reqs || []).forEach(function(r){ push(1, escHTML(r)); });
+    push(1, '답)');
+    secs.forEach(function(s, idx){
+      var pg = s.page || defMap[idx] || 3; if(pg > 3) pg = 3;
+      push(pg, escHTML((s.no ? s.no+'. ' : '')+(s.title || '')), 'h');
+      var ov = s.overview;
+      if(ov){
+        if(ov.diagram) pushDiag(pg, ov.diagram);
+        (ov.concepts || []).forEach(function(t){ push(pg, escHTML(t)); });
+        if(ov.note) push(pg, escHTML(ov.note), 'note');
+      }
+      var de = s.detail;
+      if(de){
+        if(de.title) push(pg, escHTML(de.title), 'h2');
+        if(de.table){
+          push(pg, trow(de.table.head, tcls(de.table.head)+' thead'));
+          (de.table.rows || []).forEach(function(r){ push(pg, trow(r, tcls(de.table.head))); });
+        }
+        if(de.diagram) pushDiag(pg, de.diagram);
+        if(de.note) push(pg, escHTML(de.note), 'note');
+      }
+      (s.conclusion || []).forEach(function(t){ push(pg, escHTML(t), 'note'); });
+    });
+    var out = '', ln = 0;
+    for(var pg = 1; pg <= 3; pg++){   // 페이지별 컬럼(가로 3열 나열)
+      var arr = pages[pg];
+      while(arr.length < 22) arr.push({ c:'', cls:'' });   // 페이지 22줄 채움(정합)
+      var col = '<div class="aspage">── '+pg+'페이지 ('+_p2((pg-1)*22+1)+'~'+_p2(pg*22)+') ──</div>';
+      for(var i = 0; i < arr.length; i++){
+        ln++;
+        var e = arr[i];
+        col += '<div class="asl '+e.cls+(e.c?'':' empty')+(i>=22?' over':'')+'"><b class="asn">'+_p2(ln)+'</b><div class="asc">'+e.c+'</div></div>';
+      }
+      out += '<div class="aspg">'+col+'</div>';
+    }
+    return '<div class="asheet asheet-essay">'+out+'</div>';
+  }
+
   GS.escHTML  = escHTML;
   GS.escAttr  = escAttr;
   GS.tableHTML = tableHTML;
   GS.cardHTML = cardHTML;
+  GS.answerSheetHTML = answerSheetHTML;
   GS.sheetHTML = sheetHTML;
+  GS.defText = defText;   // 정의 시트 내보내기(app.js)에서 재사용
+  GS.flatDiagram = flatDiagram;   // 구성도 1줄 직렬화
+  GS.flatTable = flatTable;       // 구성요소 표 1줄 직렬화
   GS.buildCatMap = buildCatMap;
   GS.cardMatches = cardMatches;
 })();

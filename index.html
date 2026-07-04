@@ -4,21 +4,26 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>[정보관리기술사] 1·2교시 토픽 통합 — SW공학·SW운영·정보화전략·DB·네트워크·컴퓨터구조/OS·AI·보안</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎓%3C/text%3E%3C/svg%3E" />
+<!-- 외부 리소스: Pretendard(한글 UI 표준 폰트) · Lucide(아이콘) · mermaid·vis-network(다이어그램) -->
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
 <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
 
 <header class="appbar">
   <div class="topbar">
-    <div class="brand"><span class="brand-mark">🎓</span><span class="brand-name">정보관리기술사<small>학습 콘솔 · 1·2교시</small></span></div>
-    <input id="globalSearch" class="gsearch" type="text" placeholder="🔍 전 과목 통합 검색 — 토픽·키워드" />
+    <div class="brand"><span class="brand-mark"><i data-lucide="graduation-cap"></i></span><span class="brand-name">정보관리기술사<small>학습 콘솔 · 1·2교시</small></span></div>
+    <div class="gsearch-wrap"><i data-lucide="search" class="gsearch-ic"></i><input id="globalSearch" class="gsearch" type="text" placeholder="전 과목 통합 검색 — 토픽·키워드" /></div>
     <div class="viewsw" id="viewsw">
-      <button data-v="cards" class="active">🗂 카드</button>
-      <button data-v="graph">🗺 관계도</button>
-      <button data-v="sheet">📋 정의 시트</button>
-      <button data-v="quiz">🧩 퀴즈</button>
+      <button data-v="cards" class="active"><i data-lucide="layout-grid"></i>카드</button>
+      <button data-v="graph"><i data-lucide="share-2"></i>관계도</button>
+      <button data-v="sheet"><i data-lucide="list"></i>정의 시트</button>
+      <button data-v="quiz"><i data-lucide="puzzle"></i>퀴즈</button>
     </div>
     <span class="count" id="count" aria-live="polite"></span>
   </div>
@@ -31,16 +36,16 @@
 <div id="content"></div>
 
 <div id="emptyState" class="empty-state hidden">
-  <p class="es-icon">🔍</p>
+  <p class="es-icon"><i data-lucide="search-x"></i></p>
   <p class="es-msg">검색·필터에 맞는 토픽이 없습니다.</p>
   <button type="button" class="es-reset" data-reset="1">필터 초기화</button>
 </div>
 
 <div id="graph" class="hidden">
   <div class="graph-tools">
-    <button onclick="GSGraph.expandAll()">전체 펼치기</button>
-    <button onclick="GSGraph.collapseAll()">전체 접기</button>
-    <button onclick="GSGraph.fit()">화면 맞춤</button>
+    <button onclick="GSGraph.expandAll()"><i data-lucide="chevrons-up-down"></i>전체 펼치기</button>
+    <button onclick="GSGraph.collapseAll()"><i data-lucide="chevrons-down-up"></i>전체 접기</button>
+    <button onclick="GSGraph.fit()"><i data-lucide="scan"></i>화면 맞춤</button>
     <span class="tool-hint">노드 클릭 — 단원: 토픽 펼치기/접기 · 토픽: 카드로 이동 · 휠 확대 · 드래그 이동</span>
   </div>
   <div id="graphCanvas"></div>
@@ -49,7 +54,13 @@
 <div id="sheet" class="hidden">
   <div class="sheet-tools">
     <label><input type="checkbox" id="maskDef" /> 정의 가리기 — 행 클릭해 확인(암기 모드)</label>
-    <span class="tool-hint">전 토픽 정의문 모음 · 상단 검색·과목/단원 필터 적용</span>
+    <label><input type="checkbox" id="diagOrig" /> 구성도 원래대로</label>
+    <label><input type="checkbox" id="tblOrig" /> 구성요소표 원래대로</label>
+    <span class="sheet-export">
+      <button type="button" id="exportCsv" class="exp-btn" title="현재 필터된 정의 시트를 CSV로 다운로드"><i data-lucide="file-text"></i>CSV</button>
+      <button type="button" id="exportXlsx" class="exp-btn" title="현재 필터된 정의 시트를 Excel(xlsx)로 다운로드"><i data-lucide="file-spreadsheet"></i>Excel</button>
+    </span>
+    <span class="tool-hint">전 토픽 정의문 모음 · 상단 검색·과목/단원 필터 적용 · 내보내기는 현재 표시분 기준</span>
   </div>
   <div id="sheetBody"></div>
 </div>
@@ -64,7 +75,7 @@
 <div id="cardModal" class="cmodal hidden" role="dialog" aria-modal="true" aria-label="카드 확대 보기" aria-hidden="true">
   <div class="cmodal-bg" data-close="1"></div>
   <div class="cmodal-box">
-    <button class="cmodal-x" data-close="1" title="닫기 (Esc)">✕</button>
+    <button class="cmodal-x" data-close="1" title="닫기 (Esc)"><i data-lucide="x"></i></button>
     <div class="cmodal-body"></div>
   </div>
 </div>
