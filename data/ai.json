@@ -441,7 +441,7 @@
       "category": "algo",
       "title": "군집화",
       "tag": "학습 알고리즘·모델",
-      "keyword": "K-Means·DBSCAN",
+      "keyword": "비지도 군집",
       "keywords": "군집화 clustering kmeans dbscan 비지도 거리 밀도 군집수 노이즈",
       "diagram": "K-Means: 중심 k개 반복 갱신(거리)\nDBSCAN: 밀도(ε·MinPts) 기반\n → 노이즈·임의형태 군집",
       "diagramNote": "※ K-Means=k 지정, DBSCAN=k 불필요",
@@ -991,7 +991,7 @@
       "category": "gen",
       "title": "생성 모델",
       "tag": "생성형 AI·LLM",
-      "keyword": "GAN·VAE·Diffusion",
+      "keyword": "GAN·VAE·확산",
       "keywords": "생성 모델 generative gan vae diffusion 확산 잠재공간 적대적 인코더 디코더",
       "diagram": "GAN: 생성자↔판별자 적대 학습\nVAE: 잠재공간 인코딩·복원\nDiffusion: 노이즈→점진 복원",
       "diagramNote": "※ Diffusion이 이미지 SOTA",
@@ -2218,7 +2218,7 @@
       "compare": true,
       "title": "T-test / ANOVA",
       "tag": "평균차 검정",
-      "keyword": "T-test ↔ ANOVA",
+      "keyword": "2집단 ↔ 다집단",
       "keywords": "t-test anova 평균 검정 f검정 분산분석 비교",
       "defTable": {
         "head": [
@@ -2406,7 +2406,7 @@
       "compare": true,
       "title": "점추정 / 구간추정",
       "tag": "모수 추정 방식",
-      "keyword": "점추정 ↔ 구간추정",
+      "keyword": "단일값 ↔ 신뢰구간",
       "keywords": "점추정(Point) ↔ 구간추정(Interval), 신뢰수준·신뢰구간 비교",
       "defTable": {
         "head": [
@@ -2500,7 +2500,7 @@
       "compare": true,
       "title": "베르누이 / 기하 분포",
       "tag": "이산확률분포",
-      "keyword": "베르누이 ↔ 기하",
+      "keyword": "성공여부 ↔ 첫성공",
       "keywords": "베르누이(Bernoulli) ↔ 기하(Geometric) 분포, 성공확률 p 비교",
       "defTable": {
         "head": [
@@ -2594,7 +2594,7 @@
       "compare": true,
       "title": "다중회귀 / 로지스틱회귀",
       "tag": "회귀 분석 기법",
-      "keyword": "다중회귀 ↔ 로지스틱",
+      "keyword": "연속 ↔ 범주 예측",
       "keywords": "다중회귀(Multiple) ↔ 로지스틱(Logistic), 최소제곱·로짓·시그모이드 비교",
       "defTable": {
         "head": [
@@ -2688,7 +2688,7 @@
       "compare": true,
       "title": "PCA / LDA",
       "tag": "차원 축소 기법",
-      "keyword": "PCA ↔ LDA",
+      "keyword": "비지도 ↔ 지도 축",
       "keywords": "주성분분석 PCA ↔ 선형판별분석 LDA, 비지도·지도 차원축소 비교",
       "defTable": {
         "head": [
@@ -2782,7 +2782,7 @@
       "compare": true,
       "title": "지니지수 / 엔트로피",
       "tag": "불순도 척도",
-      "keyword": "지니지수 ↔ 엔트로피",
+      "keyword": "불순도 척도",
       "keywords": "지니지수(Gini) ↔ 엔트로피(Entropy), 의사결정나무 불순도 척도 비교",
       "defTable": {
         "head": [

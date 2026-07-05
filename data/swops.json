@@ -546,7 +546,7 @@
       "category": "ops",
       "title": "쿠버네티스 (Kubernetes)",
       "tag": "DevOps",
-      "keyword": "컨테이너 오케스트레이션",
+      "keyword": "컨테이너 관리",
       "keywords": "쿠버네티스 kubernetes k8s 컨테이너 오케스트레이션 pod hpa 자가치유 선언적 배포",
       "def": "컨테이너화된 애플리케이션의 배포·확장·운영을 자동화하는 오케스트레이션 플랫폼.",
       "diagram": "[Master: API·Scheduler] → [Worker Node]\n Pod·ReplicaSet·Service\n 자동 스케일(HPA)·자가치유",
