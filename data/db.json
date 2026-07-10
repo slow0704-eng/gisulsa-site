@@ -1216,7 +1216,7 @@
       "title": "Isolation Level",
       "tag": "트랜잭션·무결성",
       "keyword": "격리 4단계",
-      "keywords": "isolation level 격리수준 read uncommitted committed repeatable read serializable",
+      "keywords": "isolation level 격리수준 read uncommitted committed repeatable read serializable dirty read non-repeatable phantom MVCC lock snapshot 동시성 일관성",
       "def": "트랜잭션 간 격리 정도를 4단계로 규정하여 동시성과 일관성을 trade-off하는 표준 수준.",
       "diagram": "Read Uncommitted → Read Committed\n → Repeatable Read → Serializable\n 동시성↑·일관성↓ → 일관성↑·동시성↓",
       "diagramNote": "※ 단계별 허용 이상현상 차등",
@@ -2362,27 +2362,27 @@
           [
             "기준",
             "정확·완전",
-            "값·누락"
+            "값 오류·누락"
           ],
           [
             "기준",
             "일관·유일",
-            "정합·중복"
+            "정합·중복 방지"
           ],
           [
             "진단",
             "프로파일링",
-            "값 분석"
+            "값 분포·패턴 분석"
           ],
           [
             "개선",
             "정제·표준화",
-            "오류 교정"
+            "오류값 교정"
           ],
           [
             "표준",
             "ISO 8000",
-            "품질 국제표준"
+            "데이터 품질 표준"
           ],
           [
             "인증",
@@ -2412,32 +2412,32 @@
           [
             "생명주기",
             "단계별 활동",
-            "구축~활용 관리"
+            "수집~폐기 관리"
           ],
           [
             "진단",
             "품질 측정",
-            "지표 기반 진단"
+            "정량 지표 측정"
           ],
           [
             "개선",
-            "원인·정제",
-            "오류 개선"
+            "원인분석·정제",
+            "오류값 교정"
           ],
           [
             "평가",
             "평가등급",
-            "수준평가 등급"
+            "인증 등급 부여"
           ],
           [
             "평가",
             "평가지표",
-            "정확·완전 등"
+            "정확·완전·유효"
           ],
           [
             "표준",
             "표준화 지침",
-            "테이블 정의서"
+            "테이블정의서 준수"
           ]
         ]
       },

@@ -2880,7 +2880,7 @@
       "title": "투자평가",
       "tag": "기획·전략",
       "keyword": "타당성",
-      "keywords": "투자평가 타당성 roi tco it투자 npv payback 정량 정성 evaluation",
+      "keywords": "투자평가 타당성 ROI TCO NPV payback IT투자 비용편익 정량 정성 사전평가 사후평가 investment evaluation",
       "def": "IT 투자의 목표달성 기여도를 정량·정성 지표로 측정해 타당성을 평가하는 활동",
       "diagram": "[투자목표] → [지표설계]\n  → [측정·분석] → [타당성판정]\n  → [의사결정] → [사후관리]\n지표유형: [정량지표: ROI·NPV]\n    · [정성지표: 전략기여]",
       "diagramNote": "※ 정량·정성 지표를 병행해 타당성을 종합 판정",
@@ -2923,14 +2923,14 @@
           ]
         ]
       },
-      "note": "※ 재무지표와 전략지표 균형으로 투자 왜곡 방지"
+      "note": "※ ISP 이행계획·EA 투자연계의 판단 근거. ROI·NPV·TCO 정량과 전략기여 정성을 균형해 투자 왜곡 방지."
     },
     {
       "category": "plan",
       "title": "IT-BSC",
       "tag": "성과평가",
       "keyword": "성과지표",
-      "keywords": "it-bsc bsc balanced scorecard 성과지표 kpi 관점 it투자성과 재무 사용자",
+      "keywords": "IT-BSC BSC balanced scorecard 성과지표 KPI 관점 Kaplan Norton 전략맵 기업기여 사용자지향 운영우수성 미래지향",
       "def": "기존 BSC 4관점을 IT 특성에 맞게 개선해 IT 투자성과를 측정하는 평가 기법",
       "diagram": "4대 관점: [기업기여] · [사용자지향]\n        · [운영우수] · [미래지향]\n[전략목표]\n   ↓ 관점별 KPI 설정\n[성과측정]\n   ↺ 피드백·개선 → 전략 반영",
       "diagramNote": "※ 4관점 KPI를 인과관계로 연계해 IT성과 측정",
@@ -2973,14 +2973,14 @@
           ]
         ]
       },
-      "note": "※ 무형 IT가치를 4관점으로 균형 측정"
+      "note": "※ Kaplan·Norton BSC를 IT로 변형. 4관점 인과(전략맵)로 무형 IT가치를 균형 측정, KPI 연계."
     },
     {
       "category": "plan",
       "title": "운영성과",
       "tag": "운영평가",
       "keyword": "유지판단",
-      "keywords": "운영성과 유지판단 정보시스템 유지 폐기 비용 업무 평가 operation lifecycle",
+      "keywords": "운영성과 유지판단 정보시스템 유지 폐기 재개발 비용 업무 포트폴리오 재평가 operation lifecycle",
       "def": "정보시스템 운영타당성을 비용·업무 측면으로 측정해 유지·폐기 유형을 결정하는 활동",
       "diagram": "[운영현황]\n  → 측정: [비용측정] · [업무기여측정]\n  → [매트릭스평가]\n  → [유지 / 개선 / 폐기 판정]\n  → [재투자·전환 계획]",
       "diagramNote": "※ 비용·업무 2축 매트릭스로 유지·폐기 유형 결정",
@@ -3023,14 +3023,14 @@
           ]
         ]
       },
-      "note": "※ 정기 재평가로 노후 시스템 정리 근거 확보"
+      "note": "※ 운영비용·업무기여 2축 포트폴리오로 유지·폐기·재개발 판정. 정기 재평가로 노후 시스템 정리 근거 확보."
     },
     {
       "category": "plan",
       "title": "SWOT",
       "tag": "전략진단",
       "keyword": "강약분석",
-      "keywords": "swot 강약분석 강점 약점 기회 위협 전략 so st wo wt 경영진단 strength",
+      "keywords": "SWOT TOWS 강약분석 강점 약점 기회 위협 전략 SO ST WO WT 경영진단 strength weakness opportunity threat",
       "def": "내부 강점·약점과 외부 기회·위협을 교차 분석해 전략을 도출하는 경영 진단 도구",
       "diagram": "내부요인: 강점(S) · 약점(W)\n외부요인: 기회(O) · 위협(T)\n        ↓ 내부×외부 교차\nSO · ST · WO · WT → 4대 전략 도출",
       "diagramNote": "※ 내부·외부 요인 교차로 4대 전략 유형 도출",
@@ -3073,7 +3073,7 @@
           ]
         ]
       },
-      "note": "※ 교차분석으로 실행가능 전략 대안 구체화",
+      "note": "※ 내외부 교차로 SO·ST·WO·WT 4전략 도출. TOWS 매트릭스·경영환경분석·전략수립과 연계.",
       "cloze": "내부 {강점}·{약점}과 외부 {기회}·{위협}을 교차 분석해 전략을 도출하는 경영 진단 도구"
     },
     {
@@ -3081,7 +3081,7 @@
       "title": "MECE",
       "tag": "논리사고",
       "keyword": "상호배타",
-      "keywords": "mece 상호배타 전체포괄 중복없이 누락없이 로직트리 분류 컨설팅 logictree",
+      "keywords": "MECE 상호배타 전체포괄 중복없이 누락없이 로직트리 이슈트리 문제구조화 분류 컨설팅 logictree",
       "def": "항목을 상호 중복 없이·전체 누락 없이 분류하는 논리적 사고 및 분석 원칙",
       "diagram": "[전체집합] → [분류기준 설정]\n  → [하위항목 분할]\n검증: 중복검증(ME) · 누락검증(CE)\n  → [로직트리 완성]",
       "diagramNote": "※ 중복·누락 없는 분할로 논리 완전성 확보",
@@ -3124,14 +3124,14 @@
           ]
         ]
       },
-      "note": "※ 문제구조화·가설수립의 논리 기반 제공"
+      "note": "※ 로직트리·이슈트리 기반 문제구조화 원칙. 중복(배타)·누락(포괄) 없는 분류로 논리 완전성 확보."
     },
     {
       "category": "plan",
       "title": "경영환경분석",
       "tag": "환경진단",
       "keyword": "내외부진단",
-      "keywords": "경영환경분석 내외부진단 pest 5forces swot 거시 미시 환경 전략 environment",
+      "keywords": "경영환경분석 내외부진단 PEST 5Forces SWOT 7S 거시 미시 내부 환경 전략 ISP environment analysis",
       "def": "기업의 내·외부 환경 요인을 종합 분석해 전략 방향을 도출하는 경영 진단 활동",
       "diagram": "[거시환경(PEST)]\n  → [산업환경(5Forces)] → [내부역량]\n[외부요인] · [내부요인]\n  → [SWOT 종합] → [전략방향 도출]",
       "diagramNote": "※ 거시·산업·내부를 계층 분석해 전략 정렬",
@@ -3174,14 +3174,14 @@
           ]
         ]
       },
-      "note": "※ 거시·미시·내부 다층 분석으로 전략 정합성 확보"
+      "note": "※ 거시(PEST)·산업(5Forces)·내부(자원) 다층 진단→SWOT 통합. ISP 환경분석 단계의 기반."
     },
     {
       "category": "plan",
       "title": "Lean UX",
       "tag": "UX방법론",
       "keyword": "반복검증",
-      "keywords": "lean ux 반복검증 mvp build measure learn 가설 사용자가치 애자일 iteration",
+      "keywords": "Lean UX 반복검증 MVP build measure learn 가설 피벗 pivot 린스타트업 leanstartup 애자일 iteration",
       "def": "MVP를 만들어 측정·학습(Build-Measure-Learn)을 반복하는 사용자 가치 검증 UX 방법론.",
       "diagram": "[가설수립] → [Build(MVP)]\n  → [Measure(측정)] → [Learn(학습)]\n  ↺ Learn → 가설수립 재순환\n[검증완료] → [제품 개선]",
       "diagramNote": "※ Build-Measure-Learn 루프로 가치 반복 검증",
@@ -3224,14 +3224,14 @@
           ]
         ]
       },
-      "note": "※ 낭비 최소화·가설검증으로 사용자 가치 극대화"
+      "note": "※ Ries 린스타트업 기반. Build-Measure-Learn 루프·MVP로 낭비 최소화, 애자일·디자인씽킹 연계."
     },
     {
       "category": "plan",
       "title": "그로스해킹",
       "tag": "성장전략",
       "keyword": "데이터성장",
-      "keywords": "그로스해킹 growth hacking 데이터성장 aarrr 실험 abtest 퍼널 마케팅 kpi",
+      "keywords": "그로스해킹 growth hacking 데이터성장 AARRR 해적지표 A/B테스트 퍼널 CAC LTV 리텐션 마케팅 KPI",
       "def": "데이터와 실험을 기반으로 저비용·고속 성장을 추구하는 데이터 주도 마케팅 기법",
       "diagram": "[데이터수집] → [가설수립]\n  → [실험(A/B)] → [분석]\n  ↺ 분석 → 가설수립 반복 개선\n기반: [AARRR 퍼널]\n    · [핵심지표 최적화]",
       "diagramNote": "※ AARRR 퍼널 단계별 실험으로 성장 견인",
@@ -3274,14 +3274,14 @@
           ]
         ]
       },
-      "note": "※ 데이터 기반 실험으로 저비용 고속 성장 실현"
+      "note": "※ AARRR 해적지표·A/B 실험 기반 데이터 주도 성장. 퍼널 분석·CAC·LTV·리텐션 연계."
     },
     {
       "category": "plan",
       "title": "레그테크",
       "tag": "규제기술",
       "keyword": "규제기술",
-      "keywords": "레그테크 regtech 규제기술 컴플라이언스 리스크 자동화 kyc aml 준수 fintech",
+      "keywords": "레그테크 RegTech 규제기술 컴플라이언스 리스크 자동화 KYC AML 규제보고 SupTech 섭테크 fintech",
       "def": "IT를 활용해 규제 준수와 리스크 관리를 자동화·효율화하는 규제 대응 기술",
       "diagram": "[규제요건] → [데이터수집]\n→ [자동모니터링] → [리스크탐지]\n   ↓ 위반 리스크\n[보고·대응]\n   ↺ 규제변화 → 규정 업데이트",
       "diagramNote": "※ 규제 준수 절차를 자동화해 대응비용 절감",
@@ -3324,14 +3324,14 @@
           ]
         ]
       },
-      "note": "※ AI·빅데이터로 컴플라이언스 효율·정확성 향상"
+      "note": "※ AI·빅데이터로 컴플라이언스 자동화. KYC·AML·규제보고 효율화, 섭테크(SupTech)와 대응 구조."
     },
     {
       "category": "plan",
       "title": "디지털세",
       "tag": "조세·정책",
       "keyword": "최저한세",
-      "keywords": "디지털세 digital tax 최저한세 pillar oecd befs 과세권 글로벌 15% pillar1 pillar2",
+      "keywords": "디지털세 digital tax 최저한세 pillar1 pillar2 OECD BEPS 과세권 글로벌최저한세 15% 구글세 IF",
       "def": "매출발생국 과세권 배분(Pillar1)과 글로벌 최저한세 15%(Pillar2)로 구성된 디지털 경제 조세체계.",
       "diagram": "[디지털 경제]\n   ↓ 2대 축\n[Pillar1 과세권배분]\n→ [시장소재국 과세]\n[Pillar2 최저한세]\n→ [최저세율 15% 적용]",
       "diagramNote": "※ 두 기둥 체계로 세원잠식·소득이전 대응",
@@ -3374,14 +3374,14 @@
           ]
         ]
       },
-      "note": "※ 디지털 무형자산 이익의 국제 과세형평 확보"
+      "note": "※ BEPS(세원잠식·소득이전) 대응 두 기둥 체계. 디지털 무형자산 이익의 국제 과세형평·글로벌 최저한세 15%."
     },
     {
       "category": "plan",
       "title": "리쇼어링",
       "tag": "글로벌전략",
       "keyword": "생산복귀",
-      "keywords": "리쇼어링 reshoring 생산복귀 오프쇼어링 공급망 국내회귀 니어쇼어링 supplychain",
+      "keywords": "리쇼어링 reshoring 생산복귀 오프쇼어링 offshoring 니어쇼어링 프렌드쇼어링 friendshoring 공급망 국내회귀 supplychain",
       "def": "비용·리스크 문제로 해외 생산기지를 자국으로 다시 이전하는 생산 복귀 경영 전략",
       "diagram": "[해외생산(오프쇼어)]\n   ↓ 비용·리스크 증가\n[재입지 검토]\n→ [자국 복귀(리쇼어링)]\n촉진: [정부지원]·[공급망 안정화]",
       "diagramNote": "※ 공급망 리스크·비용 변화로 생산 국내 회귀",
@@ -3424,14 +3424,14 @@
           ]
         ]
       },
-      "note": "※ 스마트팩토리·자동화로 국내 생산성 보완"
+      "note": "※ 공급망 리스크·지정학 불확실성으로 생산 국내 회귀. 오프쇼어링 반대, 니어·프렌드쇼어링·스마트팩토리 연계."
     },
     {
       "category": "plan",
       "title": "가치사슬모델",
       "tag": "전략분석",
       "keyword": "부가가치",
-      "keywords": "가치사슬모델 value chain 부가가치 주활동 지원활동 포터 마진 경쟁우위 porter",
+      "keywords": "가치사슬모델 value chain 부가가치 주활동 지원활동 마진 경쟁우위 본원적전략 포터 Porter 원가 차별화",
       "def": "Porter가 기업활동을 주활동·지원활동으로 구분해 부가가치 창출 원천을 분석하는 전략 모델.",
       "diagram": "[지원활동:인프라·인사·기술·조달]\n   ↓ 하부 지원\n[주활동] 물류입고 → 운영\n→ 물류출고 → 마케팅 → 서비스\n   ↓ 부가가치 창출\n[마진]",
       "diagramNote": "※ 주활동·지원활동 연계로 부가가치 원천 규명",
@@ -3474,14 +3474,14 @@
           ]
         ]
       },
-      "note": "※ 활동별 원가·차별화 분석으로 경쟁우위 도출"
+      "note": "※ 주활동·지원활동별 원가·차별화 분석으로 경쟁우위 도출. 5Forces·본원적 전략과 연계(Porter)."
     },
     {
       "category": "plan",
       "title": "ESG",
       "tag": "지속가능",
       "keyword": "지속가능",
-      "keywords": "esg 지속가능 환경 사회 지배구조 비재무 environmental social governance 공시",
+      "keywords": "ESG 지속가능 환경 사회 지배구조 비재무 environmental social governance TCFD GRI 공시 탄소중립",
       "def": "환경·사회·지배구조 관점에서 기업의 비재무적 가치와 지속가능성을 평가하는 체계",
       "diagram": "3대 요소: [환경E]·[사회S]·[지배구조G]\n   ↓ 비재무 성과측정\n[평가·등급]\n→ [공시·투자 연계]",
       "diagramNote": "※ 환경·사회·지배구조 3축으로 지속가능성 평가",
@@ -3515,7 +3515,7 @@
           [
             "공시",
             "지속가능보고",
-            "이해관계자 정보제공"
+            "TCFD·GRI 공시기준"
           ],
           [
             "연계",
@@ -3524,14 +3524,14 @@
           ]
         ]
       },
-      "note": "※ 비재무 가치로 장기 지속가능성·신뢰 제고"
+      "note": "※ 비재무 E·S·G 가치로 지속가능성 평가. TCFD·GRI 공시·책임투자(SRI)·탄소중립 연계."
     },
     {
       "category": "plan",
       "title": "PEST",
       "tag": "환경진단",
       "keyword": "거시환경",
-      "keywords": "pest 거시환경 정치 경제 사회 기술 외부환경 politics economy society technology 환경분석 pestel",
+      "keywords": "PEST PESTEL 거시환경 정치 경제 사회 기술 환경 법 외부환경 politics economy society technology 환경분석",
       "def": "정치·경제·사회·기술 4대 거시환경 요인을 분석하는 외부환경 진단 기법",
       "diagram": "[정치P]→[경제E]\n[사회S]→[기술T]\n[4대요인]→[외부환경 진단]",
       "diagramNote": "※ 4대 거시환경 요인 종합 진단",
@@ -3574,7 +3574,7 @@
           ]
         ]
       },
-      "note": "※ 통제불가 외부환경 기회·위협 진단",
+      "note": "※ 통제불가 거시환경의 기회·위협 진단. 확장형 PESTEL(환경·법)·5Forces·SWOT와 연계.",
       "cloze": "{정치}·{경제}·{사회}·{기술} 4대 거시환경 요인을 분석하는 외부환경 진단 기법"
     },
     {
@@ -3582,7 +3582,7 @@
       "title": "3C",
       "tag": "시장분석",
       "keyword": "시장진단",
-      "keywords": "3c 시장진단 자사 경쟁사 고객 company competitor customer 경영분석 시장분석 전략진단 오마에",
+      "keywords": "3C 시장진단 자사 경쟁사 고객 company competitor customer KSF 핵심성공요인 경영분석 오마에",
       "def": "자사·경쟁사·고객 3대 축을 분석해 시장과 전략을 진단하는 경영 분석 기법",
       "diagram": "3C 분석\n[고객 Customer]\n[경쟁사 Competitor]\n[자사 Company]\n   ↓ 시장 분석·전략 진단\n[3C 종합 진단]",
       "diagramNote": "※ 3대 축 교차로 시장전략 도출",
@@ -3625,7 +3625,7 @@
           ]
         ]
       },
-      "note": "※ 3C 종합으로 KSF 도출·전략 수립",
+      "note": "※ 자사·경쟁사·고객 종합으로 KSF 도출(오마에 겐이치). 4C·SWOT·STP와 연계.",
       "cloze": "{자사}·{경쟁사}·{고객} 3대 축을 분석해 시장과 전략을 진단하는 경영 분석 기법"
     },
     {
@@ -3633,7 +3633,7 @@
       "title": "IT생산성 패러독스와 IT-BSC",
       "tag": "성과평가",
       "keyword": "패러독스",
-      "keywords": "it생산성 패러독스 itbsc bsc paradox 성과평가 투자대비 균형성과 kpi solow 재무 학습성장",
+      "keywords": "IT생산성 패러독스 IT-BSC BSC Solow paradox 성과평가 투자대비 균형성과 KPI 재무 고객 내부프로세스 학습성장",
       "def": "IT 투자 대비 생산성 정체 현상과 이를 극복하는 IT-BSC 성과평가 기법",
       "diagram": "[IT투자]→[생산성 정체]\n[패러독스]→[IT-BSC 측정]\n[4관점]→[성과 극복]",
       "diagramNote": "※ 패러독스 극복 위한 4관점 성과평가",
@@ -3676,14 +3676,14 @@
           ]
         ]
       },
-      "note": "※ 4관점 균형측정 IT가치 가시화"
+      "note": "※ Solow 생산성 패러독스(투자 대비 정체) 극복. IT-BSC 4관점 균형측정으로 무형 IT가치 가시화."
     },
     {
       "category": "plan",
       "title": "PI(Process Innovation)",
       "tag": "프로세스",
       "keyword": "프로세스혁신",
-      "keywords": "pi 프로세스혁신 process innovation bpr 재설계 업무혁신 리엔지니어링 근본재설계 it혁신 성과향상",
+      "keywords": "PI 프로세스혁신 process innovation BPR 재설계 업무혁신 리엔지니어링 ERP BPM 변화관리 근본재설계 성과향상",
       "def": "IT를 활용해 업무 프로세스를 근본적으로 재설계·혁신하는 경영 기법",
       "diagram": "[현행 프로세스]→[분석]\n[근본 재설계]→[IT 적용]\n[혁신]→[성과 향상]",
       "diagramNote": "※ IT 기반 프로세스 근본 재설계",
@@ -3726,14 +3726,14 @@
           ]
         ]
       },
-      "note": "※ 급진적 재설계로 획기적 성과 창출"
+      "note": "※ IT 인에이블러로 프로세스 급진 재설계. BPR과 동일 계열, ERP·BPM·변화관리 수반."
     },
     {
       "category": "plan",
       "title": "STP",
       "tag": "마케팅",
       "keyword": "시장세분화",
-      "keywords": "stp 시장세분화 표적화 포지셔닝 segmentation targeting positioning 마케팅 타겟팅 세그먼트 전략",
+      "keywords": "STP 시장세분화 표적화 포지셔닝 segmentation targeting positioning 세분변수 매력도 마케팅믹스 4P 전략",
       "def": "시장을 세분화(S)·표적화(T)하고 포지셔닝(P)하는 3단계 마케팅 전략 기법.",
       "diagram": "[세분화S]→[표적화T]\n[표적화T]→[포지셔닝P]\n[STP]→[마케팅 전략]",
       "diagramNote": "※ 3단계 순차로 표적시장 전략 수립",
@@ -3776,14 +3776,14 @@
           ]
         ]
       },
-      "note": "※ 세분·표적·위치로 차별화 전략 수립"
+      "note": "※ 세분화·표적화·포지셔닝 순차 수행. 세분변수·시장매력도 평가 후 4P(마케팅믹스) 연계."
     },
     {
       "category": "plan",
       "title": "Funnel Analysis",
       "tag": "전환분석",
       "keyword": "단계전환",
-      "keywords": "funnel 퍼널 단계전환 이탈률 전환율 conversion 유입 acquisition 전환분석 사용자여정 드롭오프 aarrr",
+      "keywords": "funnel 퍼널 단계전환 이탈률 전환율 conversion 유입 acquisition 코호트 dropoff AARRR 사용자여정",
       "def": "사용자가 목표까지 이르는 단계별 이탈·전환율을 분석하는 퍼널 분석 기법",
       "diagram": "[유입]→[탐색]→[전환]\n[각 단계]→[이탈률 측정]\n[병목]→[전환율 개선]",
       "diagramNote": "※ 단계별 이탈 측정으로 병목 식별",
@@ -3826,7 +3826,7 @@
           ]
         ]
       },
-      "note": "※ 단계별 전환·이탈로 병목구간 개선"
+      "note": "※ 단계별 전환율·이탈률로 병목 식별·UX 개선. AARRR 퍼널·코호트·A/B 테스트 연계."
     },
     {
       "category": "plan",
@@ -3983,7 +3983,7 @@
       "title": "RE100",
       "tag": "재생E",
       "keyword": "재생전력",
-      "keywords": "re100 재생전력 재생에너지 renewable 100 탄소중립 caribbean 자발적 캠페인 esg 녹색전력 rec 클라이밋",
+      "keywords": "re100 재생전력 재생에너지 renewable energy 탄소중립 넷제로 netzero 자발적 캠페인 이니셔티브 esg ppa rec 녹색프리미엄",
       "def": "기업 사용 전력의 100%를 재생에너지로 조달하려는 자발적 글로벌 캠페인",
       "diagram": "[기업 전력사용]→[재생에너지 조달]\n[100% 목표]→[이행수단]\n[REC·PPA]→[재생전력 인증]",
       "diagramNote": "※ 전력 100% 재생에너지 자발 전환",
@@ -5133,7 +5133,7 @@
       "title": "ISO 20000",
       "tag": "서비스표준",
       "keyword": "서비스표준",
-      "keywords": "iso 20000 서비스표준 itsm pdca smsystem 인증",
+      "keywords": "iso 20000 서비스표준 itsm sms 서비스관리시스템 pdca sla itil 인증 심사 국제표준 서비스제공",
       "def": "ITSM의 프로세스와 요구사항을 PDCA 기반으로 규정한 IT서비스관리 국제표준",
       "diagram": "[Plan] → [Do] → [Check] → [Act]\n[서비스관리시스템 SMS]\n   ↓ 포함\n[프로세스군]\n[인증심사] → [지속개선]",
       "diagramNote": "※ PDCA 순환으로 SMS 운영, 프로세스군 통합 관리",
@@ -5183,7 +5183,7 @@
       "title": "ITIL",
       "tag": "모범사례",
       "keyword": "모범사례",
-      "keywords": "itil 모범사례 서비스생애주기 서비스가치사슬 프레임워크 v4",
+      "keywords": "itil 모범사례 best practice 서비스생애주기 서비스가치사슬 서비스가치시스템 svs svc v3 v4 csi itsm iso20000 4대차원",
       "def": "IT서비스 관리의 프로세스 모범사례를 생애주기 기반으로 집대성한 프레임워크",
       "diagram": "[전략] → [설계] → [전환]\n→ [운영] → [지속개선]\n[서비스가치사슬 SVC]·[관행 34종]\n   ↓ 가치 공동창출",
       "diagramNote": "※ v3 5단계 생애주기, v4 서비스가치시스템 SVS로 진화",
@@ -5233,7 +5233,7 @@
       "title": "인시던트관리",
       "tag": "신속복구",
       "keyword": "신속복구",
-      "keywords": "인시던트관리 incident 신속복구 sla 에스컬레이션 서비스데스크",
+      "keywords": "인시던트관리 incident management 신속복구 sla 에스컬레이션 서비스데스크 우선순위 영향도 긴급도 워크어라운드 문제관리 장애",
       "def": "서비스 중단을 신속히 탐지·복구해 정상 운영으로 되돌리는 ITSM 핵심 프로세스",
       "diagram": "[탐지·접수] → [분류·우선순위] → [진단]\n[해결·복구] → [종료]\n[에스컬레이션] · [SLA 준수]",
       "diagramNote": "※ 서비스데스크 접수, 우선순위=영향도×긴급도 산정",
@@ -5283,7 +5283,7 @@
       "title": "서비스포트폴리오",
       "tag": "생애주기",
       "keyword": "생애주기",
-      "keywords": "서비스포트폴리오 portfolio 생애주기 서비스파이프라인 서비스카탈로그 폐기",
+      "keywords": "서비스포트폴리오 service portfolio 생애주기 서비스파이프라인 서비스카탈로그 폐기서비스 투자관리 가치평가 itil 자산목록",
       "def": "계획부터 운영·폐기까지 IT서비스 전체를 생애주기로 관리하는 서비스 목록 체계",
       "diagram": "[서비스 파이프라인]\n→ [서비스 카탈로그]\n→ [폐기 서비스]\n   ↓ 생애주기 관리\n[투자 평가]·[가치 분석]",
       "diagramNote": "※ 파이프라인(기획)·카탈로그(운영)·폐기 3영역 구성",
@@ -5526,7 +5526,7 @@
           ]
         ]
       },
-      "note": "※ 미래 서비스 투자·출시 준비 관점 관리"
+      "note": "※ 출시 시 카탈로그로 이관, 포트폴리오 내부 미공개 영역"
     },
     {
       "category": "itsm",
@@ -5583,7 +5583,7 @@
       "title": "OLA",
       "tag": "내부협약",
       "keyword": "내부협약",
-      "keywords": "ola 내부협약 운영수준 부서간 지원 sla 백업 내부 합의 itil 협약",
+      "keywords": "ola 내부협약 운영수준협약 operational level agreement 부서간지원 sla uc 언더피닝계약 itil 내부합의",
       "def": "IT서비스 제공을 위해 내부 부서 간 지원 수준을 합의한 운영수준 협약",
       "diagram": "[고객SLA] → [서비스제공]\n[내부부서] → [OLA 합의]\n[지원수준] → [SLA 보증]",
       "diagramNote": "※ 내부 부서 지원 수준 합의로 SLA 뒷받침",
@@ -5683,7 +5683,7 @@
       "title": "LDW",
       "tag": "논리DW",
       "keyword": "논리통합",
-      "keywords": "ldw logical data warehouse 데이터가상화 논리통합",
+      "keywords": "ldw logical data warehouse 논리데이터웨어하우스 데이터가상화 논리통합 통합뷰 메타데이터 물리dw 하이브리드 셀프서비스",
       "def": "물리적 이동 없이 분산된 데이터를 가상화로 논리 통합하는 데이터웨어하우스 구조",
       "diagram": "[분산 원천]\n→ [데이터 가상화 계층]\n→ [논리 통합뷰] → [분석 도구]\n   ↑ 물리 DW·스트리밍 통합\n[가상화 계층]\n→ [메타데이터 카탈로그]",
       "diagramNote": "※ 물리 DW와 가상화 계층을 병행하는 하이브리드 통합",
@@ -5733,7 +5733,7 @@
       "title": "DW 모델링",
       "tag": "다차원설계",
       "keyword": "다차원",
-      "keywords": "dw modeling 스타스키마 스노우플레이크 팩트 차원 다차원",
+      "keywords": "dw modeling 데이터모델링 스타스키마 스노우플레이크 팩트테이블 차원테이블 다차원 olap 큐브 그레인 갤럭시스키마",
       "def": "사실·차원 테이블을 스타·스노우플레이크 스키마로 다차원 구조화하는 데이터웨어하우스 설계 기법.",
       "diagram": "[차원1]↘\n[차원2]→[사실 테이블]←[차원3]\n[차원4]↗\n[사실 테이블]→[OLAP 큐브]",
       "diagramNote": "※ 사실을 중심에 두고 차원이 방사하는 스타 스키마",
@@ -5783,7 +5783,7 @@
       "title": "OLAP",
       "tag": "분석처리",
       "keyword": "다차원분석",
-      "keywords": "olap 큐브 롤업 드릴다운 슬라이스 다차원분석 온라인분석처리",
+      "keywords": "olap 큐브 롤업 드릴다운 슬라이스앤다이스 피벗 다차원분석 온라인분석처리 molap rolap holap 사전집계",
       "def": "큐브 기반으로 다차원 데이터를 다양한 각도에서 조회·집계·분석하는 온라인 분석처리",
       "diagram": "[DW 데이터] → [OLAP 큐브]\n→ [다차원 조회] → [리포트]\n[큐브] → [롤업/드릴다운]\n[큐브] → [슬라이스/다이스]",
       "diagramNote": "※ 큐브를 회전·절단하며 다각도 분석 수행",
@@ -5833,7 +5833,7 @@
       "title": "OLTP",
       "tag": "거래처리",
       "keyword": "거래처리",
-      "keywords": "oltp 트랜잭션 acid 정규화 실시간 온라인거래처리",
+      "keywords": "oltp 트랜잭션 acid 정규화 실시간 온라인거래처리 동시성제어 락 무결성 인덱스 커밋 롤백",
       "def": "다수 사용자의 실시간 트랜잭션을 ACID 기반으로 신속 처리하는 온라인 거래처리",
       "diagram": "[사용자 요청] → [트랜잭션 관리]\n→ [DBMS] → [정규화 DB]\n[트랜잭션 관리]\n→ [동시성 제어]\n→ [로그/복구]",
       "diagramNote": "※ 다수 동시 트랜잭션을 ACID로 무결하게 처리",
@@ -5883,7 +5883,7 @@
       "title": "데이터레이크",
       "tag": "원천저장소",
       "keyword": "원천저장",
-      "keywords": "data lake 정형 비정형 스키마온리드 원천저장 대용량",
+      "keywords": "data lake 데이터레이크 정형 비정형 스키마온리드 원천저장 오브젝트스토리지 데이터늪 하둡 레이크하우스 대용량",
       "def": "정형·비정형 원천 데이터를 가공 없이 원형 그대로 저장하는 대용량 통합 저장소",
       "diagram": "[정형 데이터]↘\n[반정형]→[데이터 레이크]→[분석/ML]\n[비정형]↗\n[레이크]→[스키마 온 리드]",
       "diagramNote": "※ 원형 저장 후 활용 시점에 스키마 부여",
@@ -6133,7 +6133,7 @@
       "title": "클라우드 정보화사업 감리",
       "tag": "클라우드감리",
       "keyword": "클라우드검증",
-      "keywords": "클라우드 정보화사업 감리 적정성 품질 제3자 점검 검증",
+      "keywords": "클라우드 정보화사업 감리 적정성 품질 제3자 점검 검증 csap 이관 벤더종속성 sla saas iaas 전자정부법",
       "def": "클라우드 기반 정보화사업의 적정성과 품질을 제3자가 점검·평가하는 감리 활동",
       "diagram": "[감리계획] → [요구정의 감리]\n→ [설계 감리] → [구현·이행 감리]\n→ [감리보고]\n   ↓ 클라우드 특성 점검\n[감리보고] → [개선 권고]",
       "diagramNote": "※ 단계별 감리에 클라우드 특성 점검을 결합",
@@ -6183,7 +6183,7 @@
       "title": "빅데이터·클라우드 감리",
       "tag": "신기술감리",
       "keyword": "신기술검증",
-      "keywords": "빅데이터 클라우드 감리 신기술 품질 성과 제3자 검증",
+      "keywords": "빅데이터 클라우드 감리 신기술 품질 성과 제3자 검증 데이터품질 확장성 데이터거버넌스 정합성 아키텍처",
       "def": "빅데이터·클라우드 기반 사업의 품질과 성과를 제3자가 점검·검증하는 감리 활동",
       "diagram": "[감리계획] → [데이터 품질 감리]\n→ [아키텍처 감리] → [성과 감리]\n→ [감리보고]\n   ↓ 신기술 점검항목\n[감리보고] → [개선 권고]",
       "diagramNote": "※ 데이터 품질·확장성 등 신기술 관점을 추가 점검",
@@ -6326,7 +6326,7 @@
           ]
         ]
       },
-      "note": "※ 운영단계 정보시스템 품질·안정성 감리"
+      "note": "※ 개발감리와 구분, ITIL 운영 프로세스 정합성 점검"
     },
     {
       "category": "gov",
@@ -6376,7 +6376,7 @@
           ]
         ]
       },
-      "note": "※ AI 사업 신뢰성 확보 감리 실무 지침"
+      "note": "※ MLOps·설명가능성 점검, AI 신뢰성·윤리 가이드 준거"
     },
     {
       "category": "gov",
@@ -6426,7 +6426,7 @@
           ]
         ]
       },
-      "note": "※ 대규모 사업 현장 상주 상시 품질 관리 제도"
+      "note": "※ 정기감리 대비 상시성, 고난도·대형사업 의무 적용"
     },
     {
       "category": "biz",
@@ -6633,7 +6633,7 @@
       "title": "CPS",
       "tag": "융합",
       "keyword": "가상물리",
-      "keywords": "cps cyber physical system 사이버물리 센서 제어 스마트팩토리",
+      "keywords": "cps cyber physical system 사이버물리 센서 액추에이터 제어 임베디드 디지털트윈 스마트팩토리 자율주행 industry4.0",
       "def": "물리 세계와 사이버 시스템을 센서·제어로 실시간 연동·통합하는 사이버물리 시스템",
       "diagram": "[물리 세계]→[센서(감지)]→[네트워크]\n   ↓\n[사이버 시스템]→[분석·연산]\n   ↓\n[제어(액추에이터)]→[물리 세계 반영]\n[피드백 ─ 물리↔사이버 순환]",
       "diagramNote": "※ 센싱·연산·제어의 폐루프 실시간 연동",
@@ -6683,7 +6683,7 @@
       "title": "디지털트윈",
       "tag": "복제",
       "keyword": "가상복제",
-      "keywords": "digital twin 디지털트윈 시뮬레이션 예측 최적화 가상모델",
+      "keywords": "digital twin 디지털트윈 시뮬레이션 예측 최적화 가상모델 iot cps 실시간동기화 메타버스 스마트팩토리",
       "def": "실물 자산을 가상 공간에 복제해 시뮬레이션·예측·최적화하는 가상 복제 기술",
       "diagram": "[실물 자산]→[IoT 센서]→[데이터 수집]\n   ↓\n[가상 모델]→[시뮬레이션·예측]\n   ↓\n[최적화 도출]→[실물 자산 반영]\n[피드백 ─ 실물↔가상 동기화]",
       "diagramNote": "※ 실물-가상 양방향 동기화로 예측·제어",
@@ -6733,7 +6733,7 @@
       "title": "pibpr",
       "tag": "보호",
       "keyword": "개인정보",
-      "keywords": "pibpr 개인정보 보호 수집 이용 파기 생애주기 privacy",
+      "keywords": "pibpr 개인정보 보호 privacy 수집 이용 제공 파기 생애주기 정보주체 가명처리 isms-p 개인정보보호법 gdpr",
       "def": "개인정보의 수집·이용·제공·파기 전 생애를 규율하는 개인정보 보호 관리 체계",
       "diagram": "[수집·동의]→[이용·처리]→[제공·위탁]\n   ↓\n[보관·저장]→[파기]\n[전 단계 ─ 보호대책·통제 적용]",
       "diagramNote": "※ 생애주기 전 단계 보호·통제 적용",
@@ -6783,7 +6783,7 @@
       "title": "리빙랩",
       "tag": "실증",
       "keyword": "사용자참여",
-      "keywords": "living lab 리빙랩 사용자참여 개방형 혁신 실증 리빙래보러토리",
+      "keywords": "living lab 리빙랩 사용자참여 사용자주도 개방형혁신 실증 공동창작 co-creation 사회혁신 지역문제 enoll",
       "def": "사용자가 직접 참여해 실생활 환경에서 문제를 해결하는 개방형 실증·혁신 실험 공간",
       "diagram": "[문제 발굴]→[사용자 참여]↓\n[참여]→[공동 설계(Co-design)]\n[설계]→[실생활 실증]\n[실증]→[피드백·개선]\n[결과]→[확산·상용화]",
       "diagramNote": "※ 사용자 주도 개방형 혁신 순환 구조",
@@ -6976,7 +6976,7 @@
           ]
         ]
       },
-      "note": "※ 백업 주기 기반 데이터 손실 허용 관리"
+      "note": "※ RTO와 병행 BCP 지표, 복제주기 짧을수록 손실 감소"
     },
     {
       "category": "biz",
@@ -7026,7 +7026,7 @@
           ]
         ]
       },
-      "note": "※ 목표 시간 내 서비스 복구 체계 확립"
+      "note": "※ RPO와 상호보완, DR등급·핫사이트로 복구시간 단축"
     },
     {
       "category": "biz",
@@ -7076,7 +7076,7 @@
           ]
         ]
       },
-      "note": "※ 재해 시 핵심 업무 최소 수준 유지 관리"
+      "note": "※ 정상 아닌 최소 허용수준, RTO·MTPD와 연계 설정"
     },
     {
       "category": "biz",
@@ -7126,7 +7126,7 @@
           ]
         ]
       },
-      "note": "※ 치명 영향 전 최대 중단 허용시간 관리"
+      "note": "※ RTO는 MTPD 이내 설정, MAO·MTD와 동의 개념"
     },
     {
       "category": "proc",

@@ -192,7 +192,7 @@
       "title": "학습 유형",
       "tag": "머신러닝 기초",
       "keyword": "지도·비지도·강화",
-      "keywords": "학습 유형 지도학습 비지도학습 강화학습 supervised unsupervised reinforcement 보상",
+      "keywords": "학습 유형 지도학습 비지도학습 강화학습 준지도 자기지도 supervised unsupervised reinforcement self-supervised semi-supervised 보상",
       "diagram": "지도: 입력+정답 → 예측\n비지도: 입력만 → 군집·패턴\n강화: 상태·행동·보상 → 정책",
       "diagramNote": "※ 문제 유형이 학습방식 결정",
       "table": {
@@ -542,7 +542,7 @@
       "title": "서포트 벡터 머신",
       "tag": "학습 알고리즘·모델",
       "keyword": "마진·커널",
-      "keywords": "svm support vector machine 마진 초평면 커널 하드 소프트 마진 분류",
+      "keywords": "svm support vector machine 마진 초평면 서포트벡터 커널 rbf 다항 하드마진 소프트마진 분류",
       "diagram": "최대 마진 초평면 탐색\n 하드마진(완전분리)↔소프트마진(허용)\n 비선형: 커널 트릭(RBF)",
       "diagramNote": "※ 고차원·소표본에 강함",
       "table": {
@@ -792,7 +792,7 @@
       "title": "거대 언어모델",
       "tag": "생성형 AI·LLM",
       "keyword": "사전학습·생성",
-      "keywords": "거대 언어모델 llm large language model 파운데이션 사전학습 파인튜닝 토큰 생성형",
+      "keywords": "거대 언어모델 llm large language model 파운데이션 foundation 사전학습 파인튜닝 rlhf sft 토큰 컨텍스트 생성형",
       "diagram": "대규모 코퍼스 →사전학습→ 파운데이션\n →파인튜닝/RLHF→ 정렬\n →프롬프트/RAG→ 응용",
       "diagramNote": "※ 파운데이션=다운스트림 범용 기반",
       "table": {
@@ -842,7 +842,7 @@
       "title": "검색증강생성",
       "tag": "생성형 AI·LLM",
       "keyword": "RAG",
-      "keywords": "검색증강생성 rag retrieval augmented generation 벡터 임베딩 환각 지식 검색",
+      "keywords": "검색증강생성 rag retrieval augmented generation 벡터db retriever 임베딩 청킹 재순위 reranking 환각 최신성 지식",
       "diagram": "질의→[임베딩·벡터검색]→관련문서\n →컨텍스트 주입→ LLM 생성\n 근거기반 답변·출처 제시",
       "diagramNote": "※ 환각↓·최신지식 반영",
       "table": {
@@ -892,7 +892,7 @@
       "title": "프롬프트 엔지니어링",
       "tag": "생성형 AI·LLM",
       "keyword": "지시·예시 설계",
-      "keywords": "프롬프트 엔지니어링 prompt engineering few-shot cot 思考연쇄 zero-shot 템플릿",
+      "keywords": "프롬프트 엔지니어링 prompt engineering zero-shot few-shot cot 사고연쇄 chain-of-thought persona 출력형식 템플릿 인젝션",
       "diagram": "Zero-shot → Few-shot(예시) →\n Chain-of-Thought(단계추론) →\n 역할·제약·출력형식 지정",
       "diagramNote": "※ CoT=추론 단계 유도",
       "table": {
@@ -1492,7 +1492,7 @@
       "title": "MLOps",
       "tag": "AI 거버넌스·MLOps",
       "keyword": "모델 운영 자동화",
-      "keywords": "mlops 머신러닝 운영 ci cd ct 모델 배포 모니터링 파이프라인 재학습 dsml",
+      "keywords": "mlops 머신러닝 운영 devops ci cd ct 모델 배포 서빙 모니터링 파이프라인 재학습 드리프트 feature store",
       "diagram": "데이터→학습→배포→모니터링→재학습\n CI/CD/CT(지속학습) 파이프라인\n 모델·데이터·피처 버전관리",
       "diagramNote": "※ 데이터·모델 드리프트 감시가 핵심",
       "table": {
@@ -2118,7 +2118,7 @@
       "title": "다중공선성 (Multicollinearity)",
       "tag": "회귀진단",
       "keyword": "독립변수 상관",
-      "keywords": "다중공선성 multicollinearity vif 상관 독립변수 회귀",
+      "keywords": "다중공선성 multicollinearity vif 상관 독립변수 회귀 진단 표준오차 ridge lasso 능선회귀",
       "def": "독립변수 간 강한 상관으로 회귀계수를 불안정하게 만드는 회귀 진단 문제.",
       "diagram": "[독립변수 X1]⇄[독립변수 X2]\n        ↓ 강한 상관 ↓\n   [설계행렬 특이성]→[계수 분산 팽창]\n              ↓\n        [VIF 진단]→[변수 제거·정규화]",
       "diagramNote": "※ 변수 간 중복 정보로 계수 표준오차 증가.",
@@ -2168,7 +2168,7 @@
       "title": "데이터 패브릭 (Data Fabric)",
       "tag": "데이터통합",
       "keyword": "메타·가상화 통합",
-      "keywords": "데이터 패브릭 data fabric 메타데이터 가상화 분산 통합",
+      "keywords": "데이터 패브릭 data fabric 메타데이터 액티브메타데이터 데이터가상화 논리통합 데이터거버넌스 분산 통합",
       "def": "메타데이터·가상화로 이질·분산 데이터를 단일 계층에서 통합 접근하는 아키텍처.",
       "diagram": "[분산 소스]\n (DB·클라우드·엣지)\n  ↓ 메타데이터 계층\n  ↓ 가상화 계층\n[통합 데이터 접근]\n  ↓\n[분석·서비스 활용]",
       "diagramNote": "※ 물리 이동 없이 메타데이터로 데이터 연결·접근.",

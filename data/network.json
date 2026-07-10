@@ -134,7 +134,7 @@
       "title": "TCP/IP 4계층",
       "tag": "계층·기초",
       "keyword": "4계층·인터넷",
-      "keywords": "TCP IP 4계층 프로토콜 스택 인터넷 응용 전송 네트워크 액세스",
+      "keywords": "TCP IP 4계층 프로토콜 스택 인터넷 응용 전송 네트워크 액세스 de-facto 캡슐화",
       "def": "인터넷 표준 통신 구조를 응용·전송·인터넷·네트워크접근 4계층으로 정의한 사실상 표준 프로토콜 스택.",
       "diagram": "[응용 HTTP·DNS]\n   ↓\n[전송 TCP·UDP]\n   ↓\n[인터넷 IP·ICMP]\n   ↓\n[네트워크접근 Ethernet]",
       "diagramNote": "※ OSI 7계층의 실무 구현형",
@@ -148,7 +148,7 @@
           [
             "응용",
             "HTTP·DNS·SMTP",
-            "서비스 제공"
+            "웹·해석·메일"
           ],
           [
             "전송",
@@ -334,7 +334,7 @@
       "title": "오류·흐름 제어",
       "tag": "계층·기초",
       "keyword": "검출·재전송",
-      "keywords": "오류제어 흐름제어 패리티 CRC 해밍코드 ARQ 정지대기 슬라이딩",
+      "keywords": "오류제어 흐름제어 패리티 CRC 체크섬 해밍코드 FEC ARQ 정지대기 GBN SR 슬라이딩윈도우",
       "def": "전송 중 비트오류를 검출·정정하고 송수신 속도차를 조절해 신뢰성·효율을 확보하는 데이터링크 제어 기법.",
       "diagram": "[검출 CRC·패리티]\n   ↓ 오류 시\n[재전송 ARQ]\n[흐름 슬라이딩윈도우]",
       "diagramNote": "※ 검출(EDC)·정정(ECC) 구분",
@@ -348,27 +348,27 @@
           [
             "검출",
             "패리티·CRC",
-            "오류 발견"
+            "비트오류 검출"
           ],
           [
             "정정",
             "해밍코드",
-            "비트 복원"
+            "FEC 복원"
           ],
           [
-            "재전송",
+            "정지대기",
             "Stop&Wait",
             "단순 ARQ"
           ],
           [
-            "재전송",
+            "연속",
             "GBN·SR",
-            "연속 ARQ"
+            "선택 재전송"
           ],
           [
             "흐름",
             "슬라이딩윈도우",
-            "속도 조절"
+            "윈도우 조절"
           ],
           [
             "목적",
@@ -384,7 +384,7 @@
       "title": "IP 주소체계",
       "tag": "IP·라우팅·스위칭",
       "keyword": "IPv4·IPv6",
-      "keywords": "IP 주소 IPv4 IPv6 클래스 주소체계 32비트 128비트 헤더",
+      "keywords": "IP 주소 IPv4 IPv6 클래스 주소체계 32비트 128비트 헤더 듀얼스택 SLAAC NDP 주소고갈",
       "def": "32bit IPv4와 주소고갈을 해소한 128bit IPv6로 종단 노드를 식별·라우팅하는 인터넷 계층 논리주소 체계.",
       "diagram": "IPv4 32bit: 192.168.0.1\nIPv6 128bit: 2001:db8::1\n  → 네트워크부 + 호스트부",
       "diagramNote": "※ IPv6 헤더 단순화·자동설정",
@@ -406,19 +406,19 @@
             "사실상 무한"
           ],
           [
-            "구분",
+            "구조",
             "네트워크/호스트",
             "경로 식별"
           ],
           [
             "전환",
-            "Dual·터널링",
+            "듀얼스택·터널링",
             "점진 이행"
           ],
           [
-            "IPv6",
+            "자동화",
             "NDP·SLAAC",
-            "자동 구성"
+            "주소 자동설정"
           ],
           [
             "보안",
@@ -484,7 +484,7 @@
       "title": "라우팅 프로토콜",
       "tag": "IP·라우팅·스위칭",
       "keyword": "OSPF·BGP",
-      "keywords": "라우팅 프로토콜 RIP OSPF BGP 거리벡터 링크상태 AS 경로",
+      "keywords": "라우팅 프로토콜 RIP OSPF BGP EIGRP 거리벡터 링크상태 경로벡터 IGP EGP AS 수렴 메트릭",
       "def": "최적 경로를 동적 계산·공유하는 프로토콜로, 도메인 내부(IGP)·외부(EGP)와 거리벡터·링크상태로 분류.",
       "diagram": "[AS 내부 IGP]\n RIP(거리벡터) OSPF(링크상태)\n[AS 간 EGP]  BGP(경로벡터)",
       "diagramNote": "※ 메트릭 기준이 종류별 상이",
@@ -784,7 +784,7 @@
       "title": "혼잡 제어",
       "tag": "전송·품질",
       "keyword": "AIMD·윈도우",
-      "keywords": "혼잡제어 Congestion AIMD 슬로우스타트 혼잡회피 TCP 윈도우",
+      "keywords": "혼잡제어 Congestion AIMD 슬로우스타트 혼잡회피 빠른재전송 Reno CUBIC BBR ECN TCP 윈도우",
       "def": "망 혼잡을 감지해 송신 윈도우를 조절(AIMD)하여 패킷 손실·붕괴를 방지하는 TCP 핵심 제어 기법.",
       "diagram": "cwnd↑(슬로우스타트)→임계점\n →혼잡회피(가산증가)\n 손실 시 ↓(승산감소)",
       "diagramNote": "※ 흐름제어와 구분(혼잡=망)",
@@ -827,7 +827,7 @@
           ]
         ]
       },
-      "note": "※ 흐름제어=수신, 혼잡=네트워크"
+      "note": "※ ECN·BBR 진화, QoS·대역 관리 연계"
     },
     {
       "category": "trans",
@@ -884,7 +884,7 @@
       "title": "QoS",
       "tag": "전송·품질",
       "keyword": "대역·우선순위",
-      "keywords": "QoS 서비스품질 대역폭 지연 지터 우선순위 DiffServ 트래픽",
+      "keywords": "QoS 서비스품질 대역폭 지연 지터 우선순위 DiffServ DSCP IntServ RSVP 셰이핑 폴리싱 트래픽",
       "def": "트래픽 우선순위·대역폭을 제어(DiffServ·IntServ)해 지연·지터·손실을 관리·보장하는 서비스 품질 기술.",
       "diagram": "[분류]→[표시 DSCP]→[큐잉]\n →[스케줄링 WFQ]→[셰이핑]",
       "diagramNote": "※ 실시간 트래픽 우선 처리",
@@ -1092,7 +1092,7 @@
         "head": [
           "구분",
           "구성요소",
-          "역할"
+          "역할·기술"
         ],
         "rows": [
           [
@@ -1127,7 +1127,7 @@
           ]
         ]
       },
-      "note": "※ 속도·지연·지능 향상과 지상-위성 통합망(NTN)으로 커버리지 확장."
+      "note": "※ 지상-위성 통합망(NTN)·AI 내장, 커버리지 확장"
     },
     {
       "category": "wireless",
@@ -1384,7 +1384,7 @@
       "title": "VPN",
       "tag": "보안·신기술",
       "keyword": "터널·암호",
-      "keywords": "VPN 가상사설망 터널링 IPsec SSL 암호화 원격접속 사이트",
+      "keywords": "VPN 가상사설망 터널링 IPsec SSL TLS 암호화 원격접속 사이트 ZTNA SDP 제로트러스트",
       "def": "공중망 위에 암호화 터널을 구성해 사설망처럼 안전 통신하는 가상사설망(IPsec·SSL 방식).",
       "diagram": "[지사]==암호터널==[본사]\n 공중 인터넷 위 가상 전용선\n 사이트/원격접속형",
       "diagramNote": "※ 기밀·무결·인증 동시 보장",
@@ -1484,7 +1484,7 @@
       "title": "SDN",
       "tag": "보안·신기술",
       "keyword": "제어·전달 분리",
-      "keywords": "SDN 소프트웨어정의네트워크 컨트롤러 OpenFlow 데이터플레인 제어",
+      "keywords": "SDN 소프트웨어정의네트워크 컨트롤러 OpenFlow 데이터플레인 제어평면 북향 남향 API NFV 인텐트",
       "def": "제어부와 전달부를 분리해 중앙 컨트롤러가 소프트웨어로 망을 프로그래밍·제어하는 네트워크 아키텍처.",
       "diagram": "[애플리케이션 계층]\n   ↓ Northbound API\n[컨트롤러(제어 평면)]\n   ↓ OpenFlow\n[스위치(전달 평면)]",
       "diagramNote": "※ 제어·데이터 평면 분리",
