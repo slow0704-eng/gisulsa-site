@@ -112,7 +112,7 @@
       "keyword": "선형 순차형",
       "keywords": "폭포수 waterfall 순차 SDLC",
       "def": "각 단계(요구분석→설계→구현→시험→유지보수)를 순차·하향식으로 진행하고 완료 후 다음 단계로 이행하는 선형 고전 생명주기 모델.",
-      "diagram": "[요구분석]→[설계]→[구현]→[시험]→[유지보수]\n  확정     명세   코딩   검증    운영",
+      "diagram": "[요구분석]→[설계]→[구현]\n 확정      명세    코딩\n  ↓ 순차 진행(폭포수)\n[시험]→[유지보수]\n 검증    운영",
       "diagramNote": "※ 단계 역행 없음(Phase 동결)·산출물 기반 검토",
       "table": {
         "head": [
@@ -412,7 +412,7 @@
       "keyword": "부분 릴리즈",
       "keywords": "증분형 incremental 릴리즈 부분 인도",
       "def": "시스템을 기능 단위(증분)로 분할, 핵심 기능부터 릴리즈하며 점진적으로 완성하는 생명주기 모델.",
-      "diagram": "[전체 요구]→[증분1 설계·구현·시험]→[릴리즈1]\n            →[증분2 ...]──────────→[릴리즈2]\n            →[증분N ...]──────────→[완성]",
+      "diagram": "[전체 요구]\n  ↓ 기능 분할\n[증분1: 설계·구현·시험]→[릴리즈1]\n[증분2: 설계·구현·시험]→[릴리즈2]\n[증분N: 반복]→[완성]",
       "diagramNote": "※ 핵심기능 조기 인도, 증분 누적",
       "table": {
         "head": [
@@ -1712,7 +1712,7 @@
       "keyword": "CI/CD 자동화",
       "keywords": "DevOps DevSecOps CI CD IaC GitOps shift-left 파이프라인",
       "def": "개발·운영(·보안)을 통합, CI/CD 자동화로 배포주기를 단축하고 보안을 좌측 이동(Shift-Left)하는 방법론.",
-      "diagram": "[Code]→[Build]→[Test]→[Release]→[Deploy]→[Operate]\n  Git    빌드   자동    아티팩트  자동배포  모니터\n  └───── CI ─────┘└────── CD ──────┘\n  ↓SAST  ↓SCA   ↓DAST           ↓RASP (Shift-Left)\n  ↺ Observability(Metric·Log·Trace)",
+      "diagram": "[Code]→[Build]→[Test]  └── CI ──┘\n Git    빌드    자동\n→[Release]→[Deploy]→[Operate] └ CD ┘\n 아티팩트   자동배포   모니터\n ↓ 보안(Shift-Left):\n   SAST·SCA·DAST·RASP\n ↺ Observability(Metric·Log·Trace)",
       "diagramNote": "※ CI→CD 자동화 + 관측 피드백으로 배포주기 단축",
       "table": {
         "head": [
@@ -1962,7 +1962,7 @@
       "keyword": "피드백 순환",
       "keywords": "ABC architecture business cycle 아키텍처 비즈니스 사이클 SEI 이해관계자 영향요인 피드백 순환",
       "def": "아키텍처와 영향요인(이해관계자·개발조직·아키텍트 경험·기술환경)이 시스템·비즈니스를 거쳐 새 요구로 순환하는 피드백 사이클(SEI).",
-      "diagram": "[영향요인]→[아키텍트]→[아키텍처]\n   ↑                        ↓\n[비즈니스·조직]←──────[시스템]\n   └──── 피드백(새 요구·역량) ────┘",
+      "diagram": "[영향요인]→[아키텍트]→[아키텍처]\n   ↑ 요구·역량 반영      ↓ 실현\n[비즈니스·조직]←────[시스템]\n   ↺ 피드백(새 요구·역량 창출)",
       "diagramNote": "※ 아키텍처↔환경 양방향 영향(피드백 순환)",
       "table": {
         "head": [
@@ -2162,7 +2162,7 @@
       "keyword": "순공학",
       "keywords": "정방향 분석 forward engineering 순공학 하향식 top down 요구 설계 코드 도출 MDA",
       "def": "요구·설계 모델에서 추상→구체 방향으로 아키텍처·코드를 도출하는 하향식(Top-Down) 분석(순공학).",
-      "diagram": "[요구·명세]→[아키텍처 설계]→[상세설계]→[코드]\n   추상 ──────────────────────────→ 구체\n   ※ 하향식(Top-Down) 점진 구체화",
+      "diagram": "[요구·명세]→[아키텍처 설계]\n  ↓ 하향식(Top-Down) 구체화\n[상세설계]→[코드]\n  추상 ─────→ 구체",
       "diagramNote": "※ 추상 모델 → 구현으로 단계적 정제",
       "table": {
         "head": [
@@ -2212,7 +2212,7 @@
       "keyword": "역공학·복원",
       "keywords": "역방향 분석 reverse engineering 역공학 상향식 bottom up 아키텍처 복원 recovery 레거시 재문서화 재공학",
       "def": "기존 코드·실행 시스템에서 구체→추상 방향으로 구조·설계를 복원하는 상향식(Bottom-Up) 분석(역공학).",
-      "diagram": "[기존 코드·바이너리]→[정적·동적 분석]\n        ↓ 추출\n[의존성·구조 복원]→[아키텍처 모델]\n   구체 ─────────────────→ 추상(상향식)",
+      "diagram": "[기존 코드·바이너리]→[정적·동적 분석]\n   ↓ 추출(상향식 Bottom-Up)\n[의존성·구조 복원]→[아키텍처 모델]\n   구체 ──────→ 추상",
       "diagramNote": "※ 산출물에서 설계·구조를 역추출(복원)",
       "table": {
         "head": [
@@ -2312,7 +2312,7 @@
       "keyword": "변경 격리",
       "keywords": "캡슐화 encapsulation 정보은닉 information hiding 파나스 parnas 추상화 인터페이스 결합도 응집도",
       "def": "데이터·기능을 한 단위로 묶고(캡슐화), 변경 가능성 높은 내부 결정을 인터페이스 뒤로 감추는(정보은닉) 설계 원리(Parnas).",
-      "diagram": "    [공개 인터페이스(public)]\n   ┌────────────────────────┐\n   │ [은닉된 내부(private)]   │ ← 정보은닉\n   │  데이터+메서드 = 캡슐화  │\n   └────────────────────────┘\n     ※ 외부는 IF로만 접근",
+      "diagram": "   [공개 인터페이스(public)]\n  ┌──────────────────────┐\n  │[은닉 내부(private)]  │←정보은닉\n  │ 데이터+메서드=캡슐화 │\n  └──────────────────────┘\n   ※외부는 인터페이스로만 접근",
       "diagramNote": "※ 캡슐화=묶기, 정보은닉=감추기(변경 격리)",
       "table": {
         "head": [
@@ -2812,7 +2812,7 @@
       "keyword": "도메인 모델",
       "keywords": "DDD domain driven design aggregate bounded context 도메인 주도 설계",
       "def": "도메인 모델을 중심으로 Bounded Context·Aggregate로 복잡성을 다루고 코드-도메인을 정렬하는 설계 방법.",
-      "diagram": "[Bounded Context]\n └ [Aggregate] ─ 일관성 경계\n    ├ [Root Entity] ─ 식별자·불변식\n    ├ [Entity] ─ 식별자 有\n    └ [Value Object] ─ 식별자 無·불변\n[Repository ─ 영속] · [Domain Event ─ 전파]",
+      "diagram": "[Bounded Context]\n └ [Aggregate] ─ 일관성 경계\n    ├ [Root Entity] ─ 식별자·불변식\n    ├ [Entity] ─ 식별자 有\n    └ [Value Object] ─ 식별자 無·불변\n[Repository ─ 영속]\n[Domain Event ─ 전파]",
       "diagramNote": "※ Ubiquitous Language로 도메인-코드 정렬",
       "table": {
         "head": [
@@ -2962,7 +2962,7 @@
       "keyword": "Composite",
       "keywords": "SCA service component architecture 서비스 컴포넌트 composite component wire binding reference OASIS",
       "def": "SOA를 구현하기 위해 서비스 컴포넌트를 Composite로 조립하고 언어·프로토콜 독립적으로 결합하는 컴포넌트 모델(OASIS).",
-      "diagram": "[Composite 조립 단위]\n ┌────────────────────────┐\n │[Component]→Wire→[Component]│\n └─Service↑        ↓Reference┘\n        Binding(통신 프로토콜)",
+      "diagram": "[Composite ─ 조립 단위]\n ┌──────────────────────────────┐\n │ [Component]→Wire→[Component] │\n └──────────────────────────────┘\n Service(제공)↑  ↓Reference(사용)\n Binding(통신 프로토콜)",
       "diagramNote": "※ 구현언어·바인딩 독립, 컴포넌트 조립",
       "table": {
         "head": [
@@ -3112,7 +3112,7 @@
       "keyword": "Sidecar 프록시",
       "keywords": "service mesh 서비스 메쉬 sidecar 사이드카 istio envoy data plane control plane mTLS 트래픽 관측 MSA",
       "def": "사이드카 프록시로 서비스 간 통신(트래픽·보안·관측)을 애플리케이션 코드와 분리해 인프라 계층에서 처리하는 MSA 통신 인프라.",
-      "diagram": "     [Control Plane] (정책·설정 배포)\n        ↓ 구성        ↓\n[서비스A+Sidecar]↔[서비스B+Sidecar]  Data Plane\n   ↑ mTLS·라우팅·재시도·관측(프록시)",
+      "diagram": "[Control Plane] 정책·설정 배포\n   ↓ 구성 주입\n[서비스A + Sidecar프록시]\n   ↕ mTLS·라우팅·재시도·관측\n[서비스B + Sidecar프록시]\n   ※ Sidecar들이 Data Plane 구성",
       "diagramNote": "※ 통신 관심사를 사이드카로 분리(코드 무침투)",
       "table": {
         "head": [
@@ -3162,7 +3162,7 @@
       "keyword": "보상 트랜잭션",
       "keywords": "SAGA 사가 패턴 분산 트랜잭션 보상 compensating 코레오그래피 오케스트레이션 MSA 결과적일관성 2PC 대안",
       "def": "분산 서비스의 로컬 트랜잭션을 순차 실행하고, 실패 시 보상 트랜잭션으로 되돌려 데이터 일관성을 확보하는 분산 트랜잭션 패턴.",
-      "diagram": "[주문 T1]→[결제 T2]→[배송 T3]  로컬 트랜잭션\n   ↑ C1      ↑ C2      ✗ 실패\n   └─보상(역순 C2→C1)─┘  Compensating",
+      "diagram": "[주문 T1]→[결제 T2]→[배송 T3]\n  로컬 트랜잭션 순차 진행\n   ✗ T3 실패 시 보상(역순)\n  [C3]→[C2]→[C1] Compensating",
       "diagramNote": "※ 실패 시 보상 트랜잭션으로 역순 취소",
       "table": {
         "head": [
@@ -3312,7 +3312,7 @@
       "keyword": "코레오그래피",
       "keywords": "broker topology 브로커 토폴로지 EDA 코레오그래피 choreography 체인 분산 중재자없음 경량",
       "def": "중앙 중재자 없이 경량 브로커를 통해 이벤트가 처리기 간 연쇄(코레오그래피)되는 분산형 EDA 토폴로지.",
-      "diagram": "[Processor A]→발행→[Broker]→구독→[Processor B]\n                       ↓                ↓ 발행\n                  [Processor C]←──[Broker]\n   ※ 중재자 없이 이벤트 연쇄(체인)",
+      "diagram": "[Processor A]\n  ↓ 발행(Publish)\n[Broker]→구독→[Processor B]\n              ↓ 발행\n[Broker]→구독→[Processor C]\n ※ 중재자 없이 이벤트 연쇄(체인)",
       "diagramNote": "※ 처리기가 스스로 이벤트 연쇄(코레오그래피)",
       "table": {
         "head": [
@@ -3619,7 +3619,7 @@
       "keyword": "hUMA",
       "keywords": "HSA heterogeneous system architecture 이기종 시스템 CPU GPU hUMA 공유메모리 HSAIL 가속기 병렬",
       "def": "CPU·GPU·가속기를 통합 가상 메모리(hUMA)로 묶어 단일 주소공간에서 협업 처리하는 이기종 컴퓨팅 하드웨어 아키텍처(HSA Foundation).",
-      "diagram": "[CPU] · [GPU] · [DSP·가속기]\n   ↓     ↓        ↓\n[hUMA ─ 공유 가상 메모리·단일 주소공간]\n[User-mode Queue·HSAIL 중간언어 ─ 공통 실행모델]",
+      "diagram": "[CPU] · [GPU] · [DSP·가속기]\n   ↓      ↓       ↓ 통합\n[hUMA ─ 공유가상메모리·단일주소공간]\n   ↓ 공통 실행모델\n[User-mode Queue · HSAIL 중간언어]",
       "diagramNote": "※ 데이터 복사 없이 메모리 공유(Zero-copy)",
       "table": {
         "head": [
@@ -4612,7 +4612,7 @@
       "keyword": "베이스라인",
       "keywords": "형상관리 SCM git gitops CCB baseline 변경통제 버전",
       "def": "SW 산출물의 형상항목을 식별·통제·감사·기록하여 변경을 통제하고 무결성·추적성을 보장하는 활동.",
-      "diagram": "[형상 식별]→[형상 통제]→[형상 감사]→[형상 기록]\n 형상항목·   변경요청·    베이스라인   상태·이력\n 베이스라인  CCB 승인     적합성 확인  보고\n   ↺ 변경 발생 시 순환",
+      "diagram": "[형상 식별]→[형상 통제]\n 항목·기준선  변경요청·CCB승인\n   ↓ 진행\n[형상 감사]→[형상 기록]\n 적합성 확인  상태·이력 보고\n   ↺ 변경 시 처음으로 순환",
       "diagramNote": "※ 단일 진실원천(Git)+CCB로 무결성",
       "table": {
         "head": [
@@ -4662,7 +4662,7 @@
       "keyword": "12원칙 8영역",
       "keywords": "PMBOK 7 프로젝트관리 EVM 원칙 성과영역 테일러링 리스크",
       "def": "12원칙·8성과영역과 테일러링으로 가치를 전달하는, 프로세스 중심→원칙·가치 중심으로 전환된 PM 표준.",
-      "diagram": "      [가치 전달 시스템]\n ┌──────────┴──────────┐\n[12 원칙]          [8 성과영역]\n 책무·가치·          이해관계자·팀·\n 시스템사고·         개발접근·기획·\n 리더십·테일러링…    인도·측정·불확실성\n   ↓ 테일러링(상황 맞춤)",
+      "diagram": "      [가치 전달 시스템]\n ┌──────────┴──────────┐\n[12 원칙]          [8 성과영역]\n 책무·가치·          이해관계자·팀·\n 시스템사고·         개발접근·기획·\n 리더십·테일러링…  인도·측정·불확실성\n   ↓ 테일러링(상황 맞춤)",
       "diagramNote": "※ 프로세스 중심 → 원칙·가치 중심으로 전환",
       "table": {
         "head": [

@@ -436,7 +436,7 @@
       "keyword": "의도적 중복",
       "keywords": "반정규화 역정규화 denormalization 중복 파생 컬럼 테이블 병합 OLTP OLAP",
       "def": "정규화된 모델에 의도적 중복을 도입하여 조인 감소·조회 성능을 향상시키는 물리 설계 기법.",
-      "diagram": "[정규화 모델(3NF)] →성능분석→ [반정규화 대상]\n ├ 테이블 병합/분할\n ├ 중복 컬럼·파생 컬럼\n └ 통계·이력 테이블",
+      "diagram": "[정규화 모델(3NF)]\n   ↓ 성능분석\n[반정규화 대상]\n ├ 테이블 병합/분할\n ├ 중복 컬럼·파생 컬럼\n └ 통계·이력 테이블",
       "diagramNote": "※ 무결성은 트리거·배치로 보완",
       "table": {
         "head": [
@@ -580,7 +580,7 @@
       "keyword": "경로 모호성",
       "keywords": "연결함정 connection trap fan trap chasm trap 부채꼴 균열 경로",
       "def": "ERD 관계 설정 오류로 엔티티 간 경로 해석이 모호·단절되어 잘못된 질의 결과를 낳는 모델링 함정.",
-      "diagram": "부채꼴(Fan): A ─1:N→ B ←1:N─ C  (경로 모호)\n균열(Chasm): A ─ B ─ C, 선택참여로 경로 단절",
+      "diagram": "부채꼴(Fan)\n A ─1:N→ B ←1:N─ C  경로 모호\n균열(Chasm)\n A ─ B ─ C  선택참여로 경로 단절",
       "diagramNote": "※ 관계 재정의·교차엔티티로 해소",
       "table": {
         "head": [
@@ -818,7 +818,7 @@
       "keyword": "절차적 질의",
       "keywords": "관계대수 relational algebra 순수관계연산 일반집합연산 select project join division 관계해석",
       "def": "릴레이션을 입력받아 릴레이션을 출력하는 절차적 질의 언어로, 순수·일반집합 연산으로 구성.",
-      "diagram": "[순수 관계연산] σ Select·π Project·⋈ Join·÷ Division\n[일반 집합연산] ∪ 합·∩ 교·− 차·× 곱",
+      "diagram": "[순수 관계연산]\n σ Select · π Project\n ⋈ Join · ÷ Division\n[일반 집합연산]\n ∪ 합 · ∩ 교 · − 차 · × 곱",
       "diagramNote": "※ 관계해석(비절차)과 표현력 동등",
       "table": {
         "head": [
@@ -868,7 +868,7 @@
       "keyword": "런타임 생성",
       "keywords": "동적 SQL dynamic 정적 static 바인드 변수 prepared statement injection 파싱",
       "def": "실행 시점(런타임)에 SQL 문자열을 생성·컴파일·실행하여 가변 조건 질의에 대응하는 방식.",
-      "diagram": "[App] →런타임 SQL 생성→ [Parse→Bind→Execute]\n정적: 컴파일 시 고정 / 동적: 실행 시 결정",
+      "diagram": "[App]\n  ↓ 런타임 SQL 생성\n[Parse → Bind → Execute]\n정적: 컴파일 시 고정\n동적: 실행 시 결정",
       "diagramNote": "※ 유연성↑ vs 파싱 비용·SQL Injection",
       "table": {
         "head": [
@@ -1018,7 +1018,7 @@
       "keyword": "B-Tree 탐색",
       "keywords": "인덱스 index B-Tree bitmap hash 스캔 range unique skip 복합 커버링 튜닝",
       "def": "테이블 행의 위치를 B-Tree 등 별도 자료구조로 관리하여 검색 성능을 높이는 객체.",
-      "diagram": "[B-Tree] Root→Branch→Leaf(정렬)→ROWID→Table\n스캔: Range·Unique·Full·Skip",
+      "diagram": "[B-Tree]\n Root → Branch → Leaf(정렬)\n   ↓\n ROWID → Table\n스캔: Range·Unique·Full·Skip",
       "diagramNote": "※ 조회↑·DML 시 인덱스 갱신 비용",
       "table": {
         "head": [
@@ -1068,7 +1068,7 @@
       "keyword": "ACID",
       "keywords": "트랜잭션 transaction ACID 원자성 일관성 격리성 영속성 commit rollback saga 2PC",
       "def": "ACID를 보장하는 논리적 작업 단위로, DB 일관성을 유지하는 연산의 최소 실행 묶음.",
-      "diagram": "[Active]→[Partially Committed]→[Committed](REDO)\n   ↓ 오류\n[Failed]→[Aborted] (UNDO 롤백)",
+      "diagram": "[Active] → [Partially Committed]\n  ↓ (REDO)\n[Committed]\n  ↓ 오류\n[Failed] → [Aborted] (UNDO 롤백)",
       "diagramNote": "※ ACID(원자·일관·격리·영속)",
       "table": {
         "head": [
@@ -1168,7 +1168,7 @@
       "keyword": "락·MVCC",
       "keywords": "동시성제어 concurrency lock 2PL MVCC timestamp 낙관적 lost update dirty read phantom deadlock",
       "def": "다중 트랜잭션 동시 실행 시 락·MVCC로 상호 간섭을 제어하여 일관성을 보장하는 기법.",
-      "diagram": "[이상] Lost Update·Dirty Read·Unrepeatable·Phantom\n[기법] Lock(2PL)·Timestamp·MVCC·낙관적",
+      "diagram": "[이상]\n Lost Update · Dirty Read\n Unrepeatable · Phantom\n[기법]\n Lock(2PL) · Timestamp\n MVCC · 낙관적",
       "diagramNote": "※ 직렬가능성(Serializability) 보장",
       "table": {
         "head": [
@@ -1218,7 +1218,7 @@
       "keyword": "격리 4단계",
       "keywords": "isolation level 격리수준 read uncommitted committed repeatable read serializable",
       "def": "트랜잭션 간 격리 정도를 4단계로 규정하여 동시성과 일관성을 trade-off하는 표준 수준.",
-      "diagram": "Read Uncommitted → Read Committed\n → Repeatable Read → Serializable\n (동시성↑/일관성↓)  →  (일관성↑/동시성↓)",
+      "diagram": "Read Uncommitted → Read Committed\n → Repeatable Read → Serializable\n 동시성↑·일관성↓ → 일관성↑·동시성↓",
       "diagramNote": "※ 단계별 허용 이상현상 차등",
       "table": {
         "head": [
@@ -2150,7 +2150,7 @@
       "keyword": "메모리·그래프·벡터",
       "keywords": "특수목적 DB in-memory graph vector 인메모리 redis 임베딩 ANN HNSW milvus RAG",
       "def": "특정 워크로드에 최적화된 DB — 메모리 상주(In-memory)·관계 탐색(Graph)·유사도 검색(Vector).",
-      "diagram": "[In-memory] RAM 상주 → 초저지연 (Redis)\n[Graph]   노드·엣지 → 관계 탐색 (Neo4j)\n[Vector]  임베딩 → 유사도(ANN) 검색 (Milvus)",
+      "diagram": "[In-memory] RAM 상주\n  → 초저지연 (Redis)\n[Graph] 노드·엣지\n  → 관계 탐색 (Neo4j)\n[Vector] 임베딩\n  → 유사도(ANN) 검색 (Milvus)",
       "diagramNote": "※ 워크로드 특성별 선택",
       "table": {
         "head": [
