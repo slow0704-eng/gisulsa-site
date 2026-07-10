@@ -391,6 +391,46 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qbig{font-size:var(--fs-6);font-weight:800;color:#6d28d9;margin:10px 0;}
 .qbig span{font-size:var(--fs-4);color:var(--muted);font-weight:700;}
 
+/* ===== 퀴즈 도파민 피드백(정답 축포·연속·팝, 오답 흔들림) ===== */
+.quiz-card{position:relative;overflow:hidden;}      /* 축포 컨테이너 */
+.quiz-score{position:relative;}
+@keyframes qpop{0%{transform:scale(1)}40%{transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes qglow{0%{box-shadow:0 0 0 0 rgba(22,163,74,.55)}100%{box-shadow:0 0 0 14px rgba(22,163,74,0)}}
+@keyframes qshake{0%,100%{transform:translateX(0)}18%{transform:translateX(-8px)}38%{transform:translateX(7px)}58%{transform:translateX(-5px)}78%{transform:translateX(4px)}}
+@keyframes qbannerIn{0%{opacity:0;transform:translateY(-8px) scale(.96)}100%{opacity:1;transform:none}}
+@keyframes qfloatUp{0%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-28px)}}
+@keyframes qfall{0%{opacity:1;transform:translateY(-16px) rotate(0)}100%{opacity:.9;transform:translateY(460px) rotate(680deg)}}
+@keyframes qstreakPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes qtierPop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+
+.qopt.correct{animation:qpop .42s ease, qglow .75s ease .08s;}
+.qopt.wrong{animation:qshake .42s cubic-bezier(.36,.07,.19,.97);}
+
+.qresult{display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:12px 16px;border-radius:var(--r-md);
+  font-weight:800;font-size:var(--fs-4);animation:qbannerIn .3s ease;}
+.qresult.is-ok{background:linear-gradient(90deg,#dcfce7,#effdf4);color:#15803d;border:1.5px solid #86efac;}
+.qresult.is-no{background:linear-gradient(90deg,#fef3c7,#fff8ea);color:#b45309;border:1.5px solid #fcd34d;}
+.qresult-ic{font-size:24px;line-height:1;animation:qpop .5s ease;}
+.qresult-msg{flex:1;}
+.qstreak{font-size:var(--fs-2);font-weight:800;color:#c2410c;background:#ffedd5;padding:3px 11px;
+  border-radius:var(--r-pill);animation:qstreakPulse .7s ease infinite;white-space:nowrap;}
+.quiz-score .qs-streak{margin-left:6px;font-weight:800;color:#c2410c;}
+.qfloat{position:absolute;left:50%;top:-4px;font-weight:800;color:#16a34a;font-size:var(--fs-4);
+  pointer-events:none;animation:qfloatUp .8s ease forwards;}
+
+.qconfetti{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:6;}
+.qconfetti i{position:absolute;top:-16px;border-radius:2px;animation:qfall linear forwards;}
+
+.quiz-result .qtier{font-size:52px;line-height:1;margin:4px 0 0;animation:qtierPop .5s ease;}
+.quiz-result .qtier-msg{font-weight:800;font-size:var(--fs-4);color:var(--ink);margin:8px 0 0;}
+.quiz-result .qbest{font-weight:800;color:#c2410c;margin:2px 0 6px;}
+.quiz-result.gold .qbig{color:#b45309;}
+.quiz-result.good .qbig{color:#15803d;}
+@media (prefers-reduced-motion:reduce){
+  .qopt.correct,.qopt.wrong,.qresult,.qresult-ic,.qstreak,.qtier{animation:none;}
+  .qconfetti{display:none;}
+}
+
 /* ===== 빈 상태(검색·필터 0건) ===== */
 .empty-state{max-width:520px;margin:64px auto;padding:32px 24px;text-align:center;background:#fff;
   border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1);}

@@ -8,6 +8,46 @@
   var GS = window.GS || {};
   function esc(s){ return GS.escHTML ? GS.escHTML(s) : String(s==null?'':s); }
   function nl2br(s){ return esc(s).replace(/\n/g,'<br/>'); }
+  // ---- 도파민 피드백(정답 축포·사운드·연속) ----
+  function pickMsg(a){ return a[Math.floor(Math.random()*a.length)]; }
+  // 정답=상승 3음 차임 / 오답=하강 버즈. 사용자 클릭 직후라 자동재생 허용.
+  function qbeep(ok){
+    try{
+      var C=window.__qac||(window.__qac=new (window.AudioContext||window.webkitAudioContext)());
+      if(C.state==='suspended') C.resume();
+      var t=C.currentTime;
+      if(ok){
+        [784,988,1319].forEach(function(f,k){
+          var o=C.createOscillator(), g=C.createGain();
+          o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(C.destination);
+          var s=t+k*0.09;
+          g.gain.setValueAtTime(0.0001,s); g.gain.exponentialRampToValueAtTime(0.16,s+0.02);
+          g.gain.exponentialRampToValueAtTime(0.0001,s+0.2); o.start(s); o.stop(s+0.22);
+        });
+      } else {
+        var o=C.createOscillator(), g=C.createGain(); o.type='triangle';
+        o.frequency.setValueAtTime(320,t); o.frequency.exponentialRampToValueAtTime(150,t+0.25);
+        o.connect(g); g.connect(C.destination);
+        g.gain.setValueAtTime(0.10,t); g.gain.exponentialRampToValueAtTime(0.0001,t+0.3);
+        o.start(t); o.stop(t+0.32);
+      }
+    }catch(e){}
+  }
+  // 정답 축포(경량 DOM 파티클, 의존성 없음)
+  function qconfetti(host){
+    if(!host) return;
+    var box=document.createElement('div'); box.className='qconfetti';
+    var colors=['#38bdf8','#22c55e','#f59e0b','#ec4899','#a855f7','#ef4444','#14b8a6','#eab308'];
+    for(var i=0;i<50;i++){
+      var p=document.createElement('i');
+      p.style.cssText='left:'+(Math.random()*100)+'%;background:'+colors[i%colors.length]+
+        ';animation-duration:'+(1.5+Math.random()*1.2).toFixed(2)+'s;animation-delay:'+(Math.random()*0.35).toFixed(2)+'s;'+
+        'width:'+(7+Math.random()*6).toFixed(1)+'px;height:'+(9+Math.random()*8).toFixed(1)+'px;';
+      box.appendChild(p);
+    }
+    host.appendChild(box);
+    setTimeout(function(){ box.remove(); }, 3600);
+  }
   function shuffle(a){
     for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; }
     return a;
@@ -177,7 +217,7 @@
     });
     var multiDom = domList.length>1;
 
-    var st={ n:20, diff:'normal', idx:0, score:0, total:0, q:[], answered:false, types:{}, secs:{}, doms:{} };
+    var st={ n:20, diff:'normal', idx:0, score:0, total:0, q:[], answered:false, streak:0, best:0, types:{}, secs:{}, doms:{} };
     domList.forEach(function(d){ st.doms[d.id]=true; });
     secList.forEach(function(s){ st.secs[s.key]=true; });
 
@@ -200,7 +240,7 @@
       var pool=filteredBank();
       var n=(st.n==='all')?pool.length:Math.min(st.n, pool.length);
       st.q=shuffle(pool.slice()).slice(0,n);
-      st.idx=0; st.score=0; st.total=0; st.answered=false;
+      st.idx=0; st.score=0; st.total=0; st.answered=false; st.streak=0; st.best=0;
     }
 
     function counts(){
@@ -273,9 +313,11 @@
       if(st.answered) return;
       st.answered=true; st.total++;
       var i=+btn.getAttribute('data-i'), ok=q.opts[i].c;
-      if(ok) st.score++;
+      if(ok){ st.score++; st.streak++; if(st.streak>st.best) st.best=st.streak; } else { st.streak=0; }
       optEls.forEach(function(b,bi){ b.classList.add('done');
         if(q.opts[bi].c) b.classList.add('correct'); else if(bi===i) b.classList.add('wrong'); });
+      qbeep(ok);
+      if(ok) qconfetti(container.querySelector('.quiz-card'));
       var ex=q.ex;
       var whyHTML=q.opts.map(function(o,oi){
         var letter=String.fromCharCode(65+oi);
@@ -289,7 +331,14 @@
                '<span class="qw-src">'+describeSrc(o.src)+'</span>'+
                (mark?'<span class="qw-m">'+mark+'</span>':'')+dgExtra+'</li>';
       }).join('');
-      container.querySelector('.qfeed').innerHTML=
+      var okMsgs=['정답! 🎯','완벽해요! ✨','좋아요! 👏','바로 그거예요! 💯','명중! 🎪'];
+      var noMsgs=['아쉬워요 💪','다시 도전!','해설 보고 가요 📖','괜찮아요, 다음엔!'];
+      var strkMsg={3:'3연속 🔥',5:'5연속 불꽃 🔥🔥',7:'7연속 🔥🔥🔥',10:'10연속 신의 경지 👑'};
+      var bmsg=ok?pickMsg(okMsgs):pickMsg(noMsgs);
+      if(ok&&strkMsg[st.streak]) bmsg+=' · '+strkMsg[st.streak];
+      var bStreak=(ok&&st.streak>=2)?'<span class="qstreak">🔥 '+st.streak+'연속</span>':'';
+      var banner='<div class="qresult '+(ok?'is-ok':'is-no')+'"><span class="qresult-ic">'+(ok?'🎉':'💪')+'</span><span class="qresult-msg">'+bmsg+'</span>'+bStreak+'</div>';
+      container.querySelector('.qfeed').innerHTML= banner+
         '<div class="qsrc"><b>'+(ok?'✅ 정답':'❌ 오답')+'</b> · 출처 '+
         '<span class="qsrc-dom" style="background:'+(ex.color||'#64748b')+'">'+esc(ex.dom)+'</span> '+
         esc(ex.sec)+' · 토픽 「'+esc(ex.title)+'」'+(ex.compare?' (비교)':'')+
@@ -299,14 +348,23 @@
         '<button class="qnext">다음 →</button>';
       container.querySelector('.qnext').addEventListener('click', function(){ st.idx++; st.answered=false; render(); });
       var sc=container.querySelector('.quiz-score');
-      if(sc) sc.innerHTML='점수 <b>'+st.score+'</b> / '+st.total+' <span class="quiz-prog">('+Math.min(st.idx+1,st.q.length)+'/'+st.q.length+')</span>';
+      if(sc){ sc.innerHTML='점수 <b>'+st.score+'</b> / '+st.total+' <span class="quiz-prog">('+Math.min(st.idx+1,st.q.length)+'/'+st.q.length+')</span>'+(st.streak>=2?' <span class="qs-streak">🔥'+st.streak+'</span>':'');
+        if(ok){ var fl=document.createElement('span'); fl.className='qfloat'; fl.textContent='+1'; sc.appendChild(fl); setTimeout(function(){ fl.remove(); },800); }
+      }
     }
     function renderDone(){
       var pct=st.total?Math.round(st.score/st.total*100):0;
-      container.innerHTML=header()+'<div class="quiz-card quiz-result"><h3>🏁 완료</h3>'+
+      var tier = pct>=90?{e:'🏆',m:'완벽합니다! 명예의 전당',cls:'gold'}
+               : pct>=70?{e:'🎉',m:'훌륭해요! 합격권입니다',cls:'good'}
+               : pct>=50?{e:'👍',m:'좋아요! 조금만 더',cls:'ok'}
+               : {e:'💪',m:'다시 도전해봐요!',cls:'try'};
+      container.innerHTML=header()+'<div class="quiz-card quiz-result '+tier.cls+'">'+
+        '<div class="qtier">'+tier.e+'</div><div class="qtier-msg">'+tier.m+'</div>'+
         '<p class="qbig">'+st.score+' / '+st.total+' <span>('+pct+'%)</span></p>'+
+        (st.best>=3?'<p class="qbest">최고 연속 정답 🔥 '+st.best+'</p>':'')+
         '<button class="quiz-reset big">↻ 다시 풀기</button></div>';
       bindTop();
+      if(pct>=70) setTimeout(function(){ qconfetti(container.querySelector('.quiz-result')); }, 60);
     }
     function bindTop(){
       container.querySelectorAll('.qn').forEach(function(b){ b.addEventListener('click', function(){
