@@ -2812,7 +2812,7 @@
       "keyword": "도메인 모델",
       "keywords": "DDD domain driven design aggregate bounded context 도메인 주도 설계",
       "def": "도메인 모델을 중심으로 Bounded Context·Aggregate로 복잡성을 다루고 코드-도메인을 정렬하는 설계 방법.",
-      "diagram": "[Bounded Context]\n └[Aggregate] ── 일관성 경계\n    ├[Root Entity] 식별자·불변식\n    ├[Entity]      식별자 有\n    └[Value Object] 식별자 無·불변\n ↕ Repository(영속)·Domain Event(전파)",
+      "diagram": "[Bounded Context]\n └ [Aggregate] ─ 일관성 경계\n    ├ [Root Entity] ─ 식별자·불변식\n    ├ [Entity] ─ 식별자 有\n    └ [Value Object] ─ 식별자 無·불변\n[Repository ─ 영속] · [Domain Event ─ 전파]",
       "diagramNote": "※ Ubiquitous Language로 도메인-코드 정렬",
       "table": {
         "head": [
@@ -3062,7 +3062,7 @@
       "keyword": "독립 배포",
       "keywords": "MSA microservice 마이크로서비스 독립배포 bounded context API gateway",
       "def": "시스템을 비즈니스 능력 단위 독립 서비스로 분할해 독립 배포·확장·장애격리를 실현하는 아키텍처.",
-      "diagram": "        [API Gateway]\n            ↓ 라우팅·인증\n  ┌────────┼────────┐\n[주문]   [결제]   [배송] ← 서비스(독립 DB)\n  ↓ 비동기(Event/Saga)\n[Message Broker(Kafka)]\n ↕ Service Discovery·Config",
+      "diagram": "        [API Gateway]\n            ↓ 라우팅·인증\n  ┌────────┼────────┐\n[주문]   [결제]   [배송] ─ 서비스(독립 DB)\n            ↓ 비동기(Event/Saga)\n     [Message Broker(Kafka)]\n[Service Discovery·Config ─ 공통 인프라]",
       "diagramNote": "※ Bounded Context 단위 분할",
       "table": {
         "head": [
@@ -3619,7 +3619,7 @@
       "keyword": "hUMA",
       "keywords": "HSA heterogeneous system architecture 이기종 시스템 CPU GPU hUMA 공유메모리 HSAIL 가속기 병렬",
       "def": "CPU·GPU·가속기를 통합 가상 메모리(hUMA)로 묶어 단일 주소공간에서 협업 처리하는 이기종 컴퓨팅 하드웨어 아키텍처(HSA Foundation).",
-      "diagram": "[CPU]   [GPU]   [DSP·가속기]\n   ↓       ↓        ↓\n[hUMA 공유 가상 메모리·단일 주소공간]\n   ↕ User-mode Queue·HSAIL 중간언어",
+      "diagram": "[CPU] · [GPU] · [DSP·가속기]\n   ↓     ↓        ↓\n[hUMA ─ 공유 가상 메모리·단일 주소공간]\n[User-mode Queue·HSAIL 중간언어 ─ 공통 실행모델]",
       "diagramNote": "※ 데이터 복사 없이 메모리 공유(Zero-copy)",
       "table": {
         "head": [

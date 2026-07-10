@@ -1976,7 +1976,7 @@
       "keyword": "종형·2모수",
       "keywords": "정규분포 normal distribution gaussian 평균 분산 표준편차 좌우대칭 표준정규",
       "def": "평균·분산 2개 모수로 결정되는 좌우대칭 종형 곡선의 대표 연속확률분포.",
-      "diagram": "[평균 μ 중심]↔[좌우대칭 종형]\n         ↕\n[μ±1σ:68%]→[μ±2σ:95%]→[μ±3σ:99.7%]\n         ↓\n[표준화 Z=(x-μ)/σ]→[표준정규 N(0,1)]",
+      "diagram": "평균 μ 중심 · 좌우대칭 종형\n   ↓\n[μ±1σ 68%] → [μ±2σ 95%] → [μ±3σ 99.7%]\n   ↓ 표준화 Z=(x-μ)/σ\n[표준정규 N(0,1)]",
       "diagramNote": "※ 평균=중앙값=최빈값 일치하는 단봉 대칭 분포",
       "table": {
         "head": [
@@ -3798,7 +3798,7 @@
       "tag": "최적화·튜닝",
       "keyword": "대리모델·획득함수",
       "keywords": "베이지안최적화 bayesian optimization 대리모델 가우시안프로세스 획득함수 acquisition ei ucb pi 하이퍼파라미터 hpo 탐색",
-      "diagram": "[관측] → 대리모델(GP) → 획득함수\n → 다음 후보 선택 → 반복 수렴\n 탐색(exploration)↕활용(exploitation)",
+      "diagram": "[관측] → [대리모델(GP)] → [획득함수]\n   ↓\n다음 후보 선택 → 반복 수렴\n   ↓ 획득함수 균형\n탐색(exploration) · 활용(exploitation)",
       "diagramNote": "※ 적은 시행으로 전역 최적 근접",
       "table": {
         "head": [
