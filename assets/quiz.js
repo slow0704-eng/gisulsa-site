@@ -22,7 +22,7 @@
   // 난이도별 보기(선택지) 개수 — 오답 수. 쉬움 3(4지)·보통 4(5지)·어려움 5(6지).
   function distractorCount(diff){ return diff==='hard' ? 5 : diff==='easy' ? 3 : 4; }
   // 오답/정답 보기의 출처 설명 — 어느 토픽의 무엇(키워드·정의·구성요소…)인지.
-  var KIND_DESC={kw:'리드 키워드',def:'정의',comp:'구성요소',role:'역할',diag:'구성도',cmp:'비교 항목'};
+  var KIND_DESC={kw:'리드 키워드',def:'정의',comp:'구성요소',role:'역할',diag:'구성도',cmp:'비교 항목',dnote:'구성도 첨언',note:'구성요소 첨언'};
   // 보기 출처 설명. title(토픽명 보기)은 그 토픽의 정의문을 매핑, 그 외는 "「토픽」의 {요소}".
   function describeSrc(src){
     if(!src||!src.owner) return '';
@@ -52,7 +52,7 @@
 
   // ---- 문제 은행 생성(난이도 반영) ----
   function buildBank(items, diff){
-    var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],cmp:[]};
+    var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],cmp:[],dnote:[],note:[]};
     function push(arr, v, dom, sec, owner, kind, odef){ if(v) arr.push({v:v,dom:dom,sec:sec,owner:owner,kind:kind,odef:odef}); }
     items.forEach(function(it){
       var c=it.card, dom=it.domId, sec=it.domId+'::'+(it.secId||it.secLabel), o=c.title;
@@ -61,6 +61,8 @@
       if(c.keyword) push(P.kw, c.keyword, dom, sec, o, 'kw', od);
       if(!c.compare && c.def) push(P.def, defBody(c), dom, sec, o, 'def', od);
       if(!c.compare && c.diagram) push(P.diag, c.diagram, dom, sec, o, 'diag', od);
+      if(!c.compare && c.diagramNote) push(P.dnote, c.diagramNote, dom, sec, o, 'dnote', od);
+      if(!c.compare && c.note) push(P.note, c.note, dom, sec, o, 'note', od);
       if(!c.compare && c.table && c.table.rows) c.table.rows.forEach(function(r){
         push(P.comp, r[1], dom, sec, o, 'comp', od); push(P.role, r[2], dom, sec, o, 'role', od); });
       if(c.compare && c.table && c.table.rows) c.table.rows.forEach(function(r){
@@ -105,6 +107,10 @@
         var exDia={}; exDia[c.diagram]=1;
         mk('diag2','「'+c.title+'」의 구성도(II.구성도)로 옳은 것은?', c.diagram, P.diag, exDia, 'diag', {optPre:true});
       }
+      if(!c.compare && c.diagramNote){ var edn={}; edn[c.diagramNote]=1;
+        mk('dnote','「'+c.title+'」의 구성도 첨언(※)으로 옳은 것은?', c.diagramNote, P.dnote, edn, 'dnote'); }
+      if(!c.compare && c.note){ var ent={}; ent[c.note]=1;
+        mk('note','「'+c.title+'」의 구성요소 첨언(※)으로 옳은 것은?', c.note, P.note, ent, 'note'); }
       if(c.compare && c.table && c.table.head && c.table.head.length>=3 && c.table.rows){
         var head=c.table.head;
         var crows=c.table.rows.filter(function(r){ return r.length>=3 && r[0] && r[1] && r[2]; });
@@ -126,8 +132,8 @@
   }
 
   var TYPE_LABEL={kw:'키워드',def:'정의',rev:'역추적',comp:'구성요소',role:'역할',
-    diag:'구성도→토픽',diag2:'토픽→구성도',cmp:'비교'};
-  var TYPE_ORDER=['kw','def','rev','comp','role','diag','diag2','cmp'];
+    diag:'구성도→토픽',diag2:'토픽→구성도',dnote:'구성도첨언',note:'구성요소첨언',cmp:'비교'};
+  var TYPE_ORDER=['kw','def','rev','comp','role','diag','diag2','dnote','note','cmp'];
   var DIFFS=[['easy','쉬움'],['normal','보통'],['hard','어려움']];
 
   GSQuiz.start = function(container, items){
