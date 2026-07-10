@@ -22,7 +22,7 @@
   // 난이도별 보기(선택지) 개수 — 오답 수. 쉬움 3(4지)·보통 4(5지)·어려움 5(6지).
   function distractorCount(diff){ return diff==='hard' ? 5 : diff==='easy' ? 3 : 4; }
   // 오답/정답 보기의 출처 설명 — 어느 토픽의 무엇(키워드·정의·구성요소…)인지.
-  var KIND_DESC={kw:'리드 키워드',def:'정의',comp:'구성요소',role:'역할',diag:'구성도',cmp:'비교 항목',dnote:'구성도 첨언',note:'구성요소 첨언'};
+  var KIND_DESC={kw:'리드 키워드',def:'정의',comp:'구성요소',role:'역할',diag:'구성도',cmp:'비교 항목',dnote:'구성도 첨언',note:'구성요소 첨언',cloze:'정의 핵심어'};
   // 보기 출처 설명. title(토픽명 보기)은 그 토픽의 정의문을 매핑, 그 외는 "「토픽」의 {요소}".
   function describeSrc(src){
     if(!src||!src.owner) return '';
@@ -31,6 +31,22 @@
     if(k==='cmp-opp') return '「'+o+'」의 대비(반대편) 항목';
     if(k==='def') return '「'+o+'」의 정의';
     return '「'+o+'」의 '+(KIND_DESC[k]||'요소')+(src.def?' <span class="qw-od">('+esc(src.def)+')</span>':'');
+  }
+
+  // ---- 빈칸 채우기(cloze) 지원 ----
+  // 자동: 정의문에서 표준·기법 약어(영문 2~14자)를 빈칸 후보로 추출.
+  var CLOZE_STOP={of:1,the:1,to:1,and:1,for:1,in:1,on:1,is:1,as:1,by:1,or:1,vs:1,it:1,an:1,a:1};
+  function clozeTerms(s){
+    var m=(s||'').match(/[A-Za-z][A-Za-z0-9\-]{1,13}/g)||[], seen={}, out=[];
+    m.forEach(function(w){ var k=w.toLowerCase(); if(CLOZE_STOP[k]||seen[k]||w.length<2) return; seen[k]=1; out.push(w); });
+    return out;
+  }
+  // 수동: cloze 필드 "…{정답}…{정답2}…" 파싱. 정답 배열과, 특정 정답만 ____로 가린 렌더.
+  function clozeAnswers(raw){
+    var a=[], re=/\{([^}]+)\}/g, m; while((m=re.exec(raw))) a.push(m[1]); return a;
+  }
+  function clozeBlank(raw, targetIdx){
+    var i=-1; return raw.replace(/\{([^}]+)\}/g, function(_,ans){ i++; return i===targetIdx?'____':ans; });
   }
   // 난이도별 오답 추출: pool 항목 {v,dom,sec,owner,kind}. target {dom,sec}. 항목 객체를 반환.
   //  hard=유사 우선(같은 단원→같은 과목→기타), normal=같은 과목 우선, easy=동떨어진 것 우선
@@ -52,7 +68,7 @@
 
   // ---- 문제 은행 생성(난이도 반영) ----
   function buildBank(items, diff){
-    var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],cmp:[],dnote:[],note:[]};
+    var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],cmp:[],dnote:[],note:[],cloze:[]};
     function push(arr, v, dom, sec, owner, kind, odef){ if(v) arr.push({v:v,dom:dom,sec:sec,owner:owner,kind:kind,odef:odef}); }
     items.forEach(function(it){
       var c=it.card, dom=it.domId, sec=it.domId+'::'+(it.secId||it.secLabel), o=c.title;
@@ -60,6 +76,9 @@
       push(P.title, c.title, dom, sec, o, 'title', od);
       if(c.keyword) push(P.kw, c.keyword, dom, sec, o, 'kw', od);
       if(!c.compare && c.def) push(P.def, defBody(c), dom, sec, o, 'def', od);
+      // 빈칸 정답 후보 pool: cloze 필드 정답 우선, 없으면 정의문 약어
+      if(c.cloze) clozeAnswers(c.cloze).forEach(function(a){ push(P.cloze, a, dom, sec, o, 'cloze', od); });
+      else if(!c.compare && c.def) clozeTerms(c.def).forEach(function(w){ push(P.cloze, w, dom, sec, o, 'cloze', od); });
       if(!c.compare && c.diagram) push(P.diag, c.diagram, dom, sec, o, 'diag', od);
       if(!c.compare && c.diagramNote) push(P.dnote, c.diagramNote, dom, sec, o, 'dnote', od);
       if(!c.compare && c.note) push(P.note, c.note, dom, sec, o, 'note', od);
@@ -111,6 +130,17 @@
         mk('dnote','「'+c.title+'」의 구성도 첨언(※)으로 옳은 것은?', c.diagramNote, P.dnote, edn, 'dnote'); }
       if(!c.compare && c.note){ var ent={}; ent[c.note]=1;
         mk('note','「'+c.title+'」의 구성요소 첨언(※)으로 옳은 것은?', c.note, P.note, ent, 'note'); }
+      // 빈칸 채우기: cloze 필드(수동) 우선, 없으면 정의문 약어(자동)
+      if(c.cloze){
+        var ans=clozeAnswers(c.cloze);
+        ans.forEach(function(a,ci){ var exc={}; exc[a]=1;
+          mk('cloze','「'+c.title+'」 — 빈칸에 들어갈 말은?\n「 '+clozeBlank(c.cloze,ci)+' 」', a, P.cloze, exc, 'cloze'); });
+      } else if(!c.compare && c.def){
+        var terms=clozeTerms(c.def);
+        if(terms.length){ var a=terms[Math.floor(Math.random()*terms.length)];
+          var blanked=c.def.split(a).join('____'); var exc={}; exc[a]=1;
+          mk('cloze','「'+c.title+'」 — 정의문 빈칸에 들어갈 용어는?\n「 '+blanked+' 」', a, P.cloze, exc, 'cloze'); }
+      }
       if(c.compare && c.table && c.table.head && c.table.head.length>=3 && c.table.rows){
         var head=c.table.head;
         var crows=c.table.rows.filter(function(r){ return r.length>=3 && r[0] && r[1] && r[2]; });
@@ -131,9 +161,9 @@
     return bank;
   }
 
-  var TYPE_LABEL={kw:'키워드',def:'정의',rev:'역추적',comp:'구성요소',role:'역할',
+  var TYPE_LABEL={kw:'키워드',def:'정의',rev:'역추적',cloze:'빈칸채우기',comp:'구성요소',role:'역할',
     diag:'구성도→토픽',diag2:'토픽→구성도',dnote:'구성도첨언',note:'구성요소첨언',cmp:'비교'};
-  var TYPE_ORDER=['kw','def','rev','comp','role','diag','diag2','dnote','note','cmp'];
+  var TYPE_ORDER=['kw','def','rev','cloze','comp','role','diag','diag2','dnote','note','cmp'];
   var DIFFS=[['easy','쉬움'],['normal','보통'],['hard','어려움']];
 
   GSQuiz.start = function(container, items){
