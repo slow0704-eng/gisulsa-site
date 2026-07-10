@@ -385,7 +385,7 @@
       "tag": "모델링·설계",
       "keyword": "조인종속 제거",
       "keywords": "제5정규화 5NF PJNF 조인종속 join dependency 무손실 분해 다중 분해 후보키 정규형",
-      "def": "조인종속(JD)을 제거해 더 이상 무손실 분해가 불가능한 상태로, 모든 조인종속이 후보키에 의해 함의되는 최종 정규형(PJNF).",
+      "def": "조인종속(JD)을 제거하여 모든 JD가 후보키로 함의되고 무손실 분해가 완결된 최종 정규형(PJNF).",
       "diagram": "[4NF: 다치종속 제거]\n →조인종속(JD) 제거→ [5NF/PJNF]\n R = R1 ⋈ R2 ⋈ R3 (무손실)\n 모든 JD ← 후보키 함의",
       "diagramNote": "※ 3개 이상 분해로만 무손실인 경우 대상",
       "table": {
@@ -867,7 +867,7 @@
       "tag": "SQL·질의",
       "keyword": "런타임 생성",
       "keywords": "동적 SQL dynamic 정적 static 바인드 변수 prepared statement injection 파싱",
-      "def": "실행 시점에 SQL 문자열을 생성·컴파일·실행하는 방식으로, 가변 조건 질의에 유연하게 대응.",
+      "def": "실행 시점(런타임)에 SQL 문자열을 생성·컴파일·실행하여 가변 조건 질의에 대응하는 방식.",
       "diagram": "[App] →런타임 SQL 생성→ [Parse→Bind→Execute]\n정적: 컴파일 시 고정 / 동적: 실행 시 결정",
       "diagramNote": "※ 유연성↑ vs 파싱 비용·SQL Injection",
       "table": {
@@ -967,7 +967,7 @@
       "tag": "SQL·질의",
       "keyword": "CBO 실행계획",
       "keywords": "옵티마이저 optimizer CBO RBO 통계 실행계획 카디널리티 힌트 hint",
-      "def": "SQL의 최적 실행계획을 통계·비용 기반으로 산출하는 DBMS 핵심 엔진.",
+      "def": "SQL 실행계획을 통계·비용 기반(CBO)으로 산출하여 최적 경로를 선택하는 DBMS 엔진.",
       "diagram": "[SQL]→[Parser]→[Transformer]\n                 뷰병합·Unnest\n[통계]→[Estimator] 카디널리티·비용\n        ↓\n[Plan Generator]→[최적 실행계획]",
       "diagramNote": "※ CBO: 비용 최소 경로 선택",
       "table": {
@@ -1017,7 +1017,7 @@
       "tag": "SQL·질의",
       "keyword": "B-Tree 탐색",
       "keywords": "인덱스 index B-Tree bitmap hash 스캔 range unique skip 복합 커버링 튜닝",
-      "def": "테이블 데이터의 위치를 별도 자료구조로 관리하여 검색 성능을 높이는 객체.",
+      "def": "테이블 행의 위치를 B-Tree 등 별도 자료구조로 관리하여 검색 성능을 높이는 객체.",
       "diagram": "[B-Tree] Root→Branch→Leaf(정렬)→ROWID→Table\n스캔: Range·Unique·Full·Skip",
       "diagramNote": "※ 조회↑·DML 시 인덱스 갱신 비용",
       "table": {
@@ -1167,7 +1167,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "락·MVCC",
       "keywords": "동시성제어 concurrency lock 2PL MVCC timestamp 낙관적 lost update dirty read phantom deadlock",
-      "def": "다중 트랜잭션 동시 실행 시 상호 간섭으로 인한 이상현상을 방지하여 일관성을 보장하는 기법.",
+      "def": "다중 트랜잭션 동시 실행 시 락·MVCC로 상호 간섭을 제어하여 일관성을 보장하는 기법.",
       "diagram": "[이상] Lost Update·Dirty Read·Unrepeatable·Phantom\n[기법] Lock(2PL)·Timestamp·MVCC·낙관적",
       "diagramNote": "※ 직렬가능성(Serializability) 보장",
       "table": {
@@ -1317,7 +1317,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "즉시·지연 갱신",
       "keywords": "로그 기반 회복 recovery deferred immediate update wal redo undo 트랜잭션 로그",
-      "def": "트랜잭션 변경을 로그에 먼저 기록하고 장애 시 REDO·UNDO로 복구하는 회복기법.",
+      "def": "변경 연산을 로그에 선기록(WAL)하고 즉시·지연 갱신 방식으로 장애 시 REDO·UNDO 복구하는 기법.",
       "diagram": "변경 → [로그 기록(WAL)] → DB 반영\n장애 → 로그 스캔 → REDO / UNDO\n 지연갱신: UNDO 불필요(미반영)",
       "diagramNote": "※ WAL: 로그 선기록 후 DB 반영",
       "table": {
@@ -1611,7 +1611,7 @@
       "tag": "트랜잭션·무결성",
       "keyword": "논리·물리 독립",
       "keywords": "데이터베이스 독립성 data independence 논리적 물리적 스키마 매핑 사상 ansi sparc",
-      "def": "상위 스키마가 하위 스키마 변경에 영향받지 않도록 매핑으로 보장하는 DB 핵심 속성.",
+      "def": "상위 스키마가 하위 스키마 변경에 영향받지 않도록 매핑으로 논리·물리 독립성을 보장하는 속성.",
       "diagram": "[외부 스키마]\n   ↓ 논리적 독립성(개념 변경 무영향)\n[개념 스키마]\n   ↓ 물리적 독립성(저장 변경 무영향)\n[내부 스키마]",
       "diagramNote": "※ 3층 구조·매핑이 독립성 토대",
       "table": {
@@ -1811,7 +1811,7 @@
       "tag": "성능·확장",
       "keyword": "분산 투명성",
       "keywords": "분산 DB distributed database 투명성 transparency 2PC two phase commit 위치 중복 분할",
-      "def": "물리적으로 분산된 여러 DB를 논리적으로 단일 DB처럼 사용하게 하는 시스템.",
+      "def": "물리적으로 분산된 여러 DB를 분산 투명성을 통해 단일 DB처럼 사용하게 하는 시스템.",
       "diagram": "[전역 스키마] ─논리 단일화→ 분산 투명성\n[노드1][노드2][노드3] (지역 DB)\n분산 트랜잭션: 2PC(Prepare→Commit)",
       "diagramNote": "※ 투명성: 위치·중복·분할·장애·병행",
       "table": {
@@ -2099,7 +2099,7 @@
       "tag": "신유형·데이터관리",
       "keyword": "CAP·확장성",
       "keywords": "NoSQL NewSQL key value document column graph CAP PACELC BASE spanner",
-      "def": "비정형·대용량·분산에 대응하는 비관계형 DB(NoSQL)와, RDBMS의 ACID에 확장성을 결합한 NewSQL.",
+      "def": "CAP 이론에 기반해 비정형·대용량·분산에 대응하는 비관계형 DB(NoSQL)와, ACID에 확장성을 결합한 NewSQL.",
       "diagram": "[NoSQL] Key-Value·Document·Column·Graph\n   ↑ CAP(C·A·P 중 2)·BASE\n[NewSQL] 분산 + ACID (예: Spanner)",
       "diagramNote": "※ RDBMS=ACID, NoSQL=확장성/BASE",
       "table": {

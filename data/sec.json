@@ -192,7 +192,7 @@
       "tag": "암호·인증",
       "keyword": "일방향·무결성",
       "keywords": "해시함수 hash sha 일방향 무결성 키스트레칭 salt pbkdf2 bcrypt 충돌 레인보우",
-      "def": "임의 길이를 고정 길이로 변환하는 일방향 함수로, 무결성·비밀번호 저장에 활용.",
+      "def": "임의 길이를 고정 길이로 변환하는 일방향 함수로, 무결성 검증·키스트레칭 기반 비밀번호 저장에 활용.",
       "diagram": "데이터 →[해시]→ 고정 다이제스트\n 성질: 일방향·충돌회피·눈사태\n 키스트레칭: Salt+반복(PBKDF2)",
       "diagramNote": "※ 솔트+반복으로 무차별·레인보우 방어",
       "table": {
@@ -1086,7 +1086,7 @@
       "tag": "시스템·네트워크 보안",
       "keyword": "결코 신뢰 안 함",
       "keywords": "제로 트러스트 zero trust never trust 검증 최소권한 마이크로세그먼테이션 zta sdp 성숙도",
-      "def": "내·외부를 막론하고 모든 접근을 검증하는 보안모델로, 경계 기반 방어의 한계를 보완.",
+      "def": "모든 접근을 신뢰 않고 지속 검증하는 보안모델로, 최소권한 기반 경계 방어 한계 보완(NIST SP 800-207).",
       "diagram": "Never Trust, Always Verify\n 식별·인증→최소권한→지속검증\n 마이크로세그먼테이션·SDP",
       "diagramNote": "※ 경계 소멸(클라우드·원격) 대응",
       "table": {
@@ -1430,7 +1430,7 @@
       "tag": "관리체계·개인정보",
       "keyword": "관리체계 인증",
       "keywords": "isms isms-p 정보보호 개인정보보호 관리체계 인증 통합 pdca 인증기준 통제항목",
-      "def": "정보보호·개인정보보호 관리체계를 통합 인증하는 국내 제도(ISMS-P).",
+      "def": "정보보호(ISMS)·개인정보보호(PIMS) 관리체계를 통합 인증하는 국내 제도로, KISA 운영(ISMS-P).",
       "diagram": "관리체계(16)+보호대책(64)+개인정보(22)\n PDCA 기반 지속 운영\n ISMS(정보보호) ⊂ ISMS-P(통합)",
       "diagramNote": "※ ISMS-P=ISMS+개인정보 영역 통합",
       "table": {
@@ -1580,7 +1580,7 @@
       "tag": "관리체계·개인정보",
       "keyword": "PET",
       "keywords": "프라이버시 강화기술 pet privacy enhancing 가명 익명 차분 프라이버시 동형암호 연합학습",
-      "def": "개인정보를 보호하면서 데이터를 활용하게 하는 기술의 총칭(PET).",
+      "def": "개인정보를 보호하며 데이터 활용을 가능케 하는 기술의 총칭으로, 동형암호·차분프라이버시·가명처리 등(PET).",
       "diagram": "가명·익명화·차분프라이버시\n 동형암호·연합학습·MPC\n 데이터 활용 ↔ 프라이버시 균형",
       "diagramNote": "※ 활용과 보호의 균형 기술",
       "table": {
@@ -2750,7 +2750,7 @@
       "tag": "암호·인증",
       "keyword": "양자내성 암호",
       "keywords": "양자내성암호 pqc post quantum cryptography 격자 lattice 코드기반 다변수 해시기반 nist shor kyber dilithium",
-      "def": "양자컴퓨터(Shor)로도 풀기 어려운 수학 문제 기반으로 설계된 차세대 공개키 암호.",
+      "def": "양자컴퓨터(Shor)로도 풀기 어려운 격자·부호 기반 수학 문제로 설계한 차세대 공개키 암호(NIST 표준화).",
       "diagram": "[위협] Shor → RSA·ECC 무력화\n[대응] 격자·코드·다변수·해시 기반 PQC\n[표준] NIST: Kyber(암호)·Dilithium(서명)\n 전환: 하이브리드(기존+PQC) 점진 적용",
       "diagramNote": "※ 격자기반(LWE)이 성능·안전성으로 표준 선정",
       "table": {
@@ -2800,7 +2800,7 @@
       "tag": "암호·인증",
       "keyword": "CMVP·4등급",
       "keywords": "fips 140-3 암호모듈 검증 cmvp 보안레벨 iso 19790 nist 물리보안 키관리 변조 조달",
-      "def": "암호모듈의 보안 요구사항을 4개 등급으로 규정한 미국 NIST 표준(ISO 19790 기반).",
+      "def": "암호모듈 보안 요구사항을 4개 등급으로 규정한 NIST 표준으로, CMVP로 검증(ISO 19790 기반).",
       "diagram": "[암호모듈] HW / SW / 펌웨어\n 11개 보안영역 평가(키관리·물리보안 등)\n 레벨1→4 차등(소프트→변조대응)\n[검증] CMVP 인증 → 정부조달 요건",
       "diagramNote": "※ 140-2 후속 — ISO/IEC 19790·24759 채택",
       "table": {
