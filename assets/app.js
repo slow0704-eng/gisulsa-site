@@ -41,7 +41,7 @@
   if(MERMAID) MERMAID.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
-  var state = { q:'', dom:'all', sec:'all', view:'cards' };
+  var state = { q:'', qmode:'and', dom:'all', sec:'all', view:'cards' };
   var domById = {}, catMapByDom = {}, mapDone = {};
   DOMAINS.forEach(function(d){
     domById[d.id] = d;
@@ -156,7 +156,7 @@
       var groupVisible = false;
       g.querySelectorAll('.card').forEach(function(c){
         var text = q ? (c.getAttribute('data-k')+' '+c.textContent).toLowerCase() : '';
-        var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec);
+        var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode);
         c.classList.toggle('hidden', !ok);
         if(ok){ shown++; groupVisible = true; }
       });
@@ -243,7 +243,7 @@
     var rows = sheetBody.querySelectorAll('.sheet-row');
     rows.forEach(function(r){
       var text = q ? (r.getAttribute('data-k')+' '+r.textContent).toLowerCase() : '';
-      var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec);
+      var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode);
       r.classList.toggle('hidden', !ok);
       if(ok) shown++;
     });
@@ -287,9 +287,10 @@
     var searchable = (v==='cards' || v==='sheet');
     if(searchEl){
       searchEl.disabled = !searchable;
-      searchEl.placeholder = searchable ? '🔍 전 과목 통합 검색 — 토픽·키워드'
+      searchEl.placeholder = searchable ? '전 과목 통합 검색 — 여러 단어 공백 구분(AND/OR)'
         : (v==='graph' ? '관계도 뷰 — 검색 미적용' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절');
     }
+    var smBtn=document.getElementById('searchMode'); if(smBtn) smBtn.disabled = !searchable;
     if(v==='graph' || v==='quiz') toggleEmpty(false);
     if(v==='graph') countEl.textContent = '🗺 관계도';
 
@@ -330,7 +331,7 @@
       (d.cards||[]).forEach(function(c){
         var def = GS.defText ? GS.defText(c) : (c.def || '');
         var text = q ? (c.keywords + ' ' + c.title + ' ' + def).toLowerCase() : '';
-        if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec)) return;
+        if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec, state.qmode)) return;
         rows.push({
           '과목': d.label,
           '단원': secTitle[c.category] || catLabel[c.category] || '기타',
@@ -484,6 +485,26 @@
     if(state.view==='quiz') return;   // 퀴즈는 검색어 미사용(매 입력마다 재출제 방지)
     applyActiveFilter();
   });
+
+  // ---- 검색 방식 토글(AND: 모두 포함 / OR: 하나라도 포함) ----
+  var smodeEl = document.getElementById('searchMode');
+  function renderSmode(){
+    if(!smodeEl) return;
+    var or = state.qmode==='or';
+    smodeEl.textContent = or ? 'OR' : 'AND';
+    smodeEl.classList.toggle('is-or', or);
+    smodeEl.setAttribute('aria-pressed', or);
+    smodeEl.title = or ? '검색 방식: OR(단어 중 하나라도 포함) — 눌러 AND로'
+                       : '검색 방식: AND(단어 모두 포함) — 눌러 OR로';
+  }
+  if(smodeEl){
+    renderSmode();
+    smodeEl.addEventListener('click', function(){
+      state.qmode = (state.qmode==='or') ? 'and' : 'or';
+      renderSmode();
+      if(state.q && state.view!=='quiz') applyActiveFilter();
+    });
+  }
 
   // ---- init ----
   buildContent();

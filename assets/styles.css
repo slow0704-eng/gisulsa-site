@@ -74,7 +74,15 @@ svg.lucide{width:1.05em;height:1.05em;stroke-width:2;vertical-align:-.16em;flex:
 .gsearch-wrap{position:relative;display:flex;align-items:center;flex:1 1 280px;min-width:180px;}
 .gsearch-ic{position:absolute;left:12px;display:flex;color:var(--ink-400);pointer-events:none;}
 .gsearch-ic svg.lucide{width:16px;height:16px;}
-.gsearch-wrap .gsearch{flex:1 1 auto;width:100%;padding-left:36px;}
+.gsearch-wrap .gsearch{flex:1 1 auto;width:100%;padding-left:36px;padding-right:54px;}
+/* 검색 방식 토글(AND↔OR) — 검색창 우측 안쪽 */
+.smode{position:absolute;right:6px;top:50%;transform:translateY(-50%);z-index:2;cursor:pointer;
+  border:1px solid var(--ink-600);background:var(--ink-700);color:var(--ink-300);font-family:inherit;
+  font-size:11px;font-weight:800;letter-spacing:.4px;padding:3px 8px;border-radius:var(--r-sm);
+  min-width:40px;transition:background .12s,color .12s,border-color .12s;}
+.smode:hover{color:#fff;border-color:var(--brand);}
+.smode.is-or{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);}
+.smode:disabled{opacity:.4;cursor:default;}
 .viewsw button{display:inline-flex;align-items:center;justify-content:center;gap:5px;}
 .viewsw button svg.lucide{width:15px;height:15px;vertical-align:middle;}
 .viewsw button.active svg.lucide{stroke-width:2.4;}

@@ -13,10 +13,20 @@
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
   function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
   // 카드/시트 행 공용 필터 술어(순수). 과목·단원·검색어(소문자 q) 일치 여부.
-  function cardMatches(domId, catId, text, q, selDom, selSec){
+  // q 는 공백으로 구분된 여러 단어 가능. qmode='or'면 하나라도 포함, 그 외(기본 and)면 모두 포함.
+  function cardMatches(domId, catId, text, q, selDom, selSec, qmode){
     if(selDom!=='all' && selDom!==domId) return false;
     if(selSec!=='all' && selSec!==catId) return false;
-    if(q && String(text).indexOf(q) < 0) return false;
+    if(q){
+      var terms = q.split(/\s+/).filter(Boolean);
+      if(terms.length){
+        var s = String(text);
+        var hit = (qmode==='or')
+          ? terms.some(function(tm){ return s.indexOf(tm) >= 0; })
+          : terms.every(function(tm){ return s.indexOf(tm) >= 0; });
+        if(!hit) return false;
+      }
+    }
     return true;
   }
   // 카드 공통 속성(접근성: 클릭/Enter 로 확대 모달 — role·tabindex·aria-label)
