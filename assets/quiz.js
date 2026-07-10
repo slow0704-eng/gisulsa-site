@@ -19,38 +19,49 @@
     var b=dt.rows.map(function(r){return r[1];}).join(' ');
     return (dt.head&&dt.head[0]?dt.head[0]:'A')+': '+a+'  /  '+(dt.head&&dt.head[1]?dt.head[1]:'B')+': '+b;
   }
-  // 난이도별 오답 추출: pool 항목 {v,dom,sec}. target {dom,sec}.
+  // 난이도별 보기(선택지) 개수 — 오답 수. 쉬움 3(4지)·보통 4(5지)·어려움 5(6지).
+  function distractorCount(diff){ return diff==='hard' ? 5 : diff==='easy' ? 3 : 4; }
+  // 오답/정답 보기의 출처 설명 — 어느 토픽의 무엇(키워드·정의·구성요소…)인지.
+  var KIND_DESC={kw:'리드 키워드',def:'정의',comp:'구성요소',role:'역할',diag:'구성도',cmp:'비교 항목'};
+  function describeSrc(src){
+    if(!src||!src.owner) return '';
+    var o=esc(src.owner), k=src.kind;
+    if(k==='title') return '토픽 「'+o+'」';
+    if(k==='cmp-opp') return '「'+o+'」의 대비(반대편) 항목';
+    return '「'+o+'」의 '+(KIND_DESC[k]||'요소');
+  }
+  // 난이도별 오답 추출: pool 항목 {v,dom,sec,owner,kind}. target {dom,sec}. 항목 객체를 반환.
   //  hard=유사 우선(같은 단원→같은 과목→기타), normal=같은 과목 우선, easy=동떨어진 것 우선
   function sampleBy(pool, n, exclude, t, diff){
     var sec=[], dom=[], oth=[];
     shuffle(pool.slice()).forEach(function(e){
       if(!e.v || exclude[e.v]) return;
-      if(e.sec===t.sec) sec.push(e.v);
-      else if(e.dom===t.dom) dom.push(e.v);
-      else oth.push(e.v);
+      if(e.sec===t.sec) sec.push(e);
+      else if(e.dom===t.dom) dom.push(e);
+      else oth.push(e);
     });
     var order = diff==='hard' ? sec.concat(dom,oth)
               : diff==='easy' ? oth.concat(dom,sec)
               : shuffle(sec.concat(dom)).concat(oth);   // normal: 같은 과목 우선
     var out=[], seen={};
-    for(var i=0;i<order.length && out.length<n;i++){ var v=order[i]; if(seen[v]) continue; seen[v]=1; out.push(v); }
+    for(var i=0;i<order.length && out.length<n;i++){ var e=order[i]; if(seen[e.v]) continue; seen[e.v]=1; out.push(e); }
     return out;
   }
 
   // ---- 문제 은행 생성(난이도 반영) ----
   function buildBank(items, diff){
     var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],cmp:[]};
-    function push(arr, v, dom, sec){ if(v) arr.push({v:v,dom:dom,sec:sec}); }
+    function push(arr, v, dom, sec, owner, kind){ if(v) arr.push({v:v,dom:dom,sec:sec,owner:owner,kind:kind}); }
     items.forEach(function(it){
-      var c=it.card, dom=it.domId, sec=it.domId+'::'+(it.secId||it.secLabel);
-      push(P.title, c.title, dom, sec);
-      if(c.keyword) push(P.kw, c.keyword, dom, sec);
-      if(!c.compare && c.def) push(P.def, defBody(c), dom, sec);
-      if(!c.compare && c.diagram) push(P.diag, c.diagram, dom, sec);
+      var c=it.card, dom=it.domId, sec=it.domId+'::'+(it.secId||it.secLabel), o=c.title;
+      push(P.title, c.title, dom, sec, o, 'title');
+      if(c.keyword) push(P.kw, c.keyword, dom, sec, o, 'kw');
+      if(!c.compare && c.def) push(P.def, defBody(c), dom, sec, o, 'def');
+      if(!c.compare && c.diagram) push(P.diag, c.diagram, dom, sec, o, 'diag');
       if(!c.compare && c.table && c.table.rows) c.table.rows.forEach(function(r){
-        push(P.comp, r[1], dom, sec); push(P.role, r[2], dom, sec); });
+        push(P.comp, r[1], dom, sec, o, 'comp'); push(P.role, r[2], dom, sec, o, 'role'); });
       if(c.compare && c.table && c.table.rows) c.table.rows.forEach(function(r){
-        if(r.length>=3){ push(P.cmp, r[1], dom, sec); push(P.cmp, r[2], dom, sec); } });
+        if(r.length>=3){ push(P.cmp, r[1], dom, sec, o, 'cmp'); push(P.cmp, r[2], dom, sec, o, 'cmp'); } });
     });
     var bank=[];
     items.forEach(function(it){
@@ -58,33 +69,37 @@
       var t={dom:it.domId, sec:it.domId+'::'+(it.secId||it.secLabel)};
       var ex={title:c.title, dom:it.domLabel, domId:it.domId, sec:it.secLabel, secKey:t.sec,
         def:(c.compare?compareDef(c):(c.def||'')), color:it.color, compare:!!c.compare};
-      function mk(type, stem, answer, pool, exclude, extra){
-        var ds=sampleBy(pool, 3, exclude, t, diff);
+      // 정답 kind = pool 종류(kind). 오답도 같은 pool에서 나오므로 owner만 다름.
+      function mk(type, stem, answer, pool, exclude, kind, extra){
+        var pre = extra && extra.optPre;
+        var want = pre ? 3 : distractorCount(diff);   // 구성도 보기는 길어 4지 유지
+        var ds=sampleBy(pool, want, exclude, t, diff);
         if(ds.length<3) return;
-        var q={type:type, stem:stem, ex:ex,
-          opts:shuffle([{t:answer,c:true}].concat(ds.map(function(x){return {t:x,c:false};})))};
+        var opts=[{t:answer,c:true,src:{owner:ex.title,kind:kind}}]
+          .concat(ds.map(function(x){return {t:x.v,c:false,src:{owner:x.owner,kind:x.kind}};}));
+        var q={type:type, stem:stem, ex:ex, opts:shuffle(opts)};
         if(extra){ for(var k in extra) q[k]=extra[k]; }
         bank.push(q);
       }
       var exTitle={}; exTitle[c.title]=1;
       if(c.keyword){ var ek={}; ek[c.keyword]=1;
-        mk('kw','「'+c.title+'」의 리드(핵심) 키워드로 옳은 것은?', c.keyword, P.kw, ek); }
+        mk('kw','「'+c.title+'」의 리드(핵심) 키워드로 옳은 것은?', c.keyword, P.kw, ek, 'kw'); }
       if(!c.compare && c.def){
         var body=defBody(c); var ed={}; ed[body]=1;
-        mk('def','「'+c.title+'」의 정의(설명)로 옳은 것은?', body, P.def, ed);
-        mk('rev','다음 설명에 해당하는 토픽은?\n「 '+body+' 」', c.title, P.title, exTitle);
+        mk('def','「'+c.title+'」의 정의(설명)로 옳은 것은?', body, P.def, ed, 'def');
+        mk('rev','다음 설명에 해당하는 토픽은?\n「 '+body+' 」', c.title, P.title, exTitle, 'title');
       }
       if(!c.compare && c.table && c.table.rows && c.table.rows.length){
         var ownC={}, ownR={};
         c.table.rows.forEach(function(r){ if(r[1])ownC[r[1]]=1; if(r[2])ownR[r[2]]=1; });
         var row=c.table.rows[Math.floor(Math.random()*c.table.rows.length)];
-        if(row[1]) mk('comp','「'+c.title+'」의 구성요소(II.구성요소)에 포함되는 것은?', row[1], P.comp, ownC);
-        if(row[1] && row[2]) mk('role','「'+c.title+'」에서 구성요소 ‘'+row[1]+'’의 역할로 옳은 것은?', row[2], P.role, ownR);
+        if(row[1]) mk('comp','「'+c.title+'」의 구성요소(II.구성요소)에 포함되는 것은?', row[1], P.comp, ownC, 'comp');
+        if(row[1] && row[2]) mk('role','「'+c.title+'」에서 구성요소 ‘'+row[1]+'’의 역할로 옳은 것은?', row[2], P.role, ownR, 'role');
       }
       if(!c.compare && c.diagram){
-        mk('diag','다음 구성도(II.구성도)에 해당하는 토픽은?', c.title, P.title, exTitle, {stemDiagram:c.diagram});
+        mk('diag','다음 구성도(II.구성도)에 해당하는 토픽은?', c.title, P.title, exTitle, 'title', {stemDiagram:c.diagram});
         var exDia={}; exDia[c.diagram]=1;
-        mk('diag2','「'+c.title+'」의 구성도(II.구성도)로 옳은 것은?', c.diagram, P.diag, exDia, {optPre:true});
+        mk('diag2','「'+c.title+'」의 구성도(II.구성도)로 옳은 것은?', c.diagram, P.diag, exDia, 'diag', {optPre:true});
       }
       if(c.compare && c.table && c.table.head && c.table.head.length>=3 && c.table.rows){
         var head=c.table.head;
@@ -93,11 +108,13 @@
           var r2=crows[Math.floor(Math.random()*crows.length)];
           var side=Math.random()<0.5?1:2, ans=r2[side], opp=r2[side===1?2:1];
           var exV={}; exV[ans]=1; exV[opp]=1;
-          var extra=sampleBy(P.cmp, 2, exV, t, diff);
-          var opts=[{t:ans,c:true},{t:opp,c:false}].concat(extra.map(function(x){return {t:x,c:false};}));
+          var extra=sampleBy(P.cmp, Math.max(1,distractorCount(diff)-1), exV, t, diff);
+          var opts=[{t:ans,c:true,src:{owner:ex.title,kind:'cmp'}},
+                    {t:opp,c:false,src:{owner:ex.title,kind:'cmp-opp'}}]
+            .concat(extra.map(function(x){return {t:x.v,c:false,src:{owner:x.owner,kind:x.kind}};}));
           if(opts.length>=4) bank.push({type:'cmp', ex:ex,
             stem:'「'+c.title+'」 비교 — ‘'+r2[0]+'’ 측면에서 ['+head[side]+']의 특징으로 옳은 것은?',
-            opts:shuffle(opts.slice(0,4))});
+            opts:shuffle(opts)});
         }
       }
     });
@@ -220,11 +237,23 @@
       optEls.forEach(function(b,bi){ b.classList.add('done');
         if(q.opts[bi].c) b.classList.add('correct'); else if(bi===i) b.classList.add('wrong'); });
       var ex=q.ex;
+      var whyHTML=q.opts.map(function(o,oi){
+        var letter=String.fromCharCode(65+oi);
+        var cls=o.c?'qw-ok':(oi===i?'qw-no':'qw-neu');
+        var mark=o.c?'✓':(oi===i?'✗':'');
+        var txt=q.optPre?'':('<span class="qw-t">'+esc(o.t)+'</span>');
+        return '<li class="'+cls+'"><span class="qw-k">'+letter+'</span>'+txt+
+               '<span class="qw-src">'+describeSrc(o.src)+'</span>'+
+               (mark?'<span class="qw-m">'+mark+'</span>':'')+'</li>';
+      }).join('');
       container.querySelector('.qfeed').innerHTML=
         '<div class="qsrc"><b>'+(ok?'✅ 정답':'❌ 오답')+'</b> · 출처 '+
         '<span class="qsrc-dom" style="background:'+(ex.color||'#64748b')+'">'+esc(ex.dom)+'</span> '+
         esc(ex.sec)+' · 토픽 「'+esc(ex.title)+'」'+(ex.compare?' (비교)':'')+
-        '<div class="qsrc-def">'+esc(ex.def)+'</div></div><button class="qnext">다음 →</button>';
+        '<div class="qsrc-def">'+esc(ex.def)+'</div></div>'+
+        '<div class="qwhy"><div class="qwhy-h">보기 해설 — 각 선택지가 이어지는 토픽</div>'+
+        '<ul class="qwhy-list">'+whyHTML+'</ul></div>'+
+        '<button class="qnext">다음 →</button>';
       container.querySelector('.qnext').addEventListener('click', function(){ st.idx++; st.answered=false; render(); });
       var sc=container.querySelector('.quiz-score');
       if(sc) sc.innerHTML='점수 <b>'+st.score+'</b> / '+st.total+' <span class="quiz-prog">('+Math.min(st.idx+1,st.q.length)+'/'+st.q.length+')</span>';

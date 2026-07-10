@@ -17,7 +17,7 @@
 
 <header class="appbar">
   <div class="topbar">
-    <div class="brand"><span class="brand-mark"><i data-lucide="graduation-cap"></i></span><span class="brand-name">정보관리기술사<small>학습 콘솔 · 1·2교시</small></span></div>
+    <a href="./" class="brand" title="처음으로 (새로고침)"><span class="brand-mark"><i data-lucide="graduation-cap"></i></span><span class="brand-name">정보관리기술사<small>학습 콘솔 · 1·2교시</small></span></a>
     <div class="gsearch-wrap"><i data-lucide="search" class="gsearch-ic"></i><input id="globalSearch" class="gsearch" type="text" placeholder="전 과목 통합 검색 — 토픽·키워드" /></div>
     <div class="viewsw" id="viewsw">
       <button data-v="cards" class="active"><i data-lucide="layout-grid"></i>카드</button>
@@ -81,14 +81,31 @@
 </div>
 
 <footer>
-  기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) + 2교시 논술 카드 · 전 과목 통합 검색 + 과목·단원 필터 · 카드 클릭 시 확대<br/>
-  데이터: <code>data/*.json</code> 분리 (수정: JSON 편집 후 <code>python build.py</code> 재실행) · 자세한 구조는 <code>AGENTS.md</code>
+  <nav class="foot-nav" aria-label="시험 안내">
+    <button type="button" class="foot-link" data-info="exam"><i data-lucide="clipboard-list"></i>시험 정보</button>
+    <button type="button" class="foot-link" data-info="grade"><i data-lucide="check-check"></i>채점 방식</button>
+    <button type="button" class="foot-link" data-info="tmpl"><i data-lucide="layout-template"></i>답안 템플릿</button>
+    <button type="button" class="foot-link" data-info="write"><i data-lucide="pen-line"></i>작성 원칙</button>
+  </nav>
+  <div class="foot-meta">
+    기술사 1교시 3단 골격(정의 → 구성도 → 구성요소) + 2교시 논술 카드 · 전 과목 통합 검색 + 과목·단원 필터 · 카드 클릭 시 확대<br/>
+    데이터: <code>data/*.json</code> 분리 (수정: JSON 편집 후 <code>python build.py</code> 재실행) · 자세한 구조는 <code>AGENTS.md</code>
+  </div>
 </footer>
+
+<div id="infoModal" class="cmodal hidden" role="dialog" aria-modal="true" aria-label="시험 안내" aria-hidden="true">
+  <div class="cmodal-bg" data-close="1"></div>
+  <div class="cmodal-box">
+    <button class="cmodal-x" data-close="1" title="닫기 (Esc)"><i data-lucide="x"></i></button>
+    <div class="cmodal-body info-body"></div>
+  </div>
+</div>
 
 <script src="assets/render.js"></script>
 <script src="data/bundle.js"></script>
 <script src="assets/graph.js"></script>
 <script src="assets/quiz.js"></script>
 <script src="assets/app.js"></script>
+<script src="assets/info.js"></script>
 </body>
 </html>
