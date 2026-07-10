@@ -61,6 +61,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans)
 .gsearch::placeholder{color:var(--ink-400);}
 .gsearch:focus{border-color:var(--brand-strong);background:#fff;box-shadow:0 0 0 3px rgba(56,189,248,.15);}
 .topbar .count{font-size:var(--fs-1);color:var(--muted);white-space:nowrap;}
+.filter-toggle{cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--fs-1);font-weight:600;padding:5px 10px;border-radius:var(--r-sm);transition:all .12s;}
+.filter-toggle:hover{border-color:var(--brand-strong);color:var(--ink);}
+.filter-toggle svg.lucide{width:14px;height:14px;}
+.filter-toggle.off{color:var(--ink-400);background:var(--ink-50);}
+.facets-collapsed .facets{display:none;}
 
 /* ===== 외부 아이콘(Lucide) 사이징 · 검색 아이콘 · 타이포 폴리시 ===== */
 svg.lucide{width:1.05em;height:1.05em;stroke-width:2;vertical-align:-.16em;flex:none;}
@@ -369,6 +374,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qwhy-list .qw-k{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--surface-3);color:var(--ink-600);font-weight:800;font-size:10px;display:inline-flex;align-items:center;justify-content:center;}
 .qwhy-list .qw-t{color:var(--ink-700);font-weight:600;min-width:0;}
 .qwhy-list .qw-src{color:var(--muted);flex:1 1 auto;min-width:0;}
+.qwhy-list .qw-src b{color:var(--ink-700);font-weight:700;}
+.qwhy-list .qw-od{color:var(--ink-400);}
 .qwhy-list .qw-m{flex:0 0 auto;margin-left:auto;font-weight:800;font-size:var(--fs-2);}
 .qwhy-list .qw-ok{border-color:var(--ok);background:#f0fdf4;}
 .qwhy-list .qw-ok .qw-k{background:var(--ok);color:#fff;}

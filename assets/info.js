@@ -28,6 +28,18 @@
       '</tbody></table>' +
       '<p>교시별 100점 만점(합계 400점). <b>4교시 평균 60점(240점) 이상</b>이면 필기 합격 → 면접(구술) 60점 이상 시 최종 합격.</p>' +
 
+      '<h3>시험 시간표 (당일 일정)</h3>' +
+      '<table><thead><tr><th>구분</th><th>시간</th><th>소요</th></tr></thead><tbody>' +
+        '<tr><td>1교시</td><td>09:00 ~ 10:40</td><td>100분</td></tr>' +
+        '<tr><td>쉬는시간</td><td>10:40 ~ 11:00</td><td>20분</td></tr>' +
+        '<tr><td>2교시</td><td>11:00 ~ 12:40</td><td>100분</td></tr>' +
+        '<tr><td>점심시간</td><td>12:40 ~ 14:00</td><td>약 80분</td></tr>' +
+        '<tr><td>3교시</td><td>14:00 ~ 15:40</td><td>100분</td></tr>' +
+        '<tr><td>쉬는시간</td><td>15:40 ~ 16:00</td><td>20분</td></tr>' +
+        '<tr><td>4교시</td><td>16:00 ~ 17:40</td><td>100분</td></tr>' +
+      '</tbody></table>' +
+      '<div class="info-note">※ 위 시각은 기술사 필기 <b>표준 일정</b> 기준입니다. 시행 회차·고사장 사정에 따라 입실·시작 시각이 달라질 수 있으니, 정확한 시간은 <a href="https://www.q-net.or.kr" target="_blank" rel="noopener">큐넷</a> 수험표·공고를 확인하세요.</div>' +
+
       '<h3>응시 자격 (예시)</h3>' +
       '<ul>' +
         '<li>기사 취득 후 동일·유사 직무분야 <b>실무 4년</b> 이상</li>' +
@@ -183,5 +195,24 @@
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     }
+  });
+})();
+
+/* 헤더 과목·단원 필터 접기/펼치기 — 상태 기억(localStorage) */
+(function () {
+  var btn = document.getElementById('filterToggle');
+  if (!btn) return;
+  var KEY = 'gsFacetsCollapsed';
+  function apply(col) {
+    document.body.classList.toggle('facets-collapsed', col);
+    btn.setAttribute('aria-expanded', String(!col));
+    btn.classList.toggle('off', col);
+  }
+  var col = localStorage.getItem(KEY) === '1';
+  apply(col);
+  btn.addEventListener('click', function () {
+    col = !col;
+    try { localStorage.setItem(KEY, col ? '1' : '0'); } catch (e) {}
+    apply(col);
   });
 })();
