@@ -82,13 +82,13 @@
       "id": "run",
       "title": "⑤ 운영 (Operations)",
       "desc": "안정적 서비스 운영·장애 대응. SRE·관측가능성·ITSM.",
-      "mermaid": "flowchart LR\n  S([\"⑤ 운영 (Operations)\"]):::hub\n  n0[\"SRE (사이트 신뢰성 공학)\"] --> n1[\"관측가능성 (Observability)\"] --> n2[\"ITSM (IT 서비스 관리)\"] --> n3[\"장애관리 · 포스트모템\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
+      "mermaid": "flowchart LR\n  S([\"⑤ 운영 (Operations)\"]):::hub\n  n0[\"SRE (사이트 신뢰성 공학)\"] --> n1[\"관측가능성 (Observability)\"] --> n2[\"ITSM (IT 서비스 관리)\"] --> n3[\"장애관리 · 포스트모템\"] --> n4[\"BCP · DRS (업무연속성·재해복구)\"]\n  S --> n0\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "risk",
       "title": "⑥ 위험관리",
       "desc": "위험·이슈를 식별·분석·대응·감시. 정성/정량 분석·ETA·ERM으로 통제.",
-      "mermaid": "flowchart LR\n  S([\"⑥ 위험관리\"]):::hub\n  n0[\"위험관리 (Risk Management)\"] --> n1[\"이슈관리 (Issue Management)\"] --> n2[\"위험성평가기법 ETA\"] --> n3[\"부정적 위험 (Threat)\"] --> n4[\"종합위험관리시스템 (ERM)\"] --> n5[\"정성적 위험분석 (Qualitative)\"]\n  S --> n0\n  n6[\"정량적 위험분석 (Quantitative)\"] --> n7[\"FMEA (고장모드 영향분석)\"] --> n8[\"FTA (결함수목 분석)\"] --> n9[\"HAZOP (위험·운전분석)\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
+      "mermaid": "flowchart LR\n  S([\"⑥ 위험관리\"]):::hub\n  n0[\"위험관리 (Risk Management)\"] --> n1[\"이슈관리 (Issue Management)\"] --> n2[\"위험성평가기법 ETA\"] --> n3[\"부정적 위험 (Threat)\"] --> n4[\"종합위험관리시스템 (ERM)\"] --> n5[\"정성적 위험분석 (Qualitative)\"]\n  S --> n0\n  n6[\"정량적 위험분석 (Quantitative)\"] --> n7[\"FMEA (고장모드 영향분석)\"] --> n8[\"FTA (결함수목 분석)\"] --> n9[\"HAZOP (위험·운전분석)\"] --> n10[\"ISO 31000 (위험관리 표준)\"] --> n11[\"위험관리 / 이슈관리\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n11 cmp;"
     }
   ],
   "cards": [
@@ -4777,6 +4777,195 @@
         ]
       },
       "note": "※ 준거성(통제)과 상호보완으로 감리 신뢰성 확보."
+    },
+    {
+      "category": "risk",
+      "title": "ISO 31000 (위험관리 표준)",
+      "tag": "위험관리",
+      "keyword": "원칙·틀·프로세스",
+      "keywords": "ISO 31000 위험관리 risk management 원칙 principles 프레임워크 framework 프로세스 process iec 31010 erm 비인증 가이드",
+      "def": "조직 전반의 리스크를 관리하기 위한 원칙(Principles)·프레임워크(Framework)·프로세스(Process)를 제시하는 국제 지침(비인증).",
+      "diagram": "[원칙 Principles] 가치창출·통합·맞춤화\n        ↓\n[프레임워크] 리더십·설계·실행·평가·개선 ↺\n        ↓\n[프로세스] 소통→평가(식별·분석·평정)→처리→감시",
+      "diagramNote": "※ 원칙→프레임워크→프로세스 3계층 구조",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "원칙",
+            "Principles",
+            "가치창출 등 8원칙"
+          ],
+          [
+            "프레임워크",
+            "Framework",
+            "리더십·통합 중심"
+          ],
+          [
+            "프로세스",
+            "Process",
+            "평가·처리·감시"
+          ],
+          [
+            "평가",
+            "식별·분석",
+            "리스크 평정"
+          ],
+          [
+            "처리",
+            "대응",
+            "회피·저감·전가·수용"
+          ],
+          [
+            "성격",
+            "가이드",
+            "비인증·전 조직"
+          ]
+        ]
+      },
+      "note": "※ IEC 31010(평가기법)과 연계. ERM·PMBOK 위험관리와 정합."
+    },
+    {
+      "category": "risk",
+      "compare": true,
+      "title": "위험관리 / 이슈관리",
+      "tag": "위험관리",
+      "keyword": "미래 불확실 ↔ 현재 발생",
+      "keywords": "위험관리 이슈관리 risk issue management 비교 미래 불확실 확률 현재 발생 사실 등록부 register 로그 log 에스컬레이션 전환",
+      "defTable": {
+        "head": [
+          "위험관리",
+          "이슈관리"
+        ],
+        "rows": [
+          [
+            "미래의 불확실한 사건을",
+            "현재 발생한 문제를"
+          ],
+          [
+            "사전에 식별·분석·대응해",
+            "즉시 해결·의사결정으로"
+          ],
+          [
+            "예방하는 선제적 관리",
+            "조치하는 사후적 관리"
+          ]
+        ]
+      },
+      "diagramNote": "※ 위험 = 발생 전(확률), 이슈 = 발생 후(사실)",
+      "table": {
+        "head": [
+          "구분",
+          "위험관리",
+          "이슈관리"
+        ],
+        "rows": [
+          [
+            "시점",
+            "발생 이전",
+            "발생 이후"
+          ],
+          [
+            "",
+            "미래·예측",
+            "현재·현실"
+          ],
+          [
+            "성격",
+            "확률적 불확실",
+            "확정된 사실"
+          ],
+          [
+            "",
+            "긍정·부정 양면",
+            "부정적 문제"
+          ],
+          [
+            "대상",
+            "위험 등록부",
+            "이슈 로그"
+          ],
+          [
+            "",
+            "잠재 사건",
+            "현안 과제"
+          ],
+          [
+            "대응",
+            "회피·전가·완화·수용",
+            "즉시 조치·해결"
+          ],
+          [
+            "",
+            "예비비 확보",
+            "담당·기한 지정"
+          ],
+          [
+            "도구",
+            "정성·정량 분석",
+            "우선순위·조정"
+          ],
+          [
+            "",
+            "리스크 매트릭스",
+            "에스컬레이션"
+          ]
+        ]
+      },
+      "note": "※ 미대응 위험은 이슈로 전환 — 위험·이슈 통합관리 필수."
+    },
+    {
+      "category": "run",
+      "title": "BCP · DRS (업무연속성·재해복구)",
+      "tag": "운영",
+      "keyword": "RTO·RPO 목표",
+      "keywords": "BCP business continuity 업무연속성 DRS disaster recovery 재해복구 RTO RPO BIA 영향분석 mirror hot warm cold site 복제 동기 비동기 이격거리",
+      "def": "재해 시 핵심업무의 연속성을 보장하는 계획(BCP)과 정보시스템을 복구하는 체계(DRS)로, BIA 기반 RTO·RPO 목표에 맞춰 복구전략·센터를 구축.",
+      "diagram": "[BIA 영향분석]→[RTO·RPO 목표]→[복구전략]\n        ↓\n[DRS] Mirror ↔ Hot ↔ Warm ↔ Cold Site\n 데이터 복제: 동기(RPO≈0) ↔ 비동기\n        ↺ 모의훈련·현행화",
+      "diagramNote": "※ RTO=복구 시간, RPO=복구 시점 목표 (BIA 도출)",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "BCP지표",
+            "RTO",
+            "복구 목표시간"
+          ],
+          [
+            "BCP지표",
+            "RPO",
+            "복구 목표시점"
+          ],
+          [
+            "BCP지표",
+            "MTD·BIA",
+            "최대중단·영향분석"
+          ],
+          [
+            "DRS유형",
+            "Mirror·Hot",
+            "실시간·즉시 복구"
+          ],
+          [
+            "DRS유형",
+            "Warm·Cold",
+            "부분·최소 복구"
+          ],
+          [
+            "고려사항",
+            "이격·복제",
+            "거리·동기/비동기"
+          ]
+        ]
+      },
+      "note": "※ RTO·RPO↓ = 비용↑ — 업무 중요도별 차등 복구등급으로 균형."
     }
   ]
 }
