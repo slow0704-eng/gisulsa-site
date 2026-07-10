@@ -69,11 +69,11 @@
   // ---- 문제 은행 생성(난이도 반영) ----
   function buildBank(items, diff){
     var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],cmp:[],dnote:[],note:[],cloze:[]};
-    function push(arr, v, dom, sec, owner, kind, odef){ if(v) arr.push({v:v,dom:dom,sec:sec,owner:owner,kind:kind,odef:odef}); }
+    function push(arr, v, dom, sec, owner, kind, odef, dg){ if(v) arr.push({v:v,dom:dom,sec:sec,owner:owner,kind:kind,odef:odef,dg:dg}); }
     items.forEach(function(it){
       var c=it.card, dom=it.domId, sec=it.domId+'::'+(it.secId||it.secLabel), o=c.title;
       var od=c.compare?compareDef(c):defBody(c);   // 해설용 이 토픽 정의(리드키워드 제거)
-      push(P.title, c.title, dom, sec, o, 'title', od);
+      push(P.title, c.title, dom, sec, o, 'title', od, c.diagram);   // 토픽 보기엔 그 토픽의 구성도도 실어 해설에 표시
       if(c.keyword) push(P.kw, c.keyword, dom, sec, o, 'kw', od);
       if(!c.compare && c.def) push(P.def, defBody(c), dom, sec, o, 'def', od);
       // 빈칸 정답 후보 pool: cloze 필드 정답 우선, 없으면 정의문 약어
@@ -92,7 +92,7 @@
       var c=it.card;
       var t={dom:it.domId, sec:it.domId+'::'+(it.secId||it.secLabel)};
       var ex={title:c.title, dom:it.domLabel, domId:it.domId, sec:it.secLabel, secKey:t.sec,
-        def:(c.compare?compareDef(c):(c.def||'')), color:it.color, compare:!!c.compare};
+        def:(c.compare?compareDef(c):(c.def||'')), color:it.color, compare:!!c.compare, diagram:c.diagram};
       var od=c.compare?compareDef(c):defBody(c);   // 해설용 이 토픽 정의(리드키워드 제거)
       // 정답 kind = pool 종류(kind). 오답도 같은 pool에서 나오므로 owner만 다름.
       function mk(type, stem, answer, pool, exclude, kind, extra){
@@ -100,8 +100,8 @@
         var want = pre ? 3 : distractorCount(diff);   // 구성도 보기는 길어 4지 유지
         var ds=sampleBy(pool, want, exclude, t, diff);
         if(ds.length<3) return;
-        var opts=[{t:answer,c:true,src:{owner:ex.title,kind:kind,def:od}}]
-          .concat(ds.map(function(x){return {t:x.v,c:false,src:{owner:x.owner,kind:x.kind,def:x.odef}};}));
+        var opts=[{t:answer,c:true,src:{owner:ex.title,kind:kind,def:od,dg:ex.diagram}}]
+          .concat(ds.map(function(x){return {t:x.v,c:false,src:{owner:x.owner,kind:x.kind,def:x.odef,dg:x.dg}};}));
         var q={type:type, stem:stem, ex:ex, opts:shuffle(opts)};
         if(extra){ for(var k in extra) q[k]=extra[k]; }
         bank.push(q);
@@ -281,10 +281,13 @@
         var letter=String.fromCharCode(65+oi);
         var cls=o.c?'qw-ok':(oi===i?'qw-no':'qw-neu');
         var mark=o.c?'✓':(oi===i?'✗':'');
-        var txt=q.optPre?'':('<span class="qw-t">'+esc(o.t)+'</span>');
-        return '<li class="'+cls+'"><span class="qw-k">'+letter+'</span>'+txt+
+        // 보기 본문: 구성도 보기(optPre)는 구성도 그대로, 그 외는 텍스트
+        var body=q.optPre?('<pre class="qw-dg">'+esc(o.t)+'</pre>'):('<span class="qw-t">'+esc(o.t)+'</span>');
+        // 구성도→토픽 문제: 각 보기 토픽의 구성도도 함께 표시(오답 토픽 구성도까지 비교)
+        var dgExtra=(q.type==='diag' && o.src && o.src.dg)?('<pre class="qw-dg">'+esc(o.src.dg)+'</pre>'):'';
+        return '<li class="'+cls+'"><span class="qw-k">'+letter+'</span>'+body+
                '<span class="qw-src">'+describeSrc(o.src)+'</span>'+
-               (mark?'<span class="qw-m">'+mark+'</span>':'')+'</li>';
+               (mark?'<span class="qw-m">'+mark+'</span>':'')+dgExtra+'</li>';
       }).join('');
       container.querySelector('.qfeed').innerHTML=
         '<div class="qsrc"><b>'+(ok?'✅ 정답':'❌ 오답')+'</b> · 출처 '+

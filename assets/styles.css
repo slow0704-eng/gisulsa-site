@@ -376,6 +376,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qwhy-list .qw-src{color:var(--muted);flex:1 1 auto;min-width:0;}
 .qwhy-list .qw-src b{color:var(--ink-700);font-weight:700;}
 .qwhy-list .qw-od{color:var(--ink-400);}
+.qwhy-list .qw-dg{flex:1 1 100%;margin:5px 0 0;background:var(--surface-dark);color:var(--ink-200);border-radius:6px;padding:7px 9px;font-size:10.5px;line-height:1.5;overflow-x:auto;font-family:var(--font-mono);white-space:pre;}
 .qwhy-list .qw-m{flex:0 0 auto;margin-left:auto;font-weight:800;font-size:var(--fs-2);}
 .qwhy-list .qw-ok{border-color:var(--ok);background:#f0fdf4;}
 .qwhy-list .qw-ok .qw-k{background:var(--ok);color:#fff;}
