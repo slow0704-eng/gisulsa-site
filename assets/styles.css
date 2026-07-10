@@ -347,6 +347,9 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qdiag{margin:0;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:9px 11px;font-size:11px;line-height:1.45;
   overflow-x:auto;font-family:"D2Coding","Consolas","Courier New",monospace;white-space:pre;}
 .qstem-diag{margin:0 0 14px;font-size:11.5px;}
+/* 구성요소 빈칸 문제 — 표를 보여주고 한 셀을 ____로 가림 */
+.qstem-tbl{margin:0 0 14px;overflow-x:auto;}
+.qstem-tbl table{width:100%;}
 .qopt-body{flex:1 1 auto;min-width:0;}
 .qopt-pre{align-items:stretch;}
 .qopt-pre .qdiag{width:100%;font-size:10.5px;}

@@ -62,7 +62,7 @@
   // 난이도별 보기(선택지) 개수 — 오답 수. 쉬움 3(4지)·보통 4(5지)·어려움 5(6지).
   function distractorCount(diff){ return diff==='hard' ? 5 : diff==='easy' ? 3 : 4; }
   // 오답/정답 보기의 출처 설명 — 어느 토픽의 무엇(키워드·정의·구성요소…)인지.
-  var KIND_DESC={kw:'리드 키워드',def:'정의',comp:'구성요소',role:'역할',diag:'구성도',cmp:'비교 항목',dnote:'구성도 첨언',note:'구성요소 첨언',cloze:'정의 핵심어'};
+  var KIND_DESC={kw:'리드 키워드',def:'정의',comp:'구성요소',role:'역할',diag:'구성도',diagtok:'구성도 항목',cmp:'비교 항목',dnote:'구성도 첨언',note:'구성요소 첨언',cloze:'정의 핵심어'};
   // 보기 출처 설명. title(토픽명 보기)은 그 토픽의 정의문을 매핑, 그 외는 "「토픽」의 {요소}".
   function describeSrc(src){
     if(!src||!src.owner) return '';
@@ -88,6 +88,16 @@
   function clozeBlank(raw, targetIdx){
     var i=-1; return raw.replace(/\{([^}]+)\}/g, function(_,ans){ i++; return i===targetIdx?'____':ans; });
   }
+  // 구성도 빈칸 후보: 박스 [..] 안의 "의미 있는 노드"만(화살표·기호 제외, 문서 내 1회 등장분만 → 가려도 답이 다른 곳에 안 보임)
+  function diagTokens(d){
+    var m=(d||'').match(/\[([^\]]+)\]/g)||[], cnt={}, order=[];
+    m.forEach(function(x){ var v=x.slice(1,-1).trim(); if(!v) return; if(!(v in cnt)){cnt[v]=0;order.push(v);} cnt[v]++; });
+    return order.filter(function(v){
+      return cnt[v]===1 && v.length>=1 && v.length<=18 && v!=='____' && !/^[→↓↑↕⇄↔·\-\s]*$/.test(v);
+    });
+  }
+  // 구성도에서 특정 박스 토큰을 [____]로 치환(첫 등장)
+  function blankDiagToken(d, tok){ return (d||'').replace('['+tok+']', '[____]'); }
   // 난이도별 오답 추출: pool 항목 {v,dom,sec,owner,kind}. target {dom,sec}. 항목 객체를 반환.
   //  hard=유사 우선(같은 단원→같은 과목→기타), normal=같은 과목 우선, easy=동떨어진 것 우선
   function sampleBy(pool, n, exclude, t, diff){
@@ -108,7 +118,7 @@
 
   // ---- 문제 은행 생성(난이도 반영) ----
   function buildBank(items, diff){
-    var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],cmp:[],dnote:[],note:[],cloze:[]};
+    var P={kw:[],def:[],title:[],comp:[],role:[],diag:[],diagtok:[],cmp:[],dnote:[],note:[],cloze:[]};
     function push(arr, v, dom, sec, owner, kind, odef, dg){ if(v) arr.push({v:v,dom:dom,sec:sec,owner:owner,kind:kind,odef:odef,dg:dg}); }
     items.forEach(function(it){
       var c=it.card, dom=it.domId, sec=it.domId+'::'+(it.secId||it.secLabel), o=c.title;
@@ -119,7 +129,8 @@
       // 빈칸 정답 후보 pool: cloze 필드 정답 우선, 없으면 정의문 약어
       if(c.cloze) clozeAnswers(c.cloze).forEach(function(a){ push(P.cloze, a, dom, sec, o, 'cloze', od); });
       else if(!c.compare && c.def) clozeTerms(c.def).forEach(function(w){ push(P.cloze, w, dom, sec, o, 'cloze', od); });
-      if(!c.compare && c.diagram) push(P.diag, c.diagram, dom, sec, o, 'diag', od);
+      if(!c.compare && c.diagram){ push(P.diag, c.diagram, dom, sec, o, 'diag', od);
+        diagTokens(c.diagram).forEach(function(tk){ push(P.diagtok, tk, dom, sec, o, 'diagtok', od); }); }
       if(!c.compare && c.diagramNote) push(P.dnote, c.diagramNote, dom, sec, o, 'dnote', od);
       if(!c.compare && c.note) push(P.note, c.note, dom, sec, o, 'note', od);
       if(!c.compare && c.table && c.table.rows) c.table.rows.forEach(function(r){
@@ -160,11 +171,28 @@
         var row=c.table.rows[Math.floor(Math.random()*c.table.rows.length)];
         if(row[1]) mk('comp','「'+c.title+'」의 구성요소(II.구성요소)에 포함되는 것은?', row[1], P.comp, ownC, 'comp');
         if(row[1] && row[2]) mk('role','「'+c.title+'」에서 구성요소 ‘'+row[1]+'’의 역할로 옳은 것은?', row[2], P.role, ownR, 'role');
+        // 구성요소 빈칸: 표의 셀 하나(구성요소/역할)를 ____로 가리고 채우기
+        var bcol=Math.random()<0.5?1:2, brow=c.table.rows[Math.floor(Math.random()*c.table.rows.length)];
+        var bcell=brow&&brow[bcol];
+        if(bcell){
+          var btbl={head:c.table.head, rows:c.table.rows.map(function(r){ return r===brow?r.map(function(x,ci){return ci===bcol?'____':x;}):r; })};
+          var exc={}; c.table.rows.forEach(function(r){ if(r[bcol])exc[r[bcol]]=1; });
+          mk('compblank','아래 「'+c.title+'」 구성요소 표의 빈칸(____)에 들어갈 '+(bcol===1?'구성요소':'역할')+'로 옳은 것은?',
+             bcell, bcol===1?P.comp:P.role, exc, bcol===1?'comp':'role', {stemTable:btbl});
+        }
       }
       if(!c.compare && c.diagram){
         mk('diag','다음 구성도(II.구성도)에 해당하는 토픽은?', c.title, P.title, exTitle, 'title', {stemDiagram:c.diagram});
         var exDia={}; exDia[c.diagram]=1;
         mk('diag2','「'+c.title+'」의 구성도(II.구성도)로 옳은 것은?', c.diagram, P.diag, exDia, 'diag', {optPre:true});
+        // 구성도 빈칸: 박스 토큰 하나를 [____]로 가리고 채우기
+        var dtoks=diagTokens(c.diagram);
+        if(dtoks.length){
+          var dpick=dtoks[Math.floor(Math.random()*dtoks.length)], exDt={};
+          dtoks.forEach(function(x){ exDt[x]=1; });
+          mk('diagblank','아래 「'+c.title+'」 구성도의 빈칸 [ ____ ]에 들어갈 것은?',
+             dpick, P.diagtok, exDt, 'diagtok', {stemDiagram:blankDiagToken(c.diagram,dpick)});
+        }
       }
       if(!c.compare && c.diagramNote){ var edn={}; edn[c.diagramNote]=1;
         mk('dnote','「'+c.title+'」의 구성도 첨언(※)으로 옳은 것은?', c.diagramNote, P.dnote, edn, 'dnote'); }
@@ -202,8 +230,9 @@
   }
 
   var TYPE_LABEL={kw:'키워드',def:'정의',rev:'역추적',cloze:'빈칸채우기',comp:'구성요소',role:'역할',
+    compblank:'구성요소 빈칸',diagblank:'구성도 빈칸',
     diag:'구성도→토픽',diag2:'토픽→구성도',dnote:'구성도첨언',note:'구성요소첨언',cmp:'비교'};
-  var TYPE_ORDER=['kw','def','rev','cloze','comp','role','diag','diag2','dnote','note','cmp'];
+  var TYPE_ORDER=['kw','def','rev','cloze','comp','compblank','role','diag','diag2','diagblank','dnote','note','cmp'];
   var DIFFS=[['easy','쉬움'],['normal','보통'],['hard','어려움']];
 
   GSQuiz.start = function(container, items){
@@ -304,6 +333,7 @@
         '<div class="qtype">'+(TYPE_LABEL[q.type]||'')+'</div>'+
         '<div class="qstem">'+nl2br(q.stem)+'</div>'+
         (q.stemDiagram?'<pre class="qdiag qstem-diag">'+esc(q.stemDiagram)+'</pre>':'')+
+        (q.stemTable?'<div class="qstem-tbl">'+(GS.tableHTML?GS.tableHTML(q.stemTable):'')+'</div>':'')+
         '<div class="qopts">'+optHTML+'</div><div class="qfeed"></div></div>';
       bindTop();
       var optEls=container.querySelectorAll('.qopt');
