@@ -3899,7 +3899,7 @@
       "keyword": "TP·FP·FN·TN",
       "keywords": "혼동행렬 confusion matrix tp fp fn tn 정밀도 재현율 precision recall f1 정확도 특이도 roc auc 임계값",
       "diagram": "        예측P   예측N\n실제P  [TP]    [FN]\n실제N  [FP]    [TN]\n → 정밀도·재현율·F1 산출",
-      "diagramNote": "※ 임계값 조정 → 정밀도↕재현율 트레이드오프",
+      "diagramNote": "※ 임계값 조정 → 정밀도↔재현율 트레이드오프",
       "table": {
         "head": [
           "구분",

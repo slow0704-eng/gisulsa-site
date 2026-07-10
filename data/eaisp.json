@@ -138,7 +138,7 @@
       "keyword": "경영전략 정렬",
       "keywords": "ISP 정보화전략계획 information strategy planning 중장기 비전 로드맵",
       "def": "경영전략과 연계해 중장기 정보화 비전·목표·이행과제를 도출하는 전사 차원의 정보화 전략계획 수립 활동.",
-      "diagram": "[환경분석] → [As-Is 현황분석]\n   ↕ Gap 분석\n   → [To-Be 목표모델] → [이행계획]\n부연: 경영전략·업무/정보/기술\n     → 정보화 아키텍처·로드맵",
+      "diagram": "[환경분석] → [As-Is 현황분석]\n   ↓ Gap 분석 (As-Is↔To-Be 격차)\n[To-Be 목표모델] → [이행계획]\n부연: 경영전략·업무/정보/기술\n     → 정보화 아키텍처·로드맵",
       "diagramNote": "※ 경영전략 ↔ 정보화 정렬(Alignment)이 핵심",
       "table": {
         "head": [

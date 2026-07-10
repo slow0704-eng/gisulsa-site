@@ -3112,7 +3112,7 @@
       "keyword": "Sidecar 프록시",
       "keywords": "service mesh 서비스 메쉬 sidecar 사이드카 istio envoy data plane control plane mTLS 트래픽 관측 MSA",
       "def": "사이드카 프록시로 서비스 간 통신(트래픽·보안·관측)을 애플리케이션 코드와 분리해 인프라 계층에서 처리하는 MSA 통신 인프라.",
-      "diagram": "[Control Plane] 정책·설정 배포\n   ↓ 구성 주입\n[서비스A + Sidecar프록시]\n   ↕ mTLS·라우팅·재시도·관측\n[서비스B + Sidecar프록시]\n   ※ Sidecar들이 Data Plane 구성",
+      "diagram": "[Control Plane] 정책·설정 배포\n   ↓ 구성 주입\n[서비스A + Sidecar]\n   ↑↓ 서비스 간: mTLS·라우팅·재시도\n[서비스B + Sidecar]\n   ※ Sidecar들이 Data Plane 구성",
       "diagramNote": "※ 통신 관심사를 사이드카로 분리(코드 무침투)",
       "table": {
         "head": [
