@@ -133,12 +133,14 @@
       return;
     }
     var d = domById[state.dom], catMap = catMapByDom[d.id];
-    var html = '<button type="button" class="chip sec'+(state.sec==='all'?' active':'')+'" aria-pressed="'+(state.sec==='all')+'" data-sec="all">전체 단원</button>';
+    var secCnt = {};
+    (d.cards||[]).forEach(function(c){ secCnt[c.category] = (secCnt[c.category]||0) + 1; });
+    var html = '<button type="button" class="chip sec'+(state.sec==='all'?' active':'')+'" aria-pressed="'+(state.sec==='all')+'" data-sec="all">전체 단원 <b>'+(d.cards||[]).length+'</b></button>';
     (d.sections||[]).forEach(function(sec){
       var col = (catMap[sec.id]||{}).color || '#334155';
       var on = state.sec===sec.id;
       var style = on ? ('background:'+col+';border-color:transparent;color:#fff') : '';
-      html += '<button type="button" class="chip sec'+(on?' active':'')+'" aria-pressed="'+on+'" data-sec="'+sec.id+'" style="'+style+'">'+sec.title+'</button>';
+      html += '<button type="button" class="chip sec'+(on?' active':'')+'" aria-pressed="'+on+'" data-sec="'+sec.id+'" style="'+style+'">'+sec.title+' <b>'+(secCnt[sec.id]||0)+'</b></button>';
     });
     secFacetEl.innerHTML = html;
     secFacetEl.querySelectorAll('.chip.sec').forEach(function(ch){
@@ -157,21 +159,22 @@
       subFacetEl.innerHTML = '<span class="facet-hint">세부구분 — 단원 선택 시 표시</span>';
       return;
     }
-    var d = domById[state.dom], subs = [], seen = {};
+    var d = domById[state.dom], subs = [], seen = {}, subCnt = {}, secTotal = 0;
     (d.cards||[]).forEach(function(c){
       if(c.category!==state.sec) return;
+      secTotal++;
       var s = c.subcat || '';
-      if(s && !seen[s]){ seen[s]=1; subs.push(s); }
+      if(s){ subCnt[s] = (subCnt[s]||0) + 1; if(!seen[s]){ seen[s]=1; subs.push(s); } }
     });
     if(subs.length < 2){   // 세부구분이 1개 이하면 나눌 의미 없음 — 표시 생략
       subFacetEl.innerHTML = '';
       if(state.sub!=='all') state.sub='all';
       return;
     }
-    var html = '<button type="button" class="chip sub'+(state.sub==='all'?' active':'')+'" aria-pressed="'+(state.sub==='all')+'" data-sub="all">전체 세부</button>';
+    var html = '<button type="button" class="chip sub'+(state.sub==='all'?' active':'')+'" aria-pressed="'+(state.sub==='all')+'" data-sub="all">전체 세부 <b>'+secTotal+'</b></button>';
     subs.forEach(function(s){
       var on = state.sub===s;
-      html += '<button type="button" class="chip sub'+(on?' active':'')+'" aria-pressed="'+on+'" data-sub="'+GS.escAttr(s)+'">'+GS.escHTML(s)+'</button>';
+      html += '<button type="button" class="chip sub'+(on?' active':'')+'" aria-pressed="'+on+'" data-sub="'+GS.escAttr(s)+'">'+GS.escHTML(s)+' <b>'+(subCnt[s]||0)+'</b></button>';
     });
     subFacetEl.innerHTML = html;
     subFacetEl.querySelectorAll('.chip.sub').forEach(function(ch){
