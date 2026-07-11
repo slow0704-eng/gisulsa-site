@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="정보관리기술사 학습 콘솔">
+  <rect width="512" height="512" rx="112" fill="#0ea5e9"/>
+  <g fill="#ffffff">
+    <polygon points="256,150 424,222 256,294 88,222"/>
+    <path d="M154 250 l102 44 102 -44 v52 a102 46 0 0 1 -204 0 z"/>
+    <path d="M424 222 v96" stroke="#ffffff" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <circle cx="424" cy="330" r="17"/>
+  </g>
+</svg>

@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>[정보관리기술사] 1·2교시 토픽 통합 — SW공학·SW운영·정보화전략·DB·네트워크·컴퓨터구조/OS·AI·보안</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎓%3C/text%3E%3C/svg%3E" />
+<!-- PWA: 설치·오프라인 지원 -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0ea5e9" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="정보관리기술사" />
+<link rel="apple-touch-icon" href="assets/icon.svg" />
 <!-- 외부 리소스: Pretendard(한글 UI 표준 폰트) · Lucide(아이콘) · mermaid·vis-network(다이어그램) -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
@@ -152,5 +159,13 @@
 <script src="assets/glossary.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/info.js"></script>
+<script>
+  /* PWA 서비스 워커 등록(오프라인 지원) — file:// 직접 열람 시엔 건너뜀 */
+  if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
+</script>
 </body>
 </html>

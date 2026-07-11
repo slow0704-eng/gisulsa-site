@@ -1,0 +1,18 @@
+{
+  "name": "정보관리기술사 학습 콘솔",
+  "short_name": "정보관리기술사",
+  "description": "정보관리·컴퓨터시스템응용 기술사 1·2교시 토픽 통합 학습 — 카드·정의시트·연습·퀴즈·용어",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": ["education"],
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
