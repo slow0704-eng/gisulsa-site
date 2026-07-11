@@ -52,7 +52,15 @@
   function cardAttrs(card, domId, extraClass){
     return 'class="card'+(extraClass?' '+extraClass:'')+'" role="button" tabindex="0"'+
       ' aria-label="'+escAttr(card.title)+' — 카드 확대(클릭 또는 Enter)"'+
-      ' data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-sub="'+escAttr(card.subcat||'')+'" data-k="'+escAttr(card.keywords)+'"';
+      ' data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-sub="'+escAttr(card.subcat||'')+'" data-k="'+escAttr(card.keywords)+'"'+
+      ' data-key="'+escAttr(domId+'|'+card.title)+'"';
+  }
+  // 카드 진도 마크(학습완료·북마크) — 카드 우상단, 클릭 시 모달 대신 토글(app.js가 위임 처리)
+  function markCtl(){
+    return '<div class="card-mark">'+
+      '<button type="button" class="cm-btn cm-done" data-act="done" title="학습완료 표시">✓</button>'+
+      '<button type="button" class="cm-btn cm-mark" data-act="mark" title="북마크">★</button>'+
+    '</div>';
   }
 
   function _p2(n){ return n<10 ? '0'+n : ''+n; }
@@ -148,7 +156,7 @@
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag" style="background:'+c.bg+';color:'+c.tagColor+'">'+escHTML(card.tag)+'</span>';
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="border-top-color:'+c.color+'">'+
-        head+essayHTML(card)+
+        markCtl()+head+essayHTML(card)+
       '</div>';
     }
     var body;
@@ -168,7 +176,7 @@
         fnote;
     }
     return '<div '+cardAttrs(card, domId)+' style="border-top-color:'+c.color+'">'+
-      head+body+
+      markCtl()+head+body+
     '</div>';
   }
 
@@ -212,7 +220,7 @@
           // 구성도·구성요소는 1줄 직렬화(st-flat)와 원본(st-orig)을 함께 렌더 → 체크박스로 CSS 전환
           var origD = c.diagram ? '<pre class="st-orig st-orig-diag">'+escHTML(c.diagram)+'</pre>' : '';
           var origT = (c.table && c.table.rows && c.table.rows.length) ? '<div class="st-orig">'+tableHTML(c.table)+'</div>' : '';
-          return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-sub="'+escAttr(c.subcat||'')+'" data-k="'+escAttr(c.keywords)+'">'+
+          return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-sub="'+escAttr(c.subcat||'')+'" data-key="'+escAttr(d.id+'|'+c.title)+'" data-k="'+escAttr(c.keywords)+'">'+
             '<td class="st-title">'+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+(c.essay?' <span class="st-badge st-essay">2교시</span>':'')+'</td>'+
             '<td class="st-kw">'+escHTML(c.keyword||'')+'</td>'+
             '<td class="st-def">'+escHTML(defText(c))+'</td>'+

@@ -13,6 +13,7 @@
   var domFacetEl = document.getElementById('domFacet');
   var secFacetEl = document.getElementById('secFacet');
   var subFacetEl = document.getElementById('subFacet');
+  var progFacetEl = document.getElementById('progFacet');
   var searchEl   = document.getElementById('globalSearch');
   var countEl    = document.getElementById('count');
   var emptyEl    = document.getElementById('emptyState');
@@ -21,9 +22,9 @@
   function toggleEmpty(show){ if(emptyEl) emptyEl.classList.toggle('hidden', !show); }
   // 과목·단원·검색어 초기화 후 재적용(빈 상태의 '필터 초기화' 버튼)
   function resetFilters(){
-    state.q=''; state.dom='all'; state.sec='all'; state.sub='all';
+    state.q=''; state.dom='all'; state.sec='all'; state.sub='all'; state.only='all';
     if(searchEl) searchEl.value='';
-    buildDomFacet(); buildSecFacet(); buildSubFacet(); applyActiveFilter();
+    buildDomFacet(); buildSecFacet(); buildSubFacet(); buildProgFacet(); applyActiveFilter();
   }
 
   if(!DOMAINS || !DOMAINS.length){
@@ -42,7 +43,26 @@
   if(MERMAID) MERMAID.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
-  var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', view:'cards' };
+  var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', only:'all', view:'cards' };
+  // ---- 진도·이력(localStorage): 학습완료(done)·북마크(mark)·이어보기(resume) ----
+  var PROG = { done:{}, mark:{} };
+  try{ var _pp = JSON.parse(localStorage.getItem('gs_prog')||'{}'); PROG.done = _pp.done||{}; PROG.mark = _pp.mark||{}; }catch(e){}
+  function saveProg(){ try{ localStorage.setItem('gs_prog', JSON.stringify(PROG)); }catch(e){} }
+  function progCount(kind){ return Object.keys(PROG[kind]||{}).length; }
+  function progOk(key){
+    if(state.only==='done')   return !!PROG.done[key];
+    if(state.only==='undone') return !PROG.done[key];
+    if(state.only==='mark')   return !!PROG.mark[key];
+    return true;
+  }
+  function applyProgClasses(){
+    document.querySelectorAll('.card[data-key], .sheet-row[data-key]').forEach(function(el){
+      var k = el.getAttribute('data-key');
+      el.classList.toggle('is-done', !!PROG.done[k]);
+      el.classList.toggle('is-marked', !!PROG.mark[k]);
+    });
+  }
+  function saveResume(){ try{ localStorage.setItem('gs_resume', JSON.stringify({ dom:state.dom, sec:state.sec, sub:state.sub, view:state.view })); }catch(e){} }
   var domById = {}, catMapByDom = {}, mapDone = {};
   DOMAINS.forEach(function(d){
     domById[d.id] = d;
@@ -194,7 +214,8 @@
       g.querySelectorAll('.card').forEach(function(c){
         var text = q ? (c.getAttribute('data-k')+' '+c.textContent).toLowerCase() : '';
         var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
-                 && (state.sub==='all' || c.getAttribute('data-sub')===state.sub);
+                 && (state.sub==='all' || c.getAttribute('data-sub')===state.sub)
+                 && progOk(c.getAttribute('data-key'));
         c.classList.toggle('hidden', !ok);
         if(ok){ shown++; groupVisible = true; }
       });
@@ -278,6 +299,7 @@
   function buildSheet(){
     if(sheetBuilt) return;
     sheetBody.innerHTML = GS.sheetHTML(DOMAINS, catMapByDom);
+    applyProgClasses();   // 시트 행에 학습완료·북마크 상태 반영
     // 가리기 모드일 때 행 클릭 → 그 행 정의만 펼쳐보기(암기 자가확인)
     sheetBody.addEventListener('click', function(e){
       var r = e.target && e.target.closest ? e.target.closest('.sheet-row') : null;
@@ -292,7 +314,8 @@
     rows.forEach(function(r){
       var text = q ? (r.getAttribute('data-k')+' '+r.textContent).toLowerCase() : '';
       var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
-               && (state.sub==='all' || r.getAttribute('data-sub')===state.sub);
+               && (state.sub==='all' || r.getAttribute('data-sub')===state.sub)
+               && progOk(r.getAttribute('data-key'));
       r.classList.toggle('hidden', !ok);
       if(ok) shown++;
     });
@@ -314,6 +337,7 @@
 
   // 활성 뷰에 맞춰 검색·필터 적용(관계도는 필터 미적용)
   function applyActiveFilter(){
+    saveResume();
     if(state.view==='sheet') applySheetFilter();
     else if(state.view==='cards') applyFilter();
     // 퀴즈는 자체 과목/단원/유형/난이도 필터로 제어 — 상단 facet·검색에 반응하지 않음
@@ -322,6 +346,7 @@
   // ---- 뷰 전환: 카드 / 관계도 / 정의 시트 / 퀴즈 ----
   function setView(v){
     state.view = v;
+    saveResume();
     contentEl.classList.toggle('hidden', v!=='cards');
     graphEl.classList.toggle('hidden', v!=='graph');
     sheetEl.classList.toggle('hidden', v!=='sheet');
@@ -640,6 +665,7 @@
   if(modalEl){
     // 카드 클릭으로 열기(텍스트 드래그 선택 중에는 무시)
     contentEl.addEventListener('click', function(e){
+      if(e.target && e.target.closest && e.target.closest('.cm-btn')) return;   // 진도 마크 버튼은 모달 열지 않음
       if(window.getSelection && String(window.getSelection()).length) return;
       var card = e.target && e.target.closest ? e.target.closest('.card') : null;
       if(card) openCardModal(card);
@@ -740,11 +766,52 @@
     });
   }
 
+  // ---- 진도 필터 facet(전체/미완료/완료/북마크/초기화) ----
+  function buildProgFacet(){
+    if(!progFacetEl) return;
+    var n = totalCards();
+    function chip(v,label){ var on=state.only===v; return '<button type="button" class="chip prog'+(on?' active':'')+'" data-only="'+v+'" aria-pressed="'+on+'">'+label+'</button>'; }
+    progFacetEl.innerHTML = '<span class="facet-hint">진도</span>' +
+      chip('all','전체') + chip('undone','미완료 <b>'+(n-progCount('done'))+'</b>') +
+      chip('done','✓ 완료 <b>'+progCount('done')+'</b>') + chip('mark','★ 북마크 <b>'+progCount('mark')+'</b>') +
+      '<button type="button" class="chip prog prog-reset" data-only="reset" title="학습완료·북마크 기록 초기화">초기화</button>';
+    progFacetEl.querySelectorAll('.chip.prog').forEach(function(ch){
+      ch.addEventListener('click', function(){
+        var v = ch.getAttribute('data-only');
+        if(v==='reset'){ if(confirm('학습완료·북마크 기록을 모두 지울까요?')){ PROG={done:{},mark:{}}; saveProg(); applyProgClasses(); state.only='all'; buildProgFacet(); applyActiveFilter(); } return; }
+        state.only = v; buildProgFacet(); applyActiveFilter();
+      });
+    });
+  }
+  // 카드 마크 버튼(✓완료·★북마크) 클릭 — 위임, 모달 안 열리게 stopPropagation
+  contentEl.addEventListener('click', function(e){
+    var b = e.target && e.target.closest ? e.target.closest('.cm-btn') : null;
+    if(!b) return;
+    e.stopPropagation();
+    var card = b.closest('.card'); if(!card) return;
+    var k = card.getAttribute('data-key'), act = b.getAttribute('data-act');
+    var store = act==='done' ? PROG.done : PROG.mark;
+    if(store[k]) delete store[k]; else store[k]=1;
+    saveProg();
+    card.classList.toggle(act==='done' ? 'is-done' : 'is-marked');
+    // 시트 행도 동기화
+    var row = sheetBody && sheetBody.querySelector('.sheet-row[data-key="'+(window.CSS&&CSS.escape?CSS.escape(k):k)+'"]');
+    if(row) row.classList.toggle(act==='done'?'is-done':'is-marked', !!store[k]);
+    buildProgFacet();
+    if(state.only!=='all') applyFilter();
+  });
+
   // ---- init ----
   buildContent();
+  applyProgClasses();
+  // 이어보기: 저장된 필터·뷰 복원
+  var _r = null; try{ _r = JSON.parse(localStorage.getItem('gs_resume')||'null'); }catch(e){}
+  if(_r){ if(_r.dom) state.dom=_r.dom; if(_r.sec) state.sec=_r.sec; if(_r.sub) state.sub=_r.sub; }
   buildDomFacet();
   buildSecFacet();
   buildSubFacet();
-  applyFilter();
+  buildProgFacet();
+  if(_r && _r.view && _r.view!=='cards' && document.querySelector('#viewsw button[data-v="'+_r.view+'"]')) setView(_r.view);
+  else applyFilter();
   if(window.lucide) lucide.createIcons();   // 정적 [data-lucide] 아이콘(앱바·뷰스위처·툴·모달) 렌더
 })();

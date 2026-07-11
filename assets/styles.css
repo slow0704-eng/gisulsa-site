@@ -145,6 +145,10 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .facet-row#secFacet .chip.sec{font-size:10px;padding:3px 9px;}
 .facet-row#subFacet .chip.sub{font-size:10px;padding:3px 9px;}
 .chip.sub.active{background:var(--ink-500);color:#fff;border-color:transparent;}
+.facet-row#progFacet .chip.prog{font-size:10px;padding:3px 9px;}
+.chip.prog.active{background:var(--brand-strong);color:#fff;border-color:transparent;}
+.chip.prog.prog-reset{color:var(--err);border-color:var(--line-strong);}
+.chip.prog.prog-reset:hover{border-color:var(--err);}
 
 /* ===== 콘텐츠 ===== */
 #content{max-width:1180px;margin:0 auto;padding:20px 18px 90px;}
@@ -174,6 +178,16 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--line-strong);border-radius:var(--r-md);padding:var(--sp-4) var(--sp-4) var(--sp-3);box-shadow:var(--sh-1);display:flex;flex-direction:column;min-width:0;cursor:pointer;position:relative;transition:box-shadow .12s,transform .12s;}
 .card:hover{box-shadow:var(--sh-2);transform:translateY(-1px);}
 .card::after{content:"⤢";position:absolute;top:10px;right:12px;font-size:13px;color:var(--line-strong);opacity:.5;transition:opacity .12s;}
+/* 카드 진도 마크(✓완료·★북마크) */
+.card-mark{position:absolute;top:8px;right:32px;display:flex;gap:3px;z-index:3;}
+.cm-btn{cursor:pointer;width:21px;height:21px;line-height:1;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-400);border-radius:6px;font-size:12px;font-weight:800;padding:0;transition:all .12s;}
+.cm-btn:hover{border-color:var(--brand-strong);color:var(--ink);transform:scale(1.1);}
+.card.is-done .cm-done{background:var(--ok);color:#fff;border-color:var(--ok);}
+.card.is-marked .cm-mark{background:var(--warn);color:#fff;border-color:var(--warn);}
+.card.is-done{opacity:.68;}
+.card.is-done:hover{opacity:1;}
+.sheet-row.is-done{opacity:.6;}
+.sheet-row.is-marked .st-title::after{content:" ★";color:var(--warn);}
 .card:hover::after,.card:focus-visible::after{opacity:1;}
 .card h3{margin:0 0 var(--sp-1);font-size:var(--fs-4);line-height:var(--lh-title);}
 .card .tag{align-self:flex-start;display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:var(--r-pill);margin-bottom:var(--sp-3);}
