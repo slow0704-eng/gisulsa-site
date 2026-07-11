@@ -191,6 +191,15 @@
     t.rows.forEach(function(r){ parts.push(r.map(function(x){ return (x === '' ? '〃' : x); }).join(' | ')); });   // 셀=" | ", 빈 구분셀(병합)은 〃
     return parts.join('  ‖  ');   // 행 구분 = "‖"
   }
+  // 시트 첨언 셀: 구성도 첨언(diagramNote)·구성요소 첨언(note) 둘 다 표시(라벨 구분).
+  function sheetNotes(c){
+    function line(lab, t){
+      if(!t) return '';
+      t = String(t).replace(/^\s*※\s*/, '');
+      return '<div class="st-nline"><span class="st-nlab">'+lab+'</span>'+escHTML(t)+'</div>';
+    }
+    return line('구성도', c.diagramNote) + line('구성요소', c.note);
+  }
   function sheetHTML(domains, catMapByDom){
     var h = '<table class="sheet-table"><thead><tr class="sheet-head">'+
       '<th>토픽</th><th>리드키워드</th><th>정의</th><th>구성도</th><th>구성요소</th><th>첨언</th></tr></thead><tbody>';
@@ -209,7 +218,7 @@
             '<td class="st-def">'+escHTML(defText(c))+'</td>'+
             '<td class="st-diag"><span class="st-flat">'+escHTML(flatDiagram(c))+'</span>'+origD+'</td>'+
             '<td class="st-tbl"><span class="st-flat">'+escHTML(flatTable(c.table))+'</span>'+origT+'</td>'+
-            '<td class="st-note">'+escHTML(c.note||'')+'</td></tr>';
+            '<td class="st-note">'+sheetNotes(c)+'</td></tr>';
         }).join('');
       }
       (d.sections || []).forEach(function(s){

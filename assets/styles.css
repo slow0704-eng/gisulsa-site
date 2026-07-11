@@ -300,6 +300,9 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .sheet-row .st-diag{width:20%;}
 .sheet-row .st-tbl{width:20%;}
 .sheet-row .st-note{width:12%;font-size:11px;color:var(--ink-600);line-height:1.5;white-space:normal;word-break:break-word;}
+.sheet-row .st-nline{margin-bottom:4px;}
+.sheet-row .st-nline:last-child{margin-bottom:0;}
+.sheet-row .st-nlab{display:inline-block;font-size:9px;font-weight:800;color:var(--muted);background:var(--surface-3);border-radius:4px;padding:0 4px;margin-right:4px;vertical-align:1px;}
 /* 구성도/구성요소 '원래대로' 토글 — 1줄(st-flat) ↔ 원본(st-orig) */
 .st-orig{display:none;}
 #sheetBody.diag-orig .st-diag .st-flat{display:none;}
