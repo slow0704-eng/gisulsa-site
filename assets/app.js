@@ -38,9 +38,30 @@
     return;
   }
 
-  // mermaid 는 CDN 로드(전역). 차단·오프라인이어도 사이트 전체가 죽지 않도록 가드.
+  // mermaid·vis-network 는 무겁고(≈1MB) 첫 화면(카드)엔 불필요 → 온디맨드 지연 로드(초기 로딩 단축).
+  // 소단원 지도 렌더·관계도 진입 시점에 동적 로드. 차단·오프라인이어도 나머지 화면은 정상.
   var MERMAID = (typeof mermaid !== 'undefined') ? mermaid : null;
   if(MERMAID) MERMAID.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
+  var _lazy = {};
+  function loadScript(src){
+    if(_lazy[src]) return _lazy[src];
+    return (_lazy[src] = new Promise(function(res){
+      var s = document.createElement('script'); s.src = src; s.async = true;
+      s.onload = function(){ res(true); }; s.onerror = function(){ res(false); };
+      document.head.appendChild(s);
+    }));
+  }
+  function ensureMermaid(){
+    if(MERMAID) return Promise.resolve(MERMAID);
+    return loadScript('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js').then(function(){
+      if(typeof mermaid !== 'undefined' && !MERMAID){ MERMAID = mermaid; MERMAID.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } }); }
+      return MERMAID;
+    });
+  }
+  function ensureVis(){
+    if(typeof vis !== 'undefined') return Promise.resolve(true);
+    return loadScript('https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js');
+  }
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
   var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards' };
@@ -130,12 +151,13 @@
     if(secMapsDone) return;
     var els = contentEl.querySelectorAll('.secmap .mermaid');
     if(!els.length){ secMapsDone = true; return; }
-    secMapsDone = true;
-    if(!MERMAID) return;   // mermaid 미로드 — 관계도만 생략(나머지 화면은 정상)
-    // 한 번의 배치 호출로 전부 렌더(개별 동시호출 시 mermaid 내부 상태 충돌로 일부 깨짐).
-    // suppressErrors: 특정 다이어그램 오류가 나머지를 막지 않도록.
-    try{ MERMAID.run({ nodes: Array.prototype.slice.call(els), suppressErrors:true }); }
-    catch(e){ /* ignore */ }
+    // mermaid 온디맨드 로드 후 배치 렌더(초기 블로킹 제거). 미로드/오프라인이면 지도만 생략.
+    ensureMermaid().then(function(M){
+      if(!M || secMapsDone) return;
+      secMapsDone = true;
+      try{ M.run({ nodes: Array.prototype.slice.call(els), suppressErrors:true }); }
+      catch(e){ /* ignore */ }
+    });
   }
 
   // ---- 과목 facet (단일 선택: 전체 또는 한 과목) ----
@@ -256,10 +278,13 @@
   }
 
   function renderMap(domId){
-    if(mapDone[domId] || !MERMAID) return;
+    if(mapDone[domId]) return;
     var el = contentEl.querySelector('.mapcard[data-map="'+domId+'"] .mermaid');
     if(!el) return;
-    try{ MERMAID.run({ nodes:[el] }); mapDone[domId] = true; }catch(e){ /* ignore */ }
+    ensureMermaid().then(function(M){
+      if(!M || mapDone[domId]) return;
+      try{ M.run({ nodes:[el] }); mapDone[domId] = true; }catch(e){ /* ignore */ }
+    });
   }
 
   function scrollToGroup(domId){
@@ -394,12 +419,15 @@
     if(v==='graph') countEl.textContent = '🗺 관계도';
 
     if(v==='graph' && window.GSGraph){
-      var ok = window.GSGraph.build(graphCanvas, DOMAINS, { onTopicClick:function(title){
-        searchEl.value = title; state.q = String(title).toLowerCase();
-        state.dom='all'; state.sec='all'; state.sub='all'; buildDomFacet(); buildSecFacet(); buildSubFacet();
-        setView('cards'); window.scrollTo(0,0);
-      }});
-      if(ok) window.GSGraph.fit();
+      // vis-network 온디맨드 로드 후 그래프 빌드(초기 로딩에서 152KB 제외)
+      ensureVis().then(function(){
+        var ok = window.GSGraph.build(graphCanvas, DOMAINS, { onTopicClick:function(title){
+          searchEl.value = title; state.q = String(title).toLowerCase();
+          state.dom='all'; state.sec='all'; state.sub='all'; buildDomFacet(); buildSecFacet(); buildSubFacet();
+          setView('cards'); window.scrollTo(0,0);
+        }});
+        if(ok) window.GSGraph.fit();
+      });
     } else if(v==='sheet'){
       buildSheet(); applySheetFilter();
     } else if(v==='quiz'){

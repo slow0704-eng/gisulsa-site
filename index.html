@@ -15,9 +15,8 @@
 <!-- 외부 리소스: Pretendard(한글 UI 표준 폰트) · Lucide(아이콘) · mermaid·vis-network(다이어그램) -->
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<!-- mermaid·vis-network 는 카드 첫 화면엔 불필요 → app.js 가 필요 시점(소단원 지도·관계도)에 온디맨드 로드(초기 로딩 단축) -->
+<script defer src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <link rel="stylesheet" href="assets/styles.css" />
 <script>
   /* 테마·글자크기 조기 적용(FOUC 방지) — localStorage 우선, 없으면 시스템 설정 */
@@ -151,15 +150,15 @@
   </div>
 </div>
 
-<script src="assets/render.js"></script>
-<script src="data/bundle.js"></script>
-<script src="assets/graph.js"></script>
-<script src="assets/quiz.js"></script>
-<script src="assets/practice.js"></script>
-<script src="assets/glossary-data.js"></script>
-<script src="assets/glossary.js"></script>
-<script src="assets/app.js"></script>
-<script src="assets/info.js"></script>
+<script defer src="assets/render.js"></script>
+<script defer src="data/bundle.js"></script>
+<script defer src="assets/graph.js"></script>
+<script defer src="assets/quiz.js"></script>
+<script defer src="assets/practice.js"></script>
+<script defer src="assets/glossary-data.js"></script>
+<script defer src="assets/glossary.js"></script>
+<script defer src="assets/app.js"></script>
+<script defer src="assets/info.js"></script>
 <script>
   /* PWA 서비스 워커 등록(오프라인 지원) — file:// 직접 열람 시엔 건너뜀 */
   if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
