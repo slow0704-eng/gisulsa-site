@@ -58,7 +58,7 @@
       "id": "ml",
       "title": "① 머신러닝 기초",
       "desc": "학습 패러다임·신경망·최적화·과적합 등 ML/DL의 토대.",
-      "mermaid": "flowchart LR\n  S([\"① 머신러닝 기초\"]):::hub\n  n0[\"머신러닝 / 딥러닝\"] --> n1[\"학습 유형\"] --> n2[\"인공신경망\"] --> n3[\"최적화 알고리즘\"] --> n4[\"차원 축소\"] --> n5[\"과적합·정규화\"]\n  S --> n0\n  n6[\"PCA / LDA\"] --> n7[\"오토인코더\"] --> n8[\"베이지안 최적화\"] --> n9[\"연합학습\"] --> n10[\"전이학습\"] --> n11[\"전이학습 (Transfer Learning)\"]\n  S --> n6\n  n12[\"연합학습 (Federated Learning)\"] --> n13[\"파라미터 (Parameter, 가중치·편향)\"] --> n14[\"하이퍼파라미터 (Hyperparameter)\"] --> n15[\"교차검증 (Cross-Validation)\"] --> n16[\"최적화 알고리즘 (Optimizer)\"] --> n17[\"활성화 함수 (Activation Function)\"]\n  S --> n12\n  n18[\"마르코프 결정 프로세스 (MDP)\"]\n  S --> n18\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n0,n6 cmp;"
+      "mermaid": "flowchart LR\n  S([\"① 머신러닝 기초\"]):::hub\n  n0[\"머신러닝 / 딥러닝\"] --> n1[\"학습 유형\"] --> n2[\"인공신경망\"] --> n3[\"차원 축소\"] --> n4[\"과적합·정규화\"] --> n5[\"PCA / LDA\"]\n  S --> n0\n  n6[\"오토인코더\"] --> n7[\"베이지안 최적화\"] --> n8[\"연합학습\"] --> n9[\"전이학습 (Transfer Learning)\"] --> n10[\"파라미터 (Parameter, 가중치·편향)\"] --> n11[\"하이퍼파라미터 (Hyperparameter)\"]\n  S --> n6\n  n12[\"교차검증 (Cross-Validation)\"] --> n13[\"최적화 알고리즘 (Optimizer)\"] --> n14[\"활성화 함수 (Activation Function)\"] --> n15[\"마르코프 결정 프로세스 (MDP)\"]\n  S --> n12\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n0,n5 cmp;"
     },
     {
       "id": "algo",
@@ -70,7 +70,7 @@
       "id": "gen",
       "title": "③ 생성형 AI · LLM",
       "desc": "트랜스포머 기반 LLM과 RAG·프롬프트·에이전트·생성모델.",
-      "mermaid": "flowchart LR\n  S([\"③ 생성형 AI · LLM\"]):::hub\n  n0[\"트랜스포머\"] --> n1[\"거대 언어모델\"] --> n2[\"검색증강생성\"] --> n3[\"프롬프트 엔지니어링\"] --> n4[\"에이전틱 AI\"] --> n5[\"생성 모델\"]\n  S --> n0\n  n6[\"Self-Attention\"] --> n7[\"MoE (Mixture of Experts)\"] --> n8[\"피지컬 AI (Physical AI)\"] --> n9[\"에이전틱 AI (Agentic AI)\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
+      "mermaid": "flowchart LR\n  S([\"③ 생성형 AI · LLM\"]):::hub\n  n0[\"트랜스포머\"] --> n1[\"거대 언어모델\"] --> n2[\"검색증강생성\"] --> n3[\"프롬프트 엔지니어링\"] --> n4[\"에이전틱 AI\"] --> n5[\"생성 모델\"]\n  S --> n0\n  n6[\"Self-Attention\"] --> n7[\"MoE (Mixture of Experts)\"] --> n8[\"피지컬 AI (Physical AI)\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "stat",
@@ -292,58 +292,6 @@
       "def": "순전파로 입력을 변환하고 역전파로 오차를 학습하는 딥러닝의 기본 모델.",
       "subcat": "신경망·표현",
       "level": "핵심"
-    },
-    {
-      "category": "ml",
-      "title": "최적화 알고리즘",
-      "tag": "머신러닝 기초",
-      "keyword": "경사하강·Adam",
-      "keywords": "최적화 optimizer 경사하강 sgd adam momentum 학습률 손실함수 수렴",
-      "diagram": "손실 최소화 → ∇Loss 방향 갱신\n SGD → Momentum → RMSProp → Adam\n 학습률·배치크기 조절",
-      "diagramNote": "※ Adam=Momentum+적응 학습률",
-      "table": {
-        "head": [
-          "구분",
-          "구성요소",
-          "역할"
-        ],
-        "rows": [
-          [
-            "기울기법",
-            "경사하강(GD)",
-            "전체 기울기"
-          ],
-          [
-            "",
-            "SGD",
-            "미니배치"
-          ],
-          [
-            "가속·적응",
-            "Momentum",
-            "진동 완화"
-          ],
-          [
-            "",
-            "RMSProp",
-            "학습률 조정"
-          ],
-          [
-            "통합·제어",
-            "Adam",
-            "관성+적응"
-          ],
-          [
-            "",
-            "학습률",
-            "수렴 속도"
-          ]
-        ]
-      },
-      "note": "※ 학습률 스케줄링·조기종료로 과적합·발산 방지.",
-      "def": "손실함수를 최소화하도록 가중치를 갱신하는 기법으로, 경사하강 계열(SGD·Adam)이 표준.",
-      "subcat": "학습최적화",
-      "level": "표준"
     },
     {
       "category": "ml",
@@ -4134,58 +4082,6 @@
       },
       "note": "※ 의료·금융 등 민감데이터 협업 학습에 적합, DP·암호로 보안강화.",
       "def": "원본 데이터 이동 없이 로컬 학습한 모델 파라미터만 집계해 글로벌 모델을 만드는 분산학습.",
-      "subcat": "분산·확장학습",
-      "level": "표준"
-    },
-    {
-      "category": "ml",
-      "title": "전이학습",
-      "tag": "표현학습·재사용",
-      "keyword": "사전학습·미세",
-      "keywords": "전이학습 transfer learning pretrain fine-tuning 미세조정 특징추출 도메인적응 음의전이 사전학습",
-      "diagram": "[대규모 사전학습] → 지식 전이\n → [소량 데이터 미세조정]\n or 특징추출(층 동결) → 목표 과제",
-      "diagramNote": "※ 유사 도메인일수록 전이 효과↑",
-      "table": {
-        "head": [
-          "구분",
-          "구성요소",
-          "역할·기술"
-        ],
-        "rows": [
-          [
-            "기법",
-            "Pretrain",
-            "대규모 학습"
-          ],
-          [
-            "",
-            "Fine-tune",
-            "가중치 갱신"
-          ],
-          [
-            "",
-            "층 동결",
-            "표현 재사용"
-          ],
-          [
-            "적응·효과",
-            "Domain Adapt",
-            "분포 정렬"
-          ],
-          [
-            "",
-            "데이터 절감",
-            "비용·시간↓"
-          ],
-          [
-            "",
-            "음의 전이",
-            "성능 저하"
-          ]
-        ]
-      },
-      "note": "※ 소스·타깃 이질 시 음의 전이 주의, 도메인 적응으로 완화.",
-      "def": "사전학습된 모델의 지식을 새 과제에 재사용해 소량 데이터로 학습비용을 줄이는 기법.",
       "subcat": "분산·확장학습",
       "level": "표준"
     },
@@ -11935,58 +11831,6 @@
     },
     {
       "category": "ml",
-      "subcat": "분산·확장학습",
-      "title": "연합학습 (Federated Learning)",
-      "tag": "분산학습·프라이버시",
-      "keyword": "탈중앙 협업학습",
-      "keywords": "연합학습 FederatedLearning FedAvg 프라이버시 온디바이스 분산 로컬모델 집계 privacy",
-      "def": "탈중앙 협업학습인 연합학습은, 원본 데이터를 이동시키지 않고 로컬 모델 갱신치만 서버에서 집계(FedAvg)하여 프라이버시를 보존하는 분산학습.",
-      "diagram": "[기기1 로컬학습]↘\n[기기2 로컬학습]→[서버 집계(FedAvg)]→[글로벌 모델]\n[기기N 로컬학습]↗  ↺ 라운드 반복(가중치만 전송)",
-      "diagramNote": "※ 원본 미전송·가중치만 교환→프라이버시 보존",
-      "table": {
-        "head": [
-          "구분",
-          "구성요소",
-          "역할·기술"
-        ],
-        "rows": [
-          [
-            "구성",
-            "클라이언트",
-            "로컬 학습"
-          ],
-          [
-            "",
-            "중앙 서버",
-            "가중치 집계"
-          ],
-          [
-            "알고리즘",
-            "FedAvg",
-            "가중 평균"
-          ],
-          [
-            "",
-            "라운드 반복",
-            "점진 수렴"
-          ],
-          [
-            "이슈",
-            "Non-IID",
-            "분포 편향"
-          ],
-          [
-            "",
-            "통신비용",
-            "대역 부담"
-          ]
-        ]
-      },
-      "note": "※ 갱신치 역추론·독성공격 대비 보안집계·DP 병행",
-      "level": "심화"
-    },
-    {
-      "category": "ml",
       "subcat": "신경망·표현",
       "title": "파라미터 (Parameter, 가중치·편향)",
       "tag": "모델표현·학습대상",
@@ -12348,58 +12192,6 @@
       },
       "note": "※ 지연·안전이 관건, 엣지 온디바이스 추론 필수.",
       "level": "심화"
-    },
-    {
-      "category": "gen",
-      "subcat": "아키텍처·구조",
-      "title": "에이전틱 AI (Agentic AI)",
-      "tag": "자율에이전트·LLM",
-      "keyword": "자율 목표수행",
-      "keywords": "AgenticAI 에이전틱 자율에이전트 LLM 계획 도구호출 ReAct Reflection 메모리 오케스트레이션 MCP A2A",
-      "def": "자율 목표수행인 에이전틱 AI는, LLM 추론에 계획·도구호출·메모리를 결합해 목표를 자율 분해·실행하는 능동형 에이전트.",
-      "diagram": "[목표]→[계획 Planning]→[도구호출 Tool]\n  ↑                            ↓\n [메모리]↺[관찰 Reflection]←[실행 결과]",
-      "diagramNote": "※ ReAct: 추론(Reason)과 행동(Act) 반복",
-      "table": {
-        "head": [
-          "구분",
-          "구성요소",
-          "역할·기술"
-        ],
-        "rows": [
-          [
-            "핵심 모듈",
-            "Planning",
-            "목표 분해·계획"
-          ],
-          [
-            "",
-            "Memory",
-            "단기·장기 문맥"
-          ],
-          [
-            "",
-            "Tool Use",
-            "API·함수 호출"
-          ],
-          [
-            "실행 패턴",
-            "ReAct",
-            "추론-행동 순환"
-          ],
-          [
-            "",
-            "Reflection",
-            "자기평가·교정"
-          ],
-          [
-            "연동 표준",
-            "MCP·A2A",
-            "도구·에이전트 연동"
-          ]
-        ]
-      },
-      "note": "※ 자율성↑ 만큼 오작동·보안위협 동반, HITL 필수.",
-      "level": "핵심"
     },
     {
       "category": "gov",
