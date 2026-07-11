@@ -517,6 +517,29 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qbig{font-size:var(--fs-6);font-weight:800;color:#6d28d9;margin:10px 0;}
 .qbig span{font-size:var(--fs-4);color:var(--muted);font-weight:700;}
 
+/* ===== 용어 글로서리 뷰 ===== */
+#gloss{max-width:900px;margin:0 auto;padding:14px 18px 90px;}
+.gloss-tools{margin-bottom:10px;}
+.gl-wrap{margin:0 auto;}
+.gl-top{position:sticky;top:6px;z-index:5;display:flex;align-items:center;gap:8px;
+  background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r-lg);
+  box-shadow:var(--sh-1);padding:8px 12px;margin-bottom:14px;}
+.gl-top .gl-ic{width:18px;height:18px;color:var(--muted);flex:0 0 auto;}
+.gl-search{flex:1 1 auto;font-family:inherit;font-size:var(--fs-3);border:none;outline:none;
+  background:transparent;color:var(--ink);padding:4px 2px;min-width:0;}
+.gl-count{flex:0 0 auto;font-size:var(--fs-1);font-weight:700;color:var(--muted);white-space:nowrap;}
+.gl-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
+.gl-item{display:flex;gap:10px;background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--r-md);padding:10px 12px;box-shadow:var(--sh-1);}
+.gl-abbr{flex:0 0 auto;font-weight:800;font-size:var(--fs-3);color:var(--brand-strong);
+  min-width:58px;letter-spacing:-.2px;word-break:break-all;}
+.gl-body{flex:1 1 auto;min-width:0;}
+.gl-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;margin-bottom:3px;}
+.gl-full{font-size:var(--fs-1);color:var(--muted);font-weight:600;}
+.gl-ko{font-size:var(--fs-2);color:var(--ink-600);font-weight:700;}
+.gl-desc{font-size:var(--fs-2);color:var(--ink);line-height:1.5;}
+.gl-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0;}
+
 /* ===== 퀴즈 도파민 피드백(정답 축포·연속·팝, 오답 흔들림) ===== */
 .quiz-card{position:relative;overflow:hidden;}      /* 축포 컨테이너 */
 .quiz-score{position:relative;}
@@ -591,7 +614,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 }
 
 @media print{
-  .appbar,.topbar,.facets,.viewsw,.graph-tools,.sheet-tools,#quiz,#practice{display:none;}
+  .appbar,.topbar,.facets,.viewsw,.graph-tools,.sheet-tools,#quiz,#practice,#gloss{display:none;}
   .dom-head{color:#000;background:none !important;box-shadow:none;padding:6px 0;}
   .mapcard,#graph{display:none;}
   .card{break-inside:avoid;box-shadow:none;border:1px solid var(--ink-400);}

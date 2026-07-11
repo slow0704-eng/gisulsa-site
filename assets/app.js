@@ -276,6 +276,8 @@
   var quizBody    = document.getElementById('quizBody');
   var practiceEl  = document.getElementById('practice');
   var practiceBody = document.getElementById('practiceBody');
+  var glossEl     = document.getElementById('gloss');
+  var glossBody   = document.getElementById('glossBody');
   var facetsEl    = document.querySelector('.facets');
   var sheetBuilt  = false;
 
@@ -307,6 +309,13 @@
     window.GSPractice.start(practiceBody, allItems());
     practiceBuilt=true;
     countEl.textContent = '⌨ 연습';
+  }
+  var glossBuilt=false;
+  function startGloss(){
+    if(!window.GSGloss || !glossBody){ return; }
+    window.GSGloss.start(glossBody);
+    glossBuilt=true;
+    countEl.textContent = '📖 용어';
   }
 
   function buildSheet(){
@@ -366,8 +375,9 @@
     sheetEl.classList.toggle('hidden', v!=='sheet');
     if(quizEl) quizEl.classList.toggle('hidden', v!=='quiz');
     if(practiceEl) practiceEl.classList.toggle('hidden', v!=='practice');
-    // 관계도·퀴즈·연습은 상단 과목/단원 facet 미적용(퀴즈·연습은 자체 필터 보유)
-    if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph' || v==='quiz' || v==='practice');
+    if(glossEl) glossEl.classList.toggle('hidden', v!=='gloss');
+    // 관계도·퀴즈·연습·용어는 상단 과목/단원 facet 미적용(자체 필터/검색 보유)
+    if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph' || v==='quiz' || v==='practice' || v==='gloss');
     document.querySelectorAll('#viewsw button').forEach(function(b){
       var on = b.getAttribute('data-v')===v;
       b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
@@ -377,10 +387,10 @@
     if(searchEl){
       searchEl.disabled = !searchable;
       searchEl.placeholder = searchable ? '토픽 검색 (예: 제로트러스트)'
-        : (v==='graph' ? '관계도 뷰 — 검색 미적용' : (v==='practice' ? '연습 뷰 — 아래 과목/모드로 범위 조절' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절'));
+        : (v==='graph' ? '관계도 뷰 — 검색 미적용' : (v==='practice' ? '연습 뷰 — 아래 과목/모드로 범위 조절' : (v==='gloss' ? '용어 뷰 — 아래 검색창 사용' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절')));
     }
     var smBtn=document.getElementById('searchMode'); if(smBtn) smBtn.disabled = !searchable;
-    if(v==='graph' || v==='quiz' || v==='practice') toggleEmpty(false);
+    if(v==='graph' || v==='quiz' || v==='practice' || v==='gloss') toggleEmpty(false);
     if(v==='graph') countEl.textContent = '🗺 관계도';
 
     if(v==='graph' && window.GSGraph){
@@ -397,6 +407,9 @@
     } else if(v==='practice'){
       if(!practiceBuilt) startPractice();   // 한 번만 생성(다시 들어와도 진행 유지)
       else countEl.textContent = '⌨ 연습';
+    } else if(v==='gloss'){
+      if(!glossBuilt) startGloss();   // 한 번만 생성(용어 사전)
+      else countEl.textContent = '📖 용어';
     } else if(v==='cards'){
       applyFilter();
     }

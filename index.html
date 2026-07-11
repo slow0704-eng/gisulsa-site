@@ -34,6 +34,7 @@
       <button data-v="sheet"><i data-lucide="list"></i>정의 시트</button>
       <button data-v="practice"><i data-lucide="keyboard"></i>연습</button>
       <button data-v="quiz"><i data-lucide="puzzle"></i>퀴즈</button>
+      <button data-v="gloss"><i data-lucide="book-open"></i>용어</button>
     </div>
     <button id="filterToggle" class="filter-toggle" type="button" aria-expanded="true" aria-controls="facets" title="과목·단원 필터 접기/펼치기"><i data-lucide="sliders-horizontal"></i><span class="ft-label">필터</span></button>
     <span class="ui-prefs">
@@ -106,6 +107,13 @@
   <div id="quizBody"></div>
 </div>
 
+<div id="gloss" class="hidden">
+  <div class="gloss-tools">
+    <span class="tool-hint">📖 정보관리기술사 용어·약어 사전 — 낯선 약어를 바로 찾아보세요(검색어 입력)</span>
+  </div>
+  <div id="glossBody"></div>
+</div>
+
 <div id="cardModal" class="cmodal hidden" role="dialog" aria-modal="true" aria-label="카드 확대 보기" aria-hidden="true">
   <div class="cmodal-bg" data-close="1"></div>
   <div class="cmodal-box">
@@ -140,6 +148,8 @@
 <script src="assets/graph.js"></script>
 <script src="assets/quiz.js"></script>
 <script src="assets/practice.js"></script>
+<script src="assets/glossary-data.js"></script>
+<script src="assets/glossary.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/info.js"></script>
 </body>
