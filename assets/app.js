@@ -202,6 +202,8 @@
   var graphCanvas = document.getElementById('graphCanvas');
   var quizEl      = document.getElementById('quiz');
   var quizBody    = document.getElementById('quizBody');
+  var practiceEl  = document.getElementById('practice');
+  var practiceBody = document.getElementById('practiceBody');
   var facetsEl    = document.querySelector('.facets');
   var sheetBuilt  = false;
 
@@ -225,6 +227,14 @@
     window.GSQuiz.start(quizBody, allItems());
     quizBuilt=true;
     countEl.textContent = '🧩 퀴즈';
+  }
+  // ---- 연습(타자연습): 리드키워드·정의문 따라치기 — 퀴즈처럼 전 과목 카드에서 자체 생성 ----
+  var practiceBuilt=false;
+  function startPractice(){
+    if(!window.GSPractice || !practiceBody){ return; }
+    window.GSPractice.start(practiceBody, allItems());
+    practiceBuilt=true;
+    countEl.textContent = '⌨ 연습';
   }
 
   function buildSheet(){
@@ -277,21 +287,22 @@
     graphEl.classList.toggle('hidden', v!=='graph');
     sheetEl.classList.toggle('hidden', v!=='sheet');
     if(quizEl) quizEl.classList.toggle('hidden', v!=='quiz');
-    // 관계도·퀴즈는 상단 과목/단원 facet 미적용(퀴즈는 자체 필터 보유)
-    if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph' || v==='quiz');
+    if(practiceEl) practiceEl.classList.toggle('hidden', v!=='practice');
+    // 관계도·퀴즈·연습은 상단 과목/단원 facet 미적용(퀴즈·연습은 자체 필터 보유)
+    if(facetsEl) facetsEl.classList.toggle('hidden', v==='graph' || v==='quiz' || v==='practice');
     document.querySelectorAll('#viewsw button').forEach(function(b){
       var on = b.getAttribute('data-v')===v;
       b.classList.toggle('active', on); b.setAttribute('aria-pressed', on); });
 
-    // 검색은 카드·시트 뷰에서만 적용 — 관계도·퀴즈에선 입력 비활성화로 적용범위를 명시
+    // 검색은 카드·시트 뷰에서만 적용 — 관계도·퀴즈·연습에선 입력 비활성화로 적용범위를 명시
     var searchable = (v==='cards' || v==='sheet');
     if(searchEl){
       searchEl.disabled = !searchable;
-      searchEl.placeholder = searchable ? '전 과목 통합 검색 — 여러 단어 공백 구분(AND/OR)'
-        : (v==='graph' ? '관계도 뷰 — 검색 미적용' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절');
+      searchEl.placeholder = searchable ? '전 과목 검색 — 공백=AND/OR · "구문" · -제외'
+        : (v==='graph' ? '관계도 뷰 — 검색 미적용' : (v==='practice' ? '연습 뷰 — 아래 과목/모드로 범위 조절' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절'));
     }
     var smBtn=document.getElementById('searchMode'); if(smBtn) smBtn.disabled = !searchable;
-    if(v==='graph' || v==='quiz') toggleEmpty(false);
+    if(v==='graph' || v==='quiz' || v==='practice') toggleEmpty(false);
     if(v==='graph') countEl.textContent = '🗺 관계도';
 
     if(v==='graph' && window.GSGraph){
@@ -305,6 +316,9 @@
       buildSheet(); applySheetFilter();
     } else if(v==='quiz'){
       if(!quizBuilt) startQuiz();   // 한 번만 생성(다시 들어와도 진행/필터 유지)
+    } else if(v==='practice'){
+      if(!practiceBuilt) startPractice();   // 한 번만 생성(다시 들어와도 진행 유지)
+      else countEl.textContent = '⌨ 연습';
     } else if(v==='cards'){
       applyFilter();
     }
@@ -320,10 +334,11 @@
   var tblOrig = document.getElementById('tblOrig');
   if(tblOrig){ tblOrig.addEventListener('change', function(){ sheetBody.classList.toggle('tbl-orig', tblOrig.checked); }); }
 
-  // ---- 정의 시트 내보내기(CSV / Excel) — 현재 검색·과목·단원 필터 반영 ----
+  // ---- 정의 시트 내보내기(TXT / Word / CSV / Excel) — 현재 검색·과목·단원 필터 반영 ----
   var EXP_COLS = ['과목','단원','토픽','유형','리드키워드','정의','구성도','구성요소'];
-  function sheetExportRows(){
-    var q = state.q, rows = [];
+  // 필터를 통과한 항목을 {domLabel, secTitle, card} 로 수집(도메인·섹션 노출 순서 유지).
+  function sheetExportItems(){
+    var q = state.q, items = [];
     DOMAINS.forEach(function(d){
       var catLabel = {}, secTitle = {};
       (d.categories||[]).forEach(function(x){ catLabel[x.id] = x.label; });
@@ -332,25 +347,153 @@
         var def = GS.defText ? GS.defText(c) : (c.def || '');
         var text = q ? (c.keywords + ' ' + c.title + ' ' + def).toLowerCase() : '';
         if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec, state.qmode)) return;
-        rows.push({
-          '과목': d.label,
-          '단원': secTitle[c.category] || catLabel[c.category] || '기타',
-          '토픽': c.title,
-          '유형': c.essay ? '2교시 논술' : (c.compare ? '비교' : '일반'),
-          '리드키워드': c.keyword || '',
-          '정의': def,
-          '구성도': GS.flatDiagram ? GS.flatDiagram(c) : '',
-          '구성요소': GS.flatTable ? GS.flatTable(c.table) : ''
-        });
+        items.push({ domLabel: d.label, secTitle: (secTitle[c.category] || catLabel[c.category] || '기타'), card: c });
       });
     });
-    return rows;
+    return items;
+  }
+  // CSV/Excel 용 1줄(납작) 행 — 구성도·표를 구분자로 직렬화.
+  function sheetExportRows(){
+    return sheetExportItems().map(function(it){
+      var c = it.card, def = GS.defText ? GS.defText(c) : (c.def || '');
+      return {
+        '과목': it.domLabel, '단원': it.secTitle, '토픽': c.title,
+        '유형': c.essay ? '2교시 논술' : (c.compare ? '비교' : '일반'),
+        '리드키워드': c.keyword || '', '정의': def,
+        '구성도': GS.flatDiagram ? GS.flatDiagram(c) : '',
+        '구성요소': GS.flatTable ? GS.flatTable(c.table) : ''
+      };
+    });
   }
   function expStamp(){ var d = new Date(), p = function(n){ return (n<10?'0':'')+n; }; return '' + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()); }
+  function expStampHuman(){ var d = new Date(), p = function(n){ return (n<10?'0':'')+n; }; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+  function expDomLabel(){ if(state.dom==='all') return '전체'; var f = state.dom; DOMAINS.forEach(function(d){ if(d.id===state.dom) f = d.label; }); return f; }
+  function expSecLabel(){ if(state.sec==='all') return '전체'; var f = state.sec; DOMAINS.forEach(function(d){ (d.sections||[]).forEach(function(s){ if(s.id===state.sec) f = s.title; }); }); return f; }
   function expDownload(blob, name){
     var url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; document.body.appendChild(a); a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 120);
+  }
+
+  // 표시폭(한글·전각 2, 그 외 1) — TXT 표 정렬용
+  function expW(s){ s = String(s==null?'':s); var w = 0;
+    for(var i=0;i<s.length;i++){ var c = s.charCodeAt(i);
+      w += (c>=0x1100 && (c<=0x115F || (c>=0x2E80&&c<=0xA4CF) || (c>=0xAC00&&c<=0xD7A3) || (c>=0xF900&&c<=0xFAFF) || (c>=0xFE30&&c<=0xFE4F) || (c>=0xFF00&&c<=0xFF60) || (c>=0xFFE0&&c<=0xFFE6))) ? 2 : 1; }
+    return w; }
+  function expPad(s, w){ s = String(s==null?'':s); var d = w - expW(s); return s + (d>0 ? new Array(d+1).join(' ') : ''); }
+  function txtDiagram(g, ind){ return String(g||'').split('\n').map(function(x){ return ind + x.replace(/\s+$/,''); }).join('\n'); }
+  function txtTable(t, ind){
+    if(!t || !t.rows || !t.rows.length) return '';
+    var head = t.head || [], all = (head.length ? [head] : []).concat(t.rows), ncol = 0;
+    all.forEach(function(r){ ncol = Math.max(ncol, r.length); });
+    var wid = []; for(var i=0;i<ncol;i++) wid[i] = 0;
+    var cell = function(v){ return v==null ? '' : (v==='' ? '〃' : v); };
+    all.forEach(function(r){ for(var i=0;i<ncol;i++){ wid[i] = Math.max(wid[i], expW(cell(r[i]))); } });
+    var line = function(r){ var cs = []; for(var i=0;i<ncol;i++){ cs.push(expPad(cell(r[i]), wid[i])); } return ind + cs.join('  |  '); };
+    var out = [];
+    if(head.length){ out.push(line(head)); var sep = []; for(var i=0;i<ncol;i++) sep.push(new Array(wid[i]+1).join('─')); out.push(ind + sep.join('──┼──')); }
+    t.rows.forEach(function(r){ out.push(line(r)); });
+    return out.join('\n');
+  }
+  function txtEssay(L, c){
+    var p = c.problem || {};
+    L.push('       · 문제 : ' + (p.no ? p.no+'. ' : '') + (p.topic || c.title));
+    (p.reqs||[]).forEach(function(r){ L.push('           - ' + r); });
+    (c.sections||[]).forEach(function(s){
+      L.push('       〈 ' + (s.no ? s.no+'. ' : '') + s.title + ' 〉');
+      var ov = s.overview || {};
+      if(ov.diagram) L.push(txtDiagram(ov.diagram, '           '));
+      (ov.concepts||[]).forEach(function(x){ L.push('           · ' + x); });
+      if(ov.note) L.push('           ' + ov.note);
+      var dt = s.detail || {};
+      if(dt.title) L.push('           ▶ ' + dt.title);
+      if(dt.table && dt.table.rows && dt.table.rows.length) L.push(txtTable(dt.table, '           '));
+      if(dt.note) L.push('           ' + dt.note);
+      (s.conclusion||[]).forEach(function(x){ L.push('           - ' + x); });
+    });
+  }
+  // TXT — 들여쓰기·줄바꿈으로 가독성 확보(한글(HWP)·메모장에서 바로 열림). BOM 부여로 한글 인코딩 안전.
+  function exportTxt(){
+    var items = sheetExportItems();
+    if(!items.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    var bar = new Array(65).join('='), sub = new Array(65).join('─');
+    var L = ['정보관리기술사 정의시트',
+             '추출 ' + expStampHuman() + '  ·  총 ' + items.length + '토픽',
+             '필터  과목=' + expDomLabel() + ' / 단원=' + expSecLabel() + ' / 검색=' + (state.q || '(없음)'),
+             bar];
+    var curDom = null, curSec = null;
+    items.forEach(function(it){
+      if(it.domLabel !== curDom){ curDom = it.domLabel; curSec = null; L.push('', '', '■ ' + curDom, sub); }
+      if(it.secTitle !== curSec){ curSec = it.secTitle; L.push('', '  【 ' + curSec + ' 】'); }
+      var c = it.card, kind = c.essay ? '2교시 논술' : (c.compare ? '비교' : '일반');
+      L.push('', '  ● ' + c.title + '   〔' + kind + '〕');
+      if(c.keyword) L.push('       · 리드키워드 : ' + c.keyword);
+      if(c.essay){ txtEssay(L, c); }
+      else {
+        var def = GS.defText ? GS.defText(c) : (c.def || '');
+        if(def){ L.push('       · 정의'); L.push('           ' + def); }
+        if(c.diagram){ L.push('       · 구성도'); L.push(txtDiagram(c.diagram, '           ')); }
+        if(c.table && c.table.rows && c.table.rows.length){ L.push('       · 구성요소'); L.push(txtTable(c.table, '           ')); }
+        else if(c.compare && c.defTable && c.defTable.rows){ L.push('       · 정의비교'); L.push(txtTable(c.defTable, '           ')); }
+        if(c.note) L.push('       ' + c.note);
+      }
+    });
+    var blob = new Blob(['﻿' + L.join('\r\n')], { type:'text/plain;charset=utf-8;' });
+    expDownload(blob, '정의시트_' + expStamp() + '.txt');
+  }
+  // Word(.doc) — HTML 기반. MS Word·한글(HWP) 모두 직접 열림(네이티브 .hwp 는 브라우저 생성 불가 → .doc 로 대체).
+  function docEsc(v){ return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function docTable(t){
+    if(!t || !t.rows || !t.rows.length) return '';
+    var s = '<table>';
+    if(t.head && t.head.length) s += '<tr>' + t.head.map(function(x){ return '<th>' + docEsc(x) + '</th>'; }).join('') + '</tr>';
+    t.rows.forEach(function(r){ s += '<tr>' + r.map(function(x){ return '<td>' + (x==='' ? '〃' : docEsc(x)) + '</td>'; }).join('') + '</tr>'; });
+    return s + '</table>';
+  }
+  function docEssay(h, c){
+    var p = c.problem || {};
+    h.push('<p class="lbl">문제 : ' + docEsc((p.no ? p.no+'. ' : '') + (p.topic || c.title)) + '</p>');
+    if(p.reqs && p.reqs.length) h.push('<ul>' + p.reqs.map(function(r){ return '<li>' + docEsc(r) + '</li>'; }).join('') + '</ul>');
+    (c.sections||[]).forEach(function(s){
+      h.push('<p class="sec">〈 ' + docEsc((s.no ? s.no+'. ' : '') + s.title) + ' 〉</p>');
+      var ov = s.overview || {};
+      if(ov.diagram) h.push('<pre>' + docEsc(ov.diagram) + '</pre>');
+      if(ov.concepts && ov.concepts.length) h.push('<ul>' + ov.concepts.map(function(x){ return '<li>' + docEsc(x) + '</li>'; }).join('') + '</ul>');
+      if(ov.note) h.push('<p class="note">' + docEsc(ov.note) + '</p>');
+      var dt = s.detail || {};
+      if(dt.title) h.push('<p class="lbl">' + docEsc(dt.title) + '</p>');
+      if(dt.table && dt.table.rows && dt.table.rows.length) h.push(docTable(dt.table));
+      if(dt.note) h.push('<p class="note">' + docEsc(dt.note) + '</p>');
+      if(s.conclusion && s.conclusion.length) h.push('<ul>' + s.conclusion.map(function(x){ return '<li>' + docEsc(x) + '</li>'; }).join('') + '</ul>');
+    });
+  }
+  function exportDoc(){
+    var items = sheetExportItems();
+    if(!items.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    var h = ['<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>정의시트</title>',
+      '<style>body{font-family:"맑은 고딕","Malgun Gothic",sans-serif;font-size:10.5pt;line-height:1.5;} h1{font-size:16pt;margin:0 0 4pt;} h2{font-size:13pt;border-bottom:1.5pt solid #333;margin:16pt 0 6pt;} h3{font-size:11.5pt;color:#333;margin:10pt 0 4pt;} .meta{color:#666;font-size:9pt;} .topic{font-weight:bold;font-size:11pt;margin:10pt 0 2pt;} .kind{font-weight:normal;color:#888;font-size:9pt;} .lbl{color:#1d4ed8;font-weight:bold;margin:4pt 0 1pt;} .sec{font-weight:bold;margin:6pt 0 2pt;} .note{color:#666;} pre{font-family:Consolas,"D2Coding","맑은 고딕",monospace;font-size:9pt;white-space:pre-wrap;margin:2pt 0;background:#f6f6f6;padding:3pt 5pt;} table{border-collapse:collapse;margin:3pt 0 6pt;} td,th{border:0.75pt solid #999;padding:2pt 6pt;font-size:9.5pt;vertical-align:top;} th{background:#eee;} ul{margin:2pt 0 4pt 18pt;}</style></head><body>',
+      '<h1>정보관리기술사 정의시트</h1>',
+      '<p class="meta">추출 ' + docEsc(expStampHuman()) + ' · 총 ' + items.length + '토픽 · 필터 과목=' + docEsc(expDomLabel()) + ' / 단원=' + docEsc(expSecLabel()) + ' / 검색=' + docEsc(state.q || '(없음)') + '</p>'];
+    var curDom = null, curSec = null;
+    items.forEach(function(it){
+      if(it.domLabel !== curDom){ curDom = it.domLabel; curSec = null; h.push('<h2>' + docEsc(curDom) + '</h2>'); }
+      if(it.secTitle !== curSec){ curSec = it.secTitle; h.push('<h3>' + docEsc(curSec) + '</h3>'); }
+      var c = it.card, kind = c.essay ? '2교시 논술' : (c.compare ? '비교' : '일반');
+      h.push('<p class="topic">● ' + docEsc(c.title) + ' <span class="kind">〔' + kind + '〕</span></p>');
+      if(c.keyword) h.push('<p><span class="lbl">리드키워드 :</span> ' + docEsc(c.keyword) + '</p>');
+      if(c.essay){ docEssay(h, c); }
+      else {
+        var def = GS.defText ? GS.defText(c) : (c.def || '');
+        if(def) h.push('<p><span class="lbl">정의 :</span> ' + docEsc(def) + '</p>');
+        if(c.diagram){ h.push('<p class="lbl">구성도</p><pre>' + docEsc(c.diagram) + '</pre>'); }
+        if(c.table && c.table.rows && c.table.rows.length){ h.push('<p class="lbl">구성요소</p>' + docTable(c.table)); }
+        else if(c.compare && c.defTable && c.defTable.rows){ h.push('<p class="lbl">정의비교</p>' + docTable(c.defTable)); }
+        if(c.note) h.push('<p class="note">' + docEsc(c.note) + '</p>');
+      }
+    });
+    h.push('</body></html>');
+    var blob = new Blob(['﻿' + h.join('\n')], { type:'application/msword;charset=utf-8;' });
+    expDownload(blob, '정의시트_' + expStamp() + '.doc');
   }
   function exportCsv(){
     var rows = sheetExportRows();
@@ -380,6 +523,8 @@
     s.onerror = function(){ if(btn) btn.disabled = false; alert('Excel 모듈(SheetJS) 로드 실패 — 네트워크 확인 후 재시도.'); };
     document.head.appendChild(s);
   }
+  var _expTxt = document.getElementById('exportTxt'); if(_expTxt) _expTxt.addEventListener('click', exportTxt);
+  var _expDoc = document.getElementById('exportDoc'); if(_expDoc) _expDoc.addEventListener('click', exportDoc);
   var _expCsv = document.getElementById('exportCsv'); if(_expCsv) _expCsv.addEventListener('click', exportCsv);
   var _expXlsx = document.getElementById('exportXlsx'); if(_expXlsx) _expXlsx.addEventListener('click', exportXlsx);
 

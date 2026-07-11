@@ -12,18 +12,37 @@
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
   function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
-  // 카드/시트 행 공용 필터 술어(순수). 과목·단원·검색어(소문자 q) 일치 여부.
-  // q 는 공백으로 구분된 여러 단어 가능. qmode='or'면 하나라도 포함, 그 외(기본 and)면 모두 포함.
+  // 검색식 파서(표준화). 지원 문법:
+  //   "여러 단어"  → 공백 포함 한 구문으로 매칭   ·  -제외어(또는 !제외어) → 해당어 포함 시 탈락
+  //   OR / |       → 결과를 OR 결합(하나라도 포함)  ·  AND / & → 기본(모두 포함)이라 소비만
+  // 반환 {pos:[구문…], not:[제외어…], orOp:bool}. 미지정 시 결합은 qmode(and/or) 토글을 따름.
+  function parseQuery(q){
+    var toks = [], re = /"([^"]*)"|(\S+)/g, m;
+    while((m = re.exec(String(q||'')))){ toks.push({ p: m[1]!=null, v: m[1]!=null ? m[1] : m[2] }); }
+    var pos = [], not = [], orOp = false;
+    toks.forEach(function(t){
+      var v = t.v;
+      if(!t.p){
+        var up = v.toUpperCase();
+        if(up==='OR' || v==='|'){ orOp = true; return; }
+        if(up==='AND' || v==='&'){ return; }                       // AND=기본, 연산자로만 소비
+        if((v.charAt(0)==='-' || v.charAt(0)==='!') && v.length>1){ not.push(v.slice(1).toLowerCase()); return; }
+      }
+      v = v.toLowerCase(); if(v) pos.push(v);
+    });
+    return { pos: pos, not: not, orOp: orOp };
+  }
+  // 카드/시트 행 공용 필터 술어(순수). 과목·단원·검색식(소문자 q) 일치 여부.
   function cardMatches(domId, catId, text, q, selDom, selSec, qmode){
     if(selDom!=='all' && selDom!==domId) return false;
     if(selSec!=='all' && selSec!==catId) return false;
     if(q){
-      var terms = q.split(/\s+/).filter(Boolean);
-      if(terms.length){
-        var s = String(text);
-        var hit = (qmode==='or')
-          ? terms.some(function(tm){ return s.indexOf(tm) >= 0; })
-          : terms.every(function(tm){ return s.indexOf(tm) >= 0; });
+      var pq = parseQuery(q), s = String(text);
+      if(pq.not.length && pq.not.some(function(t){ return s.indexOf(t) >= 0; })) return false;   // 제외어
+      if(pq.pos.length){
+        var useOr = pq.orOp || qmode==='or';
+        var hit = useOr ? pq.pos.some(function(t){ return s.indexOf(t) >= 0; })
+                        : pq.pos.every(function(t){ return s.indexOf(t) >= 0; });
         if(!hit) return false;
       }
     }

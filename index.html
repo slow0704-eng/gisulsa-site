@@ -18,11 +18,12 @@
 <header class="appbar">
   <div class="topbar">
     <a href="./" class="brand" title="처음으로 (새로고침)"><span class="brand-mark"><i data-lucide="graduation-cap"></i></span><span class="brand-name">정보관리기술사<small>학습 콘솔 · 1·2교시</small></span></a>
-    <div class="gsearch-wrap"><i data-lucide="search" class="gsearch-ic"></i><input id="globalSearch" class="gsearch" type="text" placeholder="전 과목 통합 검색 — 여러 단어 공백 구분(AND/OR)" /><button id="searchMode" class="smode" type="button" aria-pressed="false" title="검색 방식: AND(단어 모두 포함) — 눌러 OR로">AND</button></div>
+    <div class="gsearch-wrap"><i data-lucide="search" class="gsearch-ic"></i><input id="globalSearch" class="gsearch" type="text" placeholder='전 과목 검색 — 공백=AND/OR · "구문" · -제외' title='검색식: 공백=단어 결합(AND/OR 토글) · "여러 단어"=구문 · OR/| 로 OR 결합 · -단어(!단어)=제외' /><button id="searchMode" class="smode" type="button" aria-pressed="false" title="검색 방식: AND(단어 모두 포함) — 눌러 OR로">AND</button></div>
     <div class="viewsw" id="viewsw">
       <button data-v="cards" class="active"><i data-lucide="layout-grid"></i>카드</button>
       <button data-v="graph"><i data-lucide="share-2"></i>관계도</button>
       <button data-v="sheet"><i data-lucide="list"></i>정의 시트</button>
+      <button data-v="practice"><i data-lucide="keyboard"></i>연습</button>
       <button data-v="quiz"><i data-lucide="puzzle"></i>퀴즈</button>
     </div>
     <button id="filterToggle" class="filter-toggle" type="button" aria-expanded="true" aria-controls="facets" title="과목·단원 필터 접기/펼치기"><i data-lucide="sliders-horizontal"></i><span class="ft-label">필터</span></button>
@@ -58,12 +59,21 @@
     <label><input type="checkbox" id="diagOrig" /> 구성도 원래대로</label>
     <label><input type="checkbox" id="tblOrig" /> 구성요소표 원래대로</label>
     <span class="sheet-export">
-      <button type="button" id="exportCsv" class="exp-btn" title="현재 필터된 정의 시트를 CSV로 다운로드"><i data-lucide="file-text"></i>CSV</button>
-      <button type="button" id="exportXlsx" class="exp-btn" title="현재 필터된 정의 시트를 Excel(xlsx)로 다운로드"><i data-lucide="file-spreadsheet"></i>Excel</button>
+      <button type="button" id="exportTxt" class="exp-btn" title="현재 필터된 정의 시트를 TXT(들여쓰기·줄바꿈 가독형)로 다운로드 — 한글(HWP)·메모장에서 열림"><i data-lucide="file-text"></i>TXT</button>
+      <button type="button" id="exportDoc" class="exp-btn" title="현재 필터된 정의 시트를 Word(.doc)로 다운로드 — MS Word·한글(HWP)에서 열림"><i data-lucide="file-type"></i>Word</button>
+      <button type="button" id="exportCsv" class="exp-btn" title="현재 필터된 정의 시트를 CSV로 다운로드"><i data-lucide="file-spreadsheet"></i>CSV</button>
+      <button type="button" id="exportXlsx" class="exp-btn" title="현재 필터된 정의 시트를 Excel(xlsx)로 다운로드"><i data-lucide="table"></i>Excel</button>
     </span>
     <span class="tool-hint">전 토픽 정의문 모음 · 상단 검색·과목/단원 필터 적용 · 내보내기는 현재 표시분 기준</span>
   </div>
   <div id="sheetBody"></div>
+</div>
+
+<div id="practice" class="hidden">
+  <div class="prac-tools">
+    <span class="tool-hint">⌨ 타자연습 — 리드키워드·정의문을 <b>보고 따라치기</b>. 실시간 정확도·속도 표시(검색어 미적용, 아래 과목/모드로 범위 조절)</span>
+  </div>
+  <div id="practiceBody"></div>
 </div>
 
 <div id="quiz" class="hidden">
@@ -106,6 +116,7 @@
 <script src="data/bundle.js"></script>
 <script src="assets/graph.js"></script>
 <script src="assets/quiz.js"></script>
+<script src="assets/practice.js"></script>
 <script src="assets/app.js"></script>
 <script src="assets/info.js"></script>
 </body>
