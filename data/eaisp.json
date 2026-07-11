@@ -6163,7 +6163,7 @@
       "title": "데이터패브릭",
       "tag": "지능통합",
       "keyword": "지능통합",
-      "keywords": "data fabric 데이터패브릭 메타데이터 ai 지능통합 분산데이터 연결 통합 아키텍처 관리 knowledge graph",
+      "keywords": "data fabric 데이터패브릭 메타데이터 ai 지능통합 분산데이터 연결 통합 아키텍처 관리 knowledge graph 액티브메타데이터 데이터가상화 논리통합 ETL",
       "def": "메타데이터와 AI로 분산 데이터를 지능적으로 연결·통합하는 데이터 관리 아키텍처",
       "diagram": "[분산데이터] → [메타데이터]\n[메타데이터] → [AI엔진] · [지식그래프]\n[가상통합] → [데이터활용]",
       "diagramNote": "※ 메타데이터·AI 기반 분산 데이터 가상 통합 구조",
