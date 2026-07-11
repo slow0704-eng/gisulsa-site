@@ -335,7 +335,7 @@
   if(tblOrig){ tblOrig.addEventListener('change', function(){ sheetBody.classList.toggle('tbl-orig', tblOrig.checked); }); }
 
   // ---- 정의 시트 내보내기(TXT / Word / CSV / Excel) — 현재 검색·과목·단원 필터 반영 ----
-  var EXP_COLS = ['과목','단원','토픽','유형','리드키워드','정의','구성도','구성요소'];
+  var EXP_COLS = ['과목','단원','토픽','유형','리드키워드','정의','구성도','구성요소','첨언'];
   // 필터를 통과한 항목을 {domLabel, secTitle, card} 로 수집(도메인·섹션 노출 순서 유지).
   function sheetExportItems(){
     var q = state.q, items = [];
@@ -361,7 +361,8 @@
         '유형': c.essay ? '2교시 논술' : (c.compare ? '비교' : '일반'),
         '리드키워드': c.keyword || '', '정의': def,
         '구성도': GS.flatDiagram ? GS.flatDiagram(c) : '',
-        '구성요소': GS.flatTable ? GS.flatTable(c.table) : ''
+        '구성요소': GS.flatTable ? GS.flatTable(c.table) : '',
+        '첨언': c.note || ''
       };
     });
   }
@@ -510,7 +511,7 @@
     function go(){
       if(btn) btn.disabled = false;
       var ws = XLSX.utils.json_to_sheet(rows, { header:EXP_COLS });
-      ws['!cols'] = [{wch:16},{wch:22},{wch:26},{wch:10},{wch:18},{wch:60},{wch:50},{wch:60}];
+      ws['!cols'] = [{wch:16},{wch:22},{wch:26},{wch:10},{wch:18},{wch:60},{wch:50},{wch:60},{wch:34}];
       var wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, '정의시트');
       XLSX.writeFile(wb, '정의시트_' + expStamp() + '.xlsx');

@@ -193,11 +193,11 @@
   }
   function sheetHTML(domains, catMapByDom){
     var h = '<table class="sheet-table"><thead><tr class="sheet-head">'+
-      '<th>토픽</th><th>리드키워드</th><th>정의</th><th>구성도</th><th>구성요소</th></tr></thead><tbody>';
+      '<th>토픽</th><th>리드키워드</th><th>정의</th><th>구성도</th><th>구성요소</th><th>첨언</th></tr></thead><tbody>';
     domains.forEach(function(d){
       var catMap = catMapByDom[d.id] || {};
       var secIds = (d.sections || []).map(function(s){ return s.id; });
-      h += '<tr class="sheet-dom" data-dom="'+escAttr(d.id)+'"><td colspan="5">'+escHTML((d.icon||'')+' '+d.label)+'</td></tr>';
+      h += '<tr class="sheet-dom" data-dom="'+escAttr(d.id)+'"><td colspan="6">'+escHTML((d.icon||'')+' '+d.label)+'</td></tr>';
       function rowsFor(catId){
         return (d.cards || []).filter(function(c){ return c.category === catId; }).map(function(c){
           // 구성도·구성요소는 1줄 직렬화(st-flat)와 원본(st-orig)을 함께 렌더 → 체크박스로 CSS 전환
@@ -208,17 +208,18 @@
             '<td class="st-kw">'+escHTML(c.keyword||'')+'</td>'+
             '<td class="st-def">'+escHTML(defText(c))+'</td>'+
             '<td class="st-diag"><span class="st-flat">'+escHTML(flatDiagram(c))+'</span>'+origD+'</td>'+
-            '<td class="st-tbl"><span class="st-flat">'+escHTML(flatTable(c.table))+'</span>'+origT+'</td></tr>';
+            '<td class="st-tbl"><span class="st-flat">'+escHTML(flatTable(c.table))+'</span>'+origT+'</td>'+
+            '<td class="st-note">'+escHTML(c.note||'')+'</td></tr>';
         }).join('');
       }
       (d.sections || []).forEach(function(s){
-        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(s.id)+'"><td colspan="5">'+escHTML(s.title)+'</td></tr>';
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(s.id)+'"><td colspan="6">'+escHTML(s.title)+'</td></tr>';
         h += rowsFor(s.id);
       });
       var orphan = {};
       (d.cards || []).forEach(function(c){ if(secIds.indexOf(c.category) < 0) orphan[c.category] = 1; });
       Object.keys(orphan).forEach(function(catId){
-        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(catId)+'"><td colspan="5">기타</td></tr>';
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(catId)+'"><td colspan="6">기타</td></tr>';
         h += rowsFor(catId);
       });
     });
