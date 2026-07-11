@@ -366,6 +366,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 #sheetBody.masked .st-kw,#sheetBody.masked .st-def{filter:blur(5px);user-select:none;transition:filter .12s;}
 #sheetBody.masked .sheet-row{cursor:pointer;}
 #sheetBody.masked .sheet-row.reveal .st-kw,#sheetBody.masked .sheet-row.reveal .st-def{filter:none;}
+#sheetBody.masked-more .st-diag,#sheetBody.masked-more .st-tbl,#sheetBody.masked-more .st-note{filter:blur(5px);user-select:none;transition:filter .12s;}
+#sheetBody.masked-more .sheet-row.reveal .st-diag,#sheetBody.masked-more .sheet-row.reveal .st-tbl,#sheetBody.masked-more .sheet-row.reveal .st-note{filter:none;}
 
 /* ===== 퀴즈 뷰 ===== */
 #quiz{max-width:900px;margin:0 auto;padding:14px 18px 90px;}

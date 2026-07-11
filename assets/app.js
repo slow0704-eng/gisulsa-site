@@ -403,6 +403,8 @@
   });
   var maskDef = document.getElementById('maskDef');
   if(maskDef){ maskDef.addEventListener('change', function(){ sheetBody.classList.toggle('masked', maskDef.checked); }); }
+  var maskMore = document.getElementById('maskMore');
+  if(maskMore){ maskMore.addEventListener('change', function(){ sheetBody.classList.toggle('masked-more', maskMore.checked); if(maskMore.checked && maskDef && !maskDef.checked){ maskDef.checked=true; sheetBody.classList.add('masked'); } }); }
   // 구성도/구성요소표 원래대로(펼침) 토글 — 시트 셀의 1줄(st-flat) ↔ 원본(st-orig) 전환
   var diagOrig = document.getElementById('diagOrig');
   if(diagOrig){ diagOrig.addEventListener('change', function(){ sheetBody.classList.toggle('diag-orig', diagOrig.checked); }); }
