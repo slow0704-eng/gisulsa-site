@@ -127,7 +127,7 @@
           ]
         ]
       },
-      "note": "※ TCP/IP와 매핑해 실무 적용"
+      "note": "※ 실제 구현은 TCP/IP로 통합, 계층은 설계·교육 참조용에 국한"
     },
     {
       "category": "layer",
@@ -177,7 +177,7 @@
           ]
         ]
       },
-      "note": "※ 계층별 대표 프로토콜 암기"
+      "note": "※ 표현·세션 계층이 응용에 흡수된 실용 위주 계층 구조"
     },
     {
       "category": "layer",
@@ -227,7 +227,7 @@
           ]
         ]
       },
-      "note": "※ 오버헤드와 MTU 고려 필요"
+      "note": "※ 계층마다 헤더가 누적되어 오버헤드 증가, MTU 초과 시 단편화"
     },
     {
       "category": "layer",
@@ -236,7 +236,7 @@
       "keyword": "CSMA/CD·MAC",
       "keywords": "이더넷 Ethernet CSMA/CD MAC 프레임 LAN IEEE 802.3 충돌",
       "def": "유선 LAN의 사실상 표준으로, MAC 주소 기반 프레임을 CSMA/CD·스위칭으로 전달하는 IEEE 802.3 기술.",
-      "diagram": "[단말]─[스위치]─[단말]\n   프레임: |목적MAC|출발MAC|Type|Data|FCS|",
+      "diagram": "[단말A]─[L2 스위치]─[단말B]\n 프레임: [Preamble][목적MAC][출발MAC]\n        [Type][Data 46~1500][FCS]\n IEEE 802.3·CSMA/CD·48bit MAC\n 10M→1G→10G/100G 속도 계층 확장",
       "diagramNote": "※ 현재는 스위치 기반 전이중",
       "table": {
         "head": [
@@ -277,7 +277,7 @@
           ]
         ]
       },
-      "note": "※ VLAN·QoS와 결합 운용"
+      "note": "※ 스위치 전이중 환경에서는 사실상 미사용, 충돌 도메인 소멸"
     },
     {
       "category": "layer",
@@ -327,7 +327,7 @@
           ]
         ]
       },
-      "note": "※ 보안: DAI·정적 ARP 적용"
+      "note": "※ 타 서브넷 통신은 게이트웨이 MAC로 대체, 캐시 만료로 갱신"
     },
     {
       "category": "layer",
@@ -336,7 +336,7 @@
       "keyword": "검출·재전송",
       "keywords": "오류제어 흐름제어 패리티 CRC 체크섬 해밍코드 FEC ARQ 정지대기 GBN SR 슬라이딩윈도우",
       "def": "전송 중 비트오류를 검출·정정하고 송수신 속도차를 조절해 신뢰성·효율을 확보하는 데이터링크 제어 기법.",
-      "diagram": "[검출 CRC·패리티]\n   ↓ 오류 시\n[재전송 ARQ]\n[흐름 슬라이딩윈도우]",
+      "diagram": "[송신] → [검출: CRC·패리티·해밍]\n   ↓ 오류 검출 시\n[재전송 ARQ: Stop&Wait/GBN/SR]\n[흐름: 슬라이딩 윈도우 기법]\n 수신버퍼 여유 ← ACK/NAK 피드백",
       "diagramNote": "※ 검출(EDC)·정정(ECC) 구분",
       "table": {
         "head": [
@@ -377,7 +377,7 @@
           ]
         ]
       },
-      "note": "※ TCP 흐름·혼잡제어와 연계"
+      "note": "※ 실시간은 재전송 없는 FEC 유리, 저오류 매체는 검출 위주 선정"
     },
     {
       "category": "route",
@@ -427,7 +427,7 @@
           ]
         ]
       },
-      "note": "※ 주소고갈→IPv6·NAT 병행"
+      "note": "※ 전환 지연은 호환성·비용 부담 때문, 듀얼스택 과도기 장기화"
     },
     {
       "category": "route",
@@ -436,7 +436,7 @@
       "keyword": "VLSM·집약",
       "keywords": "서브네팅 CIDR 서브넷마스크 VLSM 슈퍼네팅 프리픽스 주소집약",
       "def": "네트워크를 서브넷으로 분할(서브네팅)하고 클래스 없는 프리픽스(CIDR)로 주소를 유연 할당·집약하는 기법.",
-      "diagram": "192.168.1.0/24\n ├ /26 (64) ├ /26\n CIDR: 가변 프리픽스 집약",
+      "diagram": "[192.168.1.0/24] 호스트 254개\n   ↓ VLSM 가변 분할\n[/26=64][/26=64][/25=128]\n CIDR: 가변 프리픽스 경로 집약\n IP+Mask → Network/Host 경계 결정",
       "diagramNote": "※ VLSM으로 낭비 최소화",
       "table": {
         "head": [
@@ -477,7 +477,7 @@
           ]
         ]
       },
-      "note": "※ 라우팅 테이블 경량화 기여"
+      "note": "※ 과다 분할 시 호스트 부족, 요구 수량 기반 마스크 산정이 관건"
     },
     {
       "category": "route",
@@ -527,7 +527,7 @@
           ]
         ]
       },
-      "note": "※ 수렴시간·확장성 트레이드오프"
+      "note": "※ 거리벡터는 홉 제한·수렴 지연, 대규모는 링크상태 OSPF 선정"
     },
     {
       "category": "route",
@@ -577,7 +577,7 @@
           ]
         ]
       },
-      "note": "※ 포트보안·QoS 함께 적용"
+      "note": "※ 브이랜 식별자는 4096개로 한정, 대규모는 VXLAN으로 확장"
     },
     {
       "category": "route",
@@ -586,7 +586,7 @@
       "keyword": "주소변환",
       "keywords": "NAT 주소변환 PAT 사설IP 공인IP 포트 포워딩 IP 고갈",
       "def": "사설 IP를 공인 IP로 변환해 주소를 절약하고 내부망을 은닉하는 주소변환 기술(포트 기반 PAT 포함).",
-      "diagram": "[사설 192.168.x] ─NAT─ [공인 1.2.3.4]\n  PAT: 포트로 다중 매핑",
+      "diagram": "[사설 192.168.x.x]─[NAT]─[공인 1.2.3.4]\n Static NAT: 1:1 고정 매핑\n Dynamic NAT: 주소 풀 할당\n PAT/NAPT: 포트로 N:1 다중화\n IPv4 고갈 대응·내부망 주소 은닉",
       "diagramNote": "※ IPv4 고갈 완화 핵심",
       "table": {
         "head": [
@@ -627,7 +627,7 @@
           ]
         ]
       },
-      "note": "※ IPv6에서는 필요성 감소"
+      "note": "※ 외부 개시 접속 불가로 P2P는 홀펀칭 필요, 매핑 로깅 필수"
     },
     {
       "category": "route",
@@ -677,7 +677,7 @@
           ]
         ]
       },
-      "note": "※ 방화벽 정책으로 선별 허용"
+      "note": "※ 전면 차단 시 경로 MTU 탐색 실패로 장애, 타입별 선별 필요"
     },
     {
       "category": "trans",
@@ -727,7 +727,7 @@
           ]
         ]
       },
-      "note": "※ UDP와 용도별 선택"
+      "note": "※ 핸드셰이크 지연·HOL 블로킹 한계로 고지연망은 QUIC 부상"
     },
     {
       "category": "trans",
@@ -777,7 +777,7 @@
           ]
         ]
       },
-      "note": "※ TCP 대비 트레이드오프 명확"
+      "note": "※ 혼잡제어 부재로 망 공정성 저해 우려, 신뢰성은 앱 계층 보완"
     },
     {
       "category": "trans",
@@ -827,7 +827,7 @@
           ]
         ]
       },
-      "note": "※ ECN·BBR 진화, QoS·대역 관리 연계"
+      "note": "※ 손실 기반은 버퍼블로트 취약, BBR은 대역·RTT 측정으로 개선"
     },
     {
       "category": "trans",
@@ -836,7 +836,7 @@
       "keyword": "슬라이딩윈도우",
       "keywords": "흐름제어 슬라이딩윈도우 수신버퍼 정지대기 ACK 처리속도",
       "def": "수신측 버퍼 용량에 맞춰 송신량을 조절하는 기법으로, 슬라이딩 윈도우로 다수 패킷을 연속 전송.",
-      "diagram": "[송신 윈도우]████░░░░\n  ACK 수신 → 윈도우 이동\n 수신버퍼 여유만큼 전송",
+      "diagram": "[송신 윈도우]████░░░░ (미ACK/가용)\n   ↑ ACK 수신 → 윈도우 우측 이동\n[수신 버퍼] rwnd 광고 → 송신측\n TCP: rwnd·cwnd 중 min 값 선택\n 수신 버퍼 여유만큼 세그먼트 전송",
       "diagramNote": "※ 윈도우 크기=수신 능력",
       "table": {
         "head": [
@@ -877,7 +877,7 @@
           ]
         ]
       },
-      "note": "※ 혼잡제어와 함께 동작"
+      "note": "※ 망 보호 혼잡제어와 달리 수신 버퍼 오버플로 방지가 본질"
     },
     {
       "category": "trans",
@@ -886,7 +886,7 @@
       "keyword": "대역·우선순위",
       "keywords": "QoS 서비스품질 대역폭 지연 지터 우선순위 DiffServ DSCP IntServ RSVP 셰이핑 폴리싱 트래픽",
       "def": "트래픽 우선순위·대역폭을 제어(DiffServ·IntServ)해 지연·지터·손실을 관리·보장하는 서비스 품질 기술.",
-      "diagram": "[분류]→[표시 DSCP]→[큐잉]\n →[스케줄링 WFQ]→[셰이핑]",
+      "diagram": "[분류 Classify]→[표시 DSCP/CoS]\n   →[폴리싱/셰이핑 대역제어]\n   →[큐잉]→[스케줄링 WFQ/PQ]\n DiffServ·IntServ(RSVP) 모델\n 지연·지터·손실·대역폭 보장",
       "diagramNote": "※ 실시간 트래픽 우선 처리",
       "table": {
         "head": [
@@ -927,7 +927,7 @@
           ]
         ]
       },
-      "note": "※ VoIP·영상에 필수 적용"
+      "note": "※ 종단 인터넷은 보장 곤란, DiffServ가 확장성 우위로 채택"
     },
     {
       "category": "trans",
@@ -977,7 +977,7 @@
           ]
         ]
       },
-      "note": "※ 미사용 포트 차단 권장"
+      "note": "※ 1024 미만 특권 포트는 관리자 권한 필요, 동적 포트는 임시 할당"
     },
     {
       "category": "wireless",
@@ -986,7 +986,7 @@
       "keyword": "Wi-Fi·802.11",
       "keywords": "무선LAN WiFi 802.11 CSMA/CA AP SSID 채널 무선 액세스",
       "def": "전파로 단말과 AP를 연결하는 IEEE 802.11 LAN으로, CSMA/CA 접근과 다중 채널·MIMO로 무선 접속을 제공.",
-      "diagram": "[단말]~~무선~~[AP]─[유선망]\n SSID·채널·CSMA/CA\n 802.11ax(Wi-Fi6)",
+      "diagram": "[단말STA]~~무선~~[AP]─[유선 DS망]\n SSID·채널·CSMA/CA·RTS/CTS\n 2.4/5/6GHz 대역 운용\n 802.11 a/n/ac/ax(Wi-Fi6)\n OFDMA·MU-MIMO 다중 접속",
       "diagramNote": "※ 충돌 회피(CA) 방식 사용",
       "table": {
         "head": [
@@ -1027,7 +1027,7 @@
           ]
         ]
       },
-      "note": "※ 간섭·채널 설계가 성능 좌우"
+      "note": "※ 반이중 매체 공유로 실효 처리량은 표기 속도의 절반 수준"
     },
     {
       "category": "wireless",
@@ -1077,7 +1077,7 @@
           ]
         ]
       },
-      "note": "※ 6G·위성통신으로 진화"
+      "note": "※ mmWave는 회절 약해 커버리지 협소, 기지국 조밀화로 투자 부담"
     },
     {
       "category": "wireless",
@@ -1136,7 +1136,7 @@
       "keyword": "셀룰러·핸드오버",
       "keywords": "LTE 4G 이동통신 셀룰러 핸드오버 EPC OFDMA 기지국 로밍",
       "def": "셀 기반으로 이동성을 보장하는 4세대 이동통신으로, OFDMA 전송과 핸드오버로 끊김 없는 광역 접속을 제공.",
-      "diagram": "[기지국 eNB]─[EPC]\n 단말 이동 → 핸드오버\n 셀 간 끊김 없는 전환",
+      "diagram": "[단말UE]─[기지국 eNB]─[EPC]\n EPC: [MME][S-GW][P-GW][HSS]\n 이동 시 → X2/S1 핸드오버\n 셀 간 끊김 없는 세션 전환\n 5G: gNB·NR·네트워크 슬라이싱",
       "diagramNote": "※ All-IP 패킷 교환 구조",
       "table": {
         "head": [
@@ -1177,7 +1177,7 @@
           ]
         ]
       },
-      "note": "※ 음성은 VoLTE로 전환"
+      "note": "※ 셀 경계 간섭·핸드오버 지연이 체감 품질을 좌우하는 요인"
     },
     {
       "category": "wireless",
@@ -1186,7 +1186,7 @@
       "keyword": "근거리·저전력",
       "keywords": "블루투스 BLE 저전력 근거리 페어링 비콘 PAN 웨어러블",
       "def": "저전력(BLE) 모드로 웨어러블·IoT·비콘을 연결하는 2.4GHz 근거리 무선 PAN 기술.",
-      "diagram": "[기기A]~페어링~[기기B]\n Classic(스트리밍)\n BLE(저전력·비콘)",
+      "diagram": "[기기A]~페어링~[기기B] 2.4GHz ISM\n Classic(BR/EDR): 오디오 스트리밍\n BLE 4.0+: 저전력·비콘 광고\n GATT·프로파일·주파수 홉핑\n IoT·웨어러블 근거리 통신",
       "diagramNote": "※ BLE는 간헐 통신에 최적",
       "table": {
         "head": [
@@ -1227,7 +1227,7 @@
           ]
         ]
       },
-      "note": "※ Wi-Fi와 간섭 회피 설계"
+      "note": "※ Classic은 오디오, BLE는 소량 제어·비콘으로 용도 분리"
     },
     {
       "category": "wireless",
@@ -1277,7 +1277,7 @@
           ]
         ]
       },
-      "note": "※ 데이터량 적은 IoT에 적합"
+      "note": "※ LoRa는 사설 저비용, NB-IoT는 통신사 커버리지로 기준 상이"
     },
     {
       "category": "wireless",
@@ -1286,7 +1286,7 @@
       "keyword": "WPA3·인증",
       "keywords": "무선보안 WPA3 WPA2 SAE 암호화 인증 4-way 핸드셰이크 EAP",
       "def": "무선 구간의 도청·위변조를 막는 보안 체계로, WPA3(SAE)·강화 암호화·802.1X 인증으로 기밀·무결을 보장.",
-      "diagram": "[단말]─인증(802.1X/SAE)─[AP]\n 키 협상(4-way)\n WPA3 암호화 전송",
+      "diagram": "[단말]─인증 802.1X/SAE─[AP]─[AS]\n 4-way 핸드셰이크 키 협상\n PTK/GTK 세션키 생성\n WPA3: SAE·192bit·AES-GCMP\n WEP→WPA→WPA2→WPA3 진화",
       "diagramNote": "※ WEP·WPA2 취약점 보완",
       "table": {
         "head": [
@@ -1327,7 +1327,7 @@
           ]
         ]
       },
-      "note": "※ 개방형 AP 사용 지양"
+      "note": "※ PSK는 사전 대입 취약, 기업망은 802.1X 엔터프라이즈 권장"
     },
     {
       "category": "nsec",
@@ -1336,7 +1336,7 @@
       "keyword": "필터·정책",
       "keywords": "방화벽 Firewall 패킷필터 상태기반 NGFW DMZ 접근통제 정책",
       "def": "정책 기반으로 트래픽을 허용·차단해 내부망을 보호하는 접근통제 장비(패킷필터~차세대 NGFW).",
-      "diagram": "[외부]─[방화벽]─[DMZ]─[내부]\n 룰: 출발/목적/포트 허용·차단",
+      "diagram": "[외부 Untrust]─[방화벽]─[DMZ]\n                  └─[내부 Trust]\n 룰: 출발/목적 IP·포트·프로토콜\n Stateful 세션 상태 추적\n 패킷필터→NGFW(L7·IPS·앱 인지)",
       "diagramNote": "※ DMZ로 공개 서버 분리",
       "table": {
         "head": [
@@ -1377,7 +1377,7 @@
           ]
         ]
       },
-      "note": "※ IDS/IPS·WAF와 다층 방어"
+      "note": "※ 경계 방어만으론 내부 확산·암호화 트래픽 검사에 한계"
     },
     {
       "category": "nsec",
@@ -1427,7 +1427,7 @@
           ]
         ]
       },
-      "note": "※ 제로트러스트로 진화 추세"
+      "note": "※ 터널 암호화 오버헤드로 지연 증가·처리량 감소가 성능 대가"
     },
     {
       "category": "nsec",
@@ -1477,7 +1477,7 @@
           ]
         ]
       },
-      "note": "※ IPv6는 IPsec 기본 내장"
+      "note": "※ NAT 구간 통과 위해 NAT-T UDP 캡슐화·키 재협상이 필요"
     },
     {
       "category": "nsec",
@@ -1527,7 +1527,7 @@
           ]
         ]
       },
-      "note": "※ NFV와 결합해 가상화 완성"
+      "note": "※ 중앙 컨트롤러가 단일 장애점 되어 이중화·분산 설계가 관건"
     },
     {
       "category": "nsec",
@@ -1536,7 +1536,7 @@
       "keyword": "기능 가상화",
       "keywords": "NFV 네트워크기능가상화 VNF MANO 범용서버 가상화 오케스트레이션",
       "def": "전용 장비의 네트워크 기능(방화벽·라우터)을 범용 서버 SW(VNF)로 가상화하는 기술로, MANO가 수명주기를 관리.",
-      "diagram": "[범용 서버]\n └VNF(방화벽·LB·라우터)\n MANO 오케스트레이션",
+      "diagram": "[범용 x86 서버 + 하이퍼바이저]\n   └[VNF: 방화벽·LB·라우터·vEPC]\n[NFVI 인프라] ← [VIM 관리]\n[MANO: NFVO·VNFM] 오케스트레이션\n 전용장비→SW 가상화·SDN 연계",
       "diagramNote": "※ 하드웨어 종속 탈피",
       "table": {
         "head": [
@@ -1577,7 +1577,7 @@
           ]
         ]
       },
-      "note": "※ SDN과 상호 보완 관계"
+      "note": "※ 범용 서버 성능 한계로 DPDK·SR-IOV 가속 기술이 추가 필요"
     },
     {
       "category": "nsec",
@@ -1586,7 +1586,7 @@
       "keyword": "분산·가용",
       "keywords": "CDN 콘텐츠전송네트워크 로드밸런싱 캐싱 엣지 L4 L7 가용성",
       "def": "콘텐츠를 엣지 서버에 분산 캐싱(CDN)하고 트래픽을 다수 서버로 분산(로드밸런싱)해 지연·부하를 줄이는 기술.",
-      "diagram": "[사용자]→[엣지(CDN 캐시)]\n         →[LB]→[서버1·2·3]\n  지리적 분산·부하 분산",
+      "diagram": "[사용자]→[엣지 PoP: CDN 캐시]\n   ↓ Miss        ↓ Hit(즉시 응답)\n[Origin 원본]←[GSLB/LB 분배]\n   →[서버1][서버2][서버3]\n 지리적 분산·L4/L7 부하 분산",
       "diagramNote": "※ 가용성·확장성 동시 확보",
       "table": {
         "head": [
@@ -1627,7 +1627,7 @@
           ]
         ]
       },
-      "note": "※ DDoS 완화 효과도 제공"
+      "note": "※ 동적 콘텐츠는 캐싱 효과 제한, 캐시 무효화·신선도 관리가 난제"
     }
   ]
 }
