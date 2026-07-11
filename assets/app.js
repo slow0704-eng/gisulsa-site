@@ -12,6 +12,7 @@
   var contentEl  = document.getElementById('content');
   var domFacetEl = document.getElementById('domFacet');
   var secFacetEl = document.getElementById('secFacet');
+  var subFacetEl = document.getElementById('subFacet');
   var searchEl   = document.getElementById('globalSearch');
   var countEl    = document.getElementById('count');
   var emptyEl    = document.getElementById('emptyState');
@@ -20,9 +21,9 @@
   function toggleEmpty(show){ if(emptyEl) emptyEl.classList.toggle('hidden', !show); }
   // 과목·단원·검색어 초기화 후 재적용(빈 상태의 '필터 초기화' 버튼)
   function resetFilters(){
-    state.q=''; state.dom='all'; state.sec='all';
+    state.q=''; state.dom='all'; state.sec='all'; state.sub='all';
     if(searchEl) searchEl.value='';
-    buildDomFacet(); buildSecFacet(); applyActiveFilter();
+    buildDomFacet(); buildSecFacet(); buildSubFacet(); applyActiveFilter();
   }
 
   if(!DOMAINS || !DOMAINS.length){
@@ -41,7 +42,7 @@
   if(MERMAID) MERMAID.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
-  var state = { q:'', qmode:'and', dom:'all', sec:'all', view:'cards' };
+  var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', view:'cards' };
   var domById = {}, catMapByDom = {}, mapDone = {};
   DOMAINS.forEach(function(d){
     domById[d.id] = d;
@@ -118,8 +119,8 @@
     domFacetEl.querySelectorAll('.chip.dom').forEach(function(ch){
       ch.addEventListener('click', function(){
         state.dom = ch.getAttribute('data-dom');
-        state.sec = 'all';
-        buildDomFacet(); buildSecFacet(); applyActiveFilter();
+        state.sec = 'all'; state.sub = 'all';
+        buildDomFacet(); buildSecFacet(); buildSubFacet(); applyActiveFilter();
         if(state.view==='cards' && state.dom!=='all'){ scrollToGroup(state.dom); }
       });
     });
@@ -143,7 +144,40 @@
     secFacetEl.querySelectorAll('.chip.sec').forEach(function(ch){
       ch.addEventListener('click', function(){
         state.sec = ch.getAttribute('data-sec');
-        buildSecFacet(); applyActiveFilter();
+        state.sub = 'all';
+        buildSecFacet(); buildSubFacet(); applyActiveFilter();
+      });
+    });
+  }
+
+  // ---- 세부구분 facet (선택한 단원 내 토픽 군집) — 과목+단원 모두 선택 시 표시 ----
+  function buildSubFacet(){
+    if(!subFacetEl) return;
+    if(state.dom==='all' || state.sec==='all'){
+      subFacetEl.innerHTML = '<span class="facet-hint">세부구분 — 단원 선택 시 표시</span>';
+      return;
+    }
+    var d = domById[state.dom], subs = [], seen = {};
+    (d.cards||[]).forEach(function(c){
+      if(c.category!==state.sec) return;
+      var s = c.subcat || '';
+      if(s && !seen[s]){ seen[s]=1; subs.push(s); }
+    });
+    if(subs.length < 2){   // 세부구분이 1개 이하면 나눌 의미 없음 — 표시 생략
+      subFacetEl.innerHTML = '';
+      if(state.sub!=='all') state.sub='all';
+      return;
+    }
+    var html = '<button type="button" class="chip sub'+(state.sub==='all'?' active':'')+'" aria-pressed="'+(state.sub==='all')+'" data-sub="all">전체 세부</button>';
+    subs.forEach(function(s){
+      var on = state.sub===s;
+      html += '<button type="button" class="chip sub'+(on?' active':'')+'" aria-pressed="'+on+'" data-sub="'+GS.escAttr(s)+'">'+GS.escHTML(s)+'</button>';
+    });
+    subFacetEl.innerHTML = html;
+    subFacetEl.querySelectorAll('.chip.sub').forEach(function(ch){
+      ch.addEventListener('click', function(){
+        state.sub = ch.getAttribute('data-sub');
+        buildSubFacet(); applyActiveFilter();
       });
     });
   }
@@ -156,7 +190,8 @@
       var groupVisible = false;
       g.querySelectorAll('.card').forEach(function(c){
         var text = q ? (c.getAttribute('data-k')+' '+c.textContent).toLowerCase() : '';
-        var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode);
+        var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
+                 && (state.sub==='all' || c.getAttribute('data-sub')===state.sub);
         c.classList.toggle('hidden', !ok);
         if(ok){ shown++; groupVisible = true; }
       });
@@ -253,7 +288,8 @@
     var rows = sheetBody.querySelectorAll('.sheet-row');
     rows.forEach(function(r){
       var text = q ? (r.getAttribute('data-k')+' '+r.textContent).toLowerCase() : '';
-      var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode);
+      var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
+               && (state.sub==='all' || r.getAttribute('data-sub')===state.sub);
       r.classList.toggle('hidden', !ok);
       if(ok) shown++;
     });
@@ -308,7 +344,7 @@
     if(v==='graph' && window.GSGraph){
       var ok = window.GSGraph.build(graphCanvas, DOMAINS, { onTopicClick:function(title){
         searchEl.value = title; state.q = String(title).toLowerCase();
-        state.dom='all'; state.sec='all'; buildDomFacet(); buildSecFacet();
+        state.dom='all'; state.sec='all'; state.sub='all'; buildDomFacet(); buildSecFacet(); buildSubFacet();
         setView('cards'); window.scrollTo(0,0);
       }});
       if(ok) window.GSGraph.fit();
@@ -347,6 +383,7 @@
         var def = GS.defText ? GS.defText(c) : (c.def || '');
         var text = q ? (c.keywords + ' ' + c.title + ' ' + def).toLowerCase() : '';
         if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec, state.qmode)) return;
+        if(state.sub!=='all' && (c.subcat||'')!==state.sub) return;
         items.push({ domLabel: d.label, secTitle: (secTitle[c.category] || catLabel[c.category] || '기타'), card: c });
       });
     });
@@ -659,6 +696,7 @@
   buildContent();
   buildDomFacet();
   buildSecFacet();
+  buildSubFacet();
   applyFilter();
   if(window.lucide) lucide.createIcons();   // 정적 [data-lucide] 아이콘(앱바·뷰스위처·툴·모달) 렌더
 })();

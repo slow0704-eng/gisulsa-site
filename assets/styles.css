@@ -115,6 +115,8 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .chip.dom.active[data-dom="all"]{background:var(--ink-700);}
 .chip.sec.active[data-sec="all"]{background:var(--ink-600);}
 .facet-row#secFacet .chip.sec{font-size:10px;padding:3px 9px;}
+.facet-row#subFacet .chip.sub{font-size:10px;padding:3px 9px;}
+.chip.sub.active{background:var(--ink-500);color:#fff;border-color:transparent;}
 
 /* ===== 콘텐츠 ===== */
 #content{max-width:1180px;margin:0 auto;padding:20px 18px 90px;}
