@@ -36,9 +36,10 @@
         '<div class="pt-ctrl">'+
           '<label>과목 <select class="pt-sel" data-k="dom">'+domOpts+'</select></label>'+
           '<label>모드 <select class="pt-sel" data-k="mode">'+
-            '<option value="both">리드키워드 + 정의문</option>'+
-            '<option value="def">정의문만</option>'+
-            '<option value="kw">리드키워드만</option>'+
+            '<option value="both">따라치기: 리드키워드+정의</option>'+
+            '<option value="def">따라치기: 정의문만</option>'+
+            '<option value="kw">따라치기: 리드키워드만</option>'+
+            '<option value="grade">✍ 자기채점(직접 작성)</option>'+
           '</select></label>'+
           '<button type="button" class="pt-btn" data-a="shuffle">🔀 다시 섞기</button>'+
           '<span class="pt-progress" data-el="progress"></span>'+
@@ -51,7 +52,10 @@
 
     function pool(){
       return items.filter(function(it){ return st.dom==='all' || it.domId===st.dom; })
-                  .filter(function(it){ return targetOf(it.card, st.mode).length > 0; });
+                  .filter(function(it){
+                    if(st.mode==='grade') return !!(it.card.keyword && GS.defText && GS.defText(it.card));
+                    return targetOf(it.card, st.mode).length > 0;
+                  });
     }
     function rebuild(){
       var p = pool();
@@ -62,10 +66,16 @@
 
     function curItem(){ return st.order.length ? st.order[st.idx % st.order.length] : null; }
 
+    // 표시폭(한글·전각 2) · 정규화(비교용)
+    function dispW(s){ s=String(s||''); var w=0; for(var i=0;i<s.length;i++){ var o=s.charCodeAt(i); w+=(o>=0xAC00&&o<=0xD7A3)||(o>=0x3000&&o<=0x303F)||(o>=0xFF00&&o<=0xFFEF)?2:1; } return w; }
+    function hlen(s){ return (String(s||'').match(/[가-힣]/g)||[]).length; }
+    function nrm(s){ return String(s||'').replace(/[\s·\-\/()\[\].,"]/g,'').toLowerCase(); }
+
     function renderItem(){
       var it = curItem();
       if(!it){ stageEl.innerHTML = '<div class="pt-empty">연습할 항목이 없습니다. 과목·모드를 바꿔 보세요.</div>'; progEl.textContent=''; return; }
       progEl.textContent = (st.idx+1) + ' / ' + st.order.length;
+      if(st.mode==='grade'){ renderGrade(it); return; }
       var c = it.card, target = targetOf(c, st.mode);
       var typeLabel = c.compare ? '비교' : '일반';
       stageEl.innerHTML =
@@ -93,6 +103,51 @@
       paint('');
       inputEl.value = '';
       inputEl.focus();
+    }
+
+    // ---- 자기채점 모드: 리드키워드·정의문 직접 작성 → 루브릭 자동 채점 ----
+    function renderGrade(it){
+      var c = it.card, typeLabel = c.compare ? '비교' : '일반';
+      stageEl.innerHTML =
+        '<div class="pt-meta"><span class="pt-dom" style="background:'+esc(it.color||'#64748b')+'">'+esc(it.domLabel)+'</span>'+
+          '<span class="pt-sec">'+esc(it.secLabel||'')+'</span>'+
+          '<span class="pt-title">'+esc(c.title)+' 〔'+typeLabel+'〕</span></div>'+
+        '<div class="pg-guide">위 토픽의 <b>리드키워드</b>와 <b>정의문</b>을 직접 작성한 뒤 <b>채점</b>을 누르세요. (모범답안은 채점 후 공개)</div>'+
+        '<label class="pg-lb">리드키워드</label>'+
+        '<input class="pg-in" data-el="gkw" type="text" spellcheck="false" placeholder="표준·핵심 키워드 (표시폭 ≤16, 토픽명 반복 금지)" />'+
+        '<label class="pg-lb">정의문</label>'+
+        '<textarea class="pg-in pg-def" data-el="gdef" rows="3" spellcheck="false" placeholder="리드키워드를 살려 명사형으로 마무리 (예: …하는 기법.)"></textarea>'+
+        '<div class="pt-nav">'+
+          '<button type="button" class="pt-btn" data-a="prev">← 이전</button>'+
+          '<button type="button" class="pt-btn" data-a="retry">↺ 지우기</button>'+
+          '<button type="button" class="pt-btn pt-next" data-a="grade">✍ 채점</button>'+
+          '<button type="button" class="pt-btn" data-a="next">다음 →</button>'+
+        '</div>'+
+        '<div class="pg-result" data-el="gresult"></div>';
+      var kwEl = stageEl.querySelector('[data-el="gkw"]'); if(kwEl) kwEl.focus();
+    }
+    function doGrade(){
+      var it = curItem(); if(!it) return;
+      var c = it.card;
+      var kw = ((stageEl.querySelector('[data-el="gkw"]')||{}).value || '').trim();
+      var df = ((stageEl.querySelector('[data-el="gdef"]')||{}).value || '').trim();
+      var checks = [
+        { ok: kw.length>0, label:'리드키워드 작성' },
+        { ok: kw.length>0 && dispW(kw)<=16, label:'리드키워드 표시폭 ≤16 (현재 '+dispW(kw)+')' },
+        { ok: kw.length>0 && nrm(kw)!==nrm(c.title) && (nrm(c.title).indexOf(nrm(kw))<0 || nrm(kw).length<2), label:'토픽 주제어 비(非)동어반복' },
+        { ok: hlen(df)>=15, label:'정의문 한글 15자 이상 (현재 '+hlen(df)+')' },
+        { ok: df.length>0 && /[가-힣A-Za-z0-9)\]]\.?$/.test(df) && !/(다|요|음|임|됨)\.?$/.test(df), label:'명사형 종결(‘~다’ 지양)' },
+        { ok: df.length>0 && (nrm(kw).length<2 || nrm(df).indexOf(nrm(kw))>=0), label:'정의문에 리드키워드 개념 반영' }
+      ];
+      var pass = checks.filter(function(x){return x.ok;}).length, total = checks.length;
+      var pct = Math.round(pass/total*100);
+      var html = '<div class="pg-score '+(pct>=80?'good':(pct>=50?'mid':'low'))+'">채점 '+pct+'% ('+pass+'/'+total+' 통과)</div>'+
+        '<ul class="pg-checks">'+checks.map(function(x){ return '<li class="'+(x.ok?'ok':'no')+'">'+(x.ok?'✓':'✗')+' '+esc(x.label)+'</li>'; }).join('')+'</ul>'+
+        '<div class="pg-model"><div class="pg-mh">📋 모범답안 비교</div>'+
+          '<div class="pg-mrow"><b>리드키워드</b> <span class="pg-mv">'+esc(c.keyword||'')+'</span></div>'+
+          '<div class="pg-mrow"><b>정의문</b> <span class="pg-mv">'+esc(GS.defText?GS.defText(c):(c.def||''))+'</span></div>'+
+        '</div>';
+      var res = stageEl.querySelector('[data-el="gresult"]'); if(res) res.innerHTML = html;
     }
 
     // 대상 문자열을 글자별 span 으로 색칠(ok/bad/cur) + 통계 갱신
@@ -156,7 +211,15 @@
       if(a==='next') go(1);
       else if(a==='prev') go(-1);
       else if(a==='shuffle') rebuild();
-      else if(a==='retry'){ var i = stageEl.querySelector('[data-el="input"]'); if(i){ i.value=''; st.started=0; st.done=false; i.focus(); paint(''); } }
+      else if(a==='grade') doGrade();
+      else if(a==='retry'){
+        if(st.mode==='grade'){
+          var kw=stageEl.querySelector('[data-el="gkw"]'), df=stageEl.querySelector('[data-el="gdef"]'), rs=stageEl.querySelector('[data-el="gresult"]');
+          if(kw){ kw.value=''; kw.focus(); } if(df) df.value=''; if(rs) rs.innerHTML='';
+        } else {
+          var i = stageEl.querySelector('[data-el="input"]'); if(i){ i.value=''; st.started=0; st.done=false; i.focus(); paint(''); }
+        }
+      }
     });
 
     rebuild();
