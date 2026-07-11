@@ -53,7 +53,14 @@
     return 'class="card'+(extraClass?' '+extraClass:'')+'" role="button" tabindex="0"'+
       ' aria-label="'+escAttr(card.title)+' — 카드 확대(클릭 또는 Enter)"'+
       ' data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-sub="'+escAttr(card.subcat||'')+'" data-k="'+escAttr(card.keywords)+'"'+
-      ' data-key="'+escAttr(domId+'|'+card.title)+'"';
+      ' data-key="'+escAttr(domId+'|'+card.title)+'" data-lvl="'+escAttr(card.level||'')+'"';
+  }
+  // 난이도·빈출 배지(★핵심·●표준·▲심화)
+  function lvlBadge(card){
+    var L = card.level; if(!L) return '';
+    var cls = { '핵심':'lv-hot', '표준':'lv-std', '심화':'lv-adv' }[L] || 'lv-std';
+    var ic  = { '핵심':'★', '표준':'●', '심화':'▲' }[L] || '';
+    return '<span class="lv-badge '+cls+'" title="난이도·빈출: '+escAttr(L)+'">'+ic+L+'</span>';
   }
   // 카드 진도 마크(학습완료·북마크) — 카드 우상단, 클릭 시 모달 대신 토글(app.js가 위임 처리)
   function markCtl(){
@@ -153,7 +160,7 @@
     var dnote = card.diagramNote ? '<div class="note">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
     var diag = card.diagram ? '<pre class="diagram">'+escHTML(card.diagram)+'</pre>' : '';
-    var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag" style="background:'+c.bg+';color:'+c.tagColor+'">'+escHTML(card.tag)+'</span>';
+    var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag" style="background:'+c.bg+';color:'+c.tagColor+'">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="border-top-color:'+c.color+'">'+
         markCtl()+head+essayHTML(card)+
@@ -220,8 +227,8 @@
           // 구성도·구성요소는 1줄 직렬화(st-flat)와 원본(st-orig)을 함께 렌더 → 체크박스로 CSS 전환
           var origD = c.diagram ? '<pre class="st-orig st-orig-diag">'+escHTML(c.diagram)+'</pre>' : '';
           var origT = (c.table && c.table.rows && c.table.rows.length) ? '<div class="st-orig">'+tableHTML(c.table)+'</div>' : '';
-          return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-sub="'+escAttr(c.subcat||'')+'" data-key="'+escAttr(d.id+'|'+c.title)+'" data-k="'+escAttr(c.keywords)+'">'+
-            '<td class="st-title">'+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+(c.essay?' <span class="st-badge st-essay">2교시</span>':'')+'</td>'+
+          return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-sub="'+escAttr(c.subcat||'')+'" data-key="'+escAttr(d.id+'|'+c.title)+'" data-lvl="'+escAttr(c.level||'')+'" data-k="'+escAttr(c.keywords)+'">'+
+            '<td class="st-title">'+lvlBadge(c)+' '+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+(c.essay?' <span class="st-badge st-essay">2교시</span>':'')+'</td>'+
             '<td class="st-kw">'+escHTML(c.keyword||'')+'</td>'+
             '<td class="st-def">'+escHTML(defText(c))+'</td>'+
             '<td class="st-diag"><span class="st-flat">'+escHTML(flatDiagram(c))+'</span>'+origD+'</td>'+

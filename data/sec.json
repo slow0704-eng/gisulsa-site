@@ -185,7 +185,8 @@
         ]
       },
       "note": "※ TLS=비대칭(키합의)+대칭(데이터)+해시(무결) 하이브리드 구조.",
-      "subcat": "암호 알고리즘"
+      "subcat": "암호 알고리즘",
+      "level": "핵심"
     },
     {
       "category": "crypto",
@@ -236,7 +237,8 @@
         ]
       },
       "note": "※ 작업계수 상향은 무차별 대입 방어와 서버 부하 절충 판단.",
-      "subcat": "암호 알고리즘"
+      "subcat": "암호 알고리즘",
+      "level": "핵심"
     },
     {
       "category": "crypto",
@@ -287,7 +289,8 @@
         ]
       },
       "note": "※ 표준 곡선(secp256r1·Curve25519) 사용 권장 — 취약 곡선·부채널 공격 주의.",
-      "subcat": "암호 알고리즘"
+      "subcat": "암호 알고리즘",
+      "level": "표준"
     },
     {
       "category": "crypto",
@@ -338,7 +341,8 @@
         ]
       },
       "note": "※ 연산 비용 큼 → CKKS 근사연산·MPC 결합으로 실용화 진행(인접: PET·연합학습).",
-      "subcat": "암호 알고리즘"
+      "subcat": "암호 알고리즘",
+      "level": "심화"
     },
     {
       "category": "crypto",
@@ -433,7 +437,8 @@
         ]
       },
       "note": "※ QKD는 인프라 제약으로 PQC 우선, 고보안 구간은 병행 선정.",
-      "subcat": "양자암호"
+      "subcat": "양자암호",
+      "level": "심화"
     },
     {
       "category": "crypto",
@@ -484,7 +489,8 @@
         ]
       },
       "note": "※ 장기검증은 타임스탬프로 인증서 만료 후 유효성 보장.",
-      "subcat": "인증·PKI"
+      "subcat": "인증·PKI",
+      "level": "핵심"
     },
     {
       "category": "threat",
@@ -535,7 +541,8 @@
         ]
       },
       "note": "※ 유출·DDoS 결합한 삼중 갈취로 진화, 복원력 훈련 병행 필수.",
-      "subcat": "악성코드"
+      "subcat": "악성코드",
+      "level": "핵심"
     },
     {
       "category": "threat",
@@ -586,7 +593,8 @@
         ]
       },
       "note": "※ MFA·패스키(FIDO2)·유출 비밀번호 모니터링·rate limit로 다층 방어.",
-      "subcat": "피싱·계정탈취"
+      "subcat": "피싱·계정탈취",
+      "level": "표준"
     },
     {
       "category": "threat",
@@ -637,7 +645,8 @@
         ]
       },
       "note": "※ 기술적 방어(DMARC·SPF·DKIM·필터)+보안인식 교육 병행, 스피어피싱·BEC 주의.",
-      "subcat": "피싱·계정탈취"
+      "subcat": "피싱·계정탈취",
+      "level": "표준"
     },
     {
       "category": "threat",
@@ -688,7 +697,8 @@
         ]
       },
       "note": "※ 정상 관리도구 악용으로 시그니처 우회, 이상행위 기준선 확립.",
-      "subcat": "악성코드"
+      "subcat": "악성코드",
+      "level": "표준"
     },
     {
       "category": "threat",
@@ -739,7 +749,8 @@
         ]
       },
       "note": "※ 미국·EU 규제로 SBOM 제출 의무화 확산, SPDX 표준 채택 추세.",
-      "subcat": "APT·공격체계"
+      "subcat": "APT·공격체계",
+      "level": "핵심"
     },
     {
       "category": "threat",
@@ -790,7 +801,8 @@
         ]
       },
       "note": "※ 공격표면 관리(ASM)+망 세분화+측면이동 탐지로 대응.",
-      "subcat": "APT·공격체계"
+      "subcat": "APT·공격체계",
+      "level": "핵심"
     },
     {
       "category": "aisec",
@@ -841,7 +853,8 @@
         ]
       },
       "note": "※ 자율주행·인증 등 안전필수 AI에 치명 — 적대학습·탐지 병행.",
-      "subcat": "AI 공격기법"
+      "subcat": "AI 공격기법",
+      "level": "심화"
     },
     {
       "category": "aisec",
@@ -892,7 +905,8 @@
         ]
       },
       "note": "※ 신뢰경계 분리·최소권한·출력검증으로 완화(완전차단 난해).",
-      "subcat": "AI 공격기법"
+      "subcat": "AI 공격기법",
+      "level": "심화"
     },
     {
       "category": "aisec",
@@ -943,7 +957,8 @@
         ]
       },
       "note": "※ 모델 워터마킹으로 도용 입증, 데이터 복원은 규제 위반 소지.",
-      "subcat": "AI 공격기법"
+      "subcat": "AI 공격기법",
+      "level": "심화"
     },
     {
       "category": "aisec",
@@ -994,7 +1009,8 @@
         ]
       },
       "note": "※ MITRE ATLAS와 매핑해 AI 위협 통제 점검 기준으로 활용.",
-      "subcat": "AI 보안대응"
+      "subcat": "AI 보안대응",
+      "level": "심화"
     },
     {
       "category": "aisec",
@@ -1045,7 +1061,8 @@
         ]
       },
       "note": "※ 탐지기술+생성물 표시(워터마크)+법제도 병행 대응.",
-      "subcat": "AI 공격기법"
+      "subcat": "AI 공격기법",
+      "level": "표준"
     },
     {
       "category": "aisec",
@@ -1096,7 +1113,8 @@
         ]
       },
       "note": "※ 공공·기업 도입 가이드라인 준수 — DLP·가드레일·교육 통합.",
-      "subcat": "AI 보안대응"
+      "subcat": "AI 보안대응",
+      "level": "표준"
     },
     {
       "category": "netsec",
@@ -1147,7 +1165,8 @@
         ]
       },
       "note": "※ 경계방어의 대체가 아닌 보완 — 단계적 성숙도 모델로 전환.",
-      "subcat": "접근·전송보안"
+      "subcat": "접근·전송보안",
+      "level": "핵심"
     },
     {
       "category": "netsec",
@@ -1242,7 +1261,8 @@
         ]
       },
       "note": "※ SIEM의 경보 피로를 SOAR 자동화로 보완 — 통합 보안관제.",
-      "subcat": "관제·포렌식"
+      "subcat": "관제·포렌식",
+      "level": "핵심"
     },
     {
       "category": "netsec",
@@ -1293,7 +1313,8 @@
         ]
       },
       "note": "※ MAC=강제·기밀, DAC=소유자재량, RBAC=역할 — 환경별 선택.",
-      "subcat": "접근·전송보안"
+      "subcat": "접근·전송보안",
+      "level": "핵심"
     },
     {
       "category": "netsec",
@@ -1344,7 +1365,8 @@
         ]
       },
       "note": "※ 0-RTT는 재전송 위험으로 멱등 요청 한정, mTLS 상호인증 병행.",
-      "subcat": "접근·전송보안"
+      "subcat": "접근·전송보안",
+      "level": "표준"
     },
     {
       "category": "netsec",
@@ -1395,7 +1417,8 @@
         ]
       },
       "note": "※ 수집 시점 해시·쓰기방지·CoC 문서화가 증거 채택의 전제.",
-      "subcat": "관제·포렌식"
+      "subcat": "관제·포렌식",
+      "level": "표준"
     },
     {
       "category": "netsec",
@@ -1446,7 +1469,8 @@
         ]
       },
       "note": "※ 가용성·안전 최우선 — 패치·재기동 제약 고려한 보안 설계.",
-      "subcat": "OT/ICS 보안"
+      "subcat": "OT/ICS 보안",
+      "level": "심화"
     },
     {
       "category": "mgmt",
@@ -1497,7 +1521,8 @@
         ]
       },
       "note": "※ 의무대상 여부 확인, 정책→위험관리→통제→점검 순환 운영.",
-      "subcat": "인증·평가체계"
+      "subcat": "인증·평가체계",
+      "level": "핵심"
     },
     {
       "category": "mgmt",
@@ -1548,7 +1573,8 @@
         ]
       },
       "note": "※ EAL은 '안전 정도'가 아닌 '보증(검증) 깊이' — 해석 주의.",
-      "subcat": "인증·평가체계"
+      "subcat": "인증·평가체계",
+      "level": "표준"
     },
     {
       "category": "mgmt",
@@ -1599,7 +1625,8 @@
         ]
       },
       "note": "※ 개정법상 과징금 매출 기준 상향, 유출 시 통지 시한 준수 필수.",
-      "subcat": "개인정보보호"
+      "subcat": "개인정보보호",
+      "level": "핵심"
     },
     {
       "category": "mgmt",
@@ -1650,7 +1677,8 @@
         ]
       },
       "note": "※ 단일기술 만능 아님 — 재식별 위험·유용성 균형 설계 필요.",
-      "subcat": "개인정보보호"
+      "subcat": "개인정보보호",
+      "level": "표준"
     },
     {
       "category": "mgmt",
@@ -1701,7 +1729,8 @@
         ]
       },
       "note": "※ 개인정보 영향평가(PIA)·DevSecOps와 결합해 개발에 내재화.",
-      "subcat": "개인정보보호"
+      "subcat": "개인정보보호",
+      "level": "표준"
     },
     {
       "category": "mgmt",
@@ -1796,7 +1825,8 @@
         ]
       },
       "note": "※ 익명정보도 재식별 위험 잔존, 무단 재식별 시 처벌 대상.",
-      "subcat": "개인정보보호"
+      "subcat": "개인정보보호",
+      "level": "핵심"
     },
     {
       "category": "essay",
@@ -2013,7 +2043,8 @@
           ]
         }
       ],
-      "subcat": "보안개념"
+      "subcat": "보안개념",
+      "level": "핵심"
     },
     {
       "category": "essay",
@@ -2255,7 +2286,8 @@
           }
         }
       ],
-      "subcat": "암호기술"
+      "subcat": "암호기술",
+      "level": "핵심"
     },
     {
       "category": "essay",
@@ -2472,7 +2504,8 @@
           ]
         }
       ],
-      "subcat": "암호기술"
+      "subcat": "암호기술",
+      "level": "표준"
     },
     {
       "category": "essay",
@@ -2691,7 +2724,8 @@
           ]
         }
       ],
-      "subcat": "암호기술"
+      "subcat": "암호기술",
+      "level": "표준"
     },
     {
       "category": "crypto",
@@ -2742,7 +2776,8 @@
         ]
       },
       "note": "※ 모수 재사용 시 Logjam 위험, 안전 소수·충분한 길이 사용 권장.",
-      "subcat": "암호 알고리즘"
+      "subcat": "암호 알고리즘",
+      "level": "핵심"
     },
     {
       "category": "crypto",
@@ -2793,7 +2828,8 @@
         ]
       },
       "note": "※ 장거리는 위성·양자중계 연구, 인증 채널 별도 확보 필요.",
-      "subcat": "양자암호"
+      "subcat": "양자암호",
+      "level": "심화"
     },
     {
       "category": "crypto",
@@ -2844,7 +2880,8 @@
         ]
       },
       "note": "※ 격자 기반은 키·서명 크기 증가 부담, 하이브리드 전환 권고.",
-      "subcat": "양자암호"
+      "subcat": "양자암호",
+      "level": "심화"
     },
     {
       "category": "crypto",
@@ -2895,7 +2932,8 @@
         ]
       },
       "note": "※ 클라우드·금융 암호제품 도입 요건 — CC(공통평가기준)와 병행.",
-      "subcat": "인증·PKI"
+      "subcat": "인증·PKI",
+      "level": "표준"
     },
     {
       "category": "threat",
@@ -2990,7 +3028,8 @@
         ]
       },
       "note": "※ 사이버 킬 체인 'Delivery·Exploitation' 단계 — 다계층 방어 필요.",
-      "subcat": "피싱·계정탈취"
+      "subcat": "피싱·계정탈취",
+      "level": "표준"
     },
     {
       "category": "threat",
@@ -3041,7 +3080,8 @@
         ]
       },
       "note": "※ 선형 7단계는 내부자 위협 표현 한계, 통합 킬체인 보완 권고.",
-      "subcat": "APT·공격체계"
+      "subcat": "APT·공격체계",
+      "level": "핵심"
     },
     {
       "category": "netsec",
@@ -3136,7 +3176,8 @@
         ]
       },
       "note": "※ 실무 병행 — DRM(내부 권한)+DLP(외부 유출)로 다계층.",
-      "subcat": "데이터유출방지"
+      "subcat": "데이터유출방지",
+      "level": "표준"
     },
     {
       "category": "netsec",
@@ -3187,7 +3228,8 @@
         ]
       },
       "note": "※ 군·정부 적용 — 가용성은 Biba(무결성) 모델로 보완.",
-      "subcat": "접근·전송보안"
+      "subcat": "접근·전송보안",
+      "level": "표준"
     },
     {
       "category": "netsec",
@@ -3238,7 +3280,8 @@
         ]
       },
       "note": "※ 스마트팩토리·전력 ICS 적용 — IEC 62351(전력통신)과 병행.",
-      "subcat": "OT/ICS 보안"
+      "subcat": "OT/ICS 보안",
+      "level": "심화"
     },
     {
       "category": "netsec",
@@ -3289,7 +3332,8 @@
         ]
       },
       "note": "※ API Gateway 중앙통제 + 런타임 보호(WAAP) — 제로트러스트 연계.",
-      "subcat": "접근·전송보안"
+      "subcat": "접근·전송보안",
+      "level": "표준"
     }
   ]
 }

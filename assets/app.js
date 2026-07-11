@@ -22,7 +22,7 @@
   function toggleEmpty(show){ if(emptyEl) emptyEl.classList.toggle('hidden', !show); }
   // 과목·단원·검색어 초기화 후 재적용(빈 상태의 '필터 초기화' 버튼)
   function resetFilters(){
-    state.q=''; state.dom='all'; state.sec='all'; state.sub='all'; state.only='all';
+    state.q=''; state.dom='all'; state.sec='all'; state.sub='all'; state.only='all'; state.lvl='all';
     if(searchEl) searchEl.value='';
     buildDomFacet(); buildSecFacet(); buildSubFacet(); buildProgFacet(); applyActiveFilter();
   }
@@ -43,7 +43,8 @@
   if(MERMAID) MERMAID.initialize({ startOnLoad:false, theme:'default', flowchart:{ curve:'basis' } });
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
-  var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', only:'all', view:'cards' };
+  var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards' };
+  function lvlOk(l){ return state.lvl==='all' || (l||'') === state.lvl; }
   // ---- 진도·이력(localStorage): 학습완료(done)·북마크(mark)·이어보기(resume) ----
   var PROG = { done:{}, mark:{}, wrong:{} };
   try{ var _pp = JSON.parse(localStorage.getItem('gs_prog')||'{}'); PROG.done = _pp.done||{}; PROG.mark = _pp.mark||{}; PROG.wrong = _pp.wrong||{}; }catch(e){}
@@ -226,6 +227,7 @@
         var text = q ? (c.getAttribute('data-k')+' '+c.textContent).toLowerCase() : '';
         var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
                  && (state.sub==='all' || c.getAttribute('data-sub')===state.sub)
+                 && lvlOk(c.getAttribute('data-lvl'))
                  && progOk(c.getAttribute('data-key'));
         c.classList.toggle('hidden', !ok);
         if(ok){ shown++; groupVisible = true; }
@@ -326,6 +328,7 @@
       var text = q ? (r.getAttribute('data-k')+' '+r.textContent).toLowerCase() : '';
       var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
                && (state.sub==='all' || r.getAttribute('data-sub')===state.sub)
+               && lvlOk(r.getAttribute('data-lvl'))
                && progOk(r.getAttribute('data-key'));
       r.classList.toggle('hidden', !ok);
       if(ok) shown++;
@@ -784,17 +787,23 @@
     if(!progFacetEl) return;
     var n = totalCards();
     function chip(v,label){ var on=state.only===v; return '<button type="button" class="chip prog'+(on?' active':'')+'" data-only="'+v+'" aria-pressed="'+on+'">'+label+'</button>'; }
+    function lchip(v,label){ var on=state.lvl===v; return '<button type="button" class="chip lvl'+(on?' active':'')+'" data-lvl="'+v+'" aria-pressed="'+on+'">'+label+'</button>'; }
     progFacetEl.innerHTML = '<span class="facet-hint">진도</span>' +
       chip('all','전체') + chip('undone','미완료 <b>'+(n-progCount('done'))+'</b>') +
       chip('done','✓ 완료 <b>'+progCount('done')+'</b>') + chip('mark','★ 북마크 <b>'+progCount('mark')+'</b>') +
       chip('wrong','⚠ 오답 <b>'+progCount('wrong')+'</b>') +
-      '<button type="button" class="chip prog prog-reset" data-only="reset" title="학습완료·북마크·오답 기록 초기화">초기화</button>';
+      '<button type="button" class="chip prog prog-reset" data-only="reset" title="학습완료·북마크·오답 기록 초기화">초기화</button>' +
+      '<span class="fr-div"></span><span class="facet-hint">난이도</span>' +
+      lchip('all','전체') + lchip('핵심','★핵심') + lchip('표준','●표준') + lchip('심화','▲심화');
     progFacetEl.querySelectorAll('.chip.prog').forEach(function(ch){
       ch.addEventListener('click', function(){
         var v = ch.getAttribute('data-only');
         if(v==='reset'){ if(confirm('학습완료·북마크·오답 기록을 모두 지울까요?')){ PROG={done:{},mark:{},wrong:{}}; saveProg(); applyProgClasses(); state.only='all'; buildProgFacet(); applyActiveFilter(); } return; }
         state.only = v; buildProgFacet(); applyActiveFilter();
       });
+    });
+    progFacetEl.querySelectorAll('.chip.lvl').forEach(function(ch){
+      ch.addEventListener('click', function(){ state.lvl = ch.getAttribute('data-lvl'); buildProgFacet(); applyActiveFilter(); });
     });
   }
   // 카드 마크 버튼(✓완료·★북마크) 클릭 — 위임, 모달 안 열리게 stopPropagation

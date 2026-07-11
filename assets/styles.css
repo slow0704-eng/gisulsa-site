@@ -362,6 +362,14 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .st-tbl .st-orig td:first-child{background:var(--surface-2);font-weight:600;color:var(--ink-600);white-space:nowrap;}
 .sheet-row:hover{background:var(--surface-2);}
 .st-badge{display:inline-block;font-size:10px;font-weight:700;color:#7e22ce;background:#f3e8ff;border-radius:5px;padding:0 5px;margin-left:4px;vertical-align:middle;}
+/* 난이도·빈출 배지(테마 무관 rgba 틴트) */
+.lv-badge{display:inline-block;font-size:9px;font-weight:800;padding:1px 6px;border-radius:var(--r-pill);margin-left:5px;vertical-align:middle;white-space:nowrap;letter-spacing:.2px;}
+.lv-badge.lv-hot{background:rgba(220,38,38,.15);color:#dc2626;}
+.lv-badge.lv-std{background:rgba(100,116,139,.16);color:var(--ink-500);}
+.lv-badge.lv-adv{background:rgba(124,58,237,.16);color:#8b5cf6;}
+.chip.lvl.active{background:var(--ink-600);color:#fff;border-color:transparent;}
+.facet-row#progFacet .chip.lvl{font-size:10px;padding:3px 9px;}
+.facet-row#progFacet .fr-div{width:1px;align-self:stretch;background:var(--line);margin:0 4px;}
 /* 가리기(암기) 모드 — 정의 블러, 행 클릭 시 해당 행만 공개 */
 #sheetBody.masked .st-kw,#sheetBody.masked .st-def{filter:blur(5px);user-select:none;transition:filter .12s;}
 #sheetBody.masked .sheet-row{cursor:pointer;}
