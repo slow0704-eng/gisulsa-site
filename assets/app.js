@@ -45,14 +45,15 @@
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
   var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', only:'all', view:'cards' };
   // ---- 진도·이력(localStorage): 학습완료(done)·북마크(mark)·이어보기(resume) ----
-  var PROG = { done:{}, mark:{} };
-  try{ var _pp = JSON.parse(localStorage.getItem('gs_prog')||'{}'); PROG.done = _pp.done||{}; PROG.mark = _pp.mark||{}; }catch(e){}
+  var PROG = { done:{}, mark:{}, wrong:{} };
+  try{ var _pp = JSON.parse(localStorage.getItem('gs_prog')||'{}'); PROG.done = _pp.done||{}; PROG.mark = _pp.mark||{}; PROG.wrong = _pp.wrong||{}; }catch(e){}
   function saveProg(){ try{ localStorage.setItem('gs_prog', JSON.stringify(PROG)); }catch(e){} }
   function progCount(kind){ return Object.keys(PROG[kind]||{}).length; }
   function progOk(key){
     if(state.only==='done')   return !!PROG.done[key];
     if(state.only==='undone') return !PROG.done[key];
     if(state.only==='mark')   return !!PROG.mark[key];
+    if(state.only==='wrong')  return !!PROG.wrong[key];
     return true;
   }
   function applyProgClasses(){
@@ -60,8 +61,18 @@
       var k = el.getAttribute('data-key');
       el.classList.toggle('is-done', !!PROG.done[k]);
       el.classList.toggle('is-marked', !!PROG.mark[k]);
+      el.classList.toggle('is-wrong', !!PROG.wrong[k]);
     });
   }
+  // 퀴즈 결과 훅 — 오답노트 누적(오답=기록, 정답=해제). quiz.js 가 호출.
+  window.GSonQuiz = function(domId, title, ok){
+    var k = domId + '|' + title;
+    if(ok){ if(PROG.wrong[k]) delete PROG.wrong[k]; } else { PROG.wrong[k] = 1; }
+    saveProg();
+    var el = document.querySelector('.card[data-key="'+(window.CSS&&CSS.escape?CSS.escape(k):k)+'"]');
+    if(el) el.classList.toggle('is-wrong', !!PROG.wrong[k]);
+    if(progFacetEl) buildProgFacet();
+  };
   function saveResume(){ try{ localStorage.setItem('gs_resume', JSON.stringify({ dom:state.dom, sec:state.sec, sub:state.sub, view:state.view })); }catch(e){} }
   var domById = {}, catMapByDom = {}, mapDone = {};
   DOMAINS.forEach(function(d){
@@ -774,11 +785,12 @@
     progFacetEl.innerHTML = '<span class="facet-hint">진도</span>' +
       chip('all','전체') + chip('undone','미완료 <b>'+(n-progCount('done'))+'</b>') +
       chip('done','✓ 완료 <b>'+progCount('done')+'</b>') + chip('mark','★ 북마크 <b>'+progCount('mark')+'</b>') +
-      '<button type="button" class="chip prog prog-reset" data-only="reset" title="학습완료·북마크 기록 초기화">초기화</button>';
+      chip('wrong','⚠ 오답 <b>'+progCount('wrong')+'</b>') +
+      '<button type="button" class="chip prog prog-reset" data-only="reset" title="학습완료·북마크·오답 기록 초기화">초기화</button>';
     progFacetEl.querySelectorAll('.chip.prog').forEach(function(ch){
       ch.addEventListener('click', function(){
         var v = ch.getAttribute('data-only');
-        if(v==='reset'){ if(confirm('학습완료·북마크 기록을 모두 지울까요?')){ PROG={done:{},mark:{}}; saveProg(); applyProgClasses(); state.only='all'; buildProgFacet(); applyActiveFilter(); } return; }
+        if(v==='reset'){ if(confirm('학습완료·북마크·오답 기록을 모두 지울까요?')){ PROG={done:{},mark:{},wrong:{}}; saveProg(); applyProgClasses(); state.only='all'; buildProgFacet(); applyActiveFilter(); } return; }
         state.only = v; buildProgFacet(); applyActiveFilter();
       });
     });

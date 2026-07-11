@@ -186,8 +186,10 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .card.is-marked .cm-mark{background:var(--warn);color:#fff;border-color:var(--warn);}
 .card.is-done{opacity:.68;}
 .card.is-done:hover{opacity:1;}
+.card.is-wrong{border-left:3px solid var(--err);}
 .sheet-row.is-done{opacity:.6;}
 .sheet-row.is-marked .st-title::after{content:" ★";color:var(--warn);}
+.sheet-row.is-wrong .st-title::before{content:"⚠ ";color:var(--err);}
 .card:hover::after,.card:focus-visible::after{opacity:1;}
 .card h3{margin:0 0 var(--sp-1);font-size:var(--fs-4);line-height:var(--lh-title);}
 .card .tag{align-self:flex-start;display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:var(--r-pill);margin-bottom:var(--sp-3);}

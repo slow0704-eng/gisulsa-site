@@ -344,6 +344,7 @@
       st.answered=true; st.total++;
       var i=+btn.getAttribute('data-i'), ok=q.opts[i].c;
       if(ok){ st.score++; st.streak++; if(st.streak>st.best) st.best=st.streak; } else { st.streak=0; }
+      try{ if(window.GSonQuiz && q.ex && q.ex.domId) window.GSonQuiz(q.ex.domId, q.ex.title, ok); }catch(e){}   // 오답노트 누적
       optEls.forEach(function(b,bi){ b.classList.add('done');
         if(q.opts[bi].c) b.classList.add('correct'); else if(bi===i) b.classList.add('wrong'); });
       qbeep(ok);
