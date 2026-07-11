@@ -694,9 +694,18 @@
   if(modalEl){
     // 카드 클릭으로 열기(텍스트 드래그 선택 중에는 무시)
     contentEl.addEventListener('click', function(e){
-      if(e.target && e.target.closest && e.target.closest('.cm-btn')) return;   // 진도 마크 버튼은 모달 열지 않음
+      if(!(e.target && e.target.closest)) return;
+      if(e.target.closest('.cm-btn')) return;   // 진도 마크 버튼은 모달 열지 않음
+      // essay 절 아코디언(모바일): 절 헤더 클릭 → 접기/펼치기
+      var esh = e.target.closest('.es-h');
+      if(esh){ var sec=esh.closest('.es-sec'); if(sec) sec.classList.toggle('collapsed'); return; }
+      // 카드 암기모드: 정의 가리기 상태에서 정의 클릭 → 해당 정의만 공개(모달 미열림)
+      if(contentEl.classList.contains('cards-mask')){
+        var def = e.target.closest('.def');
+        if(def){ def.classList.add('revealed'); return; }
+      }
       if(window.getSelection && String(window.getSelection()).length) return;
-      var card = e.target && e.target.closest ? e.target.closest('.card') : null;
+      var card = e.target.closest('.card');
       if(card) openCardModal(card);
     });
     // 카드 키보드(Enter/Space)로 열기 — 카드는 role=button tabindex=0
@@ -706,6 +715,8 @@
       if(card){ e.preventDefault(); openCardModal(card); }
     });
     modalEl.addEventListener('click', function(e){
+      var esh = e.target && e.target.closest ? e.target.closest('.es-h') : null;
+      if(esh){ var sec=esh.closest('.es-sec'); if(sec) sec.classList.toggle('collapsed'); return; }
       if(e.target && e.target.getAttribute && e.target.getAttribute('data-close')) closeCardModal();
     });
     document.addEventListener('keydown', function(e){
@@ -782,6 +793,28 @@
   }
   var fUp = document.getElementById('fontUp'); if(fUp) fUp.addEventListener('click', function(){ setFs(1); });
   var fDn = document.getElementById('fontDn'); if(fDn) fDn.addEventListener('click', function(){ setFs(-1); });
+
+  // ---- 카드 암기모드(정의 가리기) — 카드 뷰에서 정의를 흐리게, 정의 클릭 시 개별 공개 ----
+  var maskBtn = document.getElementById('cardMask');
+  function renderCardMask(){
+    var on = contentEl.classList.contains('cards-mask');
+    if(maskBtn){
+      maskBtn.setAttribute('aria-pressed', on);
+      maskBtn.title = on ? '정의 가리기 해제' : '카드 정의 가리기(암기모드) — 정의 클릭 시 확인';
+      maskBtn.innerHTML = '<i data-lucide="'+(on?'eye':'eye-off')+'"></i>';
+      if(window.lucide) lucide.createIcons();
+    }
+  }
+  try{ if(localStorage.getItem('gs_cardmask')==='1') contentEl.classList.add('cards-mask'); }catch(e){}
+  renderCardMask();
+  if(maskBtn){
+    maskBtn.addEventListener('click', function(){
+      var on = contentEl.classList.toggle('cards-mask');
+      if(on){ contentEl.querySelectorAll('.def.revealed').forEach(function(d){ d.classList.remove('revealed'); }); }
+      try{ localStorage.setItem('gs_cardmask', on?'1':'0'); }catch(e){}
+      renderCardMask();
+    });
+  }
 
   // ---- 첫 방문 온보딩 배너 ----
   var onboardEl = document.getElementById('onboard');

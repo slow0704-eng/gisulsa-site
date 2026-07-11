@@ -517,6 +517,31 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qbig{font-size:var(--fs-6);font-weight:800;color:#6d28d9;margin:10px 0;}
 .qbig span{font-size:var(--fs-4);color:var(--muted);font-weight:700;}
 
+/* ===== 6-Key 노출 미터(카드 하단) ===== */
+.k6{display:flex;align-items:center;gap:5px;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);font-size:var(--fs-1);}
+.k6-lbl{font-weight:800;color:var(--muted);letter-spacing:-.3px;margin-right:1px;}
+.k6-chip{opacity:.26;filter:grayscale(1);font-size:13px;line-height:1;transition:opacity .12s,filter .12s;cursor:default;}
+.k6-chip.on{opacity:1;filter:none;}
+.k6-n{margin-left:auto;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;}
+
+/* ===== 카드 암기모드(정의 가리기) — 정의 클릭 시 개별 공개 ===== */
+#content.cards-mask .card .def:not(.revealed){
+  filter:blur(5px);cursor:pointer;user-select:none;border-radius:6px;
+  outline:1px dashed var(--line-strong);outline-offset:2px;transition:filter .1s;
+}
+#content.cards-mask .card .def:not(.revealed):hover{filter:blur(2.5px);}
+#content.cards-mask .card .def.revealed{outline:none;}
+
+/* ===== essay(2교시) 절 아코디언 — 모바일에서 절 접기/펼치기 ===== */
+.es-h{display:flex;align-items:center;gap:6px;}
+.es-chev{display:none;margin-left:auto;color:var(--muted);font-size:12px;transition:transform .15s;}
+@media (max-width:640px){
+  .es-sec > .es-h{cursor:pointer;user-select:none;}
+  .es-chev{display:inline-block;}
+  .es-sec.collapsed > .es-h .es-chev{transform:rotate(-90deg);}
+  .es-sec.collapsed > :not(.es-h){display:none;}
+}
+
 /* ===== 용어 글로서리 뷰 ===== */
 #gloss{max-width:900px;margin:0 auto;padding:14px 18px 90px;}
 .gloss-tools{margin-bottom:10px;}

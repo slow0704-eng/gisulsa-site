@@ -70,6 +70,30 @@
     '</div>';
   }
 
+  // 6-Key(트렌드·도구·사상·목적·표준·거버넌스) 노출 미터 — 카드 텍스트에서 큐레이션 정규식으로 감지.
+  // 채점 관점의 "답안 6요소 노출" 방법론을 카드에서 시각화(소프트 신호 — 참고용).
+  var SIXKEY = [
+    { k:'표준', ic:'📐', re:/ISO|IEC|IEEE|RFC|W3C|OMG|NIST|ITU|ANSI|TTA|OWASP|PMBOK|COBIT|ITIL|TOGAF|CMMI|SPICE|GDPR|2501\d|4201\d|2700\d|9001|표준|규격|프로토콜|준수/i },
+    { k:'도구', ic:'🛠', re:/도구|프레임워크|framework|라이브러리|플랫폼|Docker|Kubernetes|K8s|Jenkins|Git\b|Terraform|Kafka|Spark|Hadoop|TensorFlow|PyTorch|Prometheus|Grafana|Ansible|엔진|솔루션|미들웨어/i },
+    { k:'사상', ic:'💡', re:/원칙|사상|패러다임|철학|지향|SOLID|DRY|KISS|애자일|Agile|DevOps|제로트러스트|관심사\s?분리|캡슐화|추상화|모듈화|불변성|선언형/i },
+    { k:'목적', ic:'🎯', re:/목적|효과|위해|향상|최소화|극대화|보장|절감|개선|달성|확보|제고|최적화|방지|완화|단축/i },
+    { k:'트렌드', ic:'📈', re:/\bAI\b|인공지능|클라우드|MSA|마이크로서비스|서버리스|양자|생성형|LLM|엣지|edge|디지털\s?전환|\bDX\b|메타버스|블록체인|최신|차세대|자율/i },
+    { k:'거버넌스', ic:'🏛', re:/거버넌스|governance|통제|정책|규정|컴플라이언스|compliance|감사|관리체계|책임|RACI|내부통제|의사결정|승인|위원회/i }
+  ];
+  function sixKeyMeter(card){
+    if(card.essay) return '';
+    var blob = [card.title, card.tag, card.keyword, card.keywords, card.def, card.diagram, card.diagramNote, card.note];
+    if(card.table && card.table.rows){ card.table.rows.forEach(function(r){ blob = blob.concat(r); }); }
+    if(card.defTable && card.defTable.rows){ card.defTable.rows.forEach(function(r){ blob = blob.concat(r); }); }
+    var text = blob.filter(Boolean).join(' ');
+    var hits = 0, chips = SIXKEY.map(function(s){
+      var on = s.re.test(text); if(on) hits++;
+      return '<span class="k6-chip'+(on?' on':'')+'" title="'+escAttr(s.k+(on?' 노출':' 미노출'))+'">'+s.ic+'</span>';
+    }).join('');
+    return '<div class="k6" title="6-Key(트렌드·도구·사상·목적·표준·거버넌스) 노출도 — 채점 방법론 참고">'+
+      '<span class="k6-lbl">6-Key</span>'+chips+'<span class="k6-n">'+hits+'/6</span></div>';
+  }
+
   function _p2(n){ return n<10 ? '0'+n : ''+n; }
   function tableHTML(t, cls){
     if(!t) return '';
@@ -139,12 +163,14 @@
     }
     html += '<div class="es-body">';
     var curPage = 1;
-    secs.forEach(function(s){
+    secs.forEach(function(s, si){
       if(hasPages){
         var pg = s.page || curPage;
         if(pg !== curPage){ html += essayPageTag(pg, false); curPage = pg; }
       }
-      html += '<div class="es-sec"><div class="es-h">'+escHTML((s.no?s.no+'. ':'')+(s.title||''))+'</div>';
+      // 모바일 아코디언: 첫 절만 펼침, 나머지는 collapsed(데스크톱 CSS는 무시 → 항상 표시)
+      var accCls = si===0 ? '' : ' collapsed';
+      html += '<div class="es-sec'+accCls+'"><div class="es-h" role="button" tabindex="0">'+escHTML((s.no?s.no+'. ':'')+(s.title||''))+'<span class="es-chev" aria-hidden="true">▾</span></div>';
       if(s.overview){ html += '<div class="es-sub">1. 개요</div>'+essayBlock(s.overview); }
       if(s.detail){ html += '<div class="es-sub">'+escHTML(s.detail.title||'2. 상세')+'</div>'+essayBlock(s.detail); }
       if(s.conclusion){ s.conclusion.forEach(function(t){ html += '<div class="def es-concl">'+escHTML(t)+'</div>'; }); }
@@ -183,7 +209,7 @@
         fnote;
     }
     return '<div '+cardAttrs(card, domId)+' style="border-top-color:'+c.color+'">'+
-      markCtl()+head+body+
+      markCtl()+head+body+sixKeyMeter(card)+
     '</div>';
   }
 
