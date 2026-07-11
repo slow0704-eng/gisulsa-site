@@ -12,13 +12,22 @@
 <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <link rel="stylesheet" href="assets/styles.css" />
+<script>
+  /* 테마·글자크기 조기 적용(FOUC 방지) — localStorage 우선, 없으면 시스템 설정 */
+  (function(){ try{
+    var t = localStorage.getItem('gs_theme');
+    if(!t) t = (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', t);
+    var f = localStorage.getItem('gs_fs'); if(f) document.documentElement.setAttribute('data-fs', f);
+  }catch(e){} })();
+</script>
 </head>
 <body>
 
 <header class="appbar">
   <div class="topbar">
     <a href="./" class="brand" title="처음으로 (새로고침)"><span class="brand-mark"><i data-lucide="graduation-cap"></i></span><span class="brand-name">정보관리기술사<small>학습 콘솔 · 1·2교시</small></span></a>
-    <div class="gsearch-wrap"><i data-lucide="search" class="gsearch-ic"></i><input id="globalSearch" class="gsearch" type="text" placeholder='전 과목 검색 — 공백=AND/OR · "구문" · -제외' title='검색식: 공백=단어 결합(AND/OR 토글) · "여러 단어"=구문 · OR/| 로 OR 결합 · -단어(!단어)=제외' /><button id="searchMode" class="smode" type="button" aria-pressed="false" title="검색 방식: AND(단어 모두 포함) — 눌러 OR로">AND</button></div>
+    <div class="gsearch-wrap"><i data-lucide="search" class="gsearch-ic"></i><input id="globalSearch" class="gsearch" type="text" placeholder='토픽 검색 (예: 제로트러스트)' title='기본: 단어만 입력. 고급 — "여러 단어"=구문 · 공백=AND/OR(우측 토글) · OR/| 로 OR · -단어=제외' /><button id="searchMode" class="smode" type="button" aria-pressed="false" title="검색 방식: AND(단어 모두 포함) — 눌러 OR로">AND</button></div>
     <div class="viewsw" id="viewsw">
       <button data-v="cards" class="active"><i data-lucide="layout-grid"></i>카드</button>
       <button data-v="graph"><i data-lucide="share-2"></i>관계도</button>
@@ -27,6 +36,11 @@
       <button data-v="quiz"><i data-lucide="puzzle"></i>퀴즈</button>
     </div>
     <button id="filterToggle" class="filter-toggle" type="button" aria-expanded="true" aria-controls="facets" title="과목·단원 필터 접기/펼치기"><i data-lucide="sliders-horizontal"></i><span class="ft-label">필터</span></button>
+    <span class="ui-prefs">
+      <button id="fontDn" class="pref-btn" type="button" title="글자 작게">A-</button>
+      <button id="fontUp" class="pref-btn" type="button" title="글자 크게">A+</button>
+      <button id="themeToggle" class="pref-btn" type="button" title="다크/라이트 전환" aria-pressed="false"><i data-lucide="moon"></i></button>
+    </span>
     <span class="count" id="count" aria-live="polite"></span>
   </div>
   <div class="facets">
@@ -35,6 +49,12 @@
     <div class="facet-row" id="subFacet" aria-label="세부구분 필터"></div>
   </div>
 </header>
+
+<div id="onboard" class="onboard hidden" role="note">
+  <span class="ob-ic">🎓</span>
+  <div class="ob-txt"><b>처음이신가요?</b> 학습 사이클 → <b>🗂카드</b>로 개념·답안골격 보기 → <b>📋정의 시트</b> 암기모드로 복습 → <b>⌨연습</b> 따라치기 → <b>🧩퀴즈</b> 자가확인. 위 <b>과목·단원·세부구분</b>으로 범위를 좁히세요.</div>
+  <button type="button" class="ob-x" title="닫기">알겠어요 ✕</button>
+</div>
 
 <div id="content"></div>
 

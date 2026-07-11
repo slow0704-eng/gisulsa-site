@@ -41,6 +41,23 @@
   --line:var(--ink-200); --line-strong:var(--ink-300); --bg:var(--ink-50);
   --accent:var(--brand);
 }
+/* 다크 테마 — 잉크 스케일 반전 + 표면 재정의(토큰만 오버라이드, 컴포넌트 무수정) */
+:root[data-theme="dark"]{
+  --ink-900:#f1f5f9; --ink-800:#e2e8f0; --ink-700:#cbd5e1;
+  --ink-600:#a9b6c8; --ink-500:#94a3b8; --ink-400:#7386a0;
+  --ink-300:#475569; --ink-200:#334155; --ink-100:#1e293b; --ink-50:#111a2b;
+  --surface:#0f1826; --surface-2:#131f31; --surface-3:#1c2942;
+  --surface-dark:#0a1120; --bg:#070c15;
+  --brand-ink:#04293a;
+  --line:#2b3a52; --line-strong:#3b4d69;
+  --ink:var(--ink-800); --ink-soft:var(--ink-600); --muted:var(--ink-500);
+  --sh-1:0 1px 3px rgba(0,0,0,.45); --sh-2:0 6px 18px rgba(0,0,0,.55); --sh-pop:0 14px 44px rgba(0,0,0,.6);
+}
+:root[data-theme="dark"] .card{border-top-color:var(--line-strong);}
+:root[data-theme="dark"] .gsearch:focus,:root[data-theme="dark"] .pt-input:focus{background:var(--surface-2);}
+/* 글자 크기 3단(sm/기본/lg) — 본문·표 토큰만 상향 */
+:root[data-fs="lg"]{ --fs-1:13px; --fs-2:14px; --fs-3:16px; --fs-4:18px; }
+:root[data-fs="xl"]{ --fs-1:14px; --fs-2:15px; --fs-3:17px; --fs-4:19px; }
 *{box-sizing:border-box;}
 
 /* 키보드 포커스 가시성(전역) — 마우스 클릭 시엔 안 뜨고 키보드 탐색 때만 */
@@ -63,6 +80,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans)
 .topbar .count{font-size:var(--fs-1);color:var(--muted);white-space:nowrap;}
 .filter-toggle{cursor:pointer;display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--fs-1);font-weight:600;padding:5px 10px;border-radius:var(--r-sm);transition:all .12s;}
 .filter-toggle:hover{border-color:var(--brand-strong);color:var(--ink);}
+/* 첫 방문 온보딩 배너 */
+.onboard{display:flex;align-items:center;gap:12px;margin:12px var(--sp-4) 0;padding:10px 14px;background:linear-gradient(135deg,rgba(56,189,248,.12),rgba(14,165,233,.06));border:1px solid var(--brand);border-radius:var(--r-md);}
+.onboard.hidden{display:none;}
+.onboard .ob-ic{font-size:22px;}
+.onboard .ob-txt{flex:1;font-size:var(--fs-2);color:var(--ink-700);line-height:1.55;}
+.onboard .ob-x{cursor:pointer;white-space:nowrap;border:1px solid var(--brand);background:var(--surface);color:var(--brand-strong);font-family:inherit;font-weight:700;font-size:var(--fs-1);padding:5px 11px;border-radius:var(--r-sm);}
+.onboard .ob-x:hover{background:var(--brand);color:var(--brand-ink);}
+.ui-prefs{display:inline-flex;gap:4px;align-items:center;}
+.pref-btn{cursor:pointer;display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:28px;padding:0 7px;border:1px solid var(--line-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--fs-1);font-weight:800;border-radius:var(--r-sm);transition:all .12s;}
+.pref-btn:hover{border-color:var(--brand-strong);color:var(--ink);}
+.pref-btn svg.lucide{width:15px;height:15px;}
 .filter-toggle svg.lucide{width:14px;height:14px;}
 .filter-toggle.off{color:var(--ink-400);background:var(--ink-50);}
 .facets-collapsed .facets{display:none;}

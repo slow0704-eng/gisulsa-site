@@ -134,7 +134,7 @@
       "category": "model",
       "title": "ERD",
       "tag": "모델링·설계",
-      "keyword": "엔티티·관계",
+      "keyword": "개념 데이터모델",
       "keywords": "ERD entity relationship diagram 카디널리티 관계형 모델 학생 수강신청",
       "def": "엔티티·속성·관계로 데이터 구조를 시각적으로 표현하는 개념적 데이터 모델 표기법.",
       "diagram": "[학생] ──(수강신청)──< [수강신청서]\n  1                        N\n □엔티티 ◇관계 ○속성 — 카디널리티 표기",

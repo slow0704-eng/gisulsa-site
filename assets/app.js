@@ -337,7 +337,7 @@
     var searchable = (v==='cards' || v==='sheet');
     if(searchEl){
       searchEl.disabled = !searchable;
-      searchEl.placeholder = searchable ? '전 과목 검색 — 공백=AND/OR · "구문" · -제외'
+      searchEl.placeholder = searchable ? '토픽 검색 (예: 제로트러스트)'
         : (v==='graph' ? '관계도 뷰 — 검색 미적용' : (v==='practice' ? '연습 뷰 — 아래 과목/모드로 범위 조절' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절'));
     }
     var smBtn=document.getElementById('searchMode'); if(smBtn) smBtn.disabled = !searchable;
@@ -692,6 +692,51 @@
       state.qmode = (state.qmode==='or') ? 'and' : 'or';
       renderSmode();
       if(state.q && state.view!=='quiz') applyActiveFilter();
+    });
+  }
+
+  // ---- 환경설정(테마·글자크기) — localStorage 저장, <head> 인라인 스크립트가 초기 적용 ----
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeToggle');
+  function renderTheme(){
+    var dark = root.getAttribute('data-theme')==='dark';
+    if(themeBtn){
+      themeBtn.setAttribute('aria-pressed', dark);
+      themeBtn.title = dark ? '라이트 모드로' : '다크 모드로';
+      themeBtn.innerHTML = '<i data-lucide="'+(dark?'sun':'moon')+'"></i>';
+      if(window.lucide) lucide.createIcons();
+    }
+  }
+  if(themeBtn){
+    renderTheme();
+    themeBtn.addEventListener('click', function(){
+      var dark = root.getAttribute('data-theme')==='dark';
+      var next = dark ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try{ localStorage.setItem('gs_theme', next); }catch(e){}
+      renderTheme();
+    });
+  }
+  var FS = ['', 'lg', 'xl'];
+  function setFs(dir){
+    var cur = root.getAttribute('data-fs') || '';
+    var i = Math.max(0, Math.min(FS.length-1, FS.indexOf(cur) + dir));
+    var v = FS[i];
+    if(v) root.setAttribute('data-fs', v); else root.removeAttribute('data-fs');
+    try{ localStorage.setItem('gs_fs', v); }catch(e){}
+  }
+  var fUp = document.getElementById('fontUp'); if(fUp) fUp.addEventListener('click', function(){ setFs(1); });
+  var fDn = document.getElementById('fontDn'); if(fDn) fDn.addEventListener('click', function(){ setFs(-1); });
+
+  // ---- 첫 방문 온보딩 배너 ----
+  var onboardEl = document.getElementById('onboard');
+  if(onboardEl){
+    var done = false; try{ done = localStorage.getItem('gs_onboard')==='done'; }catch(e){}
+    if(!done) onboardEl.classList.remove('hidden');
+    var obx = onboardEl.querySelector('.ob-x');
+    if(obx) obx.addEventListener('click', function(){
+      onboardEl.classList.add('hidden');
+      try{ localStorage.setItem('gs_onboard','done'); }catch(e){}
     });
   }
 
