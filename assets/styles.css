@@ -217,13 +217,16 @@ pre.diagram{margin:0;background:var(--surface-2);color:var(--ink-800);border:1px
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-1);}
 .blk table,.cmodal-body table,.st-orig table{table-layout:fixed;}   /* T4: colgroup 폭 고정으로 632장 열폭 통일 */
-table th,table td{border:1px solid var(--table-line);padding:5px 7px;text-align:left;vertical-align:top;overflow-wrap:anywhere;}   /* T4: 비분절 토큰 절단 대신 wrap */
+/* D6: 수평 우세 격자 — 가로선(--table-line) 강, 세로 내부선(--line) 약 → 행 좌→우 시선흐름. D8: 패딩 소폭 확대. */
+table th,table td{border-top:1px solid var(--table-line);border-bottom:1px solid var(--table-line);border-left:1px solid var(--line);border-right:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere;}
 table th{background:var(--surface-3);font-weight:700;color:var(--ink-800);}   /* D2: 헤더 명도 복원(앵커) */
 table thead th{border-bottom:2px solid var(--line-strong);}   /* T3: 헤더 수평축 분리(L 프레임 가로) */
 table thead th:first-child{border-right:2px solid var(--ink-400);}   /* D4: 헤더 코너~구분열 세로 스파인 연속 */
 /* 구분 열(th scope=row/rowgroup): D1 3층 배경 사다리 + D2 명도 복원(ink-800). D4 액센트를 좌측→구분열↔데이터 경계(우측·가시대비 ink-400)로 이설 → 헤더 하단 2px 와 L 프레임. */
 table th[scope="row"],table th[scope="rowgroup"]{white-space:normal;font-weight:600;color:var(--ink-800);background:var(--surface-2);border-right:2px solid var(--ink-400);}
-table th[scope="rowgroup"]{vertical-align:middle;}
+table th[scope="row"],table th[scope="rowgroup"]{vertical-align:middle;}   /* D8: 단일행·병합행 구분 라벨 세로정렬 middle 통일(좌측 축 리듬) */
+/* D7: 다크 구분열 틴트 보강(전역 토큰 무변경·표 스코프 override) — surface-2(#131f31)→#17263c 로 본문 대비 상승 */
+:root[data-theme="dark"] table th[scope="row"],:root[data-theme="dark"] table th[scope="rowgroup"]{background:#17263c;}
 /* D3: 그룹 시작 행 상단 전폭 2px 강선 — rowspan 청크를 표 전폭으로 시각화(셀 경계 1px / 그룹 경계 2px 2단) */
 .blk table tbody tr.grp>*,.cmodal-body table tbody tr.grp>*{border-top:2px solid var(--line-strong);}
 /* D5: 열별 타이포 위계 — 구성요소(키) 강조 / 역할(설명) 약화. 비교표(compare)·essay 는 제외(대칭 유지) */
