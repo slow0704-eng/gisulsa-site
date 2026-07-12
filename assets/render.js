@@ -95,8 +95,10 @@
       var on = s.re.test(text); if(on) hits++;
       return '<span class="k6-chip'+(on?' on':'')+'" title="'+escAttr(s.k+(on?' 노출':' 미노출'))+'">'+s.ic+'</span>';
     }).join('');
-    return '<div class="k6" title="6-Key(트렌드·도구·사상·목적·표준·거버넌스) 노출도 — 채점 방법론 참고">'+
-      '<span class="k6-lbl">6-Key</span>'+chips+'<span class="k6-n">'+hits+'/6</span></div>';
+    return '<div class="k6" aria-label="6-Key 노출 '+hits+'/6" title="6-Key(트렌드·도구·사상·목적·표준·거버넌스) 노출도 — 채점 방법론 참고">'+
+      '<span class="k6-lbl" aria-hidden="true">6-Key</span>'+
+      '<span class="k6-chips" aria-hidden="true">'+chips+'</span>'+
+      '<span class="k6-n" aria-hidden="true">'+hits+'/6</span></div>';
   }
 
   function _p2(n){ return n<10 ? '0'+n : ''+n; }
@@ -188,32 +190,33 @@
 
   function cardHTML(card, catMap, domId){
     var c = catMap[card.category] || {color:'#cbd5e1',bg:'#f1f5f9',tagColor:'#475569'};
+    // 카테고리 색은 CSS 변수로 주입 → 테마 오버라이드 가능·인라인 반복 제거(R6)
+    var cstyle = '--cat-color:'+c.color+';--cat-bg:'+c.bg+';--cat-tag:'+c.tagColor;
     var dnote = card.diagramNote ? '<div class="note">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
     var diag = card.diagram ? '<pre class="diagram">'+escHTML(card.diagram)+'</pre>' : '';
-    var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag" style="background:'+c.bg+';color:'+c.tagColor+'">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
+    var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
-      return '<div '+cardAttrs(card, domId, 'essay')+' style="border-top-color:'+c.color+'">'+
+      return '<div '+cardAttrs(card, domId, 'essay')+' style="'+cstyle+'">'+
         markCtl()+zoomCtl(card)+head+essayHTML(card)+
       '</div>';
     }
     var body;
     if(card.compare){
       body =
-        '<div class="blk"><div class="lbl">I. 정의 비교</div>'+tableHTML(card.defTable, 'cmp2')+dnote+'</div>'+
-        '<div class="blk"><div class="lbl ink">II. 상세 비교</div>'+tableHTML(card.table)+fnote+'</div>';
+        '<div class="blk"><div class="lbl tier1">I. 정의 비교</div>'+tableHTML(card.defTable, 'cmp2')+dnote+'</div>'+
+        '<div class="blk"><div class="lbl tier1 ink">II. 상세 비교</div>'+tableHTML(card.table)+fnote+'</div>';
     } else {
       // I. 정의: 리드 키워드+토픽을 헤더로(골격 03줄), 정의문 본문은 아래(04·05)
       var defLead = card.keyword ? 'I. "<span class="lead-kw">'+escHTML(card.keyword)+'</span>" '+escHTML(card.title)+'의 정의'
                                  : 'I. '+escHTML(card.title)+'의 정의';
       body =
-        '<div class="blk"><div class="lbl">'+defLead+'</div><div class="def">'+escHTML(_stripLeadKw(card.def))+'</div></div>'+
-        '<div class="blk"><div class="lbl ink">II. 구성도 및 구성요소</div></div>'+
-        '<div class="blk"><div class="lbl">1. 구성도</div>'+diag+dnote+'</div>'+
-        '<div class="blk"><div class="lbl">2. 구성요소</div>'+tableHTML(card.table)+'</div>'+
+        '<div class="blk"><div class="lbl tier1">'+defLead+'</div><div class="def">'+escHTML(_stripLeadKw(card.def))+'</div></div>'+
+        '<div class="blk"><div class="lbl tier2">1. 구성도</div>'+diag+dnote+'</div>'+
+        '<div class="blk"><div class="lbl tier2">2. 구성요소</div>'+tableHTML(card.table)+'</div>'+
         fnote;
     }
-    return '<div '+cardAttrs(card, domId)+' style="border-top-color:'+c.color+'">'+
+    return '<div '+cardAttrs(card, domId)+' style="'+cstyle+'">'+
       markCtl()+zoomCtl(card)+head+body+sixKeyMeter(card)+
     '</div>';
   }

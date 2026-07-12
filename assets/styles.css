@@ -17,9 +17,10 @@
 
   /* 상태색 */
   --ok:#16a34a; --warn:#f59e0b; --err:#dc2626;
+  --warn-bg:#fffbeb;                 /* 첨언(note) 배경 — 다크에서 재정의 */
 
   /* 타이포 스케일(6단) — 12·13·15(본문)·17·20·26 */
-  --fs-1:12px; --fs-2:13px; --fs-3:15px; --fs-4:17px; --fs-5:20px; --fs-6:26px;
+  --fs-0:11px; --fs-1:12px; --fs-2:13px; --fs-3:15px; --fs-4:17px; --fs-5:20px; --fs-6:26px;
   --fw-normal:400; --fw-semibold:600; --fw-bold:800;
   --lh-body:1.55; --lh-title:1.3;
   --font-sans:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
@@ -48,6 +49,7 @@
   --ink-300:#475569; --ink-200:#334155; --ink-100:#1e293b; --ink-50:#111a2b;
   --surface:#0f1826; --surface-2:#131f31; --surface-3:#1c2942;
   --surface-dark:#0a1120; --bg:#070c15;
+  --warn-bg:#2a2410;
   --brand-ink:#04293a;
   --line:#2b3a52; --line-strong:#3b4d69;
   --ink:var(--ink-800); --ink-soft:var(--ink-600); --muted:var(--ink-500);
@@ -56,8 +58,8 @@
 :root[data-theme="dark"] .card{border-top-color:var(--line-strong);}
 :root[data-theme="dark"] .gsearch:focus,:root[data-theme="dark"] .pt-input:focus{background:var(--surface-2);}
 /* 글자 크기 3단(sm/기본/lg) — 본문·표 토큰만 상향 */
-:root[data-fs="lg"]{ --fs-1:13px; --fs-2:14px; --fs-3:16px; --fs-4:18px; }
-:root[data-fs="xl"]{ --fs-1:14px; --fs-2:15px; --fs-3:17px; --fs-4:19px; }
+:root[data-fs="lg"]{ --fs-0:12px; --fs-1:13px; --fs-2:14px; --fs-3:16px; --fs-4:18px; }
+:root[data-fs="xl"]{ --fs-0:12px; --fs-1:14px; --fs-2:15px; --fs-3:17px; --fs-4:19px; }
 *{box-sizing:border-box;}
 
 /* 키보드 포커스 가시성(전역) — 마우스 클릭 시엔 안 뜨고 키보드 탐색 때만 */
@@ -175,7 +177,9 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .secmap .mermaid{text-align:center;}
 
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;}
-.card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--line-strong);border-radius:var(--r-md);padding:var(--sp-4) var(--sp-4) var(--sp-3);box-shadow:var(--sh-1);display:flex;flex-direction:column;min-width:0;cursor:pointer;position:relative;transition:box-shadow .12s,transform .12s;}
+/* R10: 641~900px(태블릿) — 카드 min 300px 로 초광폭 1열 방지 */
+@media (min-width:641px) and (max-width:900px){.grid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));}}
+.card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--cat-color,var(--line-strong));border-radius:var(--r-md);padding:var(--sp-4) var(--sp-4) var(--sp-3);box-shadow:var(--sh-1);display:flex;flex-direction:column;min-width:0;cursor:pointer;position:relative;transition:box-shadow .12s,transform .12s;}
 .card:hover{box-shadow:var(--sh-2);transform:translateY(-1px);}
 /* 확대 트리거(⤢) — 실제 <button>. 명도 대비 3:1↑(--ink-500), 카드 hover·터치기기 상시 노출 */
 .card-zoom{position:absolute;top:6px;right:7px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:var(--ink-500);opacity:.8;font-size:15px;line-height:1;cursor:pointer;padding:0;border-radius:6px;z-index:3;transition:opacity .12s,color .12s,background .12s;}
@@ -196,14 +200,18 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .card:hover .card-zoom{opacity:1;}
 @media (pointer:coarse){.card-zoom{opacity:1;}}
 .card h3{margin:0 0 var(--sp-1);font-size:var(--fs-4);line-height:var(--lh-title);padding-right:88px;}
-.card .tag{align-self:flex-start;display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:var(--r-pill);margin-bottom:var(--sp-3);}
+.card .tag{align-self:flex-start;display:inline-block;font-size:var(--fs-0);font-weight:700;padding:2px 10px;border-radius:var(--r-pill);margin-bottom:var(--sp-3);background:var(--cat-bg);color:var(--cat-tag);}
 .blk{margin-top:10px;}
 .blk .lbl{font-size:var(--fs-1);font-weight:800;color:var(--muted);letter-spacing:.3px;margin-bottom:4px;}
 .blk .lbl.ink{color:var(--ink);}
+/* 3단 위계(R9): 로마숫자(I/II) 티어1 크게·진하게, 아라비아(1./2.) 티어2 작게·muted */
+.blk .lbl.tier1{font-size:var(--fs-2);color:var(--ink-800);}
+.blk .lbl.tier2{font-size:var(--fs-1);color:var(--muted);}
 /* 리드키워드 강조 — 일반모드 brand 강조, 암기모드에선 정의와 함께 블러(정답 절반 누출 방지) */
 .lead-kw{color:var(--brand-strong);font-weight:800;}
 .def{font-size:var(--fs-2);color:var(--ink-700);line-height:var(--lh-body);}
-pre.diagram{margin:0;background:var(--surface-dark);color:var(--ink-200);border-radius:var(--r-sm);padding:11px 12px;font-size:11.5px;line-height:1.5;overflow-x:auto;font-family:var(--font-mono);white-space:pre;}
+/* 구성도(R9): 그리드 카드는 밝은 박스(정의문 우선 읽기) — 다크 고대비는 모달에서만 */
+pre.diagram{margin:0;background:var(--surface-2);color:var(--ink-800);border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 12px;font-size:var(--fs-0);line-height:1.5;overflow-x:auto;font-family:var(--font-mono);white-space:pre;}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-1);}
 table th,table td{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top;}
 table th{background:var(--surface-3);font-weight:700;color:var(--ink-600);}
@@ -212,25 +220,25 @@ table td:first-child{white-space:nowrap;font-weight:600;color:var(--ink-600);bac
 table.cmp2{table-layout:fixed;}
 table.cmp2 th,table.cmp2 td{width:50%;}
 table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;background:transparent;}
-.note{margin-top:11px;font-size:var(--fs-1);color:var(--ink-600);background:#fffbeb;border-left:3px solid var(--warn);padding:7px 10px;border-radius:0 var(--r-sm) var(--r-sm) 0;}
+.note{margin-top:11px;font-size:var(--fs-1);color:var(--ink-600);background:var(--warn-bg);border-left:3px solid var(--warn);padding:7px 10px;border-radius:0 var(--r-sm) var(--r-sm) 0;}
 
 /* 성능(P2): 화면 밖 카드는 렌더(레이아웃·페인트) 생략 — DOM은 유지되어 검색·필터·Ctrl+F 정상.
    contain-intrinsic-size 로 자리 높이 예약(스크롤바 안정). essay(전체폭·가변높이)는 큰 값 예약. */
-.card{content-visibility:auto;contain-intrinsic-size:auto 360px;}
+.card{content-visibility:auto;contain-intrinsic-size:auto 520px;}
 
 /* ===== 2교시 논술 카드(전체폭) ===== */
-.card.essay{grid-column:1/-1;contain-intrinsic-size:auto 900px;}
-.es-prob{background:#0f172a;color:#fff;border-radius:10px;padding:12px 16px;margin:2px 0 6px;}
+.card.essay{grid-column:1/-1;contain-intrinsic-size:auto 2000px;}
+.es-prob{background:var(--surface-dark);color:#fff;border-radius:10px;padding:12px 16px;margin:2px 0 6px;}
 .es-pq{font-weight:800;font-size:var(--fs-3);letter-spacing:-.2px;}
 .es-reqs{margin:7px 0 0;padding-left:18px;font-size:var(--fs-2);color:#cbd5e1;}
 .es-reqs li{margin:2px 0;}
 .es-body{display:grid;grid-template-columns:1fr;gap:14px 22px;margin-top:10px;min-width:0;}   /* 2교시 답안: I→II→III→IV 단일 열 세로 흐름(답안 읽기 순서 유지) */
 .es-sec{border-left:3px solid #c7d2fe;padding-left:12px;min-width:0;}
 .es-intro{margin:8px 0 2px;border-left-color:#6366f1;}
-.es-h{font-size:var(--fs-3);font-weight:800;color:#1e293b;margin-bottom:6px;}
+.es-h{font-size:var(--fs-3);font-weight:800;color:var(--ink-800);margin-bottom:6px;}
 .es-sub{font-size:var(--fs-1);font-weight:800;color:var(--muted);letter-spacing:.3px;margin:11px 0 4px;}
-.es-concl{background:#f8fafc;border-radius:6px;padding:5px 9px;margin-top:5px;font-size:var(--fs-2);}
-.es-pagetag{grid-column:1/-1;font-size:11px;font-weight:800;color:#8b5cf6;letter-spacing:1.5px;text-align:center;margin:16px 0 6px;border-top:2px dashed #ede9fe;padding-top:9px;}   /* 2교시 66줄/3페이지 구분선 */
+.es-concl{background:var(--surface-2);border-radius:6px;padding:5px 9px;margin-top:5px;font-size:var(--fs-2);}
+.es-pagetag{grid-column:1/-1;font-size:var(--fs-0);font-weight:800;color:#8b5cf6;letter-spacing:1.5px;text-align:center;margin:16px 0 6px;border-top:2px dashed var(--line);padding-top:9px;}   /* 2교시 66줄/3페이지 구분선 */
 .es-pagetag.first{border-top:none;margin-top:4px;padding-top:0;}
 .st-essay{color:#4338ca;background:#eef2ff;}
 
@@ -249,7 +257,7 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 .cmodal-body .def,.cmodal-body .es-concl{font-size:var(--fs-3);}
 .cmodal-body table{font-size:var(--fs-2);}
 .cmodal-body table th,.cmodal-body table td{padding:7px 10px;}
-.cmodal-body pre.diagram{font-size:13px;line-height:1.6;padding:14px 16px;}
+.cmodal-body pre.diagram{background:var(--surface-dark);color:#e2e8f0;border-color:transparent;font-size:13px;line-height:1.6;padding:14px 16px;}
 .cmodal-body .note{font-size:var(--fs-2);}
 .cmodal-body .es-h{font-size:var(--fs-4);}
 /* 모달 '답안 모드' 토글 — 카드를 골격 01~22줄 답안지로 전환(모든 줄 왼쪽 줄번호) */
@@ -266,7 +274,7 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 .asc{font-size:var(--fs-2);color:var(--ink);min-width:0;line-height:1.6;}
 .asl.h .asc{font-weight:800;color:var(--ink);}
 .asl.h2 .asc{font-weight:700;color:var(--ink-600);}
-.asl.q .asc{font-weight:800;background:#0f172a;color:#fff;border-radius:6px;padding:3px 9px;}
+.asl.q .asc{font-weight:800;background:var(--surface-dark);color:#fff;border-radius:6px;padding:3px 9px;}
 .asl.note .asc{color:#92400e;}
 .asl.empty{min-height:1.5em;}
 .asheet .asdiag{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre-wrap;color:var(--ink);}
@@ -313,7 +321,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .info-body th,.info-body td{border:1px solid var(--line);padding:8px 11px;text-align:left;vertical-align:top;line-height:1.5;}
 .info-body th{background:var(--surface-3);font-weight:700;color:var(--ink-700);white-space:nowrap;}
 .info-body td:first-child{font-weight:600;color:var(--ink-700);background:var(--surface-2);white-space:nowrap;}
-.info-body .info-note{margin-top:14px;font-size:var(--fs-1);color:var(--ink-600);background:#fffbeb;border-left:3px solid var(--warn);padding:9px 12px;border-radius:0 var(--r-sm) var(--r-sm) 0;line-height:1.6;}
+.info-body .info-note{margin-top:14px;font-size:var(--fs-1);color:var(--ink-600);background:var(--warn-bg);border-left:3px solid var(--warn);padding:9px 12px;border-radius:0 var(--r-sm) var(--r-sm) 0;line-height:1.6;}
 .info-body .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0;}
 .info-body .info-kpi{border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;background:var(--surface-2);}
 .info-body .info-kpi .k{font-size:var(--fs-1);color:var(--muted);font-weight:700;letter-spacing:.2px;}
@@ -373,8 +381,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .sheet-row:hover{background:var(--surface-2);}
 .st-badge{display:inline-block;font-size:10px;font-weight:700;color:#7e22ce;background:#f3e8ff;border-radius:5px;padding:0 5px;margin-left:4px;vertical-align:middle;}
 /* 난이도·빈출 배지(테마 무관 rgba 틴트) */
-.lv-badge{display:inline-block;font-size:9px;font-weight:800;padding:1px 6px;border-radius:var(--r-pill);margin-left:5px;vertical-align:middle;white-space:nowrap;letter-spacing:.2px;}
-.lv-badge.lv-hot{background:rgba(220,38,38,.15);color:#dc2626;}
+.lv-badge{display:inline-block;font-size:var(--fs-0);font-weight:800;padding:1px 6px;border-radius:var(--r-pill);margin-left:5px;vertical-align:middle;white-space:nowrap;letter-spacing:.2px;}
+.lv-badge.lv-hot{background:rgba(220,38,38,.15);color:#b91c1c;}
 .lv-badge.lv-std{background:rgba(100,116,139,.16);color:var(--ink-500);}
 .lv-badge.lv-adv{background:rgba(124,58,237,.16);color:#8b5cf6;}
 .chip.lvl.active{background:var(--ink-600);color:#fff;border-color:transparent;}
@@ -530,9 +538,13 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 /* ===== 6-Key 노출 미터(카드 하단) ===== */
 .k6{display:flex;align-items:center;gap:5px;margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);font-size:var(--fs-1);}
 .k6-lbl{font-weight:800;color:var(--muted);letter-spacing:-.3px;margin-right:1px;}
-.k6-chip{opacity:.26;filter:grayscale(1);font-size:13px;line-height:1;transition:opacity .12s,filter .12s;cursor:default;}
+.k6-chips{display:inline-flex;align-items:center;gap:5px;}
+.k6-chip{opacity:.4;filter:grayscale(1);font-size:13px;line-height:1;transition:opacity .12s,filter .12s;cursor:default;}
 .k6-chip.on{opacity:1;filter:none;}
 .k6-n{margin-left:auto;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;}
+/* 6-Key 강등(R7): 카드 기본형은 'n/6' 요약만, 8아이콘 상세는 모달(확대) 시에만 */
+#content .k6-chips{display:none;}
+.cmodal-body .k6-chips{display:inline-flex;}
 
 /* ===== 카드 암기모드(정의 가리기) — 정의 클릭 시 개별 공개 ===== */
 #content.cards-mask .card .def:not(.revealed){
@@ -636,6 +648,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
   .viewsw button{flex:1 1 0;padding:8px 6px;font-size:var(--fs-1);}
   #content{padding:14px 12px 80px;}
   .grid{grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:12px;}
+  pre.diagram{font-size:12.5px;}                    /* R10: 모바일 구성도 가독 하한 */
+  .card table td:first-child{white-space:normal;}   /* R10: 좁은 폭 구분셀 오버플로 방지 */
   .chip{padding:8px 13px;}                 /* 터치 타깃 ↑ */
   /* facet: 여러 줄 wrap → 1줄 가로 스크롤(세로 점유 축소) */
   .facets{padding:6px 12px;gap:5px;}
