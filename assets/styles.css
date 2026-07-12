@@ -219,12 +219,16 @@ table{width:100%;border-collapse:collapse;font-size:var(--fs-1);}
 .blk table,.cmodal-body table,.st-orig table{table-layout:fixed;}   /* T4: colgroup 폭 고정으로 632장 열폭 통일 */
 table th,table td{border:1px solid var(--table-line);padding:5px 7px;text-align:left;vertical-align:top;overflow-wrap:anywhere;}   /* T4: 비분절 토큰 절단 대신 wrap */
 table th{background:var(--surface-3);font-weight:700;color:var(--ink-800);}   /* D2: 헤더 명도 복원(앵커) */
-table thead th{border-bottom:2px solid var(--line-strong);}   /* T3: 헤더 수평축 분리 */
-/* 구분 열(th scope=row/rowgroup): D1 3층 배경 사다리(구분=surface-2, 헤더>구분>본문) + D2 명도 복원(ink-800). 위계는 배경틴트+굵기로. */
-table th[scope="row"],table th[scope="rowgroup"]{white-space:normal;font-weight:600;color:var(--ink-800);background:var(--surface-2);border-left:2px solid var(--line-strong);}
+table thead th{border-bottom:2px solid var(--line-strong);}   /* T3: 헤더 수평축 분리(L 프레임 가로) */
+table thead th:first-child{border-right:2px solid var(--ink-400);}   /* D4: 헤더 코너~구분열 세로 스파인 연속 */
+/* 구분 열(th scope=row/rowgroup): D1 3층 배경 사다리 + D2 명도 복원(ink-800). D4 액센트를 좌측→구분열↔데이터 경계(우측·가시대비 ink-400)로 이설 → 헤더 하단 2px 와 L 프레임. */
+table th[scope="row"],table th[scope="rowgroup"]{white-space:normal;font-weight:600;color:var(--ink-800);background:var(--surface-2);border-right:2px solid var(--ink-400);}
 table th[scope="rowgroup"]{vertical-align:middle;}
 /* D3: 그룹 시작 행 상단 전폭 2px 강선 — rowspan 청크를 표 전폭으로 시각화(셀 경계 1px / 그룹 경계 2px 2단) */
 .blk table tbody tr.grp>*,.cmodal-body table tbody tr.grp>*{border-top:2px solid var(--line-strong);}
+/* D5: 열별 타이포 위계 — 구성요소(키) 강조 / 역할(설명) 약화. 비교표(compare)·essay 는 제외(대칭 유지) */
+.card:not(.compare) .blk table tbody td:nth-of-type(1),.cmodal-body .card:not(.compare) .blk table tbody td:nth-of-type(1){font-weight:600;color:var(--ink-800);}
+.card:not(.compare) .blk table tbody td:nth-of-type(2),.cmodal-body .card:not(.compare) .blk table tbody td:nth-of-type(2){font-weight:400;color:var(--ink-700);}
 .cmodal-body tbody tr:hover td{background:var(--surface-2);}   /* T3: 모달 확대표 행 hover(그리드는 클릭=모달) */
 /* 정의 비교(2열 A|B) — 구분 라벨 열 없음: 좌우 동일 폭·동일 스타일(색 구분 제거) */
 table.cmp2{table-layout:fixed;}
