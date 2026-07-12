@@ -147,7 +147,8 @@
         }
       });
       if(first!=='') last1 = first;   // 유효 구분값 갱신
-      trs += '<tr>'+cells+'</tr>';
+      var isGrp = (!grouped && ri>0);   // D3: 새 구분(그룹) 시작 행 — 상단 전폭 강선(첫 행은 thead 하단선과 중복이라 제외)
+      trs += '<tr'+(isGrp?' class="grp"':'')+'>'+cells+'</tr>';
     });
     // T4: 3열표 열폭 고정(구분 22 / 구성요소 34 / 역할 44%) — table-layout:fixed 와 병용
     var colg = (ncol===3) ? '<colgroup><col style="width:22%"><col style="width:34%"><col style="width:44%"></colgroup>' : '';
