@@ -102,39 +102,54 @@
   }
 
   function _p2(n){ return n<10 ? '0'+n : ''+n; }
-  function tableHTML(t, cls){
+  // 구성요소/비교 표. T1(접근성): thead/tbody·th scope(col/row/rowgroup)·sr-only caption.
+  // T2(견고성): 연속 동일(또는 빈) 1열 값을 위 구분에 자동 rowspan 병합 + 고아행·열수 방어.
+  function tableHTML(t, cls, caption){
     if(!t) return '';
-    var h = '';
-    if(t.head && t.head.length){
-      h += '<tr>'+t.head.map(function(c){return '<th>'+escHTML(c)+'</th>';}).join('')+'</tr>';
-    }
+    var cap = caption ? '<caption class="sr-only">'+escHTML(caption)+'</caption>' : '';
+    var head = (t.head && t.head.length) ? t.head : null;
+    var thead = head ? '<thead><tr>'+head.map(function(c){return '<th scope="col">'+escHTML(c)+'</th>';}).join('')+'</tr></thead>' : '';
     var rows = t.rows||[];
     // 정의 비교(cmp2): 각 열의 여러 행을 한 셀로 합쳐 복사 용이(칸 분할 없음 — 줄바꿈만).
     if(cls==='cmp2'){
-      var nc = (t.head&&t.head.length) || (rows[0]?rows[0].length:0), mg=[];
+      var nc = (head&&head.length) || (rows[0]?rows[0].length:0), mg=[];
       for(var ci=0; ci<nc; ci++){
         mg.push(rows.map(function(r){ return r[ci]; }).filter(function(x){ return x!=null && x!==''; }).join(' '));
       }
-      h += '<tr>'+mg.map(function(c){ return '<td>'+escHTML(c)+'</td>'; }).join('')+'</tr>';
-      return '<table class="cmp2">'+h+'</table>';
+      var cbody = '<tbody><tr>'+mg.map(function(c){ return '<td>'+escHTML(c)+'</td>'; }).join('')+'</tr></tbody>';
+      return '<table class="cmp2">'+cap+thead+cbody+'</table>';
     }
-    // 비교형 구분 그룹화: 1열이 ""인 행은 위 구분 셀에 rowspan 병합(빈 구분 셀은 렌더 생략).
-    // 기존 표는 빈 1열이 없어 동작 불변(하위호환).
+    var ncol = head ? head.length : (rows[0]?rows[0].length:0);
+    var last1 = null;   // 마지막 유효 1열(구분) 값 — 빈 센티넬·연속 동일값 귀속용
+    var trs = '';
     rows.forEach(function(r, ri){
+      // 열수 방어: 부족분 빈칸 패딩, 초과분 무시(정렬 붕괴 차단)
+      var row = (r||[]).slice(0, ncol);
+      while(row.length < ncol) row.push('');
+      var first = row[0]==null ? '' : row[0];
+      // 자동 그룹화: 빈값 또는 앞 유효값과 동일 → 위 구분에 병합. 단 첫 데이터행이 빈값이면(앵커 없음) 폴백.
+      var grouped = (first==='' || (last1!==null && first===last1));
+      if(grouped && last1===null) grouped = false;
       var cells = '';
-      r.forEach(function(c, ci){
-        if(ci===0 && c===''){ return; }   // 위 구분에 병합됨 → 셀 생략
-        var span = '';
+      row.forEach(function(c, ci){
         if(ci===0){
+          if(grouped) return;   // 위 구분에 병합됨 → 셀 생략
+          // 이 구분 값이 걸치는 행 수(이어지는 빈값·동일값 연속)
           var rs = 1;
-          for(var k=ri+1; k<rows.length && rows[k][0]===''; k++) rs++;
-          if(rs>1) span = ' rowspan="'+rs+'"';
+          for(var k=ri+1; k<rows.length; k++){
+            var nf = (rows[k] && rows[k][0]!=null) ? rows[k][0] : '';
+            if(nf==='' || nf===first) rs++; else break;
+          }
+          var scope = rs>1 ? 'rowgroup' : 'row';
+          cells += '<th scope="'+scope+'"'+(rs>1?' rowspan="'+rs+'"':'')+'>'+escHTML(c)+'</th>';
+        } else {
+          cells += '<td>'+escHTML(c)+'</td>';
         }
-        cells += '<td'+span+'>'+escHTML(c)+'</td>';
       });
-      h += '<tr>'+cells+'</tr>';
+      if(first!=='') last1 = first;   // 유효 구분값 갱신
+      trs += '<tr>'+cells+'</tr>';
     });
-    return '<table'+(cls?' class="'+cls+'"':'')+'>'+h+'</table>';
+    return '<table'+(cls?' class="'+cls+'"':'')+'>'+cap+thead+'<tbody>'+trs+'</tbody></table>';
   }
 
   // 2교시 논술 카드 — 한 블록(개요 도식+개념+※) / 상세(표·구성도+※) 골격을 절(節)별로 렌더.
@@ -144,7 +159,7 @@
     var h = '';
     if(b.diagram)  h += '<pre class="diagram">'+escHTML(b.diagram)+'</pre>';
     if(b.concepts) b.concepts.forEach(function(t){ h += '<div class="def">'+escHTML(t)+'</div>'; });
-    if(b.table)    h += tableHTML(b.table);
+    if(b.table)    h += tableHTML(b.table, '', b.title ? b.title+' 구성요소' : '구성요소 표');
     if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
     return h;
   }
@@ -204,8 +219,8 @@
     var body;
     if(card.compare){
       body =
-        '<div class="blk"><div class="lbl tier1">I. 정의 비교</div>'+tableHTML(card.defTable, 'cmp2')+dnote+'</div>'+
-        '<div class="blk"><div class="lbl tier1 ink">II. 상세 비교</div>'+tableHTML(card.table)+fnote+'</div>';
+        '<div class="blk"><div class="lbl tier1">I. 정의 비교</div>'+tableHTML(card.defTable, 'cmp2', card.title+' 정의 비교')+dnote+'</div>'+
+        '<div class="blk"><div class="lbl tier1 ink">II. 상세 비교</div>'+tableHTML(card.table, '', card.title+' 상세 비교')+fnote+'</div>';
     } else {
       // I. 정의: 리드 키워드+토픽을 헤더로(골격 03줄), 정의문 본문은 아래(04·05)
       var defLead = card.keyword ? 'I. "<span class="lead-kw">'+escHTML(card.keyword)+'</span>" '+escHTML(card.title)+'의 정의'
@@ -213,7 +228,7 @@
       body =
         '<div class="blk"><div class="lbl tier1">'+defLead+'</div><div class="def">'+escHTML(_stripLeadKw(card.def))+'</div></div>'+
         '<div class="blk"><div class="lbl tier2">1. 구성도</div>'+diag+dnote+'</div>'+
-        '<div class="blk"><div class="lbl tier2">2. 구성요소</div>'+tableHTML(card.table)+'</div>'+
+        '<div class="blk"><div class="lbl tier2">2. 구성요소</div>'+tableHTML(card.table, '', card.title+' 구성요소')+'</div>'+
         fnote;
     }
     return '<div '+cardAttrs(card, domId)+' style="'+cstyle+'">'+
@@ -260,7 +275,7 @@
         return (d.cards || []).filter(function(c){ return c.category === catId; }).map(function(c){
           // 구성도·구성요소는 1줄 직렬화(st-flat)와 원본(st-orig)을 함께 렌더 → 체크박스로 CSS 전환
           var origD = c.diagram ? '<pre class="st-orig st-orig-diag">'+escHTML(c.diagram)+'</pre>' : '';
-          var origT = (c.table && c.table.rows && c.table.rows.length) ? '<div class="st-orig">'+tableHTML(c.table)+'</div>' : '';
+          var origT = (c.table && c.table.rows && c.table.rows.length) ? '<div class="st-orig">'+tableHTML(c.table, '', c.title+' 구성요소')+'</div>' : '';
           return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-sub="'+escAttr(c.subcat||'')+'" data-key="'+escAttr(d.id+'|'+c.title)+'" data-lvl="'+escAttr(c.level||'')+'" data-k="'+escAttr(c.keywords)+'">'+
             '<td class="st-title">'+lvlBadge(c)+' '+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+(c.essay?' <span class="st-badge st-essay">2교시</span>':'')+'</td>'+
             '<td class="st-kw">'+escHTML(c.keyword||'')+'</td>'+
