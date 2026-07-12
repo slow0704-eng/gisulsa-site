@@ -84,6 +84,10 @@
       el.classList.toggle('is-done', !!PROG.done[k]);
       el.classList.toggle('is-marked', !!PROG.mark[k]);
       el.classList.toggle('is-wrong', !!PROG.wrong[k]);
+      var bd = el.querySelector ? el.querySelector('.cm-done') : null;
+      if(bd) bd.setAttribute('aria-pressed', !!PROG.done[k] ? 'true' : 'false');
+      var bm = el.querySelector ? el.querySelector('.cm-mark') : null;
+      if(bm) bm.setAttribute('aria-pressed', !!PROG.mark[k] ? 'true' : 'false');
     });
   }
   // 퀴즈 결과 훅 — 오답노트 누적(오답=기록, 정답=해제). quiz.js 가 호출.
@@ -691,9 +695,10 @@
   // 카드 DOM(data-dom + h3 제목)으로 원본 카드 데이터 조회 — 답안지 뷰 생성용
   function findCardData(el){
     if(!el || !DOMAINS) return null;
-    var dom = el.getAttribute('data-dom');
-    var h3 = el.querySelector('h3');
-    var title = h3 ? h3.textContent : '';
+    // data-key(=dom|title) 결정적 매칭 — h3 DOM 변화(리드키워드 span·확대 버튼)에 영향 없음
+    var dom, title, key = el.getAttribute('data-key');
+    if(key && key.indexOf('|') >= 0){ var p = key.split('|'); dom = p[0]; title = p.slice(1).join('|'); }
+    else { dom = el.getAttribute('data-dom'); var h3 = el.querySelector('h3'); title = h3 ? h3.textContent : ''; }
     var found = null;
     DOMAINS.forEach(function(d){
       if(found || d.id !== dom) return;
@@ -765,11 +770,12 @@
       var card = e.target.closest('.card');
       if(card) openCardModal(card);
     });
-    // 카드 키보드(Enter/Space)로 열기 — 카드는 role=button tabindex=0
+    // 키보드: 확대(card-zoom)·진도(cm-btn)는 실제 <button>이라 브라우저 기본 동작이 처리.
+    // essay 절 헤더(es-h, role=button div)만 Enter/Space 아코디언 토글을 수동 처리.
     contentEl.addEventListener('keydown', function(e){
       if(e.key!=='Enter' && e.key!==' ' && e.key!=='Spacebar') return;
-      var card = e.target && e.target.closest ? e.target.closest('.card') : null;
-      if(card){ e.preventDefault(); openCardModal(card); }
+      var esh = e.target && e.target.closest ? e.target.closest('.es-h[role="button"]') : null;
+      if(esh){ e.preventDefault(); var sec=esh.closest('.es-sec'); if(sec) sec.classList.toggle('collapsed'); }
     });
     modalEl.addEventListener('click', function(e){
       var esh = e.target && e.target.closest ? e.target.closest('.es-h') : null;
@@ -779,6 +785,10 @@
     document.addEventListener('keydown', function(e){
       if(!modalOpen()) return;
       if(e.key==='Escape'){ closeCardModal(); return; }
+      if(e.key==='Enter' || e.key===' ' || e.key==='Spacebar'){   // essay 절 헤더 아코디언
+        var esh = e.target && e.target.closest ? e.target.closest('.es-h[role="button"]') : null;
+        if(esh){ e.preventDefault(); var sec=esh.closest('.es-sec'); if(sec) sec.classList.toggle('collapsed'); return; }
+      }
       if(e.key==='Tab'){   // 포커스 트랩 — 모달 내부 포커스 가능 요소 순환
         var f = modalEl.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
         if(!f.length) return;
@@ -909,23 +919,37 @@
       ch.addEventListener('click', function(){ state.lvl = ch.getAttribute('data-lvl'); buildProgFacet(); applyActiveFilter(); });
     });
   }
-  // 카드 마크 버튼(✓완료·★북마크) 클릭 — 위임, 모달 안 열리게 stopPropagation
-  contentEl.addEventListener('click', function(e){
+  // 진도(✓완료·★북마크) 상태를 data-key 기준으로 그리드·모달 클론·시트에 일괄 동기화
+  function cssEsc(k){ return (window.CSS && CSS.escape) ? CSS.escape(k) : k; }
+  function applyMarkState(k, act){
+    var on = !!(act==='done' ? PROG.done : PROG.mark)[k];
+    var cls = act==='done' ? 'is-done' : 'is-marked';
+    var mk  = act==='done' ? 'cm-done' : 'cm-mark';
+    var sel = '[data-key="'+cssEsc(k)+'"]';
+    [contentEl, modalBody, sheetBody].forEach(function(root){
+      if(!root) return;
+      root.querySelectorAll('.card'+sel+', .sheet-row'+sel).forEach(function(el){ el.classList.toggle(cls, on); });
+      root.querySelectorAll('.card'+sel+' .'+mk).forEach(function(b){ b.setAttribute('aria-pressed', on?'true':'false'); });
+    });
+  }
+  function toggleProg(k, act){
+    var store = act==='done' ? PROG.done : PROG.mark;
+    if(store[k]) delete store[k]; else store[k]=1;
+    saveProg();
+    applyMarkState(k, act);
+    buildProgFacet();
+    if(state.only!=='all') applyFilter();
+  }
+  // 마크 버튼 클릭 — 위임(모달 안 열리게 stopPropagation). 그리드·모달 클론 양쪽에 부착.
+  function onMarkClick(e){
     var b = e.target && e.target.closest ? e.target.closest('.cm-btn') : null;
     if(!b) return;
     e.stopPropagation();
     var card = b.closest('.card'); if(!card) return;
-    var k = card.getAttribute('data-key'), act = b.getAttribute('data-act');
-    var store = act==='done' ? PROG.done : PROG.mark;
-    if(store[k]) delete store[k]; else store[k]=1;
-    saveProg();
-    card.classList.toggle(act==='done' ? 'is-done' : 'is-marked');
-    // 시트 행도 동기화
-    var row = sheetBody && sheetBody.querySelector('.sheet-row[data-key="'+(window.CSS&&CSS.escape?CSS.escape(k):k)+'"]');
-    if(row) row.classList.toggle(act==='done'?'is-done':'is-marked', !!store[k]);
-    buildProgFacet();
-    if(state.only!=='all') applyFilter();
-  });
+    toggleProg(card.getAttribute('data-key'), b.getAttribute('data-act'));
+  }
+  contentEl.addEventListener('click', onMarkClick);
+  if(modalEl) modalEl.addEventListener('click', onMarkClick);
 
   // ---- init ----
   buildContent();

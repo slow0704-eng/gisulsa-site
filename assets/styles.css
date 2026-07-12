@@ -177,11 +177,14 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px;}
 .card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--line-strong);border-radius:var(--r-md);padding:var(--sp-4) var(--sp-4) var(--sp-3);box-shadow:var(--sh-1);display:flex;flex-direction:column;min-width:0;cursor:pointer;position:relative;transition:box-shadow .12s,transform .12s;}
 .card:hover{box-shadow:var(--sh-2);transform:translateY(-1px);}
-.card::after{content:"⤢";position:absolute;top:10px;right:12px;font-size:13px;color:var(--line-strong);opacity:.5;transition:opacity .12s;}
-/* 카드 진도 마크(✓완료·★북마크) */
-.card-mark{position:absolute;top:8px;right:32px;display:flex;gap:3px;z-index:3;}
-.cm-btn{cursor:pointer;width:21px;height:21px;line-height:1;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-400);border-radius:6px;font-size:12px;font-weight:800;padding:0;transition:all .12s;}
-.cm-btn:hover{border-color:var(--brand-strong);color:var(--ink);transform:scale(1.1);}
+/* 확대 트리거(⤢) — 실제 <button>. 명도 대비 3:1↑(--ink-500), 카드 hover·터치기기 상시 노출 */
+.card-zoom{position:absolute;top:6px;right:7px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:0;background:transparent;color:var(--ink-500);opacity:.8;font-size:15px;line-height:1;cursor:pointer;padding:0;border-radius:6px;z-index:3;transition:opacity .12s,color .12s,background .12s;}
+.card-zoom:hover,.card-zoom:focus-visible{opacity:1;color:var(--ink);background:var(--ink-100);}
+/* 카드 진도 마크(✓완료·★북마크) — 시각 24px(WCAG 2.5.8), 히트영역 44px(::before), 아이콘/테두리 --ink-500(≈4.7:1) */
+.card-mark{position:absolute;top:8px;right:38px;display:flex;gap:8px;z-index:3;}
+.cm-btn{position:relative;cursor:pointer;width:24px;height:24px;line-height:1;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--ink-500);background:var(--surface);color:var(--ink-500);border-radius:6px;font-size:13px;font-weight:800;padding:0;transition:all .12s;}
+.cm-btn::before{content:"";position:absolute;top:-10px;bottom:-10px;left:-10px;right:-10px;}
+.cm-btn:hover{border-color:var(--brand-strong);color:var(--ink);background:var(--ink-50);}
 .card.is-done .cm-done{background:var(--ok);color:#fff;border-color:var(--ok);}
 .card.is-marked .cm-mark{background:var(--warn);color:#fff;border-color:var(--warn);}
 .card.is-done{opacity:.68;}
@@ -190,12 +193,15 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .sheet-row.is-done{opacity:.6;}
 .sheet-row.is-marked .st-title::after{content:" ★";color:var(--warn);}
 .sheet-row.is-wrong .st-title::before{content:"⚠ ";color:var(--err);}
-.card:hover::after,.card:focus-visible::after{opacity:1;}
-.card h3{margin:0 0 var(--sp-1);font-size:var(--fs-4);line-height:var(--lh-title);}
+.card:hover .card-zoom{opacity:1;}
+@media (pointer:coarse){.card-zoom{opacity:1;}}
+.card h3{margin:0 0 var(--sp-1);font-size:var(--fs-4);line-height:var(--lh-title);padding-right:88px;}
 .card .tag{align-self:flex-start;display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:var(--r-pill);margin-bottom:var(--sp-3);}
 .blk{margin-top:10px;}
 .blk .lbl{font-size:var(--fs-1);font-weight:800;color:var(--muted);letter-spacing:.3px;margin-bottom:4px;}
 .blk .lbl.ink{color:var(--ink);}
+/* 리드키워드 강조 — 일반모드 brand 강조, 암기모드에선 정의와 함께 블러(정답 절반 누출 방지) */
+.lead-kw{color:var(--brand-strong);font-weight:800;}
 .def{font-size:var(--fs-2);color:var(--ink-700);line-height:var(--lh-body);}
 pre.diagram{margin:0;background:var(--surface-dark);color:var(--ink-200);border-radius:var(--r-sm);padding:11px 12px;font-size:11.5px;line-height:1.5;overflow-x:auto;font-family:var(--font-mono);white-space:pre;}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-1);}
@@ -238,8 +244,8 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 /* 모달 안의 카드 — 크게(폰트·다이어그램 확대), 클릭/확대 affordance 제거 */
 .cmodal-body .card{cursor:default;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.3);transform:none;border-top-width:5px;}
 .cmodal-body .card:hover{transform:none;}
-.cmodal-body .card::after{display:none;}
-.cmodal-body .card h3{font-size:var(--fs-5);}
+.cmodal-body .card-zoom{display:none;}
+.cmodal-body .card h3{font-size:var(--fs-5);padding-right:0;}
 .cmodal-body .def,.cmodal-body .es-concl{font-size:var(--fs-3);}
 .cmodal-body table{font-size:var(--fs-2);}
 .cmodal-body table th,.cmodal-body table td{padding:7px 10px;}
@@ -535,6 +541,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 }
 #content.cards-mask .card .def:not(.revealed):hover{filter:blur(2.5px);}
 #content.cards-mask .card .def.revealed{outline:none;}
+/* 리드키워드도 함께 가림 — 같은 blk의 정의가 공개되면(:has) 키워드도 해제 */
+#content.cards-mask .card .blk:has(.def:not(.revealed)) .lead-kw{filter:blur(5px);user-select:none;border-radius:4px;transition:filter .1s;}
 
 /* ===== essay(2교시) 절 아코디언 — 모바일에서 절 접기/펼치기 ===== */
 .es-h{display:flex;align-items:center;gap:6px;}

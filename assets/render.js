@@ -48,12 +48,17 @@
     }
     return true;
   }
-  // 카드 공통 속성(접근성: 클릭/Enter 로 확대 모달 — role·tabindex·aria-label)
+  // 카드 공통 속성 — 컨테이너는 role=group(그룹 라벨). 확대·진도 컨트롤은 카드 내부의
+  // 실제 <button>(card-zoom·cm-btn)로 분리해 nested-interactive(WCAG 4.1.2) 회피.
   function cardAttrs(card, domId, extraClass){
-    return 'class="card'+(extraClass?' '+extraClass:'')+'" role="button" tabindex="0"'+
-      ' aria-label="'+escAttr(card.title)+' — 카드 확대(클릭 또는 Enter)"'+
+    return 'class="card'+(extraClass?' '+extraClass:'')+'" role="group"'+
+      ' aria-label="'+escAttr(card.title)+'"'+
       ' data-dom="'+escAttr(domId)+'" data-cat="'+escAttr(card.category)+'" data-sub="'+escAttr(card.subcat||'')+'" data-k="'+escAttr(card.keywords)+'"'+
       ' data-key="'+escAttr(domId+'|'+card.title)+'" data-lvl="'+escAttr(card.level||'')+'"';
+  }
+  // 확대(펼쳐 보기) 트리거 — 카드당 단일 명시적 버튼(키보드·스크린리더 진입점)
+  function zoomCtl(card){
+    return '<button type="button" class="card-zoom" data-act="zoom" aria-label="'+escAttr(card.title)+' 확대 보기" title="확대 보기">⤢</button>';
   }
   // 난이도·빈출 배지(★핵심·●표준·▲심화)
   function lvlBadge(card){
@@ -65,8 +70,8 @@
   // 카드 진도 마크(학습완료·북마크) — 카드 우상단, 클릭 시 모달 대신 토글(app.js가 위임 처리)
   function markCtl(){
     return '<div class="card-mark">'+
-      '<button type="button" class="cm-btn cm-done" data-act="done" title="학습완료 표시">✓</button>'+
-      '<button type="button" class="cm-btn cm-mark" data-act="mark" title="북마크">★</button>'+
+      '<button type="button" class="cm-btn cm-done" data-act="done" aria-label="학습완료 표시" aria-pressed="false" title="학습완료 표시">✓</button>'+
+      '<button type="button" class="cm-btn cm-mark" data-act="mark" aria-label="북마크" aria-pressed="false" title="북마크">★</button>'+
     '</div>';
   }
 
@@ -189,7 +194,7 @@
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag" style="background:'+c.bg+';color:'+c.tagColor+'">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="border-top-color:'+c.color+'">'+
-        markCtl()+head+essayHTML(card)+
+        markCtl()+zoomCtl(card)+head+essayHTML(card)+
       '</div>';
     }
     var body;
@@ -199,7 +204,7 @@
         '<div class="blk"><div class="lbl ink">II. 상세 비교</div>'+tableHTML(card.table)+fnote+'</div>';
     } else {
       // I. 정의: 리드 키워드+토픽을 헤더로(골격 03줄), 정의문 본문은 아래(04·05)
-      var defLead = card.keyword ? 'I. "'+escHTML(card.keyword)+'" '+escHTML(card.title)+'의 정의'
+      var defLead = card.keyword ? 'I. "<span class="lead-kw">'+escHTML(card.keyword)+'</span>" '+escHTML(card.title)+'의 정의'
                                  : 'I. '+escHTML(card.title)+'의 정의';
       body =
         '<div class="blk"><div class="lbl">'+defLead+'</div><div class="def">'+escHTML(_stripLeadKw(card.def))+'</div></div>'+
@@ -209,7 +214,7 @@
         fnote;
     }
     return '<div '+cardAttrs(card, domId)+' style="border-top-color:'+c.color+'">'+
-      markCtl()+head+body+sixKeyMeter(card)+
+      markCtl()+zoomCtl(card)+head+body+sixKeyMeter(card)+
     '</div>';
   }
 
