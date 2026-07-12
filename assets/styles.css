@@ -208,8 +208,12 @@ table.cmp2 th,table.cmp2 td{width:50%;}
 table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;background:transparent;}
 .note{margin-top:11px;font-size:var(--fs-1);color:var(--ink-600);background:#fffbeb;border-left:3px solid var(--warn);padding:7px 10px;border-radius:0 var(--r-sm) var(--r-sm) 0;}
 
+/* 성능(P2): 화면 밖 카드는 렌더(레이아웃·페인트) 생략 — DOM은 유지되어 검색·필터·Ctrl+F 정상.
+   contain-intrinsic-size 로 자리 높이 예약(스크롤바 안정). essay(전체폭·가변높이)는 큰 값 예약. */
+.card{content-visibility:auto;contain-intrinsic-size:auto 360px;}
+
 /* ===== 2교시 논술 카드(전체폭) ===== */
-.card.essay{grid-column:1/-1;}
+.card.essay{grid-column:1/-1;contain-intrinsic-size:auto 900px;}
 .es-prob{background:#0f172a;color:#fff;border-radius:10px;padding:12px 16px;margin:2px 0 6px;}
 .es-pq{font-weight:800;font-size:var(--fs-3);letter-spacing:-.2px;}
 .es-reqs{margin:7px 0 0;padding-left:18px;font-size:var(--fs-2);color:#cbd5e1;}
