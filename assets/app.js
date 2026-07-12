@@ -320,27 +320,41 @@
     });
     return items;
   }
+  // 뷰 모듈(quiz·practice·glossary)은 초기 로드에서 제외 → 해당 뷰 첫 진입 시 온디맨드 로드(P4)
   var quizBuilt=false;
   function startQuiz(){
-    if(!window.GSQuiz || !quizBody){ return; }
-    window.GSQuiz.start(quizBody, allItems());
-    quizBuilt=true;
-    countEl.textContent = '🧩 퀴즈';
+    if(!quizBody || quizBuilt){ return; }
+    loadScript('assets/quiz.js').then(function(){
+      if(!window.GSQuiz){ return; }
+      window.GSQuiz.start(quizBody, allItems());
+      quizBuilt=true;
+      countEl.textContent = '🧩 퀴즈';
+      if(window.lucide) lucide.createIcons();
+    });
   }
   // ---- 연습(타자연습): 리드키워드·정의문 따라치기 — 퀴즈처럼 전 과목 카드에서 자체 생성 ----
   var practiceBuilt=false;
   function startPractice(){
-    if(!window.GSPractice || !practiceBody){ return; }
-    window.GSPractice.start(practiceBody, allItems());
-    practiceBuilt=true;
-    countEl.textContent = '⌨ 연습';
+    if(!practiceBody || practiceBuilt){ return; }
+    loadScript('assets/practice.js').then(function(){
+      if(!window.GSPractice){ return; }
+      window.GSPractice.start(practiceBody, allItems());
+      practiceBuilt=true;
+      countEl.textContent = '⌨ 연습';
+      if(window.lucide) lucide.createIcons();
+    });
   }
   var glossBuilt=false;
   function startGloss(){
-    if(!window.GSGloss || !glossBody){ return; }
-    window.GSGloss.start(glossBody);
-    glossBuilt=true;
-    countEl.textContent = '📖 용어';
+    if(!glossBody || glossBuilt){ return; }
+    // 용어 사전은 데이터(glossary-data)→로직(glossary) 순으로 로드
+    loadScript('assets/glossary-data.js').then(function(){ return loadScript('assets/glossary.js'); }).then(function(){
+      if(!window.GSGloss){ return; }
+      window.GSGloss.start(glossBody);
+      glossBuilt=true;
+      countEl.textContent = '📖 용어';
+      if(window.lucide) lucide.createIcons();
+    });
   }
 
   function buildSheet(){
@@ -418,9 +432,10 @@
     if(v==='graph' || v==='quiz' || v==='practice' || v==='gloss') toggleEmpty(false);
     if(v==='graph') countEl.textContent = '🗺 관계도';
 
-    if(v==='graph' && window.GSGraph){
-      // vis-network 온디맨드 로드 후 그래프 빌드(초기 로딩에서 152KB 제외)
-      ensureVis().then(function(){
+    if(v==='graph'){
+      // graph.js(로직) + vis-network(152KB) 온디맨드 로드 후 그래프 빌드(초기 로딩에서 제외)
+      Promise.all([loadScript('assets/graph.js'), ensureVis()]).then(function(){
+        if(!window.GSGraph) return;
         var ok = window.GSGraph.build(graphCanvas, DOMAINS, { onTopicClick:function(title){
           searchEl.value = title; state.q = String(title).toLowerCase();
           state.dom='all'; state.sec='all'; state.sub='all'; buildDomFacet(); buildSecFacet(); buildSubFacet();
@@ -445,6 +460,20 @@
   document.querySelectorAll('#viewsw button').forEach(function(b){
     b.addEventListener('click', function(){ setView(b.getAttribute('data-v')); });
   });
+  // info.js(시험 안내 모달) 온디맨드(P4): 첫 시험안내 버튼 클릭 시 로드 후 재실행
+  (function(){
+    var infoLoaded=false;
+    document.querySelectorAll('.foot-link[data-info]').forEach(function(b){
+      b.addEventListener('click', function(){
+        if(infoLoaded) return;   // 로드 완료 후엔 info.js 자체 핸들러가 처리
+        infoLoaded=true;
+        loadScript('assets/info.js').then(function(){
+          if(window.lucide) lucide.createIcons();
+          b.click();             // info.js 핸들러 부착 완료 → 해당 안내 모달 오픈
+        });
+      });
+    });
+  })();
   var maskDef = document.getElementById('maskDef');
   if(maskDef){ maskDef.addEventListener('change', function(){ sheetBody.classList.toggle('masked', maskDef.checked); }); }
   var maskMore = document.getElementById('maskMore');
