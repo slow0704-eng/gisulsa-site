@@ -40,6 +40,7 @@
   /* 레거시 별칭(P2에서 점진 치환) — 현재 값과 1:1 동일 */
   --ink:var(--ink-800); --ink-soft:var(--ink-600); --muted:var(--ink-500);
   --line:var(--ink-200); --line-strong:var(--ink-300); --bg:var(--ink-50);
+  --table-line:var(--line-strong);   /* 표 격자선 — line 보다 강해 격자 가시성↑(테마 자동) */
   --accent:var(--brand);
 }
 /* 다크 테마 — 잉크 스케일 반전 + 표면 재정의(토큰만 오버라이드, 컴포넌트 무수정) */
@@ -215,11 +216,14 @@ pre.diagram{margin:0;background:var(--surface-2);color:var(--ink-800);border:1px
 /* 스크린리더 전용(시각 숨김) — 표 caption 등 */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-1);}
-table th,table td{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top;}
+.blk table,.cmodal-body table,.st-orig table{table-layout:fixed;}   /* T4: colgroup 폭 고정으로 632장 열폭 통일 */
+table th,table td{border:1px solid var(--table-line);padding:5px 7px;text-align:left;vertical-align:top;overflow-wrap:anywhere;}   /* T4: 비분절 토큰 절단 대신 wrap */
 table th{background:var(--surface-3);font-weight:700;color:var(--ink-600);}
-/* 구분 열은 이제 th[scope=row/rowgroup] — 기존 td:first-child 시각 유지(특이도로 위 규칙 override) */
-table th[scope="row"],table th[scope="rowgroup"]{white-space:nowrap;font-weight:600;color:var(--ink-600);background:var(--surface-2);}
+table thead th{border-bottom:2px solid var(--line-strong);}   /* T3: 헤더 수평축 분리 */
+/* 구분 열(th scope=row/rowgroup): 위계 강조(surface-3·ink-700·좌측 액센트) + fixed 병용으로 wrap */
+table th[scope="row"],table th[scope="rowgroup"]{white-space:normal;font-weight:600;color:var(--ink-700);background:var(--surface-3);border-left:2px solid var(--line-strong);}
 table th[scope="rowgroup"]{vertical-align:middle;}
+.cmodal-body tbody tr:hover td{background:var(--surface-2);}   /* T3: 모달 확대표 행 hover(그리드는 클릭=모달) */
 /* 정의 비교(2열 A|B) — 구분 라벨 열 없음: 좌우 동일 폭·동일 스타일(색 구분 제거) */
 table.cmp2{table-layout:fixed;}
 table.cmp2 th,table.cmp2 td{width:50%;}

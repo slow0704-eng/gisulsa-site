@@ -149,7 +149,9 @@
       if(first!=='') last1 = first;   // 유효 구분값 갱신
       trs += '<tr>'+cells+'</tr>';
     });
-    return '<table'+(cls?' class="'+cls+'"':'')+'>'+cap+thead+'<tbody>'+trs+'</tbody></table>';
+    // T4: 3열표 열폭 고정(구분 22 / 구성요소 34 / 역할 44%) — table-layout:fixed 와 병용
+    var colg = (ncol===3) ? '<colgroup><col style="width:22%"><col style="width:34%"><col style="width:44%"></colgroup>' : '';
+    return '<table'+(cls?' class="'+cls+'"':'')+'>'+cap+colg+thead+'<tbody>'+trs+'</tbody></table>';
   }
 
   // 2교시 논술 카드 — 한 블록(개요 도식+개념+※) / 상세(표·구성도+※) 골격을 절(節)별로 렌더.
