@@ -9,6 +9,13 @@
   // HTML 텍스트 이스케이프(<,>,& 가 태그·엔티티로 해석돼 카드가 깨지는 것 방지)
   function escHTML(s){ return toStr(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escAttr(s){ return escHTML(s).replace(/"/g,'&quot;'); }
+  // 구성도(ASCII) 표시층 — escHTML 이후 화살표·대괄호만 span 래핑해 3층 색 위계(흐름/노드/프레임)를 준다.
+  // 데이터·ASCII 원문·스키마 불변, 색상만 조정(굵기·자간은 CSS 에서 불변 고정 — 폭이 바뀌면 열 정렬이 깨진다).
+  function diagHTML(s){
+    return escHTML(s)
+      .replace(/([→←↑↓↔↕⇄⇆⇅↺⟳])/g, '<span class="dg-arw">$1</span>')
+      .replace(/([\[\]])/g, '<span class="dg-br">$1</span>');
+  }
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
   function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
@@ -160,7 +167,7 @@
   function essayBlock(b){
     if(!b) return '';
     var h = '';
-    if(b.diagram)  h += '<pre class="diagram">'+escHTML(b.diagram)+'</pre>';
+    if(b.diagram)  h += '<pre class="diagram">'+diagHTML(b.diagram)+'</pre>';
     if(b.concepts) b.concepts.forEach(function(t){ h += '<div class="def">'+escHTML(t)+'</div>'; });
     if(b.table)    h += tableHTML(b.table, '', b.title ? b.title+' 구성요소' : '구성요소 표');
     if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
@@ -211,8 +218,11 @@
     // 카테고리 색은 CSS 변수로 주입 → 테마 오버라이드 가능·인라인 반복 제거(R6)
     var cstyle = '--cat-color:'+c.color+';--cat-bg:'+c.bg+';--cat-tag:'+c.tagColor;
     var dnote = card.diagramNote ? '<div class="note">'+escHTML(card.diagramNote)+'</div>' : '';
+    // D8: 도식 첨언은 도식 하단에 물린 캡션('note diag')으로 결속 — 노란 통찰박스는 최종 첨언(note)만.
+    //     비교형은 도식이 없어(정의비교 표 뒤) 기존 note 그대로 사용.
+    var dcap = card.diagramNote ? '<div class="note diag">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
-    var diag = card.diagram ? '<pre class="diagram">'+escHTML(card.diagram)+'</pre>' : '';
+    var diag = card.diagram ? '<pre class="diagram">'+diagHTML(card.diagram)+'</pre>' : '';
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="'+cstyle+'">'+
@@ -230,7 +240,7 @@
                                  : 'I. '+escHTML(card.title)+'의 정의';
       body =
         '<div class="blk"><div class="lbl tier1">'+defLead+'</div><div class="def">'+escHTML(_stripLeadKw(card.def))+'</div></div>'+
-        '<div class="blk"><div class="lbl tier2">1. 구성도</div>'+diag+dnote+'</div>'+
+        '<div class="blk"><div class="lbl tier2">1. 구성도</div>'+diag+dcap+'</div>'+
         '<div class="blk"><div class="lbl tier2">2. 구성요소</div>'+tableHTML(card.table, '', card.title+' 구성요소')+'</div>'+
         fnote;
     }
@@ -417,6 +427,7 @@
 
   GS.escHTML  = escHTML;
   GS.escAttr  = escAttr;
+  GS.diagHTML = diagHTML;
   GS.tableHTML = tableHTML;
   GS.cardHTML = cardHTML;
   GS.answerSheetHTML = answerSheetHTML;

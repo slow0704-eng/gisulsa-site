@@ -24,7 +24,13 @@
   --fw-normal:400; --fw-semibold:600; --fw-bold:800;
   --lh-body:1.55; --lh-title:1.3;
   --font-sans:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
-  --font-mono:"D2Coding",ui-monospace,"Consolas","Courier New",monospace;
+  /* D4: 라틴 전용 mono 로 떨어지기 전 CJK 고정폭 후보를 경유 — 한글 2배폭 미보장 시 ASCII 격자 붕괴 방지 */
+  --font-mono:"D2Coding","Nanum Gothic Coding","NanumGothicCoding","Sarasa Mono K",ui-monospace,"Consolas","Courier New",monospace;
+
+  /* 구성도(ASCII 도식) 공용 토큰 — 6개 렌더 면(그리드·모달·답안지·시트·퀴즈)이 동일 상(像)을 갖도록 일원화 */
+  --diag-fs:12px; --diag-lh:1.35;
+  --diag-fs-modal:14px; --diag-lh-modal:1.4;
+  --diag-shadow:rgba(15,23,42,.14);   /* 가로 오버플로 스크롤섀도 — 다크에서 재정의 */
 
   /* 간격(4px 베이스) — 4·8·12·16·24·32 */
   --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:24px; --sp-6:32px;
@@ -53,14 +59,15 @@
   --warn-bg:#2a2410;
   --brand-ink:#04293a;
   --line:#2b3a52; --line-strong:#3b4d69;
+  --diag-shadow:rgba(0,0,0,.4);
   --ink:var(--ink-800); --ink-soft:var(--ink-600); --muted:var(--ink-500);
   --sh-1:0 1px 3px rgba(0,0,0,.45); --sh-2:0 6px 18px rgba(0,0,0,.55); --sh-pop:0 14px 44px rgba(0,0,0,.6);
 }
 :root[data-theme="dark"] .card{border-top-color:var(--line-strong);}
 :root[data-theme="dark"] .gsearch:focus,:root[data-theme="dark"] .pt-input:focus{background:var(--surface-2);}
 /* 글자 크기 3단(sm/기본/lg) — 본문·표 토큰만 상향 */
-:root[data-fs="lg"]{ --fs-0:12px; --fs-1:13px; --fs-2:14px; --fs-3:16px; --fs-4:18px; }
-:root[data-fs="xl"]{ --fs-0:12px; --fs-1:14px; --fs-2:15px; --fs-3:17px; --fs-4:19px; }
+:root[data-fs="lg"]{ --fs-0:12px; --fs-1:13px; --fs-2:14px; --fs-3:16px; --fs-4:18px; --diag-fs:13px; --diag-fs-modal:15px; }
+:root[data-fs="xl"]{ --fs-0:12px; --fs-1:14px; --fs-2:15px; --fs-3:17px; --fs-4:19px; --diag-fs:14px; --diag-fs-modal:16px; }
 *{box-sizing:border-box;}
 
 /* 키보드 포커스 가시성(전역) — 마우스 클릭 시엔 안 뜨고 키보드 탐색 때만 */
@@ -211,8 +218,32 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 /* 리드키워드 강조 — 일반모드 brand 강조, 암기모드에선 정의와 함께 블러(정답 절반 누출 방지) */
 .lead-kw{color:var(--brand-strong);font-weight:800;}
 .def{font-size:var(--fs-2);color:var(--ink-700);line-height:var(--lh-body);}
-/* 구성도(R9): 그리드 카드는 밝은 박스(정의문 우선 읽기) — 다크 고대비는 모달에서만 */
-pre.diagram{margin:0;background:var(--surface-2);color:var(--ink-800);border:1px solid var(--line);border-radius:var(--r-sm);padding:11px 12px;font-size:var(--fs-0);line-height:1.5;overflow-x:auto;font-family:var(--font-mono);white-space:pre;}
+/* 구성도(R9→D1~D6): 그리드 카드의 도식은 카드의 figure(백지 재현 목표물) — '청사진 패널'로 승격.
+   D1 배경 surface-3 + line-strong 경계 + 좌측 3px 카테고리 레일, D2 크기 12px(정의문 13px와 균형),
+   D3 행간 1.35(세로 커넥터 ↓↑│ 연결 복원), D4 격자 무결성(합자·커닝·트래킹 차단), D6 스크롤섀도.
+   ★ monospace advance-width 를 바꾸는 변형(font-weight·letter-spacing≠0·pre-wrap) 금지 — 정렬이 도식의 존재이유. */
+pre.diagram{margin:0;color:var(--ink-800);border:1px solid var(--line-strong);border-left:3px solid var(--cat-color,var(--brand-strong));border-radius:var(--r-sm);padding:11px 12px 11px 11px;font-size:var(--diag-fs);line-height:var(--diag-lh);overflow-x:auto;font-family:var(--font-mono);white-space:pre;
+  /* D4: 격자 무결성 하드닝 */
+  font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;font-kerning:none;letter-spacing:0;tab-size:2;
+  /* D6: 자기은폐 스크롤섀도(넘칠 때만 좌우 그림자) + 얇은 스크롤바. 커버=local(내용과 함께 스크롤), 그림자=scroll(박스 고정) */
+  background-color:var(--surface-3);
+  background-image:linear-gradient(to right,var(--surface-3) 40%,rgba(0,0,0,0)),linear-gradient(to left,var(--surface-3) 40%,rgba(0,0,0,0)),radial-gradient(farthest-side at 0 50%,var(--diag-shadow),rgba(0,0,0,0)),radial-gradient(farthest-side at 100% 50%,var(--diag-shadow),rgba(0,0,0,0));
+  background-position:left center,right center,left center,right center;
+  background-repeat:no-repeat;
+  background-size:24px 100%,24px 100%,12px 100%,12px 100%;
+  background-attachment:local,local,scroll,scroll;
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.04);
+  scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;}
+pre.diagram::-webkit-scrollbar{height:6px;}
+pre.diagram::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:3px;}
+pre.diagram::-webkit-scrollbar-track{background:transparent;}
+/* D5: ASCII 3층 색 위계 — 화살표(흐름·액센트)/노드 라벨(기본 잉크)/브래킷(프레임·후퇴).
+   ★ 색상만 조정 — font-weight·letter-spacing 은 inherit/0 고정(폭이 바뀌면 열 정렬이 깨진다). */
+pre.diagram .dg-arw{color:var(--brand-strong);font-weight:inherit;}
+pre.diagram .dg-br{color:var(--ink-400);font-weight:inherit;}
+/* D8: 도식 첨언(diagramNote)은 노란 warn 박스가 아니라 도식에 물린 저채도 캡션 — '도형+캡션' 한 단위, 주석<원본 */
+pre.diagram:has(+ .note.diag){border-radius:var(--r-sm) var(--r-sm) 0 0;}
+.note.diag{margin-top:0;background:transparent;border:1px solid var(--line-strong);border-top:none;border-left:3px solid var(--cat-color,var(--brand-strong));border-radius:0 0 var(--r-sm) var(--r-sm);color:var(--ink-600);font-size:var(--fs-1);padding:6px 12px 6px 11px;}
 /* 스크린리더 전용(시각 숨김) — 표 caption 등 */
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;}
 table{width:100%;border-collapse:collapse;font-size:var(--fs-1);}
@@ -274,7 +305,13 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 .cmodal-body .def,.cmodal-body .es-concl{font-size:var(--fs-3);}
 .cmodal-body table{font-size:var(--fs-2);}
 .cmodal-body table th,.cmodal-body table td{padding:7px 10px;}
-.cmodal-body pre.diagram{background:var(--surface-dark);color:#e2e8f0;border-color:transparent;font-size:13px;line-height:1.6;padding:14px 16px;}
+/* 모달 도식 = 정독 청사진(D2·D3·D9): 그리드(surface-3)→모달(surface-dark)은 같은 slate 램프의 '명도 심화'.
+   좌측 3px brand 레일로 확대 연속성·정독 신호 유지. 크기 14px / 행간 1.4. */
+.cmodal-body pre.diagram{background:var(--surface-dark);background-image:none;color:#e2e8f0;border-color:transparent;border-left:3px solid var(--brand);font-size:var(--diag-fs-modal);line-height:var(--diag-lh-modal);padding:14px 16px 14px 13px;box-shadow:none;}
+.cmodal-body pre.diagram .dg-arw{color:var(--brand);}
+.cmodal-body pre.diagram .dg-br{color:var(--ink-500);}
+.cmodal-body pre.diagram:has(+ .note.diag){border-radius:var(--r-sm) var(--r-sm) 0 0;}
+.cmodal-body .note.diag{border-color:var(--line-strong);border-left-color:var(--brand);border-top:none;}
 .cmodal-body .note{font-size:var(--fs-2);}
 .cmodal-body .es-h{font-size:var(--fs-4);}
 /* 모달 '답안 모드' 토글 — 카드를 골격 01~22줄 답안지로 전환(모든 줄 왼쪽 줄번호) */
@@ -294,7 +331,8 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 .asl.q .asc{font-weight:800;background:var(--surface-dark);color:#fff;border-radius:6px;padding:3px 9px;}
 .asl.note .asc{color:#92400e;}
 .asl.empty{min-height:1.5em;}
-.asheet .asdiag{margin:0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre-wrap;color:var(--ink);}
+/* D7: 답안지 도식 행 — 카드와 동일 상(像) 보장(mono 스택·white-space:pre). pre-wrap 은 줄바꿈으로 열을 밀어 재현 심상을 왜곡 */
+.asheet .asdiag{margin:0;font-family:var(--font-mono);font-size:var(--diag-fs);line-height:var(--diag-lh);white-space:pre;overflow-x:auto;color:var(--ink);font-variant-ligatures:none;font-kerning:none;letter-spacing:0;tab-size:2;scrollbar-width:thin;}
 .asheet .astbl{display:grid;gap:8px;}
 .asheet .astbl.col3{grid-template-columns:4.6em 1fr 1fr;}
 .asheet .astbl.col2{grid-template-columns:1fr 1fr;}
@@ -390,7 +428,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 #sheetBody.diag-orig .st-diag .st-orig{display:block;}
 #sheetBody.tbl-orig .st-tbl .st-flat{display:none;}
 #sheetBody.tbl-orig .st-tbl .st-orig{display:block;}
-.st-orig-diag{margin:0;font-family:var(--font-mono);font-size:11px;line-height:1.5;white-space:pre-wrap;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:6px 8px;color:var(--ink-700);}
+/* D7: 정의시트 원본 도식 — 카드와 동일 정렬 규칙(pre·mono·토큰 크기), 테마 차이는 배경·글자색만 */
+.st-orig-diag{margin:0;font-family:var(--font-mono);font-size:var(--diag-fs);line-height:var(--diag-lh);white-space:pre;overflow-x:auto;background:var(--surface-3);border:1px solid var(--line-strong);border-radius:6px;padding:6px 8px;color:var(--ink-700);font-variant-ligatures:none;font-kerning:none;letter-spacing:0;tab-size:2;scrollbar-width:thin;}
 .st-tbl .st-orig table{width:100%;margin:0;}
 .st-tbl .st-orig th,.st-tbl .st-orig td{padding:3px 6px;border:1px solid var(--line);font-size:11px;white-space:normal;background:none;color:var(--ink-700);font-weight:400;vertical-align:top;}
 .st-tbl .st-orig th{background:var(--surface-3);font-weight:700;color:var(--ink-600);}
@@ -502,15 +541,16 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qm[data-m="__all"]{color:#475569;border-color:#cbd5e1;}
 .qm[data-m="__all"].active{background:#334155;color:#fff;}
 /* 구성도(다이어그램) 문제 — 보기/문항 내 ASCII */
-.qdiag{margin:0;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:9px 11px;font-size:11px;line-height:1.45;
-  overflow-x:auto;font-family:"D2Coding","Consolas","Courier New",monospace;white-space:pre;}
+/* D7: 퀴즈 도식 — 폰트 스택·크기·행간을 공용 토큰으로 통일(재현 대상 이미지가 면마다 달라지지 않게) */
+.qdiag{margin:0;background:var(--surface-dark);color:#e2e8f0;border-radius:8px;padding:9px 11px;font-size:var(--diag-fs);line-height:var(--diag-lh);
+  overflow-x:auto;font-family:var(--font-mono);white-space:pre;font-variant-ligatures:none;font-kerning:none;letter-spacing:0;tab-size:2;scrollbar-width:thin;}
 .qstem-diag{margin:0 0 14px;font-size:11.5px;}
 /* 구성요소 빈칸 문제 — 표를 보여주고 한 셀을 ____로 가림 */
 .qstem-tbl{margin:0 0 14px;overflow-x:auto;}
 .qstem-tbl table{width:100%;}
 .qopt-body{flex:1 1 auto;min-width:0;}
 .qopt-pre{align-items:stretch;}
-.qopt-pre .qdiag{width:100%;font-size:10.5px;}
+.qopt-pre .qdiag{width:100%;font-size:var(--diag-fs);}
 .quiz-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px 22px 18px;box-shadow:var(--sh-1);}
 .qtype{display:inline-block;font-size:var(--fs-1);font-weight:800;color:#6d28d9;background:#f3e8ff;border-radius:6px;padding:2px 9px;margin-bottom:10px;}
 .qstem{font-size:var(--fs-4);font-weight:700;color:var(--ink);line-height:1.5;margin-bottom:16px;}
@@ -537,7 +577,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .qwhy-list .qw-src{color:var(--muted);flex:1 1 auto;min-width:0;}
 .qwhy-list .qw-src b{color:var(--ink-700);font-weight:700;}
 .qwhy-list .qw-od{color:var(--ink-400);}
-.qwhy-list .qw-dg{flex:1 1 100%;margin:5px 0 0;background:var(--surface-dark);color:var(--ink-200);border-radius:6px;padding:7px 9px;font-size:10.5px;line-height:1.5;overflow-x:auto;font-family:var(--font-mono);white-space:pre;}
+.qwhy-list .qw-dg{flex:1 1 100%;margin:5px 0 0;background:var(--surface-dark);color:var(--ink-200);border-radius:6px;padding:7px 9px;font-size:var(--diag-fs);line-height:var(--diag-lh);overflow-x:auto;font-family:var(--font-mono);white-space:pre;font-variant-ligatures:none;font-kerning:none;letter-spacing:0;tab-size:2;scrollbar-width:thin;}
 .qwhy-list .qw-m{flex:0 0 auto;margin-left:auto;font-weight:800;font-size:var(--fs-2);}
 .qwhy-list .qw-ok{border-color:var(--ok);background:#f0fdf4;}
 .qwhy-list .qw-ok .qw-k{background:var(--ok);color:#fff;}
@@ -665,7 +705,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
   .viewsw button{flex:1 1 0;padding:8px 6px;font-size:var(--fs-1);}
   #content{padding:14px 12px 80px;}
   .grid{grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:12px;}
-  pre.diagram{font-size:12.5px;}                    /* R10: 모바일 구성도 가독 하한 */
+  :root{--diag-fs:12.5px;}                          /* R10: 모바일 구성도 가독 하한 — 6개 도식 면 공통(토큰 1점 override) */
   .card table td:first-child,.card table th[scope="row"],.card table th[scope="rowgroup"]{white-space:normal;}   /* R10: 좁은 폭 구분셀 오버플로 방지 */
   .chip{padding:8px 13px;}                 /* 터치 타깃 ↑ */
   /* facet: 여러 줄 wrap → 1줄 가로 스크롤(세로 점유 축소) */
@@ -689,7 +729,10 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
   #sheetBody.masked .st-kw,#sheetBody.masked .st-def{filter:none;}
   body{background:#fff;}
   /* 다크 블록(구성도·문제박스)을 밝게 — 인쇄 시 배경 미출력으로 글자가 사라지는 것 방지 */
-  pre.diagram,.qdiag,.es-prob{background:#fff !important;color:#000 !important;border:1px solid var(--ink-400);}
+  pre.diagram,.qdiag,.es-prob{background:#fff !important;color:#000 !important;border:1px solid var(--ink-400);box-shadow:none !important;}
+  /* 흑백 인쇄: 도식 3층 색 위계는 잉크 농도로 축약(액센트 색 소실 대비) */
+  pre.diagram .dg-arw{color:#000 !important;}
+  pre.diagram .dg-br{color:#555 !important;}
   .es-reqs,.es-prob *{color:#000 !important;}
   .note{background:#fff !important;border-left:3px solid var(--ink-400);}
 }
