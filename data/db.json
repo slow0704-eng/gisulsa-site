@@ -86,7 +86,7 @@
       "keyword": "개념·논리·물리",
       "keywords": "데이터 모델링 3단계 개념 논리 물리 기본원칙 추상화",
       "def": "현실 세계 데이터를 추상화하여 개념→논리→물리 3단계로 정제, DBMS 구현 가능한 구조로 변환하는 설계 활동.",
-      "diagram": "[현실세계] →추상화→ [개념모델(ERD)]\n                        ↓ 정규화\n                  [논리모델(스키마)]\n                        ↓ 물리변환\n                  [물리모델(테이블·인덱스)]",
+      "diagram": "[현실세계 업무·요구]\n  ↓ 추상화(엔티티·관계)\n[개념모델 ERD] → [논리모델 스키마]\n  ↓ 정규화·키·제약 정의\n[물리모델 테이블·인덱스] → [DBMS 구현]",
       "diagramNote": "※ 개념→논리→물리 단계적 상세화",
       "table": {
         "head": [
@@ -190,7 +190,7 @@
       "keyword": "FD 추론규칙",
       "keywords": "암스트롱 공리 Armstrong axioms 반사 첨가 이행 폐포 closure 추론규칙",
       "def": "함수종속성(FD)의 완전한 추론 규칙 집합으로, 주어진 FD로부터 유도 가능한 모든 FD를 도출하는 공리.",
-      "diagram": "[기본 공리]\n ├ 반사: Y⊆X ⇒ X→Y\n ├ 첨가: X→Y ⇒ XZ→YZ\n └ 이행: X→Y, Y→Z ⇒ X→Z\n[추가 규칙] 합집합·분해·의사이행",
+      "diagram": "[기본공리 3종] 반사: Y⊆X 이면 X→Y\n[첨가] X→Y 이면 XZ→YZ\n[이행] X→Y·Y→Z 이면 X→Z\n  ↓ 3공리 조합으로 유도\n[추가규칙] 합집합·분해·의사이행 규칙",
       "diagramNote": "※ 속성 폐포(X⁺) 계산의 기반",
       "table": {
         "head": [
@@ -242,7 +242,7 @@
       "keyword": "X→Y 결정",
       "keywords": "함수 종속성 functional dependency FD 완전 부분 이행 다치종속 결정자",
       "def": "속성집합 X의 값이 Y의 값을 유일하게 결정하는(X→Y) 속성 간 의존 관계.",
-      "diagram": "X ──결정──> Y  (X:결정자, Y:종속자)\n ├ 완전 FD : 후보키 전체에 종속\n ├ 부분 FD : 후보키 일부에 종속\n └ 이행 FD : X→Y→Z",
+      "diagram": "[결정자 X] →결정→ [종속자 Y] : X→Y\n  ↓ 종속 유형 분류\n[완전 FD] 후보키 전체에 종속\n[부분 FD] 후보키 일부에 종속(2NF 위배)\n[이행 FD] X→Y→Z 간접 종속(3NF 위배)",
       "diagramNote": "※ 정규화 분해의 판단 기준",
       "table": {
         "head": [
@@ -450,7 +450,7 @@
       "keyword": "의도적 중복",
       "keywords": "반정규화 역정규화 denormalization 중복 파생 컬럼 테이블 병합 OLTP OLAP",
       "def": "정규화된 모델에 의도적 중복을 도입하여 조인 감소·조회 성능을 향상시키는 물리 설계 기법.",
-      "diagram": "[정규화 모델(3NF)]\n   ↓ 성능분석\n[반정규화 대상]\n ├ 테이블 병합/분할\n ├ 중복 컬럼·파생 컬럼\n └ 통계·이력 테이블",
+      "diagram": "[정규화 모델 3NF] → [성능 병목 분석]\n  ↓ 중복 허용(조인 감소)\n[테이블 병합·수평/수직 분할]\n[중복 컬럼·파생 컬럼 추가]\n[통계·이력 테이블] → [조회 성능 향상]",
       "diagramNote": "※ 무결성은 트리거·배치로 보완",
       "table": {
         "head": [
@@ -598,7 +598,7 @@
       "keyword": "경로 모호성",
       "keywords": "연결함정 connection trap fan trap chasm trap 부채꼴 균열 경로",
       "def": "ERD 관계 설정 오류로 엔티티 간 경로 해석이 모호·단절되어 잘못된 질의 결과를 낳는 모델링 함정.",
-      "diagram": "부채꼴(Fan)\n A ─1:N→ B ←1:N─ C  경로 모호\n균열(Chasm)\n A ─ B ─ C  선택참여로 경로 단절",
+      "diagram": "[부채꼴 Fan] 1:N 관계 중첩이 원인\n  [A] ←1:N─ [B] ─1:N→ [C] : 경로 모호\n[균열 Chasm] 선택적 참여가 원인\n  [A] ─ [B] ─ [C] : 하위 경로 단절",
       "diagramNote": "※ 관계 재정의·교차엔티티로 해소",
       "table": {
         "head": [
@@ -842,7 +842,7 @@
       "keyword": "절차적 질의",
       "keywords": "관계대수 relational algebra 순수관계연산 일반집합연산 select project join division 관계해석",
       "def": "릴레이션을 입력받아 릴레이션을 출력하는 절차적 질의 언어로, 순수·일반집합 연산으로 구성.",
-      "diagram": "[순수 관계연산]\n σ Select · π Project\n ⋈ Join · ÷ Division\n[일반 집합연산]\n ∪ 합 · ∩ 교 · − 차 · × 곱",
+      "diagram": "[입력 릴레이션 R·S] → [관계대수 연산]\n  ↓ 순수 관계연산\n[σ Select 행] · [π Project 열]\n[⋈ Join 결합] · [÷ Division 전칭]\n[일반 집합연산] ∪ 합·∩ 교·− 차·× 곱 → [결과]",
       "diagramNote": "※ 관계해석(비절차)과 표현력 동등",
       "table": {
         "head": [
@@ -894,7 +894,7 @@
       "keyword": "런타임 생성",
       "keywords": "동적 SQL dynamic 정적 static 바인드 변수 prepared statement injection 파싱",
       "def": "실행 시점(런타임)에 SQL 문자열을 생성·컴파일·실행하여 가변 조건 질의에 대응하는 방식.",
-      "diagram": "[App]\n  ↓ 런타임 SQL 생성\n[Parse → Bind → Execute]\n정적: 컴파일 시 고정\n동적: 실행 시 결정",
+      "diagram": "[App 요청] → [SQL 문자열 동적 생성]\n  ↓ 실행 시점(런타임)\n[Parse] → [Bind] → [Execute] → [결과]\n정적 SQL: 컴파일 시 문장 고정\n동적 SQL: 실행 시 문장 결정",
       "diagramNote": "※ 유연성↑ vs 파싱 비용·SQL Injection",
       "table": {
         "head": [
@@ -946,7 +946,7 @@
       "keyword": "테이블 결합",
       "keywords": "JOIN 조인 inner outer nested loop sort merge hash 동작원리 성능",
       "def": "둘 이상의 테이블을 연결 조건으로 결합하여 하나의 결과집합을 생성하는 연산.",
-      "diagram": "[논리] Inner·Outer(L/R/Full)·Cross·Self\n[물리] Nested Loop(소량·인덱스)\n       Sort Merge(대량·범위·정렬)\n       Hash Join(대량·등가)",
+      "diagram": "[테이블 A] ⇄ [테이블 B] 조인 조건 결합\n[논리] Inner·Outer(L/R/Full)·Cross·Self\n  ↓ 조인 순서·구동 테이블\n[물리] Nested Loop(소량·인덱스 구동)\n       Sort Merge(대량·범위) · Hash(등가)",
       "diagramNote": "※ 옵티마이저가 물리 방식 선택",
       "table": {
         "head": [
@@ -1050,7 +1050,7 @@
       "keyword": "B-Tree 탐색",
       "keywords": "인덱스 index B-Tree bitmap hash 스캔 range unique skip 복합 커버링 튜닝",
       "def": "테이블 행의 위치를 B-Tree 등 별도 자료구조로 관리하여 검색 성능을 높이는 객체.",
-      "diagram": "[B-Tree]\n Root → Branch → Leaf(정렬)\n   ↓\n ROWID → Table\n스캔: Range·Unique·Full·Skip",
+      "diagram": "[B-Tree Root] → [Branch] → [Leaf 정렬·ROWID]\n  ↓ ROWID 랜덤 액세스\n[Table 행 접근] → [결과 반환]\n스캔: Range·Unique·Full·Skip\n[Bitmap] 낮은 카디널리티 · [Hash] 등가 검색",
       "diagramNote": "※ 조회↑·DML 시 인덱스 갱신 비용",
       "table": {
         "head": [
@@ -1102,7 +1102,7 @@
       "keyword": "ACID",
       "keywords": "트랜잭션 transaction ACID 원자성 일관성 격리성 영속성 commit rollback saga 2PC",
       "def": "ACID를 보장하는 논리적 작업 단위로, DB 일관성을 유지하는 연산의 최소 실행 묶음.",
-      "diagram": "[Active] → [Partially Committed]\n  ↓ (REDO)\n[Committed]\n  ↓ 오류\n[Failed] → [Aborted] (UNDO 롤백)",
+      "diagram": "[Active 실행] → [Partially Committed]\n  ↓ 정상: Commit(REDO·WAL)\n[Committed 확정] → 영속성 보장\n  ↓ 오류 시 Active·PC에서 분기\n[Failed] → [Aborted] : UNDO 롤백",
       "diagramNote": "※ ACID(원자·일관·격리·영속)",
       "table": {
         "head": [
@@ -1206,7 +1206,7 @@
       "keyword": "락·MVCC",
       "keywords": "동시성제어 concurrency lock 2PL MVCC timestamp 낙관적 lost update dirty read phantom deadlock",
       "def": "다중 트랜잭션 동시 실행 시 락·MVCC로 상호 간섭을 제어하여 일관성을 보장하는 기법.",
-      "diagram": "[이상]\n Lost Update · Dirty Read\n Unrepeatable · Phantom\n[기법]\n Lock(2PL) · Timestamp\n MVCC · 낙관적",
+      "diagram": "[다중 Tx 동시실행] → [일관성 위협]\n        ↓ 상호 간섭 발생\n[이상현상] Lost Update·Dirty Read·Phantom\n    ↓ 제어 필요\n[제어기법] Lock(2PL)·MVCC·Timestamp·낙관적",
       "diagramNote": "※ 직렬가능성(Serializability) 보장",
       "table": {
         "head": [
@@ -1258,7 +1258,7 @@
       "keyword": "격리 4단계",
       "keywords": "isolation level 격리수준 read uncommitted committed repeatable read serializable dirty read non-repeatable phantom MVCC lock snapshot 동시성 일관성",
       "def": "트랜잭션 간 격리 정도를 4단계로 규정하여 동시성과 일관성을 trade-off하는 표준 수준.",
-      "diagram": "Read Uncommitted → Read Committed\n → Repeatable Read → Serializable\n 동시성↑·일관성↓ → 일관성↑·동시성↓",
+      "diagram": "[L0 Read Uncommitted] → [L1 Read Committed]\n        ↓ 격리수준 상향\n[L2 Repeatable Read] → [L3 Serializable]\n        ↓ trade-off 발생\n 동시성↑·일관성↓ ⇄ 일관성↑·동시성↓ (성능 대가)",
       "diagramNote": "※ 단계별 허용 이상현상 차등",
       "table": {
         "head": [
@@ -1562,8 +1562,8 @@
       "keyword": "제약조건",
       "keywords": "데이터 무결성 integrity 개체 참조 도메인 사용자정의 제약 PK FK check 트리거",
       "def": "데이터의 정확성·일관성을 보장하기 위해 부적합한 값의 입력·갱신을 제약하는 규칙.",
-      "diagram": "[개체] PK Not Null·Unique\n[참조] FK = 부모 PK or NULL\n[도메인] 타입·범위·CHECK\n[사용자정의] 업무규칙(트리거)",
-      "diagramNote": "※ 제약·트리거·앱 계층으로 구현",
+      "diagram": "[데이터 입력·갱신] → [DBMS 제약 검증]\n  ↓ 위반 시 거부(Reject)\n[개체] PK Unique·Not Null / [참조] FK=부모 PK\n[도메인] 타입·범위·CHECK 제약\n[사용자정의] 업무규칙 → 트리거·앱 계층 구현",
+      "diagramNote": "※ 위반 시 롤백·연쇄(CASCADE) 처리",
       "table": {
         "head": [
           "구분",
@@ -1770,7 +1770,7 @@
       "keyword": "단일 DB 분할",
       "keywords": "파티셔닝 partitioning range hash list composite partition pruning 분할키 로컬인덱스 단일 인스턴스",
       "def": "대용량 테이블을 Range·Hash·List 기준으로 단일 인스턴스 내에서 나누어 검색·관리 성능을 높이는 분할 기법.",
-      "diagram": "[애플리케이션]\n   ↓ 파티션키(분할 기준)\n[단일 DB 인스턴스]\n ├[P1:Range] ├[P2:Hash] └[P3:List]\n ⇒ Partition Pruning: 대상 분할만 스캔",
+      "diagram": "[애플리케이션 질의]\n   ↓ 파티션키(Range·Hash·List)\n[단일 DB 인스턴스 논리분할]\n ├→[P1 Range] ├→[P2 Hash] └→[P3 List]\n → Partition Pruning: 대상 분할만 스캔·I/O 절감",
       "diagramNote": "※ 단일 DB 내 논리 분할, Pruning으로 I/O↓",
       "table": {
         "head": [
@@ -1822,8 +1822,8 @@
       "keyword": "노드 수평 분산",
       "keywords": "샤딩 sharding shard key range hash directory shared nothing scale out 노드 수평 분산 리밸런싱 크로스샤드",
       "def": "데이터를 샤드키 기준으로 여러 DB 노드에 수평 분산 저장해 무공유(Shared-Nothing) 확장성을 확보하는 분산 기법.",
-      "diagram": "[라우팅 계층 / 샤드키 매핑]\n   ↓ 샤드키 해시·범위\n ┌────┬────┬────┐\n[Shard1][Shard2][Shard3]  (Shared-Nothing)\n ⇒ 노드 추가 수평 확장(Scale-Out)",
-      "diagramNote": "※ 노드 간 물리 분산, 조인·글로벌 Tx 난제",
+      "diagram": "[애플리케이션] → [라우팅 계층 샤드키]\n                     ↓ 해시·범위 매핑\n[Shard1] [Shard2] [Shard3] 무공유(Shared-Nothing)\n   → 노드 추가 수평 확장(Scale-Out)\n   ↺ 샤드키 편중 시 리밸런싱(재분산)",
+      "diagramNote": "※ 크로스샤드 조인·분산 Tx 처리 난제",
       "table": {
         "head": [
           "구분",

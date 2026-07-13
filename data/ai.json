@@ -195,7 +195,7 @@
       "tag": "머신러닝 기초",
       "keyword": "지도·비지도·강화",
       "keywords": "학습 유형 지도학습 비지도학습 강화학습 준지도 자기지도 supervised unsupervised reinforcement self-supervised semi-supervised 보상",
-      "diagram": "지도: 입력+정답 → 예측\n비지도: 입력만 → 군집·패턴\n강화: 상태·행동·보상 → 정책",
+      "diagram": "[지도학습]→[입력+정답]→[분류·회귀 예측]\n[비지도]→[입력만]→[군집·차원축소 구조발견]\n[강화학습]→[상태·행동·보상]→[정책 최적화]\n[반지도]→[일부 라벨]·[자기지도]→[라벨 자동생성]",
       "diagramNote": "※ 문제 유형이 학습방식 결정",
       "table": {
         "head": [
@@ -299,8 +299,8 @@
       "tag": "머신러닝 기초",
       "keyword": "PCA·t-SNE",
       "keywords": "차원 축소 dimensionality reduction pca tsne umap 특징선택 추출 차원의저주",
-      "diagram": "[고차원] →분산 보존→ [저차원]\n 선형: PCA  비선형: t-SNE·UMAP\n 특징선택 ↔ 특징추출",
-      "diagramNote": "※ 차원의 저주·시각화에 활용",
+      "diagram": "[고차원 데이터] →분산 보존→ [저차원 표현]\n[투영기법]→[PCA 선형]·[t-SNE·UMAP 비선형]\n[변수기법]→[특징선택 부분집합]·[특징추출 새 변수]\n[효과]→[차원저주 완화]→[과적합·연산량↓]",
+      "diagramNote": "※ 정보손실 최소화가 관건",
       "table": {
         "head": [
           "구분",
@@ -351,8 +351,8 @@
       "tag": "머신러닝 기초",
       "keyword": "편향-분산",
       "keywords": "과적합 overfitting 정규화 regularization 편향 분산 bias variance dropout l1 l2",
-      "diagram": "편향↑(과소) ←─ 최적 ─→ 분산↑(과대)\n 억제: L1/L2·Dropout·조기종료\n 교차검증으로 일반화 측정",
-      "diagramNote": "※ 편향-분산 트레이드오프",
+      "diagram": "[편향↑ 과소적합] ←─ [최적 균형] ─→ [분산↑ 과적합]\n[규제]→[L1·L2 가중치 억제]→[Dropout 공적응 방지]\n[검증]→[교차검증 일반화 측정]→[조기종료]\n[증강]→[Augmentation 데이터 확대]→[일반화 성능↑]",
+      "diagramNote": "※ 규제 강도는 검증셋으로 결정",
       "table": {
         "head": [
           "구분",
@@ -403,7 +403,7 @@
       "tag": "학습 알고리즘·모델",
       "keyword": "거리·밀도기반",
       "keywords": "군집화 clustering kmeans dbscan 비지도 거리 밀도 군집수 노이즈",
-      "diagram": "K-Means: 중심 k개 반복 갱신(거리)\nDBSCAN: 밀도(ε·MinPts) 기반\n → 노이즈·임의형태 군집",
+      "diagram": "[데이터]→[유사도·거리 계산]→[군집 형성]\n[K-Means]→[중심 k개 반복 갱신]→[구형 군집]\n[DBSCAN]→[밀도 ε·MinPts]→[임의형태·노이즈 분리]\n[Hierarchical]→[덴드로그램]→[계층 구조]\n[평가]→[실루엣 계수]→[응집·분리도 판정]",
       "diagramNote": "※ K-Means=k 지정, DBSCAN=k 불필요",
       "table": {
         "head": [
@@ -507,7 +507,7 @@
       "tag": "학습 알고리즘·모델",
       "keyword": "마진·커널",
       "keywords": "svm support vector machine 마진 초평면 서포트벡터 커널 rbf 다항 하드마진 소프트마진 분류",
-      "diagram": "최대 마진 초평면 탐색\n 하드마진(완전분리)↔소프트마진(허용)\n 비선형: 커널 트릭(RBF)",
+      "diagram": "[학습 데이터]→[서포트벡터 식별]→[최대 마진 초평면]\n[마진 유형]→[하드마진 완전분리]·[소프트마진 오류허용]\n[비선형]→[커널 트릭 RBF·다항]→[고차원 사상]\n[결과]→[결정 경계 확정]→[신규 표본 분류]",
       "diagramNote": "※ 고차원·소표본에 강함",
       "table": {
         "head": [
@@ -559,8 +559,8 @@
       "tag": "학습 알고리즘·모델",
       "keyword": "배깅·부스팅",
       "keywords": "앙상블 ensemble bagging boosting random forest xgboost 스태킹 약학습기",
-      "diagram": "Bagging: 병렬·분산↓ (랜덤포레스트)\nBoosting: 순차·편향↓ (XGBoost)\nStacking: 메타모델 결합",
-      "diagramNote": "※ 배깅=분산↓, 부스팅=편향↓",
+      "diagram": "[학습 데이터]→[다수 약학습기]→[결합·투표]\n[Bagging 병렬]→[랜덤포레스트]→[분산↓]\n[Boosting 순차]→[XGBoost 오류보정]→[편향↓]\n[Stacking]→[메타모델 결합]→[정확도·안정성↑]",
+      "diagramNote": "※ 약학습기 다양성이 성능 좌우",
       "table": {
         "head": [
           "구분",
@@ -611,8 +611,8 @@
       "tag": "학습 알고리즘·모델",
       "keyword": "노드·관계학습",
       "keywords": "그래프 신경망 gnn graph neural network 노드 엣지 메시지 패싱 임베딩 관계",
-      "diagram": "노드 ← 이웃 메시지 집계(전파)\n → 노드/엣지/그래프 임베딩\n GCN·GAT·GraphSAGE",
-      "diagramNote": "※ 관계·네트워크 데이터에 적합",
+      "diagram": "[그래프 데이터]→[노드·엣지 표현]→[이웃 구조]\n[메시지 패싱]→[이웃 특성 집계]↺[다층 반복 전파]\n[GCN]→[이웃 평균 집계]·[GAT]→[어텐션 가중]\n[GraphSAGE]→[샘플링 집계]→[노드·그래프 임베딩]\n[응용]→[추천·분자·SNS]→[관계 구조 분석]",
+      "diagramNote": "※ 이웃 K홉 정보가 표현에 반영",
       "table": {
         "head": [
           "구분",
@@ -663,8 +663,8 @@
       "tag": "학습 알고리즘·모델",
       "keyword": "지지도·신뢰도",
       "keywords": "연관규칙 association rule apriori 지지도 신뢰도 향상도 장바구니 fp-growth",
-      "diagram": "X→Y 규칙 탐색\n 지지도·신뢰도·향상도(Lift)로 평가\n Apriori·FP-Growth",
-      "diagramNote": "※ 향상도>1 → 양의 상관",
+      "diagram": "[거래 데이터]→[빈발항목 탐색]→[규칙 X→Y 생성]\n[알고리즘]→[Apriori 후보생성]·[FP-Growth 트리 기반]\n[평가]→[지지도 동시출현]→[신뢰도 조건부확률]\n[Lift 향상도]→[1 초과 시 양의 상관]→[교차판매 활용]",
+      "diagramNote": "※ 지지도 임계로 후보 가지치기",
       "table": {
         "head": [
           "구분",
@@ -767,8 +767,8 @@
       "tag": "생성형 AI·LLM",
       "keyword": "초거대·사전학습",
       "keywords": "거대 언어모델 llm large language model 파운데이션 foundation 사전학습 파인튜닝 rlhf sft 토큰 컨텍스트 생성형",
-      "diagram": "대규모 코퍼스 →사전학습→ 파운데이션\n →파인튜닝/RLHF→ 정렬\n →프롬프트/RAG→ 응용",
-      "diagramNote": "※ 파운데이션=다운스트림 범용 기반",
+      "diagram": "[대규모 코퍼스] →사전학습→ [파운데이션 모델]\n[정렬·튜닝]→[SFT·RLHF 사람 선호]→[도메인 파인튜닝]\n[활용]→[프롬프트·컨텍스트]→[다운스트림 과제]\n[한계]→[환각·최신성]←[RAG 외부지식 보완]",
+      "diagramNote": "※ 토큰·컨텍스트 길이가 입력 제약",
       "table": {
         "head": [
           "구분",
@@ -871,8 +871,8 @@
       "tag": "생성형 AI·LLM",
       "keyword": "지시·예시 설계",
       "keywords": "프롬프트 엔지니어링 prompt engineering zero-shot few-shot cot 사고연쇄 chain-of-thought persona 출력형식 템플릿 인젝션",
-      "diagram": "Zero-shot → Few-shot(예시) →\n Chain-of-Thought(단계추론) →\n 역할·제약·출력형식 지정",
-      "diagramNote": "※ CoT=추론 단계 유도",
+      "diagram": "[지시·맥락 설계]→[Zero-shot]→[Few-shot 예시 제시]\n[추론]→[Chain-of-Thought 단계 추론]→[정확도↑]\n[역할]→[Persona 맥락 부여]→[출력형식 구조 강제]\n[확장]→[RAG·도구 호출]→[외부 지식 결합]",
+      "diagramNote": "※ 지시 구체성이 출력 품질 좌우",
       "table": {
         "head": [
           "구분",
@@ -975,7 +975,7 @@
       "tag": "생성형 AI·LLM",
       "keyword": "GAN·VAE·확산",
       "keywords": "생성 모델 generative gan vae diffusion 확산 잠재공간 적대적 인코더 디코더",
-      "diagram": "GAN: 생성자↔판별자 적대 학습\nVAE: 잠재공간 인코딩·복원\nDiffusion: 노이즈→점진 복원",
+      "diagram": "[생성 모델]→[GAN 적대학습]→[생성자⇄판별자]\n     ↓\n[VAE 잠재변분]→[인코더 압축]→[디코더 복원]\n     ↓\n[Diffusion]→[노이즈 역과정]→[고품질 이미지]",
       "diagramNote": "※ Diffusion이 이미지 SOTA",
       "table": {
         "head": [
@@ -1027,7 +1027,7 @@
       "tag": "통계·데이터분석",
       "keyword": "t·z검정",
       "keywords": "가설검정 t검정 z검정 중심극한정리 clt p-value 귀무가설 유의수준 1종오류",
-      "diagram": "귀무H0 vs 대립H1 → 검정통계량\n p-value < 유의수준(α) → H0 기각\n CLT: 표본평균 분포 → 정규근사",
+      "diagram": "[가설설정 H0·H1]→[유의수준 α]→[검정통계량 z·t]\n       ↓\n[p-value 비교]→[p<α 이면 H0 기각]\n       ↓\n[오류 판정]→[1종 위양성]·[2종 위음성]",
       "diagramNote": "※ CLT가 z검정의 이론 근거",
       "table": {
         "head": [
@@ -1079,7 +1079,7 @@
       "tag": "통계·데이터분석",
       "keyword": "이항·포아송·정규",
       "keywords": "확률분포 이항분포 포아송 정규분포 베르누이 기하 분포 기대값 분산 연속 이산",
-      "diagram": "베르누이→이항(n회 성공)\n포아송(단위시간 사건)\n정규(연속·종형) ← CLT",
+      "diagram": "[베르누이 1회]→[이항 Bin(n,p)]→[기하 첫 성공]\n       ↓\n[포아송 λ 희귀]→[단위시간 사건 수]\n       ↓\n[정규 μ,σ² 종형]→[연속형 대표 분포]",
       "diagramNote": "※ 이항(n大,p小)→포아송 근사",
       "table": {
         "head": [
@@ -1131,7 +1131,7 @@
       "tag": "통계·데이터분석",
       "keyword": "점·구간추정",
       "keywords": "추정 점추정 구간추정 신뢰구간 불편추정량 estimator confidence interval 표준오차",
-      "diagram": "점추정: 모수 ≈ 단일값(표본평균)\n구간추정: 신뢰구간[하한,상한]\n 불편·일치·효율 추정량 평가",
+      "diagram": "[모집단 모수 θ]→[표본 추출]→[표본통계량 산출]\n   ↓\n[점추정]→[단일값 표본평균]\n[구간추정]→[신뢰구간 하한~상한]→[95%·99%]\n[추정량 평가]→[불편성·최소분산·표준오차]",
       "diagramNote": "※ 신뢰수준↑ → 구간 넓어짐",
       "table": {
         "head": [
@@ -1235,7 +1235,7 @@
       "tag": "통계·데이터분석",
       "keyword": "혼동행렬·ROC",
       "keywords": "분류 성능평가 혼동행렬 confusion matrix 정밀도 재현율 f1 roc auc pr curve 임계값",
-      "diagram": "혼동행렬: TP FP / FN TN\n 정밀도·재현율·F1\n ROC(임계값별 TPR-FPR)·AUC",
+      "diagram": "[예측 결과]→[혼동행렬 TP·FP·FN·TN]\n      ↓\n[정밀도 예측정답]→[재현율 실제탐지]→[F1 조화평균]\n      ↓\n[임계값 변화]→[ROC 곡선 TPR-FPR]→[AUC 면적]",
       "diagramNote": "※ 불균형 데이터는 PR곡선 유용",
       "table": {
         "head": [
@@ -1287,7 +1287,7 @@
       "tag": "통계·데이터분석",
       "keyword": "실루엣·Outlier",
       "keywords": "군집평가 실루엣 silhouette 이상치 outlier 이상탐지 anomaly 응집도 분리도 elbow",
-      "diagram": "실루엣: 응집도↑·분리도↑ → 1에 근접\n 군집수: Elbow·실루엣\n 이상치: 통계·거리·밀도·모델",
+      "diagram": "[군집 결과]→[실루엣 계수]→[응집도·분리도 비교]\n      ↓\n[군집수 선정]→[Elbow법]→[최적 k 결정]\n      ↓\n[이상치 탐지]→[통계 Z·IQR]→[밀도 LOF]→[Isolation]",
       "diagramNote": "※ 실루엣 [-1,1], 1에 가까울수록 우수",
       "table": {
         "head": [
@@ -1339,7 +1339,7 @@
       "tag": "AI 거버넌스·MLOps",
       "keyword": "책임·투명·공정",
       "keywords": "ai 윤리 거버넌스 ethics governance 투명성 공정성 책임성 설명가능성 편향 신뢰",
-      "diagram": "원칙: 공정성·투명성·책임성·안전성\n →설명가능(XAI)·편향 점검\n →거버넌스 체계·감독",
+      "diagram": "[AI 원칙]→[공정성]→[투명성]→[책임성]→[안전성]\n     ↓\n[설명가능 XAI]→[근거 제시]→[편향 점검·완화]\n     ↓\n[거버넌스 체계]→[감독·통제]→[신뢰가능 AI]",
       "diagramNote": "※ 국내 AI 윤리기준(3대 원칙·10대 요건)",
       "table": {
         "head": [
@@ -1391,8 +1391,8 @@
       "tag": "AI 거버넌스·MLOps",
       "keyword": "RMF·ISO42001",
       "keywords": "ai 위험관리 risk management rmf nist iso 42001 거버넌스 위험 식별 통제 프레임워크",
-      "diagram": "Govern·Map·Measure·Manage (NIST RMF)\n ISO 42001: AI 경영시스템(AIMS)\n 생애주기 위험 통제",
-      "diagramNote": "※ ISO 42001=AI 경영시스템 표준",
+      "diagram": "[NIST AI RMF]→[Govern 거버넌스]→[Map 맥락 식별]\n      ↓\n[Measure 위험 측정]→[Manage 우선순위 대응]\n      ↓\n[ISO 42001 AIMS]→[생애주기 위험 통제·인증]",
+      "diagramNote": "※ AI RMF 4대 기능은 상시 순환 적용",
       "table": {
         "head": [
           "구분",
@@ -1443,8 +1443,8 @@
       "tag": "AI 거버넌스·MLOps",
       "keyword": "고위험·신뢰기반",
       "keywords": "인공지능기본법 ai basic act 고위험 영향평가 투명성 표시 거버넌스 진흥 규제",
-      "diagram": "진흥(생태계)+신뢰(안전)\n 고위험 AI: 영향평가·고지의무\n 생성형 AI: 산출물 표시",
-      "diagramNote": "※ 고위험 영역 사전 고지·관리 의무",
+      "diagram": "[인공지능기본법]→[진흥 생태계 지원]→[신뢰 안전 확보]\n       ↓\n[고위험 AI]→[영향평가]→[사전 고지 의무]\n       ↓\n[생성형 AI]→[산출물 표시]→[위원회 정책 총괄]",
+      "diagramNote": "※ 진흥과 규제의 균형이 입법 취지",
       "table": {
         "head": [
           "구분",
@@ -1495,8 +1495,8 @@
       "tag": "AI 거버넌스·MLOps",
       "keyword": "모델 운영 자동화",
       "keywords": "mlops 머신러닝 운영 devops ci cd ct 모델 배포 서빙 모니터링 파이프라인 재학습 드리프트 feature store",
-      "diagram": "데이터→학습→배포→모니터링→재학습\n CI/CD/CT(지속학습) 파이프라인\n 모델·데이터·피처 버전관리",
-      "diagramNote": "※ 데이터·모델 드리프트 감시가 핵심",
+      "diagram": "[데이터 수집]→[전처리·피처]→[모델 학습·검증]\n      ↓\n[배포 서빙]→[API 추론]→[모니터링 드리프트]\n      ↓ 성능 저하 감지\n[자동 재학습 ↺]→[CI/CD/CT]→[모델·피처 버전관리]",
+      "diagramNote": "※ Feature Store가 학습·추론 일관성 보장",
       "table": {
         "head": [
           "구분",
@@ -1547,7 +1547,7 @@
       "tag": "AI 거버넌스·MLOps",
       "keyword": "정확·일관·대표성",
       "keywords": "ai 학습데이터 품질 data quality 라벨링 어노테이션 편향 정확성 대표성 무결성",
-      "diagram": "수집→정제→라벨링(어노테이션)→검증\n 품질기준: 정확·완전·일관·대표성\n 편향·중복·오라벨 제거",
+      "diagram": "[수집]→[정제]→[라벨링]→[검증 교차검수]\n  ↓\n[품질기준]→정확·완전·일관·대표성\n  ↓\n[편향·중복·오라벨 제거]↺[수집] 재수집",
       "diagramNote": "※ Garbage In, Garbage Out",
       "table": {
         "head": [
@@ -1599,7 +1599,7 @@
       "tag": "AI 거버넌스·MLOps",
       "keyword": "검증·설명·강건",
       "keywords": "ai 신뢰성 품질 검증 trustworthy 설명가능성 강건성 robustness 테스트 검인증 xai",
-      "diagram": "기능(정확)·강건(적대입력)·설명(XAI)\n AI SW 테스트: 데이터·메타모픽\n 검·인증 제도(신뢰성)",
+      "diagram": "[기능 정확]·[강건 적대입력]·[설명 XAI]\n  ↓\n[AI SW 테스트]→데이터·메타모픽 기법\n  ↓\n[검·인증 제도]→[신뢰성 보증]",
       "diagramNote": "※ 전통 SW 테스트로 한계 → AI 특화 기법",
       "table": {
         "head": [
@@ -3831,7 +3831,7 @@
       "tag": "최적화·튜닝",
       "keyword": "대리모델·획득",
       "keywords": "베이지안최적화 bayesian optimization 대리모델 가우시안프로세스 획득함수 acquisition ei ucb pi 하이퍼파라미터 hpo 탐색",
-      "diagram": "[관측] → [대리모델(GP)] → [획득함수]\n   ↓\n다음 후보 선택 → 반복 수렴\n   ↓ 획득함수 균형\n탐색(exploration) · 활용(exploitation)",
+      "diagram": "[관측]→[대리모델 GP]→[획득함수 EI·UCB]\n  ↓\n[다음 후보 선택]→[관측 갱신]↺반복 수렴\n  ↓\n[탐색 exploration]⇄[활용 exploitation]",
       "diagramNote": "※ 적은 시행으로 전역 최적 근접",
       "table": {
         "head": [
@@ -3883,7 +3883,7 @@
       "tag": "MLOps·자동화",
       "keyword": "수집~배포 자동화",
       "keywords": "머신러닝파이프라인 ml pipeline mlops 전처리 피처엔지니어링 배포 모니터링 드리프트 ci cd 재현성 자동화",
-      "diagram": "[수집]→[전처리]→[피처]→[학습]\n →[평가]→[배포]→[모니터링]\n ↑ 드리프트 감지 시 재학습(순환)",
+      "diagram": "[수집]→[전처리]→[피처]→[학습]\n  ↓\n[평가]→[배포]→[모니터링(드리프트)]\n  ↓\n[재학습 트리거]↺[수집] 순환 자동화",
       "diagramNote": "※ MLOps=CI/CD·자동화·재현성 보장",
       "table": {
         "head": [
@@ -11369,7 +11369,7 @@
       "keyword": "재귀분할·결합",
       "keywords": "분할정복 divide conquer 재귀 병합정렬 퀵정렬 이진탐색 마스터정리 부분문제",
       "def": "재귀분할·결합인 분할정복은, 문제를 동일 구조 부분문제로 분할·재귀로 풀고 병합해 전체 해를 구하는 알고리즘 설계 기법.",
-      "diagram": "[원문제]→[분할 Divide]\n ↓ 부분문제(재귀 호출)\n[정복 Conquer]↕[병합 Combine]\n → [전체 해]",
+      "diagram": "[원문제]→[분할 Divide]→부분문제 생성\n  ↓\n[정복 Conquer]→재귀 호출로 부분해\n  ↓\n[병합 Combine]→[전체 해] 예:병합정렬",
       "diagramNote": "※ 마스터정리 T(n)=aT(n/b)+f(n)로 복잡도 분석",
       "table": {
         "head": [
@@ -11785,7 +11785,7 @@
       "keyword": "학습대상 가중치",
       "keywords": "파라미터 parameter 가중치 weight 편향 bias 역전파 경사하강 모델용량 학습변수",
       "def": "학습으로 결정되는 파라미터는, 가중치(W)·편향(b)에 모델 내부 표현을 담아 경사하강법으로 손실 최소화 방향에 자동 갱신되는 학습 대상 변수.",
-      "diagram": "[입력 x]→[z=Wx+b]→[활성화]→[출력]\n              ↑ W·b 갱신\n손실 L→∂L/∂W 역전파→W←W-η∇L",
+      "diagram": "[입력 x]→[z=Wx+b]→[활성화]→[출력]\n  ↑\n[W·b 갱신]←경사하강 W←W-η∇L\n  ↑\n[손실 L]→[∂L/∂W 기울기]→[역전파]",
       "diagramNote": "※ 사람이 아닌 데이터·역전파가 값 결정(학습 대상)",
       "table": {
         "head": [
@@ -12097,7 +12097,7 @@
       "keyword": "실세계 체화 AI",
       "keywords": "PhysicalAI 피지컬AI 체화지능 embodied 로보틱스 휴머노이드 sim2real 월드모델 디지털트윈 VLA",
       "def": "실세계 체화 AI인 피지컬 AI는, 센서 인지·월드모델 예측·액추에이터 제어를 결합해 물리 환경과 상호작용하는 체화형 지능.",
-      "diagram": "[센서 인지]→[월드모델 예측]→[정책·계획]\n       ↓                    ↓\n [액추에이터 제어]→[물리환경]↺피드백",
+      "diagram": "[센서 인지]→[월드모델 예측]→[정책 VLA]\n  ↓\n[액추에이터 제어]→[물리환경 상호작용]\n  ↓\n[피드백 관측]↺[센서 인지] Sim2Real",
       "diagramNote": "※ Sim2Real: 시뮬레이션 학습을 실물 이전",
       "table": {
         "head": [
@@ -12149,7 +12149,7 @@
       "keyword": "미세섭동 오분류",
       "keywords": "adversarial 적대적공격 AE 회피공격 poisoning FGSM PGD 섭동 오분류 robustness 적대적훈련",
       "def": "미세섭동 오분류인 적대적 공격은, 사람이 인지 못할 입력 섭동으로 모델 판단을 왜곡하는 AI 보안 위협.",
-      "diagram": "[정상입력]+[미세섭동 δ]→[적대적 예제]\n                          ↓\n [모델]→오분류(판다→긴팔원숭이) 오판",
+      "diagram": "[정상입력 x]+[미세섭동 δ]→[적대적 예제]\n  ↓\n[모델 추론]→오분류(판다→긴팔원숭이)\n  ↓\n[방어 적대적 훈련]→[강건성 확보]",
       "diagramNote": "※ FGSM·PGD: 기울기 방향 섭동 생성",
       "table": {
         "head": [
@@ -12253,7 +12253,7 @@
       "keyword": "최소권한·HITL",
       "keywords": "에이전틱 보안대책 HITL 최소권한 샌드박스 행위감사 가드레일 인젝션방어 킬스위치 zerotrust guardrail",
       "def": "최소권한·HITL 기반 에이전틱 AI 보안대책은, 가드레일·샌드박스·행위감사로 자율 에이전트 위협을 통제하는 다층 방어체계.",
-      "diagram": "[입력 가드레일]→[HITL 승인]→[에이전트]\n       ↓                    ↓\n [최소권한]→[샌드박스 격리]→[행위감사 로그]",
+      "diagram": "[입력 가드레일]→[HITL 승인]→[에이전트]\n  ↓\n[최소권한 RBAC]→[샌드박스 격리 실행]\n  ↓\n[행위감사 로그]→[킬스위치 이상 차단]",
       "diagramNote": "※ 위협별 대응: 인젝션→가드레일, 권한→최소화",
       "table": {
         "head": [
