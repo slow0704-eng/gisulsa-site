@@ -136,16 +136,46 @@
       html += '</section>';
     });
     contentEl.innerHTML = html;
-    // mermaid 소스 주입(<br/> 보존). 렌더는 표시 시점에 1회.
+    // mermaid 소스는 DOM 텍스트가 아니라 엘리먼트 프로퍼티로 보관한다.
+    // textContent 로 넣으면 CDN 로드~렌더 완료까지 flowchart 원문이 화면에 그대로 노출된다(FOUC).
+    // 렌더는 표시 시점에 1회, mermaid.render() 로 SVG 만 주입(_mmSrc → innerHTML).
     DOMAINS.forEach(function(d){
       var el = contentEl.querySelector('.mapcard[data-map="'+d.id+'"] .mermaid');
-      if(el) el.textContent = d.mermaid;
+      if(el) el._mmSrc = d.mermaid;
       // 소단원 관계도 소스 주입
       (d.sections||[]).forEach(function(sec){
         if(!sec.mermaid) return;
         var sm = contentEl.querySelector('.secmap[data-dom="'+d.id+'"][data-sec="'+sec.id+'"] .mermaid');
-        if(sm) sm.textContent = sec.mermaid;
+        if(sm) sm._mmSrc = sec.mermaid;
       });
+    });
+  }
+
+  // ---- mermaid 렌더 ----
+  // 소스(_mmSrc)를 DOM 에 넣지 않고 mermaid.render() 로 SVG 문자열만 받아 주입한다 → 원문 노출(FOUC) 원천 차단.
+  // 렌더 완료 전까지 CSS 가 자리(높이)를 예약한 스켈레톤을 보여주고, .mm-ready 로 해제한다.
+  // 실패(CDN 차단·오프라인·문법 오류)는 .mm-fail 로 지도 블록을 접어 스켈레톤이 영원히 남지 않게 한다.
+  var _mmSeq = 0;
+  function failMap(el){
+    el.classList.add('mm-fail');
+    var wrap = el.parentNode;
+    if(wrap && wrap.classList && (wrap.classList.contains('secmap') || wrap.classList.contains('mapcard'))) wrap.classList.add('mm-fail');
+  }
+  function renderMermaid(M, els){
+    var arr = Array.prototype.slice.call(els);
+    if(!M || !M.render){ arr.forEach(failMap); return; }
+    arr.forEach(function(el){
+      var src = el._mmSrc;
+      if(!src){ failMap(el); return; }
+      try{
+        Promise.resolve(M.render('mm-svg-' + (++_mmSeq), src)).then(function(r){
+          var svg = r && r.svg ? r.svg : r;      // v10: {svg,bindFunctions} · 구버전: svg 문자열
+          if(!svg){ failMap(el); return; }
+          el.innerHTML = svg;
+          if(r && typeof r.bindFunctions === 'function') r.bindFunctions(el);
+          el.classList.add('mm-ready');
+        }).catch(function(){ failMap(el); });
+      }catch(e){ failMap(el); }
     });
   }
 
@@ -155,13 +185,9 @@
     if(secMapsDone) return;
     var els = contentEl.querySelectorAll('.secmap .mermaid');
     if(!els.length){ secMapsDone = true; return; }
-    // mermaid 온디맨드 로드 후 배치 렌더(초기 블로킹 제거). 미로드/오프라인이면 지도만 생략.
-    ensureMermaid().then(function(M){
-      if(!M || secMapsDone) return;
-      secMapsDone = true;
-      try{ M.run({ nodes: Array.prototype.slice.call(els), suppressErrors:true }); }
-      catch(e){ /* ignore */ }
-    });
+    secMapsDone = true;
+    // mermaid 온디맨드 로드 후 렌더(초기 블로킹 제거). 미로드/오프라인이면 지도만 생략.
+    ensureMermaid().then(function(M){ renderMermaid(M, els); });
   }
 
   // ---- 과목 facet (단일 선택: 전체 또는 한 과목) ----
@@ -285,10 +311,8 @@
     if(mapDone[domId]) return;
     var el = contentEl.querySelector('.mapcard[data-map="'+domId+'"] .mermaid');
     if(!el) return;
-    ensureMermaid().then(function(M){
-      if(!M || mapDone[domId]) return;
-      try{ M.run({ nodes:[el] }); mapDone[domId] = true; }catch(e){ /* ignore */ }
-    });
+    mapDone[domId] = true;
+    ensureMermaid().then(function(M){ renderMermaid(M, [el]); });
   }
 
   function scrollToGroup(domId){

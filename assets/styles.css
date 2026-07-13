@@ -173,6 +173,23 @@ body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 .mapcard h3{margin:0 0 4px;font-size:var(--fs-4);}
 .mapcard .legend{font-size:var(--fs-1);color:var(--muted);margin-bottom:10px;}
 .mermaid{text-align:center;overflow-x:auto;}
+/* mermaid FOUC 방지 — 렌더 전까지 자리(높이)만 예약한 스켈레톤. app.js 가 SVG 주입 후 .mm-ready 를 붙인다.
+   소스는 DOM 에 넣지 않고(app.js `_mmSrc`) mermaid.render() 로 SVG 만 주입하므로 원문 노출이 원천 차단된다.
+   ★ 이 규칙에서 font-size·color 를 건드리지 말 것 — mermaid 가 라벨 폭을 실측할 때 상속돼 노드가 빈 박스로 렌더된다.
+   CDN 차단·오프라인 등 렌더 실패 시엔 .mm-fail 로 지도 블록 자체를 접는다(스켈레톤 무한 대기 방지). */
+.mermaid:not(.mm-ready){
+  position:relative;height:var(--mm-h,132px);overflow:hidden;border-radius:8px;background:var(--surface-2);
+}
+.mermaid:not(.mm-ready)::after{
+  content:"관계도 렌더링 중…";position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:var(--fs-1);color:var(--muted);
+  background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 37%,var(--surface-2) 63%);
+  background-size:400% 100%;animation:mm-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes mm-shimmer{from{background-position:100% 0;}to{background-position:0 0;}}
+.mapcard .mermaid:not(.mm-ready){--mm-h:220px;}
+.mermaid.mm-fail,.secmap.mm-fail,.mapcard.mm-fail{display:none;}
 
 .sec{margin:26px 0 12px;padding-left:12px;border-left:5px solid #cbd5e1;}
 .sec h2{margin:0;font-size:var(--fs-4);}
@@ -683,6 +700,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .quiz-result.good .qbig{color:#15803d;}
 @media (prefers-reduced-motion:reduce){
   .qopt.correct,.qopt.wrong,.qresult,.qresult-ic,.qstreak,.qtier{animation:none;}
+  .mermaid:not(.mm-ready)::after{animation:none;background:var(--surface-2);}
   .qconfetti{display:none;}
 }
 
