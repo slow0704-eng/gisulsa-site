@@ -191,6 +191,112 @@
       "keywords": "ISP 절차 information strategy planning 환경분석 현황분석 as-is gap 목표모델 to-be 이행계획 로드맵 단계",
       "def": "ISP를 환경분석→현황분석(As-Is)→목표모델(To-Be)→이행계획의 단계로 수행하는 표준 수립 절차.",
       "diagram": "[환경분석]→[As-Is현황]→[Gap분석]\n[Gap]→[To-Be목표]→[이행계획]\n[정보화비전]↓[전략과제 도출]\n[EA/ITA]→[아키텍처 정합]\n[로드맵]→[투자우선순위 확정]",
+      "diagram2": {
+        "cw": 86,
+        "ch": 40,
+        "gx": 30,
+        "gy": 24,
+        "nodes": [
+          {
+            "id": "env",
+            "label": "환경분석",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "as",
+            "label": "As-Is\n현황",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "gap",
+            "label": "Gap\n분석",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "to",
+            "label": "To-Be\n목표",
+            "col": 3,
+            "row": 0,
+            "accent": true
+          },
+          {
+            "id": "imp",
+            "label": "이행계획",
+            "col": 4,
+            "row": 0
+          },
+          {
+            "id": "vis",
+            "label": "정보화\n비전",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "str",
+            "label": "전략과제\n도출",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "ea",
+            "label": "EA/ITA\n정합",
+            "col": 3,
+            "row": 1
+          },
+          {
+            "id": "inv",
+            "label": "투자\n우선순위",
+            "col": 4,
+            "row": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "env",
+            "to": "as"
+          },
+          {
+            "from": "as",
+            "to": "gap"
+          },
+          {
+            "from": "gap",
+            "to": "to"
+          },
+          {
+            "from": "to",
+            "to": "imp"
+          },
+          {
+            "from": "gap",
+            "to": "str",
+            "label": "Gap"
+          },
+          {
+            "from": "vis",
+            "to": "str",
+            "label": "비전"
+          },
+          {
+            "from": "str",
+            "to": "to",
+            "label": "반영"
+          },
+          {
+            "from": "ea",
+            "to": "to",
+            "label": "정합"
+          },
+          {
+            "from": "imp",
+            "to": "inv",
+            "label": "로드맵"
+          }
+        ]
+      },
       "diagramNote": "※ As-Is~To-Be Gap이 과제 도출 핵심",
       "table": {
         "head": [
