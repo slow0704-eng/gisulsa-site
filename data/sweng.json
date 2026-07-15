@@ -113,6 +113,58 @@
       "keywords": "폭포수 waterfall 선형 linear 순차 sequential SDLC 생명주기 고전 Royce 로이스 단계동결 Phase SRS V-Model",
       "def": "각 단계(요구분석→설계→구현→시험→유지보수)를 순차·하향식으로 진행하고 완료 후 다음 단계로 이행하는 선형 고전 생명주기 모델.",
       "diagram": "[요구분석]→[설계]→[구현]\n 확정      명세    코딩\n  ↓ 순차 진행(폭포수)\n[시험]→[유지보수]\n 검증    운영",
+      "diagram2": {
+        "nodes": [
+          {
+            "id": "a",
+            "label": "요구분석\n확정",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "b",
+            "label": "설계\n명세",
+            "col": 1,
+            "row": 0
+          },
+          {
+            "id": "c",
+            "label": "구현\n코딩",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "d",
+            "label": "시험\n검증",
+            "col": 3,
+            "row": 0
+          },
+          {
+            "id": "e",
+            "label": "유지보수\n운영",
+            "col": 4,
+            "row": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "b"
+          },
+          {
+            "from": "b",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "d"
+          },
+          {
+            "from": "d",
+            "to": "e"
+          }
+        ]
+      },
       "diagramNote": "※ 단계 역행 없음(Phase 동결)·산출물 기반 검토",
       "table": {
         "head": [
@@ -165,6 +217,111 @@
       "keywords": "V-Model 브이모델 검증 확인 verification validation 테스트",
       "def": "폭포수 각 개발단계에 대응 테스트 단계를 좌우 대칭 배치하여 검증(V&V)을 강화한 생명주기 모델.",
       "diagram": "[요구분석]━━━━━━━━━[인수테스트]\n [기본설계]━━━━━━[시스템테스트]\n  [상세설계]━━━[통합테스트]\n   [구현]━━━[단위테스트]",
+      "diagram2": {
+        "cw": 88,
+        "ch": 38,
+        "gx": 22,
+        "gy": 16,
+        "nodes": [
+          {
+            "id": "r",
+            "label": "요구분석",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "b",
+            "label": "기본설계",
+            "col": 1,
+            "row": 1
+          },
+          {
+            "id": "s",
+            "label": "상세설계",
+            "col": 2,
+            "row": 2
+          },
+          {
+            "id": "c",
+            "label": "구현",
+            "col": 3,
+            "row": 3,
+            "accent": true
+          },
+          {
+            "id": "u",
+            "label": "단위테스트",
+            "col": 4,
+            "row": 3
+          },
+          {
+            "id": "i",
+            "label": "통합테스트",
+            "col": 5,
+            "row": 2
+          },
+          {
+            "id": "y",
+            "label": "시스템테스트",
+            "col": 6,
+            "row": 1
+          },
+          {
+            "id": "a",
+            "label": "인수테스트",
+            "col": 7,
+            "row": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "r",
+            "to": "b"
+          },
+          {
+            "from": "b",
+            "to": "s"
+          },
+          {
+            "from": "s",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "u"
+          },
+          {
+            "from": "u",
+            "to": "i"
+          },
+          {
+            "from": "i",
+            "to": "y"
+          },
+          {
+            "from": "y",
+            "to": "a"
+          },
+          {
+            "from": "r",
+            "to": "a",
+            "style": "map",
+            "label": "검증"
+          },
+          {
+            "from": "b",
+            "to": "y",
+            "style": "map",
+            "label": "검증"
+          },
+          {
+            "from": "s",
+            "to": "i",
+            "style": "map",
+            "label": "검증"
+          }
+        ]
+      },
       "diagramNote": "※ 좌(개발)·우(검증) 단계별 매핑",
       "table": {
         "head": [
@@ -217,6 +374,68 @@
       "keywords": "프로토타입 prototype 시제품 요구 구체화 진화형 폐기형 evolutionary throwaway 사용자평가 피드백 반복 UI검증 요구위험",
       "def": "시제품을 빠르게 만들어 사용자 피드백으로 요구를 구체화하는 반복적 생명주기 모델.",
       "diagram": "[요구 수집]→[시제품 설계]\n    ↑         ↓ 시제품 시연\n[사용자 평가]←[시제품 구축]\n      ↓ 반복 종료(요구 안정화)\n[확정 요구]→[본 시스템 개발]",
+      "diagram2": {
+        "cw": 92,
+        "nodes": [
+          {
+            "id": "a",
+            "label": "요구\n수집",
+            "col": 0,
+            "row": 0
+          },
+          {
+            "id": "b",
+            "label": "프로토타입\n설계",
+            "col": 2,
+            "row": 0
+          },
+          {
+            "id": "c",
+            "label": "프로토타입\n구축",
+            "col": 2,
+            "row": 1
+          },
+          {
+            "id": "p",
+            "label": "사용자\n평가",
+            "col": 0,
+            "row": 1
+          },
+          {
+            "id": "e",
+            "label": "본 시스템\n개발",
+            "col": 1,
+            "row": 2,
+            "accent": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "b",
+            "label": "설계"
+          },
+          {
+            "from": "b",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "p",
+            "label": "평가"
+          },
+          {
+            "from": "p",
+            "to": "a",
+            "label": "보완"
+          },
+          {
+            "from": "p",
+            "to": "e",
+            "label": "확정"
+          }
+        ]
+      },
       "diagramNote": "※ 평가↺구축 반복으로 요구 위험↓",
       "table": {
         "head": [

@@ -16,6 +16,46 @@
       .replace(/([→←↑↓↔↕⇄⇆⇅↺⟳])/g, '<span class="dg-arw">$1</span>')
       .replace(/([\[\]])/g, '<span class="dg-br">$1</span>');
   }
+  // 구성도 v2 — 저자 배치 제어형 SVG 렌더러(레이아웃 연산 없음: nodes 의 col/row 좌표를 저자가 지정).
+  //   d = { cw?,ch?,gx?,gy?, nodes:[{id,label('\n'2줄),col,row,w?,h?,accent?}], edges:[{from,to,label?,style?('flow'|'map')}] }
+  //   자동배치(mermaid)와 달리 V-Model=V자·순환=컴팩트 등 "특정 배치"를 저자가 보존(시험 수기재현 정합).
+  //   색·크기·굵기는 CSS(.dg2-*) 토큰 연동 → 라이트/다크·글자확대 자동. 마커 id 는 카드별 uid 로 충돌 방지.
+  var _dg2uid = 0;
+  function diagram2SVG(d){
+    if(!d || !d.nodes || !d.nodes.length) return '';
+    var nodes=d.nodes, edges=d.edges||[];
+    var CW=(d.cw||96), CH=(d.ch||42), GX=(d.gx||34), GY=(d.gy||26), PAD=10;
+    function box(n){ var w=(n.w||1),h=(n.h||1);
+      var x=PAD+n.col*(CW+GX), y=PAD+n.row*(CH+GY);
+      var bw=w*CW+(w-1)*GX, bh=h*CH+(h-1)*GY;
+      return {x:x,y:y,w:bw,h:bh,cx:x+bw/2,cy:y+bh/2}; }
+    var bm={}; nodes.forEach(function(n){ bm[n.id]=box(n); });
+    var maxX=0,maxY=0; nodes.forEach(function(n){ var b=bm[n.id]; if(b.x+b.w>maxX)maxX=b.x+b.w; if(b.y+b.h>maxY)maxY=b.y+b.h; });
+    var W=maxX+PAD, H=maxY+PAD, uid='dg2'+(_dg2uid++);
+    function anchor(b,tx,ty){ var dx=tx-b.cx, dy=ty-b.cy;
+      if(Math.abs(dx)*b.h >= Math.abs(dy)*b.w) return {x: dx>=0?b.x+b.w:b.x, y:b.cy};
+      return {x:b.cx, y: dy>=0?b.y+b.h:b.y}; }
+    var eSvg=edges.map(function(e){ var a=bm[e.from], c=bm[e.to]; if(!a||!c) return '';
+      var p1=anchor(a,c.cx,c.cy), p2=anchor(c,a.cx,a.cy);
+      var map=(e.style==='map'||e.style==='dashed');
+      var s='<line x1="'+p1.x+'" y1="'+p1.y+'" x2="'+p2.x+'" y2="'+p2.y+'" class="dg2-edge'+(map?' dg2-map':'')+'"'+(map?'':' marker-end="url(#'+uid+')"')+'/>';
+      if(e.label){ var mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2, tw=String(e.label).length*11+6;
+        s+='<rect x="'+(mx-tw/2)+'" y="'+(my-8)+'" width="'+tw+'" height="14" rx="3" class="dg2-elabel-bg"/>'+
+           '<text x="'+mx+'" y="'+(my+1)+'" class="dg2-elabel" text-anchor="middle" dominant-baseline="central">'+escHTML(e.label)+'</text>'; }
+      return s; }).join('');
+    var nSvg=nodes.map(function(n){ var b=bm[n.id], L=String(n.label).split('\n'), tx;
+      if(L.length===1){ tx='<text x="'+b.cx+'" y="'+b.cy+'" class="dg2-label" text-anchor="middle" dominant-baseline="central">'+escHTML(L[0])+'</text>'; }
+      else { tx='<text class="dg2-label" text-anchor="middle" dominant-baseline="central">'+L.map(function(t,i){ var dy=(i-(L.length-1)/2)*13.5; return '<tspan x="'+b.cx+'" y="'+(b.cy+dy)+'">'+escHTML(t)+'</tspan>'; }).join('')+'</text>'; }
+      return '<rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" rx="7" class="dg2-box'+(n.accent?' dg2-accent':'')+'"/>'+tx; }).join('');
+    return '<div class="dg2wrap"><svg class="dg2" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="구성도">'+
+      '<defs><marker id="'+uid+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9" fill="none" class="dg2-arw"/></marker></defs>'+
+      eSvg+nSvg+'</svg></div>';
+  }
+  // 구성도 렌더 선택 — diagram2(구조화) 우선, 없으면 diagram(ASCII) 폴백. (ASCII 는 검색·6Key·답안지의 원본 데이터로 유지)
+  function diagramBlock(o){
+    if(o && o.diagram2) return diagram2SVG(o.diagram2);
+    return o && o.diagram ? '<pre class="diagram">'+diagHTML(o.diagram)+'</pre>' : '';
+  }
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
   function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
@@ -167,7 +207,7 @@
   function essayBlock(b){
     if(!b) return '';
     var h = '';
-    if(b.diagram)  h += '<pre class="diagram">'+diagHTML(b.diagram)+'</pre>';
+    if(b.diagram2 || b.diagram)  h += diagramBlock(b);
     if(b.concepts) b.concepts.forEach(function(t){ h += '<div class="def">'+escHTML(t)+'</div>'; });
     if(b.table)    h += tableHTML(b.table, '', b.title ? b.title+' 구성요소' : '구성요소 표');
     if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
@@ -222,7 +262,7 @@
     //     비교형은 도식이 없어(정의비교 표 뒤) 기존 note 그대로 사용.
     var dcap = card.diagramNote ? '<div class="note diag">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
-    var diag = card.diagram ? '<pre class="diagram">'+diagHTML(card.diagram)+'</pre>' : '';
+    var diag = diagramBlock(card);   // diagram2(SVG) 우선, 없으면 diagram(ASCII) 폴백
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="'+cstyle+'">'+
