@@ -16,87 +16,6 @@
       .replace(/([→←↑↓↔↕⇄⇆⇅↺⟳])/g, '<span class="dg-arw">$1</span>')
       .replace(/([\[\]])/g, '<span class="dg-br">$1</span>');
   }
-  // 구성도 v2 — 저자 배치 제어형 SVG 렌더러(레이아웃 연산 없음: nodes 의 col/row 좌표를 저자가 지정).
-  //   d = { cw?,ch?,gx?,gy?, nodes:[{id,label('\n'2줄),col,row,w?,h?,accent?}], edges:[{from,to,label?,style?('flow'|'map')}] }
-  //   자동배치(mermaid)와 달리 V-Model=V자·순환=컴팩트 등 "특정 배치"를 저자가 보존(시험 수기재현 정합).
-  //   색·크기·굵기는 CSS(.dg2-*) 토큰 연동 → 라이트/다크·글자확대 자동. 마커 id 는 카드별 uid 로 충돌 방지.
-  var _dg2uid = 0;
-  function diagram2SVG(d){
-    if(!d || !d.nodes || !d.nodes.length) return '';
-    var nodes=d.nodes, edges=d.edges||[];
-    var CW=(d.cw||96), CH=(d.ch||42), GX=(d.gx||34), GY=(d.gy||26), PAD=10;
-    function box(n){ var w=(n.w||1),h=(n.h||1);
-      var x=PAD+n.col*(CW+GX), y=PAD+n.row*(CH+GY);
-      var bw=w*CW+(w-1)*GX, bh=h*CH+(h-1)*GY;
-      return {x:x,y:y,w:bw,h:bh,cx:x+bw/2,cy:y+bh/2}; }
-    var bm={}; nodes.forEach(function(n){ bm[n.id]=box(n); });
-    var maxX=0,maxY=0; nodes.forEach(function(n){ var b=bm[n.id]; if(b.x+b.w>maxX)maxX=b.x+b.w; if(b.y+b.h>maxY)maxY=b.y+b.h; });
-    var W=maxX+PAD, H=maxY+PAD, uid='dg2'+(_dg2uid++);
-    function anchor(b,tx,ty){ var dx=tx-b.cx, dy=ty-b.cy;
-      if(Math.abs(dx)*b.h >= Math.abs(dy)*b.w) return {x: dx>=0?b.x+b.w:b.x, y:b.cy};
-      return {x:b.cx, y: dy>=0?b.y+b.h:b.y}; }
-    var eSvg=edges.map(function(e){ var a=bm[e.from], c=bm[e.to]; if(!a||!c) return '';
-      var p1=anchor(a,c.cx,c.cy), p2=anchor(c,a.cx,a.cy);
-      var map=(e.style==='map'||e.style==='dashed');
-      var s='<line x1="'+p1.x+'" y1="'+p1.y+'" x2="'+p2.x+'" y2="'+p2.y+'" class="dg2-edge'+(map?' dg2-map':'')+'"'+(map?'':' marker-end="url(#'+uid+')"')+'/>';
-      if(e.label){ var mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2, tw=String(e.label).length*11+6;
-        s+='<rect x="'+(mx-tw/2)+'" y="'+(my-8)+'" width="'+tw+'" height="14" rx="3" class="dg2-elabel-bg"/>'+
-           '<text x="'+mx+'" y="'+(my+1)+'" class="dg2-elabel" text-anchor="middle" dominant-baseline="central">'+escHTML(e.label)+'</text>'; }
-      return s; }).join('');
-    var nSvg=nodes.map(function(n){ var b=bm[n.id], L=String(n.label).split('\n'), tx;
-      if(L.length===1){ tx='<text x="'+b.cx+'" y="'+b.cy+'" class="dg2-label" text-anchor="middle" dominant-baseline="central">'+escHTML(L[0])+'</text>'; }
-      else { tx='<text class="dg2-label" text-anchor="middle" dominant-baseline="central">'+L.map(function(t,i){ var dy=(i-(L.length-1)/2)*13.5; return '<tspan x="'+b.cx+'" y="'+(b.cy+dy)+'">'+escHTML(t)+'</tspan>'; }).join('')+'</text>'; }
-      return '<rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" rx="7" class="dg2-box'+(n.accent?' dg2-accent':'')+'"/>'+tx; }).join('');
-    return '<div class="dg2wrap"><svg class="dg2" viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" role="img" aria-label="구성도">'+
-      '<defs><marker id="'+uid+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9" fill="none" class="dg2-arw"/></marker></defs>'+
-      eSvg+nSvg+'</svg></div>';
-  }
-  // 구성도 텍스트 DSL(dtext) — 좌표 JSON 대신 사람이 쓰기 쉬운 "그리드 텍스트 + 엣지 리스트".
-  //   [grid]  각 행: 셀을 '|' 로 구분(빈칸·'·'·'.'=공백). 셀 끝 '*'=강조. 셀 안 '//'=2줄 줄바꿈. → col=셀순번, row=행순번(배치=텍스트 위치)
-  //   [edges] 각 행: 'A > B : 라벨'(흐름·화살표) | 'A -- B : 라벨'(대응·점선). 라벨/체인('A > B > C') 허용.
-  //   [opts]  (선택) 'cw=.. ch=.. gx=.. gy=..' 로 셀 크기·간격 조절.
-  //   노드 id·엣지 참조는 라벨의 '\n'·공백·'*' 제거 정규화로 매칭 → 엣지는 라벨을 개행 없이 그대로 쓰면 된다.
-  function _dkey(s){ return String(s).replace(/\/\//g,'').replace(/\\n/g,'').replace(/\n/g,'').replace(/\*\s*$/,'').trim(); }
-  function parseDtext(s){
-    var lines=String(s||'').split('\n'), mode='', grid=[], edges=[], opts={};
-    lines.forEach(function(ln){
-      var t=ln.trim(); if(!t) return;
-      if(t==='[grid]'){ mode='grid'; return; }
-      if(t==='[edges]'){ mode='edges'; return; }
-      if(t==='[opts]'){ mode='opts'; return; }
-      if(mode==='grid'){ grid.push(ln.split('|').map(function(c){ return c.trim(); })); }
-      else if(mode==='opts'){ t.split(/\s+/).forEach(function(kv){ var m=kv.split('='); if(m.length===2) opts[m[0]]=(+m[1]||m[1]); }); }
-      else if(mode==='edges'){
-        var label='', body=t, li=t.indexOf(' : ');
-        if(li>=0){ label=t.slice(li+3).trim(); body=t.slice(0,li).trim(); }
-        var style='flow', sep=' > ';
-        if(body.indexOf(' -- ')>=0){ sep=' -- '; style='map'; }
-        else if(body.indexOf(' .. ')>=0){ sep=' .. '; style='map'; }
-        var p=body.split(sep);
-        for(var i=0; i+1<p.length; i++){ edges.push({ from:_dkey(p[i]), to:_dkey(p[i+1]), style:style, label:(i===p.length-2?label:'') }); }
-      }
-    });
-    var nodes=[], seen={};
-    grid.forEach(function(row, ri){ row.forEach(function(cell, ci){
-      if(!cell || cell==='·' || cell==='.') return;
-      var accent=/\*\s*$/.test(cell), label=cell.replace(/\*\s*$/,'').trim().replace(/\\n/g,'\n').replace(/\/\//g,'\n'), id=_dkey(cell);
-      if(seen[id]) return; seen[id]=1;
-      nodes.push({ id:id, label:label, col:ci, row:ri, accent:accent });
-    }); });
-    var d={ nodes:nodes, edges:edges };
-    ['cw','ch','gx','gy'].forEach(function(k){ if(opts[k]) d[k]=opts[k]; });
-    return d;
-  }
-  // 구성도 렌더 선택 — dtext(텍스트 DSL) → diagram2(좌표 JSON) → diagram(ASCII) 순 폴백.
-  //   (ASCII diagram 은 검색·6Key·답안지 수기재현의 원본 데이터로 병존 유지)
-  function diagramBlock(o){
-    if(o){
-      if(o.dtext) return diagram2SVG(parseDtext(o.dtext));
-      if(o.diagram2) return diagram2SVG(o.diagram2);
-      if(o.diagram) return '<pre class="diagram">'+diagHTML(o.diagram)+'</pre>';
-    }
-    return '';
-  }
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
   function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
@@ -248,7 +167,7 @@
   function essayBlock(b){
     if(!b) return '';
     var h = '';
-    if(b.dtext || b.diagram2 || b.diagram)  h += diagramBlock(b);
+    if(b.diagram)  h += '<pre class="diagram">'+diagHTML(b.diagram)+'</pre>';
     if(b.concepts) b.concepts.forEach(function(t){ h += '<div class="def">'+escHTML(t)+'</div>'; });
     if(b.table)    h += tableHTML(b.table, '', b.title ? b.title+' 구성요소' : '구성요소 표');
     if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
@@ -303,7 +222,7 @@
     //     비교형은 도식이 없어(정의비교 표 뒤) 기존 note 그대로 사용.
     var dcap = card.diagramNote ? '<div class="note diag">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
-    var diag = diagramBlock(card);   // diagram2(SVG) 우선, 없으면 diagram(ASCII) 폴백
+    var diag = card.diagram ? '<pre class="diagram">'+diagHTML(card.diagram)+'</pre>' : '';
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="'+cstyle+'">'+

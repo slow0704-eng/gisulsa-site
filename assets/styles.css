@@ -18,7 +18,6 @@
   /* 상태색 */
   --ok:#16a34a; --warn:#f59e0b; --err:#dc2626;
   --warn-bg:#fffbeb;                 /* 첨언(note) 배경 — 다크에서 재정의 */
-  --acc-bg:#e0f2fe;                  /* 구성도 강조 노드(accent) 배경 */
 
   /* 타이포 스케일(6단) — 12·13·15(본문)·17·20·26 */
   --fs-0:11px; --fs-1:12px; --fs-2:13px; --fs-3:15px; --fs-4:17px; --fs-5:20px; --fs-6:26px;
@@ -57,7 +56,7 @@
   --ink-300:#475569; --ink-200:#334155; --ink-100:#1e293b; --ink-50:#111a2b;
   --surface:#0f1826; --surface-2:#131f31; --surface-3:#1c2942;
   --surface-dark:#0a1120; --bg:#070c15;
-  --warn-bg:#2a2410; --acc-bg:#0b2a3f;
+  --warn-bg:#2a2410;
   --brand-ink:#04293a;
   --line:#2b3a52; --line-strong:#3b4d69;
   --diag-shadow:rgba(0,0,0,.4);
@@ -255,23 +254,6 @@ pre.diagram{margin:0;color:var(--ink-800);border:1px solid var(--line-strong);bo
 pre.diagram::-webkit-scrollbar{height:6px;}
 pre.diagram::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:3px;}
 pre.diagram::-webkit-scrollbar-track{background:transparent;}
-/* ===== 구성도 v2 — 저자 배치 제어형 SVG(diagram2). 패널은 청사진 톤 통일, 색·크기 토큰 연동 ===== */
-.dg2wrap{overflow-x:auto;background:var(--surface-3);border:1px solid var(--line-strong);border-left:3px solid var(--cat-color,var(--brand-strong));border-radius:var(--r-sm);padding:9px 11px;box-shadow:inset 0 1px 2px rgba(15,23,42,.04);scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;}
-.dg2wrap::-webkit-scrollbar{height:6px;} .dg2wrap::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:3px;}
-svg.dg2{display:block;max-width:100%;height:auto;}
-.dg2-box{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.2;}
-.dg2-accent{fill:var(--acc-bg);stroke:var(--brand-strong);stroke-width:1.6;}
-.dg2-label{fill:var(--ink-800);font-family:var(--font-sans);font-size:11.5px;font-weight:600;}
-.dg2-edge{stroke:var(--ink-700);stroke-width:1.5;fill:none;}
-.dg2-map{stroke:var(--ink-400);stroke-width:1.3;stroke-dasharray:4 3;}
-.dg2-arw{fill:none;stroke:var(--ink-700);stroke-width:1.6;}
-.dg2-elabel{fill:var(--ink-600);font-family:var(--font-sans);font-size:10px;font-weight:700;}
-.dg2-elabel-bg{fill:var(--surface-3);}
-.cmodal-body .dg2wrap{background:var(--surface-dark);border-color:transparent;border-left:3px solid var(--brand);}
-.cmodal-body svg.dg2{width:100%;}
-.cmodal-body .dg2-box{fill:#1e2c44;stroke:#3b4d69;} .cmodal-body .dg2-label{fill:#e2e8f0;}
-.cmodal-body .dg2-edge,.cmodal-body .dg2-arw{stroke:#cbd5e1;} .cmodal-body .dg2-map{stroke:#7386a0;}
-.cmodal-body .dg2-elabel{fill:#a9b6c8;} .cmodal-body .dg2-elabel-bg{fill:var(--surface-dark);} .cmodal-body .dg2-accent{fill:#0b2a3f;stroke:var(--brand);}
 /* D5: ASCII 3층 색 위계 — 화살표(흐름·액센트)/노드 라벨(기본 잉크)/브래킷(프레임·후퇴).
    ★ 색상만 조정 — font-weight·letter-spacing 은 inherit/0 고정(폭이 바뀌면 열 정렬이 깨진다). */
 pre.diagram .dg-arw{color:var(--brand-strong);font-weight:inherit;}
