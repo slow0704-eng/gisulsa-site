@@ -254,20 +254,6 @@ pre.diagram{margin:0;color:var(--ink-800);border:1px solid var(--line-strong);bo
 pre.diagram::-webkit-scrollbar{height:6px;}
 pre.diagram::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:3px;}
 pre.diagram::-webkit-scrollbar-track{background:transparent;}
-/* ===== 구성도 v2 — ASCII 파싱 도형 렌더(adg). 패널은 청사진 톤, 색·크기 토큰 연동 ===== */
-.adgwrap{overflow-x:auto;background:var(--surface-3);border:1px solid var(--line-strong);border-left:3px solid var(--cat-color,var(--brand-strong));border-radius:var(--r-sm);padding:8px 10px;box-shadow:inset 0 1px 2px rgba(15,23,42,.04);scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;}
-.adgwrap::-webkit-scrollbar{height:6px;} .adgwrap::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:3px;}
-svg.adg{display:block;max-width:100%;height:auto;}
-.adg-box{fill:var(--surface);stroke:var(--line-strong);stroke-width:1.2;}
-.adg-lab{fill:var(--ink-800);font-family:var(--font-sans);font-size:11.5px;font-weight:600;}
-.adg-sub{fill:var(--ink-500);font-family:var(--font-sans);font-size:10px;}
-.adg-edge{stroke:var(--ink-700);stroke-width:1.4;fill:none;}
-.adg-map{stroke:var(--ink-400);stroke-width:1.2;stroke-dasharray:4 3;}
-.adg-arw{fill:none;stroke:var(--ink-700);stroke-width:1.6;}
-.cmodal-body .adgwrap{background:var(--surface-dark);border-color:transparent;border-left:3px solid var(--brand);}
-.cmodal-body svg.adg{width:100%;}
-.cmodal-body .adg-box{fill:#1e2c44;stroke:#3b4d69;} .cmodal-body .adg-lab{fill:#e2e8f0;}
-.cmodal-body .adg-sub{fill:#a9b6c8;} .cmodal-body .adg-edge,.cmodal-body .adg-arw{stroke:#cbd5e1;} .cmodal-body .adg-map{stroke:#7386a0;}
 /* D5: ASCII 3층 색 위계 — 화살표(흐름·액센트)/노드 라벨(기본 잉크)/브래킷(프레임·후퇴).
    ★ 색상만 조정 — font-weight·letter-spacing 은 inherit/0 고정(폭이 바뀌면 열 정렬이 깨진다). */
 pre.diagram .dg-arw{color:var(--brand-strong);font-weight:inherit;}
@@ -466,12 +452,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .st-tbl .st-orig th{background:var(--surface-3);font-weight:700;color:var(--ink-600);}
 .st-tbl .st-orig td:first-child{background:var(--surface-2);font-weight:600;color:var(--ink-600);white-space:nowrap;}
 .sheet-row:hover{background:var(--surface-2);}
-.st-badge{display:inline-block;font-size:10px;font-weight:700;color:#7e22ce;background:#f3e8ff;border-radius:5px;padding:0 5px;margin-left:4px;vertical-align:middle;}
 /* 난이도·빈출 배지(테마 무관 rgba 틴트) */
-.lv-badge{display:inline-block;font-size:var(--fs-0);font-weight:800;padding:1px 6px;border-radius:var(--r-pill);margin-left:5px;vertical-align:middle;white-space:nowrap;letter-spacing:.2px;}
-.lv-badge.lv-hot{background:rgba(220,38,38,.15);color:#b91c1c;}
-.lv-badge.lv-std{background:rgba(100,116,139,.16);color:var(--ink-500);}
-.lv-badge.lv-adv{background:rgba(124,58,237,.16);color:#8b5cf6;}
 .chip.lvl.active{background:var(--ink-600);color:#fff;border-color:transparent;}
 .facet-row#progFacet .chip.lvl{font-size:10px;padding:3px 9px;}
 .facet-row#progFacet .fr-div{width:1px;align-self:stretch;background:var(--line);margin:0 4px;}
@@ -515,7 +496,6 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .pt-stat{display:inline-flex;align-items:baseline;gap:3px;color:var(--muted);font-size:var(--fs-1);}
 .pt-stat b{font-size:var(--fs-5);font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
 .pt-stat small{font-size:10px;color:var(--ink-400);}
-.pt-badge{margin-left:auto;}
 .pt-ok{color:var(--ok);font-weight:800;font-size:var(--fs-3);}
 .pt-nav{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
 .pt-nav .pt-next{margin-left:auto;}
