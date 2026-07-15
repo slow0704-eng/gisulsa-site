@@ -16,6 +16,88 @@
       .replace(/([→←↑↓↔↕⇄⇆⇅↺⟳])/g, '<span class="dg-arw">$1</span>')
       .replace(/([\[\]])/g, '<span class="dg-br">$1</span>');
   }
+  // ── 구성도 v2 — 기존 ASCII(card.diagram)를 파싱해 도형(박스+화살표)으로 렌더. 데이터·저작 형식 불변 ──
+  //   원리: 모노스페이스 격자 = 배치. 줄=행(row), 문자 시각컬럼(한글2·기타1)=열(인덴트). '[라벨]'=박스,
+  //   화살표(→←↓↑)=엣지, ─━선=대응엣지, 박스 없는 줄 텍스트=하위라벨. 박스<2면 '' 반환 → ASCII 폴백.
+  var _adgUid = 0;
+  function _cpw(c){ return ((c>=0xAC00&&c<=0xD7A3)||(c>=0x4E00&&c<=0x9FFF)||(c>=0x3000&&c<=0x303F)||(c>=0xFF00&&c<=0xFF60)||(c>=0x2460&&c<=0x24FF)) ? 2 : 1; }
+  var _ADGARW={'→':'R','⟶':'R','⇒':'R','⇢':'R','←':'L','⇐':'L','↓':'D','↑':'U','↕':'V','⇅':'V','⇄':'R','↔':'H'};
+  var _ADGLINE='─━—=╌┈';
+  function asciiDiagramSVG(txt){
+    var lines=String(txt||'').replace(/\t/g,'  ').split('\n');
+    var boxes=[], arws=[], runs=[], subs=[];
+    lines.forEach(function(ln,r){
+      var i=0, vcol=0, runS=-1;
+      while(i<ln.length){
+        var ch=ln[i], cc=ln.charCodeAt(i), cw=_cpw(cc);
+        if(ch==='['){ var j=ln.indexOf(']', i);
+          if(j>=0){ var inner=ln.slice(i+1,j), w=0;
+            for(var k=i;k<=j;k++) w+=_cpw(ln.charCodeAt(k));
+            boxes.push({label:inner.trim(), row:r, x0:vcol, x1:vcol+w});
+            if(runS>=0){ runs.push({row:r,x0:runS,x1:vcol}); runS=-1; }
+            vcol+=w; i=j+1; continue; }
+        }
+        if(_ADGARW[ch]){ arws.push({row:r,col:vcol,dir:_ADGARW[ch]}); if(runS>=0){ runs.push({row:r,x0:runS,x1:vcol}); runS=-1; } }
+        else if(_ADGLINE.indexOf(ch)>=0){ if(runS<0) runS=vcol; }
+        else if(runS>=0){ runs.push({row:r,x0:runS,x1:vcol}); runS=-1; }
+        vcol+=cw; i++;
+      }
+      if(runS>=0) runs.push({row:r,x0:runS,x1:vcol});
+    });
+    if(boxes.length<2) return '';   // 박스 부족 → 폴백
+    // 하위라벨(박스 없는 줄의 텍스트 조각)
+    lines.forEach(function(ln,r){
+      if(boxes.some(function(b){return b.row===r;})) return;
+      if(!ln.trim()) return;
+      var i=0,vcol=0,run='',start=0;
+      while(i<ln.length){ var ch=ln[i], cw=_cpw(ln.charCodeAt(i));
+        if(ch===' '){ if(run){ subs.push({row:r,col:start,t:run}); run=''; } }
+        else { if(!run) start=vcol; run+=ch; }
+        vcol+=cw; i++;
+      }
+      if(run) subs.push({row:r,col:start,t:run});
+    });
+    var U=8.5, PAD=10, RH=54, BH=34;
+    var B=boxes.map(function(b){ return {label:b.label,row:b.row,x0:b.x0,x1:b.x1,
+      x:PAD+b.x0*U, y:PAD+b.row*RH, w:Math.max((b.x1-b.x0)*U,26), h:BH, cx:PAD+(b.x0+b.x1)/2*U, cy:PAD+b.row*RH+BH/2}; });
+    function rowBoxes(r){ return B.filter(function(b){return b.row===r;}).sort(function(a,b){return a.x0-b.x0;}); }
+    function boxAtCol(r,c){ return B.filter(function(b){return b.row===r;}).filter(function(b){ return c>=b.x0-2 && c<=b.x1+2; })[0]; }
+    var edges=[], eseen={};
+    function addEdge(a,b,map){ if(!a||!b||a===b) return; var k=a.label+'>'+b.label+(map?'~':''); if(eseen[k]) return; eseen[k]=1; edges.push({a:a,b:b,map:map}); }
+    function betw(row,col){ var rb=rowBoxes(row),l=null,rt=null; rb.forEach(function(b){ if(b.x1<=col+1) l=b; if(b.x0>=col-1 && !rt) rt=b; }); return {l:l,r:rt}; }
+    arws.forEach(function(m){
+      if(m.dir==='R'||m.dir==='L'||m.dir==='H'){ var g=betw(m.row,m.col); if(g.l&&g.r) addEdge(m.dir==='L'?g.r:g.l, m.dir==='L'?g.l:g.r, false); }
+      else { var g=betw(m.row,m.col);
+        if(g.l&&g.r) addEdge(g.l,g.r,false);                       // 같은 줄 두 박스 사이 세로화살표 → 흐름
+        else { var up=boxAtCol(m.row-1,m.col)||boxAtCol(m.row,m.col), dn=boxAtCol(m.row+1,m.col);
+          if(up&&dn) addEdge(m.dir==='U'?dn:up, m.dir==='U'?up:dn, false); } }
+    });
+    runs.forEach(function(lr){ var rb=rowBoxes(lr.row),l=null,rt=null;
+      rb.forEach(function(b){ if(b.x1<=lr.x0+1) l=b; if(b.x0>=lr.x1-1 && !rt) rt=b; });
+      var hasArw=arws.some(function(m){return m.row===lr.row && m.col>=lr.x0-1 && m.col<=lr.x1+1;});
+      if(l&&rt&&!hasArw) addEdge(l,rt,true); });
+    var maxX=0,maxY=0; B.forEach(function(b){ if(b.x+b.w>maxX)maxX=b.x+b.w; if(b.y+b.h>maxY)maxY=b.y+b.h; });
+    subs.forEach(function(s){ var sw=0; for(var q=0;q<s.t.length;q++) sw+=_cpw(s.t.charCodeAt(q));
+      if(PAD+s.col*U+sw*U>maxX)maxX=PAD+s.col*U+sw*U; if(PAD+s.row*RH+16>maxY)maxY=PAD+s.row*RH+16; });
+    var W=maxX+PAD, H=maxY+PAD, uid='adg'+(_adgUid++);
+    function anc(b,tx,ty){ var dx=tx-b.cx,dy=ty-b.cy; if(Math.abs(dx)>=Math.abs(dy)) return {x:dx>=0?b.x+b.w:b.x,y:b.cy}; return {x:b.cx,y:dy>=0?b.y+b.h:b.y}; }
+    var eSvg=edges.map(function(e){ var p1=anc(e.a,e.b.cx,e.b.cy), p2=anc(e.b,e.a.cx,e.a.cy);
+      return '<line x1="'+p1.x.toFixed(1)+'" y1="'+p1.y.toFixed(1)+'" x2="'+p2.x.toFixed(1)+'" y2="'+p2.y.toFixed(1)+'" class="adg-edge'+(e.map?' adg-map':'')+'"'+(e.map?'':' marker-end="url(#'+uid+')"')+'/>'; }).join('');
+    var nSvg=B.map(function(b){ return '<rect x="'+b.x.toFixed(1)+'" y="'+b.y.toFixed(1)+'" width="'+b.w.toFixed(1)+'" height="'+b.h+'" rx="6" class="adg-box"/>'+
+      '<text x="'+b.cx.toFixed(1)+'" y="'+b.cy.toFixed(1)+'" class="adg-lab" text-anchor="middle" dominant-baseline="central">'+escHTML(b.label)+'</text>'; }).join('');
+    var sSvg=subs.map(function(s){ return '<text x="'+(PAD+s.col*U).toFixed(1)+'" y="'+(PAD+s.row*RH+3).toFixed(1)+'" class="adg-sub">'+escHTML(s.t)+'</text>'; }).join('');
+    return '<div class="adgwrap"><svg class="adg" viewBox="0 0 '+W.toFixed(0)+' '+H.toFixed(0)+'" width="'+W.toFixed(0)+'" height="'+H.toFixed(0)+'" role="img" aria-label="구성도">'+
+      '<defs><marker id="'+uid+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9" fill="none" class="adg-arw"/></marker></defs>'+
+      eSvg+nSvg+sSvg+'</svg></div>';
+  }
+  // 구성도 렌더 선택 — ASCII 파싱 도형(성공 시) → 실패/박스부족 시 ASCII pre 폴백. (데이터=card.diagram 불변)
+  function diagramBlock(o){
+    if(o && o.diagram){
+      var svg = asciiDiagramSVG(o.diagram);
+      return svg || ('<pre class="diagram">'+diagHTML(o.diagram)+'</pre>');
+    }
+    return '';
+  }
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
   function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
@@ -167,7 +249,7 @@
   function essayBlock(b){
     if(!b) return '';
     var h = '';
-    if(b.diagram)  h += '<pre class="diagram">'+diagHTML(b.diagram)+'</pre>';
+    if(b.diagram)  h += diagramBlock(b);
     if(b.concepts) b.concepts.forEach(function(t){ h += '<div class="def">'+escHTML(t)+'</div>'; });
     if(b.table)    h += tableHTML(b.table, '', b.title ? b.title+' 구성요소' : '구성요소 표');
     if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
@@ -222,7 +304,7 @@
     //     비교형은 도식이 없어(정의비교 표 뒤) 기존 note 그대로 사용.
     var dcap = card.diagramNote ? '<div class="note diag">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
-    var diag = card.diagram ? '<pre class="diagram">'+diagHTML(card.diagram)+'</pre>' : '';
+    var diag = diagramBlock(card);   // ASCII 파싱→도형(성공 시), 아니면 ASCII pre 폴백
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="'+cstyle+'">'+
