@@ -51,10 +51,51 @@
       '<defs><marker id="'+uid+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9" fill="none" class="dg2-arw"/></marker></defs>'+
       eSvg+nSvg+'</svg></div>';
   }
-  // 구성도 렌더 선택 — diagram2(구조화) 우선, 없으면 diagram(ASCII) 폴백. (ASCII 는 검색·6Key·답안지의 원본 데이터로 유지)
+  // 구성도 텍스트 DSL(dtext) — 좌표 JSON 대신 사람이 쓰기 쉬운 "그리드 텍스트 + 엣지 리스트".
+  //   [grid]  각 행: 셀을 '|' 로 구분(빈칸·'·'·'.'=공백). 셀 끝 '*'=강조. 셀 안 '//'=2줄 줄바꿈. → col=셀순번, row=행순번(배치=텍스트 위치)
+  //   [edges] 각 행: 'A > B : 라벨'(흐름·화살표) | 'A -- B : 라벨'(대응·점선). 라벨/체인('A > B > C') 허용.
+  //   [opts]  (선택) 'cw=.. ch=.. gx=.. gy=..' 로 셀 크기·간격 조절.
+  //   노드 id·엣지 참조는 라벨의 '\n'·공백·'*' 제거 정규화로 매칭 → 엣지는 라벨을 개행 없이 그대로 쓰면 된다.
+  function _dkey(s){ return String(s).replace(/\/\//g,'').replace(/\\n/g,'').replace(/\n/g,'').replace(/\*\s*$/,'').trim(); }
+  function parseDtext(s){
+    var lines=String(s||'').split('\n'), mode='', grid=[], edges=[], opts={};
+    lines.forEach(function(ln){
+      var t=ln.trim(); if(!t) return;
+      if(t==='[grid]'){ mode='grid'; return; }
+      if(t==='[edges]'){ mode='edges'; return; }
+      if(t==='[opts]'){ mode='opts'; return; }
+      if(mode==='grid'){ grid.push(ln.split('|').map(function(c){ return c.trim(); })); }
+      else if(mode==='opts'){ t.split(/\s+/).forEach(function(kv){ var m=kv.split('='); if(m.length===2) opts[m[0]]=(+m[1]||m[1]); }); }
+      else if(mode==='edges'){
+        var label='', body=t, li=t.indexOf(' : ');
+        if(li>=0){ label=t.slice(li+3).trim(); body=t.slice(0,li).trim(); }
+        var style='flow', sep=' > ';
+        if(body.indexOf(' -- ')>=0){ sep=' -- '; style='map'; }
+        else if(body.indexOf(' .. ')>=0){ sep=' .. '; style='map'; }
+        var p=body.split(sep);
+        for(var i=0; i+1<p.length; i++){ edges.push({ from:_dkey(p[i]), to:_dkey(p[i+1]), style:style, label:(i===p.length-2?label:'') }); }
+      }
+    });
+    var nodes=[], seen={};
+    grid.forEach(function(row, ri){ row.forEach(function(cell, ci){
+      if(!cell || cell==='·' || cell==='.') return;
+      var accent=/\*\s*$/.test(cell), label=cell.replace(/\*\s*$/,'').trim().replace(/\\n/g,'\n').replace(/\/\//g,'\n'), id=_dkey(cell);
+      if(seen[id]) return; seen[id]=1;
+      nodes.push({ id:id, label:label, col:ci, row:ri, accent:accent });
+    }); });
+    var d={ nodes:nodes, edges:edges };
+    ['cw','ch','gx','gy'].forEach(function(k){ if(opts[k]) d[k]=opts[k]; });
+    return d;
+  }
+  // 구성도 렌더 선택 — dtext(텍스트 DSL) → diagram2(좌표 JSON) → diagram(ASCII) 순 폴백.
+  //   (ASCII diagram 은 검색·6Key·답안지 수기재현의 원본 데이터로 병존 유지)
   function diagramBlock(o){
-    if(o && o.diagram2) return diagram2SVG(o.diagram2);
-    return o && o.diagram ? '<pre class="diagram">'+diagHTML(o.diagram)+'</pre>' : '';
+    if(o){
+      if(o.dtext) return diagram2SVG(parseDtext(o.dtext));
+      if(o.diagram2) return diagram2SVG(o.diagram2);
+      if(o.diagram) return '<pre class="diagram">'+diagHTML(o.diagram)+'</pre>';
+    }
+    return '';
   }
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
@@ -207,7 +248,7 @@
   function essayBlock(b){
     if(!b) return '';
     var h = '';
-    if(b.diagram2 || b.diagram)  h += diagramBlock(b);
+    if(b.dtext || b.diagram2 || b.diagram)  h += diagramBlock(b);
     if(b.concepts) b.concepts.forEach(function(t){ h += '<div class="def">'+escHTML(t)+'</div>'; });
     if(b.table)    h += tableHTML(b.table, '', b.title ? b.title+' 구성요소' : '구성요소 표');
     if(b.note)     h += '<div class="note">'+escHTML(b.note)+'</div>';
