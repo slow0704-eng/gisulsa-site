@@ -258,6 +258,15 @@ pre.diagram::-webkit-scrollbar-track{background:transparent;}
    ★ 색상만 조정 — font-weight·letter-spacing 은 inherit/0 고정(폭이 바뀌면 열 정렬이 깨진다). */
 pre.diagram .dg-arw{color:var(--brand-strong);font-weight:inherit;}
 pre.diagram .dg-br{color:var(--ink-400);font-weight:inherit;}
+/* T2·T3: 부가라벨행(박스·화살표·연결선이 없어 위아래 열과 물리지 않는 줄)만 축소·후퇴.
+   ★ 축소는 이 줄에만 — 격자행에 font-size 를 주면 advance-width 가 바뀌어 세로 커넥터 정렬이 깨진다.
+   바깥 span(.dg-sub)은 기준 크기 유지 → padding-left 의 ch 가 기준 격자 1칸과 같다(시작 x 재고정). */
+pre.diagram .dg-sub{font-size:var(--diag-fs);}
+pre.diagram .dg-sub-t{font-size:.85em;color:var(--ink-500);}
+/* 열정렬형 부가라벨 — 위 박스와 열을 맞춘 줄이라 크기 불변(폭 보존), 색만 후퇴 */
+pre.diagram .dg-subc{color:var(--ink-500);}
+/* T4: 빈 줄 = 요소 그룹 구분 → 기본 행간보다 넓은 갭으로 승격(격자행 행간은 불변) */
+pre.diagram .dg-gap{display:inline-block;width:0;height:1.75em;vertical-align:top;}
 /* D8: 도식 첨언(diagramNote)은 노란 warn 박스가 아니라 도식에 물린 저채도 캡션 — '도형+캡션' 한 단위, 주석<원본 */
 pre.diagram:has(+ .note.diag){border-radius:var(--r-sm) var(--r-sm) 0 0;}
 .note.diag{margin-top:0;background:transparent;border:1px solid var(--line-strong);border-top:none;border-left:3px solid var(--cat-color,var(--brand-strong));border-radius:0 0 var(--r-sm) var(--r-sm);color:var(--ink-600);font-size:var(--fs-1);padding:6px 12px 6px 11px;}
@@ -327,6 +336,9 @@ table.cmp2 td:first-child{white-space:normal;font-weight:inherit;color:inherit;b
 .cmodal-body pre.diagram{background:var(--surface-dark);background-image:none;color:#e2e8f0;border-color:transparent;border-left:3px solid var(--brand);font-size:var(--diag-fs-modal);line-height:var(--diag-lh-modal);padding:14px 16px 14px 13px;box-shadow:none;}
 .cmodal-body pre.diagram .dg-arw{color:var(--brand);}
 .cmodal-body pre.diagram .dg-br{color:var(--ink-500);}
+/* 모달은 기준 크기가 --diag-fs-modal — 바깥 span 도 같은 크기여야 padding-left 의 ch 가 격자 1칸과 일치 */
+.cmodal-body pre.diagram .dg-sub{font-size:var(--diag-fs-modal);}
+.cmodal-body pre.diagram .dg-sub-t,.cmodal-body pre.diagram .dg-subc{color:#94a3b8;}
 .cmodal-body pre.diagram:has(+ .note.diag){border-radius:var(--r-sm) var(--r-sm) 0 0;}
 .cmodal-body .note.diag{border-color:var(--line-strong);border-left-color:var(--brand);border-top:none;}
 .cmodal-body .note{font-size:var(--fs-2);}
@@ -745,6 +757,7 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
   /* 흑백 인쇄: 도식 3층 색 위계는 잉크 농도로 축약(액센트 색 소실 대비) */
   pre.diagram .dg-arw{color:#000 !important;}
   pre.diagram .dg-br{color:#555 !important;}
+  pre.diagram .dg-sub-t{color:#444 !important;}
   .es-reqs,.es-prob *{color:#000 !important;}
   .note{background:#fff !important;border-left:3px solid var(--ink-400);}
 }

@@ -9,12 +9,47 @@
   // HTML 텍스트 이스케이프(<,>,& 가 태그·엔티티로 해석돼 카드가 깨지는 것 방지)
   function escHTML(s){ return toStr(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function escAttr(s){ return escHTML(s).replace(/"/g,'&quot;'); }
-  // 구성도(ASCII) 표시층 — escHTML 이후 화살표·대괄호만 span 래핑해 3층 색 위계(흐름/노드/프레임)를 준다.
-  // 데이터·ASCII 원문·스키마 불변, 색상만 조정(굵기·자간은 CSS 에서 불변 고정 — 폭이 바뀌면 열 정렬이 깨진다).
-  function diagHTML(s){
+  // 구성도(ASCII) 표시층 — 색 위계(T5): 화살표·대괄호만 span 래핑(흐름/노드/프레임 3층).
+  // ★ 굵기·자간은 CSS 에서 불변 고정 — advance-width 가 바뀌면 열 정렬이 깨진다.
+  function diagInk(s){
     return escHTML(s)
       .replace(/([→←↑↓↔↕⇄⇆⇅↺⟳])/g, '<span class="dg-arw">$1</span>')
       .replace(/([\[\]])/g, '<span class="dg-br">$1</span>');
+  }
+  // 격자 참여 문자 — 이 중 하나라도 있는 줄은 위/아래 줄과 열이 물린다(= 기준 크기 고정 대상).
+  var DG_ARW = /[→←↑↓↔↕⇄⇆⇅↺⟳]/;
+  var DG_STRUCT = /[─━│┃┌┐└┘├┤┬┴┼╭╮╰╯╱╲\\|+]/;
+  // 시각컬럼 폭(한글·전각 2, 그 외 1) — 선행 공백은 전부 1폭이라 길이와 같지만 규칙을 명시해 둔다.
+  function dgWidth(s){
+    var w = 0;
+    for(var i=0;i<s.length;i++){
+      var c = s.charCodeAt(i);
+      w += (c>=0x1100 && (c<=0x115F || (c>=0x2E80&&c<=0xA4CF) || (c>=0xAC00&&c<=0xD7A3) ||
+            (c>=0xF900&&c<=0xFAFF) || (c>=0xFE30&&c<=0xFE6F) || (c>=0xFF00&&c<=0xFF60) ||
+            (c>=0xFFE0&&c<=0xFFE6))) ? 2 : 1;
+    }
+    return w;
+  }
+  // 구성도 표시층 타이포그래피(T1~T4) — 데이터·ASCII 원문·저작 형식 불변, 화면 표시만 위계화.
+  //  T1 줄 역할 분류(문자 검사 수준 — 관계 추론·좌표 계산 없음)
+  //  T2 크기 위계: 박스행·커넥터행 = 기준 크기 고정 / 부가라벨행(격자 미참여)만 0.85em 축소
+  //  T3 인덴트 고정: 축소한 줄은 선행 공백 → padding-left(기준 크기 ch)로 치환해 시작 x 를 격자에 재고정
+  //  T4 요소 간격: 빈 줄을 그룹 갭으로 승격(박스행 사이 행간 --diag-lh 는 불변 — 세로 커넥터 연결 유지)
+  //  T6 폴백: 박스행 2 미만이면 현행 그대로(무회귀)
+  function diagHTML(s){
+    var lines = toStr(s).split('\n'), boxes = 0;
+    lines.forEach(function(l){ if(l.indexOf('[')>=0) boxes++; });
+    if(boxes < 2) return diagInk(s);
+    return lines.map(function(l){
+      if(!l.trim()) return '<span class="dg-ln dg-gap"></span>';                 // T4
+      if(l.indexOf('[')>=0 || DG_ARW.test(l) || DG_STRUCT.test(l)) return diagInk(l); // T2 격자행 불변
+      var m = /^(\s*)(.*?)\s*$/.exec(l);
+      // ★ 열정렬형 부가라벨(내부 2칸 이상 공백 = 위 박스들 아래 열을 맞춘 라벨. 예 폭포수 "확정  명세  코딩")
+      //   → 축소하면 뒤쪽 토큰이 자기 박스 아래에서 밀려난다. 색만 후퇴시키고 크기·폭은 불변.
+      if(/\s{2,}/.test(m[2])) return '<span class="dg-subc">'+diagInk(l)+'</span>';
+      return '<span class="dg-ln dg-sub" style="padding-left:'+dgWidth(m[1])+'ch">'+  // T3 단일 부가라벨행
+             '<span class="dg-sub-t">'+diagInk(m[2])+'</span></span>';
+    }).join('\n');
   }
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
