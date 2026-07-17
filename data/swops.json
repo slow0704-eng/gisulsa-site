@@ -1853,7 +1853,7 @@
       "keyword": "무비난 사후분석",
       "keywords": "장애관리 장애대응 postmortem 포스트모템 MTTD MTTR MTBF RCA 비난없는 blameless incident IC 복구 runbook",
       "def": "장애를 신속 탐지·복구하고, 비난 없는 사후분석(Postmortem)으로 재발을 방지하는 운영 활동.",
-      "diagram": "[탐지·알림(MTTD)]→[대응·복구(MTTR)]\n ↓ 복구 확인 후\n[포스트모템 RCA] 비난 없는 사후분석\n ↓ 액션아이템 도출\n[재발방지 조치]→[프로세스 개선]",
+      "diagram": "[①탐지·알림(MTTD)]→[②대응·복구(MTTR)]\n ↓ 복구 확인 후\n[③포스트모템 RCA] 비난 없는 사후분석\n ↓ 액션아이템 도출\n[④재발방지 조치]→[⑤프로세스 개선]",
       "diagramNote": "※ 심각도(SEV) 등급별 대응·소집 체계",
       "table": {
         "head": [
