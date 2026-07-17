@@ -268,7 +268,7 @@
       "keyword": "수평·수직형",
       "keywords": "프로토타입 유형 horizontal vertical rapid 수평 수직 신속 throwaway 범위 깊이 breadth depth",
       "def": "구현 범위(넓이·깊이)와 제작 속도에 따라 프로토타입을 수평·수직·신속(Rapid)형으로 구분한 분류.",
-      "diagram": "[Horizontal]→ 넓고 얕게(UI·메뉴 전반)\n[Vertical]  → 좁고 깊게(전 계층 관통)\n[Rapid]     → 빠른 제작·검증 후 폐기\n      ↓ 검증 목적에 따라 선택\n[범위 Breadth]⇄[깊이 Depth]",
+      "diagram": "[Horizontal]→ 넓고 얕게(UI·메뉴 전반)\n[Vertical]  → 좁고 깊게(전 계층 관통)\n[Rapid]     → 빠른 제작·검증 후 폐기\n [범위 Breadth]⇄[깊이 Depth] 분류축\n 검증 목적에 따라 유형 선택",
       "diagramNote": "※ 목적에 따라 수평·수직 혼합 적용",
       "table": {
         "head": [
@@ -320,7 +320,7 @@
       "keyword": "짜깁기·비동작형",
       "keywords": "프로토타입 4유형 patch up non-operational first of a series selected features 짜깁기 비동작 파일럿 선택기능",
       "def": "구현 정도·목적에 따라 프로토타입을 짜깁기·비동작·시리즈 선두·선택기능형 4가지로 구분한 분류.",
-      "diagram": "[Patch-Up]→기존 부품 짜깁기(재사용 조합)\n[Non-Operational]→동작X·화면(설계)만 검토\n[First-of-Series]→파일럿(운영 첫 버전)\n[Selected Features]→핵심 기능 일부만 구현\n      ↓ 구현 정도 기준 → [요구·위험 검증]",
+      "diagram": "[Patch-Up]→기존 부품 짜깁기(재사용 조합)\n[Non-Operational]→동작X·화면(설계)만 검토\n[First-of-Series]→파일럿(운영 첫 버전)\n[Selected Features]→핵심 기능 일부만 구현\n 4유형 공통 → [요구·위험 검증]",
       "diagramNote": "※ 비동작형=폐기, 선두형=진화(운영 승계)",
       "table": {
         "head": [
