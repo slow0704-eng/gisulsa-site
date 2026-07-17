@@ -190,7 +190,7 @@
       "keyword": "As-Is→To-Be",
       "keywords": "ISP 절차 information strategy planning 환경분석 현황분석 as-is gap 목표모델 to-be 이행계획 로드맵 단계",
       "def": "ISP를 환경분석→현황분석(As-Is)→목표모델(To-Be)→이행계획의 단계로 수행하는 표준 수립 절차.",
-      "diagram": "[환경분석]→[As-Is 현황]→[Gap 분석]\n ↓ 격차·개선기회 도출\n[To-Be 목표모델]→[전략과제 도출]→[EA/ITA 정합]\n ↓ 과제 구조화·재원 배분\n[이행계획]→[로드맵·예산]→[투자우선순위 확정]",
+      "diagram": "[환경분석]→[현황분석 As-Is]\n ↓ 경영·IT 환경 대비 진단\n[목표모델 To-Be]→[Gap 분석]\n ↓ 차이 = 개선과제 원천\n[이행계획]→[ISP 보고서]",
       "diagramNote": "※ As-Is~To-Be Gap이 과제 도출 핵심",
       "table": {
         "head": [
