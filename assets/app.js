@@ -64,7 +64,17 @@
   }
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
-  var state = { q:'', qmode:'and', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards' };
+  var state = { q:'', qmode:'and', qscope:'both', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards' };
+  // 검색 범위별 대상 문자열 — 제목만 / 내용만(제목 제외 + 키워드) / 제목+내용(전부).
+  //   제목은 카드 aria-label, 시트행은 data-key(dom|title) 에서 얻는다. 내용은 title 문자열을 본문에서 제거.
+  function searchTextFor(el){
+    var dataK = el.getAttribute('data-k') || '';
+    var title = el.getAttribute('aria-label') || String(el.getAttribute('data-key')||'').split('|').pop() || '';
+    if(state.qscope==='title') return title.toLowerCase();
+    var full = el.textContent;
+    if(state.qscope==='content'){ var body = title ? full.replace(title,'') : full; return (dataK+' '+body).toLowerCase(); }
+    return (dataK+' '+full).toLowerCase();   // both
+  }
   function lvlOk(l){ return state.lvl==='all' || (l||'') === state.lvl; }
   // ---- 진도·이력(localStorage): 학습완료(done)·북마크(mark)·이어보기(resume) ----
   var PROG = { done:{}, mark:{}, wrong:{} };
@@ -276,7 +286,7 @@
       var domId = g.getAttribute('data-dom');
       var groupVisible = false;
       g.querySelectorAll('.card').forEach(function(c){
-        var text = q ? (c.getAttribute('data-k')+' '+c.textContent).toLowerCase() : '';
+        var text = q ? searchTextFor(c) : '';
         var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
                  && (state.sub==='all' || c.getAttribute('data-sub')===state.sub)
                  && lvlOk(c.getAttribute('data-lvl'))
@@ -401,7 +411,7 @@
     var q = state.q, shown = 0;
     var rows = sheetBody.querySelectorAll('.sheet-row');
     rows.forEach(function(r){
-      var text = q ? (r.getAttribute('data-k')+' '+r.textContent).toLowerCase() : '';
+      var text = q ? searchTextFor(r) : '';
       var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
                && (state.sub==='all' || r.getAttribute('data-sub')===state.sub)
                && lvlOk(r.getAttribute('data-lvl'))
@@ -848,6 +858,25 @@
     smodeEl.addEventListener('click', function(){
       state.qmode = (state.qmode==='or') ? 'and' : 'or';
       renderSmode();
+      if(state.q && state.view!=='quiz') applyActiveFilter();
+    });
+  }
+
+  // ---- 검색 범위 토글(제목+내용 → 제목 → 내용 순환) ----
+  var scopeEl = document.getElementById('searchScope');
+  var SCOPES = ['both', 'title', 'content'];
+  var SCOPE_LABEL = { both:'제목+내용', title:'제목', content:'내용' };
+  function renderScope(){
+    if(!scopeEl) return;
+    scopeEl.textContent = SCOPE_LABEL[state.qscope];
+    scopeEl.classList.toggle('is-scoped', state.qscope!=='both');
+    scopeEl.title = '검색 범위: '+SCOPE_LABEL[state.qscope]+' — 눌러 전환(제목+내용/제목/내용)';
+  }
+  if(scopeEl){
+    renderScope();
+    scopeEl.addEventListener('click', function(){
+      state.qscope = SCOPES[(SCOPES.indexOf(state.qscope)+1) % SCOPES.length];
+      renderScope();
       if(state.q && state.view!=='quiz') applyActiveFilter();
     });
   }
