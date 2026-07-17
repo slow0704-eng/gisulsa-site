@@ -86,7 +86,7 @@
       "keyword": "ISO·계층독립",
       "keywords": "OSI 7계층 모델 참조모델 캡슐화 PDU 계층화 프로토콜 표준",
       "def": "통신 기능을 물리~응용 7계층으로 분할, 계층별 독립 프로토콜로 상호운용성을 보장하는 ISO 표준 참조모델.",
-      "diagram": "[7 응용][6 표현][5 세션] 서비스·암호·대화\n  ↓ 캡슐화(계층별 헤더 부착)\n[4 전송] 종단 신뢰·포트 [3 네트워크] IP 라우팅\n  ↓ 하위 계층으로 위임\n[2 데이터링크] MAC 프레임 → [1 물리] 비트 전송",
+      "diagram": "[7 응용][6 표현][5 세션] 서비스·암호·대화\n  ↓ 캡슐화(계층별 헤더 부착)\n[4 전송] 종단 신뢰·포트 [3 네트워크] 라우팅\n  ↓ 하위 계층으로 위임\n[2 데이터링크] MAC 프레임 [1 물리] 비트 전송",
       "diagramNote": "※ 계층별 PDU 상이: 세그먼트·패킷·프레임",
       "table": {
         "head": [
@@ -242,7 +242,7 @@
       "keyword": "CSMA/CD·MAC",
       "keywords": "이더넷 Ethernet CSMA/CD MAC 프레임 LAN IEEE 802.3 충돌",
       "def": "유선 LAN의 사실상 표준으로, MAC 주소 기반 프레임을 CSMA/CD·스위칭으로 전달하는 IEEE 802.3 기술.",
-      "diagram": "[단말A]─[L2 스위치]─[단말B]\n 프레임: [Preamble][목적MAC][출발MAC]\n        [Type][Data 46~1500][FCS]\n IEEE 802.3·CSMA/CD·48bit MAC\n 10M→1G→10G/100G 속도 계층 확장",
+      "diagram": "[단말A] ⇄ [L2 스위치] ⇄ [단말B]\n  ↓ CSMA/CD 충돌 감지·전이중 전환\n[프레임] Preamble·MAC48·Type·Data·FCS\n  ↓ IEEE 802.3 물리 규격\n[10M~400G] 대역 확장 → [스위칭] 전이중",
       "diagramNote": "※ 현재는 스위치 기반 전이중",
       "table": {
         "head": [
@@ -294,7 +294,7 @@
       "keyword": "IP↔MAC",
       "keywords": "ARP 주소결정 프로토콜 IP MAC 매핑 캐시 RARP GARP 스푸핑",
       "def": "동일 네트워크에서 IP 주소에 대응하는 MAC 주소를 브로드캐스트 질의로 알아내는 주소결정 프로토콜.",
-      "diagram": "[송신 호스트] →브로드캐스트→ \"IP의 MAC 주소?\"\n   ↓ 동일 서브넷 대상만 응답\n[대상 호스트] →유니캐스트→ \"내 MAC 주소\" 회신\n   ↓ 캐시에 매핑 등록\n[ARP 캐시] 재질의 생략, 만료 시 자동 갱신",
+      "diagram": "[송신 호스트] ─①Request→ [브로드캐스트]\n   ↓ 동일 서브넷 전체 질의\n[대상 호스트] ─②Reply→ 유니캐스트 회신\n   ↓ ③매핑 등록\n[ARP 캐시] 재질의 생략·만료 시 갱신",
       "diagramNote": "※ 스푸핑 위조 응답 위험, 정적 매핑 대응",
       "table": {
         "head": [
@@ -346,7 +346,7 @@
       "keyword": "검출·재전송",
       "keywords": "오류제어 흐름제어 패리티 CRC 체크섬 해밍코드 FEC ARQ 정지대기 GBN SR 슬라이딩윈도우",
       "def": "전송 중 비트오류를 검출·정정하고 송수신 속도차를 조절해 신뢰성·효율을 확보하는 데이터링크 제어 기법.",
-      "diagram": "[송신] → [검출: CRC·패리티·해밍]\n   ↓ 오류 검출 시\n[재전송 ARQ: Stop&Wait/GBN/SR]\n[흐름: 슬라이딩 윈도우 기법]\n 수신버퍼 여유 ← ACK/NAK 피드백",
+      "diagram": "[송신] → [검출: CRC·패리티·해밍]\n   ↓ 오류 검출 시\n[재전송 ARQ: Stop&Wait/GBN/SR]\n   ↓ 송수신 속도차 조절\n[흐름 제어] 슬라이딩 윈도우 ← ACK/NAK",
       "diagramNote": "※ 검출(EDC)·정정(ECC) 구분",
       "table": {
         "head": [
@@ -398,7 +398,7 @@
       "keyword": "IPv4·IPv6",
       "keywords": "IP 주소 IPv4 IPv6 클래스 주소체계 32비트 128비트 헤더 듀얼스택 SLAAC NDP 주소고갈",
       "def": "32bit IPv4와 주소고갈을 해소한 128bit IPv6로 종단 노드를 식별·라우팅하는 인터넷 계층 논리주소 체계.",
-      "diagram": "[IPv4 32bit] 192.168.0.1 → 약 43억개·주소 고갈\n   ↓ 128bit 확장으로 고갈 해소\n[IPv6 128bit] 2001:db8::1 · IPsec 내장\n   ↓ 듀얼스택·터널링 점진 이행\n[네트워크부] + [호스트부] → 경로·노드 식별",
+      "diagram": "[IPv4 32bit] 192.168.0.1 → 약 43억개 고갈\n   ↓ 128bit 확장으로 고갈 해소\n[IPv6 128bit] 2001:db8::1 · IPsec 내장\n   ↓ 듀얼스택·터널링 점진 이행\n[네트워크부] + [호스트부] → 경로·노드 식별",
       "diagramNote": "※ IPv6 헤더 단순화·자동설정",
       "table": {
         "head": [
@@ -502,7 +502,7 @@
       "keyword": "OSPF·BGP",
       "keywords": "라우팅 프로토콜 RIP OSPF BGP EIGRP 거리벡터 링크상태 경로벡터 IGP EGP AS 수렴 메트릭",
       "def": "최적 경로를 동적 계산·공유하는 프로토콜로, 도메인 내부(IGP)·외부(EGP)와 거리벡터·링크상태로 분류.",
-      "diagram": "[AS 내부 IGP] → [RIP 거리벡터] 홉 수 기준·소규모망\n   ↓ 대규모는 링크상태\n[OSPF 링크상태] SPF로 최단경로 계산·빠른 수렴\n   ↓ AS 경계 통과\n[AS 간 EGP] → [BGP 경로벡터] 정책 기반 경로 선택",
+      "diagram": "[AS 내부 IGP] → [RIP 거리벡터] 홉 수·소규모\n   ↓ 대규모는 링크상태\n[OSPF 링크상태] SPF로 최단경로·빠른 수렴\n   ↓ AS 경계 통과\n[AS 간 EGP] → [BGP 경로벡터] 정책 기반 선택",
       "diagramNote": "※ 수렴 지연 시 라우팅 루프 발생",
       "table": {
         "head": [
@@ -554,7 +554,7 @@
       "keyword": "L2·논리분할",
       "keywords": "스위칭 VLAN L2 트렁크 802.1Q 브로드캐스트 도메인 STP",
       "def": "MAC 학습으로 프레임을 포워딩하는 스위칭과, 물리망을 논리 분할해 브로드캐스트 도메인을 격리하는 VLAN 기술.",
-      "diagram": "[프레임 수신] → [MAC 학습·테이블] → [포트 포워딩]\n   ↓ 포트 단위 논리 분할\n[VLAN10 영업] [VLAN20 개발] 브로드캐스트 격리\n   ↓ 트렁크 802.1Q 태깅\n[VLAN 다중화] 전송 → [L3 스위치] VLAN 간 통신",
+      "diagram": "[프레임 수신] → [MAC 학습] → [포트 포워딩]\n   ↓ 포트 단위 논리 분할\n[VLAN10 영업] [VLAN20 개발] 도메인 격리\n   ↓ 트렁크 802.1Q 태깅\n[VLAN 다중화] → [L3 스위치] VLAN 간 통신",
       "diagramNote": "※ STP로 루프 방지",
       "table": {
         "head": [
@@ -658,7 +658,7 @@
       "keyword": "오류·진단",
       "keywords": "ICMP 오류보고 진단 ping traceroute Echo TTL 도달불가",
       "def": "IP 전달 과정의 오류·상태를 보고하고 ping·traceroute 진단을 지원하는 네트워크 계층 제어 프로토콜.",
-      "diagram": "[송신 호스트] → Echo Request → [대상 호스트] 도달 확인\n   ↓ Echo Reply 회신\n[ping 진단] 왕복지연(RTT)·손실률 확인\n   ↓ TTL 1씩 증가\n[traceroute] TTL 초과 → [오류 통보] 도달불가 회신",
+      "diagram": "[송신 호스트] → Echo Request → [대상 호스트]\n   ↓ Echo Reply 회신·도달 확인\n[ping 진단] 왕복지연(RTT)·손실률 확인\n   ↓ TTL 1씩 증가\n[traceroute] TTL 초과 → [오류 통보] 도달불가",
       "diagramNote": "※ 제어용, 데이터 전달 아님",
       "table": {
         "head": [
@@ -710,7 +710,7 @@
       "keyword": "연결·신뢰",
       "keywords": "TCP 연결지향 신뢰성 3-way 핸드셰이크 순서 재전송 혼잡제어",
       "def": "연결을 수립한 뒤 순서·확인응답·재전송으로 신뢰성을 보장하는 연결지향 전송계층 프로토콜.",
-      "diagram": "[SYN] → [SYN/ACK] → [ACK] 3-way 연결 수립\n  ↓ 세션 확립 후 전송\n[데이터 전송] Seq/ACK 순서 보장·손실 시 재전송\n  ↓ 윈도우로 흐름·혼잡 조절\n[FIN·ACK 교환] 4-way → [연결 해제] 자원 회수",
+      "diagram": "[SYN] → [SYN/ACK] → [ACK] 3-way 연결 수립\n  ↓ 세션 확립 후 전송\n[데이터 전송] Seq/ACK 순서 보장·손실 재전송\n  ↓ 윈도우로 흐름·혼잡 조절\n[FIN·ACK 교환] 4-way → [연결 해제] 자원 회수",
       "diagramNote": "※ 신뢰성↑ 대신 오버헤드↑",
       "table": {
         "head": [
@@ -814,7 +814,7 @@
       "keyword": "AIMD·윈도우",
       "keywords": "혼잡제어 Congestion AIMD 슬로우스타트 혼잡회피 빠른재전송 Reno CUBIC BBR ECN TCP 윈도우",
       "def": "망 혼잡을 감지해 송신 윈도우를 조절(AIMD)하여 패킷 손실·붕괴를 방지하는 TCP 핵심 제어 기법.",
-      "diagram": "[슬로우스타트] cwnd 지수 증가 → [임계점 ssthresh]\n   ↓ 임계점 도달 시 전환\n[혼잡회피] 가산증가로 RTT당 1씩 선형 증가\n   ↓ 3중 ACK·타임아웃 감지\n[승산감소] cwnd 절반으로 축소 → [재전송] 붕괴 방지",
+      "diagram": "[슬로우스타트] cwnd 지수 증가 → [ssthresh]\n   ↓ 임계점 도달 시 전환\n[혼잡회피] 가산증가로 RTT당 1씩 선형 증가\n   ↓ 3중 ACK·타임아웃 감지\n[승산감소] cwnd 절반 → [재전송] 붕괴 방지",
       "diagramNote": "※ 흐름제어와 구분(혼잡=망)",
       "table": {
         "head": [
@@ -918,7 +918,7 @@
       "keyword": "대역·우선순위",
       "keywords": "QoS 서비스품질 대역폭 지연 지터 우선순위 DiffServ DSCP IntServ RSVP 셰이핑 폴리싱 트래픽",
       "def": "트래픽 우선순위·대역폭을 제어(DiffServ·IntServ)해 지연·지터·손실을 관리·보장하는 서비스 품질 기술.",
-      "diagram": "[분류 Classify]→[표시 DSCP/CoS]\n   →[폴리싱/셰이핑 대역제어]\n   →[큐잉]→[스케줄링 WFQ/PQ]\n DiffServ·IntServ(RSVP) 모델\n 지연·지터·손실·대역폭 보장",
+      "diagram": "[분류 Classify] → [표시 DSCP/CoS]\n   ↓ DiffServ 트래픽 등급 부여\n[폴리싱·셰이핑] 대역 조절 → [큐잉]\n   ↓ IntServ(RSVP) 자원 예약\n[스케줄링] WFQ·PQ → 지연·지터·손실 보장",
       "diagramNote": "※ 실시간 트래픽 우선 처리",
       "table": {
         "head": [
@@ -1126,7 +1126,7 @@
       "keyword": "테라헤르츠·AI",
       "keywords": "6g 6세대 이동통신 테라헤르츠 thz ai-native 위성 ntn tbps 초저지연 초공간",
       "def": "5G를 잇는 6세대 이동통신으로, 테라헤르츠 대역·AI 내장·위성 융합으로 초고속·초공간 통신을 지향.",
-      "diagram": "[5G] → [6G] 6세대 이동통신 진화\n  ↓ THz 대역 확장\n[초고속] Tbps급 전송·초저지연 100μs급\n  ↓ 지능·공간 확장\n[AI-Native] 망 자율운영 → [위성 융합 NTN] 초공간 연결",
+      "diagram": "[5G] → [6G] 6세대 이동통신 진화\n  ↓ THz 대역 확장\n[초고속] Tbps급 전송·초저지연 100μs급\n  ↓ 지능·공간 확장\n[AI-Native] 망 자율운영 → [위성 NTN] 초공간",
       "diagramNote": "※ 2030년대 상용화 목표",
       "table": {
         "head": [
@@ -1230,7 +1230,7 @@
       "keyword": "근거리·저전력",
       "keywords": "블루투스 BLE 저전력 근거리 페어링 비콘 PAN 웨어러블",
       "def": "저전력(BLE) 모드로 웨어러블·IoT·비콘을 연결하는 2.4GHz 근거리 무선 PAN 기술.",
-      "diagram": "[기기A] ⇄ 페어링 ⇄ [기기B] 2.4GHz ISM 대역\n   ↓ 용도별 모드 분기\n[Classic BR/EDR] 오디오 스트리밍·연속 연결\n   ↓ 저전력 요구 시\n[BLE 4.0+] 비콘 광고·GATT → [IoT·웨어러블] 코인전지",
+      "diagram": "[기기A] ⇄ 페어링 ⇄ [기기B] 2.4GHz ISM 대역\n   ↓ 용도별 모드 분기\n[Classic BR/EDR] 오디오 스트리밍·연속 연결\n   ↓ 코인전지 저전력 요구 시\n[BLE 4.0+] 비콘·GATT → [IoT·웨어러블]",
       "diagramNote": "※ BLE는 간헐 통신에 최적",
       "table": {
         "head": [
@@ -1282,7 +1282,7 @@
       "keyword": "저전력·광역",
       "keywords": "LPWAN LoRa NB-IoT SigFox 저전력 광역 IoT 저속 배터리",
       "def": "저전력·광역·저속으로 대규모 IoT 단말을 연결하는 무선기술로, 비면허(LoRa)·면허(NB-IoT) 방식으로 구분.",
-      "diagram": "[센서 다수]→[LoRa 비면허·NB-IoT 면허]\n                   ↓ 저전력·저속·장거리\n              [게이트웨이·기지국]\n                   ↓ 대규모 IoT 수집\n              [IoT 플랫폼 검침·환경]",
+      "diagram": "[센서 다수] → [LoRa 비면허·NB-IoT 면허]\n                   ↓ 저전력·저속·장거리\n              [게이트웨이] [기지국] 수용\n                   ↓ 대규모 IoT 수집\n              [IoT 플랫폼] 검침·환경 활용",
       "diagramNote": "※ 대역·전력·거리 트레이드오프",
       "table": {
         "head": [
@@ -1542,7 +1542,7 @@
       "keyword": "제어·전달 분리",
       "keywords": "SDN 소프트웨어정의네트워크 컨트롤러 OpenFlow 데이터플레인 제어평면 북향 남향 API NFV 인텐트",
       "def": "제어부와 전달부를 분리해 중앙 컨트롤러가 소프트웨어로 망을 프로그래밍·제어하는 네트워크 아키텍처.",
-      "diagram": "[애플리케이션 계층(인텐트)]\n   ↓ Northbound API\n[컨트롤러(제어 평면·중앙 정책)]\n   ↓ OpenFlow(Southbound)\n[스위치(전달 평면)·NFV 연동]",
+      "diagram": "[앱 계층] 인텐트·API 앱 연동\n   ↓ Northbound API\n[컨트롤러] 제어 평면·중앙 정책 결정\n   ↓ OpenFlow(Southbound)\n[스위치] 전달 평면 → [NFV] 동적 제어",
       "diagramNote": "※ 컨트롤러 단일장애점 이중화",
       "table": {
         "head": [
@@ -1594,7 +1594,7 @@
       "keyword": "기능 가상화",
       "keywords": "NFV 네트워크기능가상화 VNF MANO 범용서버 가상화 오케스트레이션",
       "def": "전용 장비의 네트워크 기능(방화벽·라우터)을 범용 서버 SW(VNF)로 가상화하는 기술로, MANO가 수명주기를 관리.",
-      "diagram": "[범용 x86 서버 + 하이퍼바이저]\n   └[VNF: 방화벽·LB·라우터·vEPC]\n[NFVI 인프라] ← [VIM 관리]\n[MANO: NFVO·VNFM] 오케스트레이션\n 전용장비→SW 가상화·SDN 연계",
+      "diagram": "[범용 서버 x86] → [VNF] 방화벽·LB·vEPC\n   ↓ NFVI 가상 자원 위에 배치\n[NFVI 인프라] ← [VIM] 가상 자원 관리\n   ↓ 수명주기 오케스트레이션\n[MANO: NFVO·VNFM] → [SDN] 동적 제어",
       "diagramNote": "※ 하드웨어 종속 탈피",
       "table": {
         "head": [

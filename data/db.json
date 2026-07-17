@@ -86,7 +86,7 @@
       "keyword": "개념·논리·물리",
       "keywords": "데이터 모델링 3단계 개념 논리 물리 기본원칙 추상화",
       "def": "현실 세계 데이터를 추상화하여 개념→논리→물리 3단계로 정제, DBMS 구현 가능한 구조로 변환하는 설계 활동.",
-      "diagram": "[현실세계 업무·요구]\n  ↓ 추상화(엔티티·관계)\n[개념모델 ERD] → [논리모델 스키마]\n  ↓ 정규화·키·제약 정의\n[물리모델 테이블·인덱스] → [DBMS 구현]",
+      "diagram": "[현실세계 요구]\n  ↓ 추상화(엔티티·관계 식별)\n[개념모델 ERD] → [논리모델 스키마]\n  ↓ 속성·키 제약·정규화 정의\n[물리모델 테이블] → [DBMS 구현]",
       "diagramNote": "※ 개념→논리→물리 단계적 상세화",
       "table": {
         "head": [
@@ -346,7 +346,7 @@
       "keyword": "무손실 분해",
       "keywords": "정규화 normalization 이상현상 anomaly 1NF 2NF 3NF BCNF 4NF 5NF 무손실 분해",
       "def": "함수종속성에 따라 릴레이션을 무손실 분해하여 이상현상(Anomaly)을 제거하는 데이터 설계 기법.",
-      "diagram": "[비정규] →원자값→ [1NF]\n →부분FD 제거→ [2NF]\n →이행FD 제거→ [3NF]\n →결정자=후보키→ [BCNF]\n →다치종속→[4NF] →조인종속→[5NF]",
+      "diagram": "[비정규] →원자값→ [1NF]\n ↓ 부분FD 제거\n[2NF] →이행FD 제거→ [3NF]\n ↓ 결정자=후보키\n[BCNF] →다치·조인종속 제거→ [4NF·5NF]",
       "diagramNote": "※ 무손실·종속성 보존 분해",
       "table": {
         "head": [
@@ -450,7 +450,7 @@
       "keyword": "의도적 중복",
       "keywords": "반정규화 역정규화 denormalization 중복 파생 컬럼 테이블 병합 OLTP OLAP",
       "def": "정규화된 모델에 의도적 중복을 도입하여 조인 감소·조회 성능을 향상시키는 물리 설계 기법.",
-      "diagram": "[정규화 모델 3NF] → [성능 병목 분석]\n  ↓ 중복 허용(조인 감소)\n[테이블 병합·수평/수직 분할]\n[중복 컬럼·파생 컬럼 추가]\n[통계·이력 테이블] → [조회 성능 향상]",
+      "diagram": "[정규화 3NF] → [성능 병목 분석]\n  ↓ 중복 허용(조인 감소)\n[테이블 병합] → [수평·수직 분할]\n  ↓ 속성·관계 중복 추가\n[중복·파생 컬럼] → [조회 성능 향상]",
       "diagramNote": "※ 무결성은 트리거·배치로 보완",
       "table": {
         "head": [
@@ -598,7 +598,7 @@
       "keyword": "경로 모호성",
       "keywords": "연결함정 connection trap fan trap chasm trap 부채꼴 균열 경로",
       "def": "ERD 관계 설정 오류로 엔티티 간 경로 해석이 모호·단절되어 잘못된 질의 결과를 낳는 모델링 함정.",
-      "diagram": "[부채꼴 Fan] 1:N 관계 중첩이 원인\n  [A] ←1:N─ [B] ─1:N→ [C] : 경로 모호\n[균열 Chasm] 선택적 참여가 원인\n  [A] ─ [B] ─ [C] : 하위 경로 단절",
+      "diagram": "부채꼴 Fan — 1:N 중첩 → 경로 모호\n [A] ←1:N─ [B] ─1:N→ [C]\n균열 Chasm — 선택적 참여 → 경로 단절\n [A] ─ [B] ─ [C] : 하위 경로 단절\n → 해결: 관계 재배치·교차 엔티티 추가",
       "diagramNote": "※ 관계 재정의·교차엔티티로 해소",
       "table": {
         "head": [
@@ -842,7 +842,7 @@
       "keyword": "절차적 질의",
       "keywords": "관계대수 relational algebra 순수관계연산 일반집합연산 select project join division 관계해석",
       "def": "릴레이션을 입력받아 릴레이션을 출력하는 절차적 질의 언어로, 순수·일반집합 연산으로 구성.",
-      "diagram": "[입력 릴레이션 R·S] → [관계대수 연산]\n  ↓ 순수 관계연산\n[σ Select 행] · [π Project 열]\n[⋈ Join 결합] · [÷ Division 전칭]\n[일반 집합연산] ∪ 합·∩ 교·− 차·× 곱 → [결과]",
+      "diagram": "[입력 릴레이션 R·S] → [관계대수 연산]\n  ↓ 순수 관계연산 · 일반 집합연산\n[단항] σ Select 행 · π Project 열\n[이항] ⋈ Join 결합 · ÷ Division 전칭\n[집합] ∪ 합·∩ 교·− 차·× 곱 → [결과]",
       "diagramNote": "※ 관계해석(비절차)과 표현력 동등",
       "table": {
         "head": [
@@ -1206,7 +1206,7 @@
       "keyword": "락·MVCC",
       "keywords": "동시성제어 concurrency lock 2PL MVCC timestamp 낙관적 lost update dirty read phantom deadlock",
       "def": "다중 트랜잭션 동시 실행 시 락·MVCC로 상호 간섭을 제어하여 일관성을 보장하는 기법.",
-      "diagram": "[다중 Tx 동시실행] → [일관성 위협]\n        ↓ 상호 간섭 발생\n[이상현상] Lost Update·Dirty Read·Phantom\n    ↓ 제어 필요\n[제어기법] Lock(2PL)·MVCC·Timestamp·낙관적",
+      "diagram": "[다중 Tx 동시실행] → [일관성 위협]\n        ↓ 상호 간섭 발생\n[이상현상] Lost Update·Dirty Read·Phantom\n    ↓ 락·MVCC 기반 제어\n[제어기법] Lock(2PL)·MVCC·Timestamp·낙관적",
       "diagramNote": "※ 직렬가능성(Serializability) 보장",
       "table": {
         "head": [
@@ -1258,7 +1258,7 @@
       "keyword": "격리 4단계",
       "keywords": "isolation level 격리수준 read uncommitted committed repeatable read serializable dirty read non-repeatable phantom MVCC lock snapshot 동시성 일관성",
       "def": "트랜잭션 간 격리 정도를 4단계로 규정하여 동시성과 일관성을 trade-off하는 표준 수준.",
-      "diagram": "[L0 Read Uncommitted] → [L1 Read Committed]\n        ↓ 격리수준 상향\n[L2 Repeatable Read] → [L3 Serializable]\n        ↓ trade-off 발생\n 동시성↑·일관성↓ ⇄ 일관성↑·동시성↓ (성능 대가)",
+      "diagram": "[L0 Read Uncommitted] → [L1 Read Committed]\n        ↓ 격리수준 상향\n[L2 Repeatable Read] → [L3 Serializable]\n        ↓ trade-off 발생\n 동시성↑·일관성↓ ⇄ 일관성↑·동시성↓",
       "diagramNote": "※ 단계별 허용 이상현상 차등",
       "table": {
         "head": [
@@ -1562,7 +1562,7 @@
       "keyword": "제약조건",
       "keywords": "데이터 무결성 integrity 개체 참조 도메인 사용자정의 제약 PK FK check 트리거",
       "def": "데이터의 정확성·일관성을 보장하기 위해 부적합한 값의 입력·갱신을 제약하는 규칙.",
-      "diagram": "[데이터 입력·갱신] → [DBMS 제약 검증]\n  ↓ 위반 시 거부(Reject)\n[개체] PK Unique·Not Null / [참조] FK=부모 PK\n[도메인] 타입·범위·CHECK 제약\n[사용자정의] 업무규칙 → 트리거·앱 계층 구현",
+      "diagram": "[데이터 입력·갱신] → [DBMS 제약 검증]\n  ↓ 위반 시 거부(Reject)\n[개체] PK 유일·Not Null / [참조] FK 정합\n[도메인] 타입·범위·CHECK 제약\n[사용자정의] 업무규칙 → 트리거·앱 계층 구현",
       "diagramNote": "※ 위반 시 롤백·연쇄(CASCADE) 처리",
       "table": {
         "head": [
@@ -1770,7 +1770,7 @@
       "keyword": "단일 DB 분할",
       "keywords": "파티셔닝 partitioning range hash list composite partition pruning 분할키 로컬인덱스 단일 인스턴스",
       "def": "대용량 테이블을 Range·Hash·List 기준으로 단일 인스턴스 내에서 나누어 검색·관리 성능을 높이는 분할 기법.",
-      "diagram": "[애플리케이션 질의]\n   ↓ 파티션키(Range·Hash·List)\n[단일 DB 인스턴스 논리분할]\n ├→[P1 Range] ├→[P2 Hash] └→[P3 List]\n → Partition Pruning: 대상 분할만 스캔·I/O 절감",
+      "diagram": "[앱 질의] → [파티션키 판정]\n   ↓ Range·Hash·List 기준\n[단일 DB 논리분할]\n ├→[P1 Range] ├→[P2 Hash] └→[P3 List]\n → Pruning: 대상 분할만 스캔·I/O 절감",
       "diagramNote": "※ 단일 DB 내 논리 분할, Pruning으로 I/O↓",
       "table": {
         "head": [
@@ -1822,7 +1822,7 @@
       "keyword": "노드 수평 분산",
       "keywords": "샤딩 sharding shard key range hash directory shared nothing scale out 노드 수평 분산 리밸런싱 크로스샤드",
       "def": "데이터를 샤드키 기준으로 여러 DB 노드에 수평 분산 저장해 무공유(Shared-Nothing) 확장성을 확보하는 분산 기법.",
-      "diagram": "[애플리케이션] → [라우팅 계층 샤드키]\n                     ↓ 해시·범위 매핑\n[Shard1] [Shard2] [Shard3] 무공유(Shared-Nothing)\n   → 노드 추가 수평 확장(Scale-Out)\n   ↺ 샤드키 편중 시 리밸런싱(재분산)",
+      "diagram": "[애플리케이션] → [라우팅 계층]\n               ↓ 샤드키 해시·범위 매핑\n[Shard1] [Shard2] [Shard3] : Shared-Nothing\n   → 노드 추가 수평 확장(Scale-Out)\n   ↺ 샤드키 편중 시 리밸런싱(재분산)",
       "diagramNote": "※ 크로스샤드 조인·분산 Tx 처리 난제",
       "table": {
         "head": [
@@ -2222,7 +2222,7 @@
       "keyword": "워크로드 특화",
       "keywords": "특수목적 DB in-memory graph vector 인메모리 redis 임베딩 ANN HNSW milvus RAG",
       "def": "특정 워크로드에 최적화된 DB — 메모리 상주(In-memory)·관계 탐색(Graph)·유사도 검색(Vector).",
-      "diagram": "[In-memory] RAM 상주\n  → 초저지연 (Redis)\n[Graph] 노드·엣지\n  → 관계 탐색 (Neo4j)\n[Vector] 임베딩\n  → 유사도(ANN) 검색 (Milvus)",
+      "diagram": "[워크로드 특성] → [특수목적 DB 선택]\n  ↓ 지연·관계·유사도 요구\n[In-memory] RAM 상주 → 초저지연 (Redis)\n[Graph] 노드·엣지 → 관계 탐색 (Neo4j)\n[Vector] 임베딩 → 유사도 검색 ANN (Milvus)",
       "diagramNote": "※ 워크로드 특성별 선택",
       "table": {
         "head": [
@@ -2378,7 +2378,7 @@
       "keyword": "GIS·위상",
       "keywords": "공간 데이터베이스 spatial GIS point line polygon MBR R-Tree 다차원 색인 quad kd OGC",
       "def": "점·선·면 등 공간 객체와 위상 관계를 저장·질의·분석하는 DB(GIS 기반).",
-      "diagram": "[객체] Point·Line·Polygon (MBR)\n[연산] Overlap·Contain·Distance·Buffer\n[색인] R-Tree·R+·R*·Quad·KD",
+      "diagram": "[공간객체] Point·Line·Polygon\n  ↓ 최소경계사각형(MBR) 근사\n[공간색인] R-Tree·R+·R* / Quad·KD\n  ↓ 위상·거리 질의 수행\n[공간연산] Overlap·Contain·Buffer → [OGC]",
       "diagramNote": "※ MBR 1차 필터 → 정밀 연산(정제)",
       "table": {
         "head": [
@@ -2430,7 +2430,7 @@
       "keyword": "정확·완전·일관",
       "keywords": "데이터 품질관리 quality 프로파일링 정제 표준화 ISO 8000 DQ 인증 정합성 마이그레이션",
       "def": "데이터의 정확성·완전성·일관성을 진단·개선하여 신뢰도를 확보하는 관리 체계.",
-      "diagram": "[기준] 정확·완전·일관·유효·유일·적시\n[진단] 프로파일링→업무규칙→측정\n[개선] 정제→표준화→ISO 8000 / DQ 인증",
+      "diagram": "[품질기준] 정확·완전·일관·유효·유일·적시\n  ↓ 기준 대비 측정\n[진단] 프로파일링 → 업무규칙 → [측정]\n  ↓ 오류·중복 식별\n[개선] 정제·표준화 → [ISO 8000·DQ 인증]",
       "diagramNote": "※ 데이터 생명주기 전반 관리",
       "table": {
         "head": [
@@ -2482,7 +2482,7 @@
       "keyword": "생명주기 진단",
       "keywords": "공공데이터 품질 public data 생명주기 수준평가 평가등급 평가지표 표준화 지침 매뉴얼",
       "def": "공공데이터의 신뢰성 확보를 위해 생명주기별 품질관리·진단·수준평가를 수행하는 제도(품질관리 매뉴얼).",
-      "diagram": "[생명주기] 계획→구축→운영→활용→폐기\n[진단·개선] 측정→원인분석→개선\n[수준평가] 평가등급·평가지표",
+      "diagram": "[생명주기] 계획→구축→운영→활용→폐기\n  ↓ 단계별 품질관리 적용\n[진단] 품질 측정 → 원인분석 → [정제]\n  ↓ 정량 지표 산출\n[수준평가] 평가지표·평가등급 → [인증]",
       "diagramNote": "※ 공공데이터 품질관리 매뉴얼 V2.0",
       "table": {
         "head": [
@@ -2534,7 +2534,7 @@
       "keyword": "정량·정성 산정",
       "keywords": "데이터 가치평가 value 데이터 기본법 산업법 원가 시장 수익 접근법 자산화 거래",
       "def": "데이터의 경제적·전략적 가치를 정량·정성 기법으로 산정하는 제도(데이터산업법 기반).",
-      "diagram": "[제도] 데이터산업법·평가기관 지정\n[기법] 원가 / 시장 / 수익 접근법\n[절차] 대상선정→분석→평가→검증",
+      "diagram": "[제도] 데이터산업법·평가기관 지정\n  ↓ 근거 법령 → 기법 선택\n[기법] 원가 / 시장 / 수익 접근법\n  ↓ 정량·정성 산정\n[절차] 대상선정 → 분석 → 평가 → [검증]",
       "diagramNote": "※ 데이터 거래·자산화의 기반",
       "table": {
         "head": [

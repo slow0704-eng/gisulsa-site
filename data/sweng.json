@@ -164,7 +164,7 @@
       "keyword": "V&V 검증",
       "keywords": "V-Model 브이모델 검증 확인 verification validation 테스트",
       "def": "폭포수 각 개발단계에 대응 테스트 단계를 좌우 대칭 배치하여 검증(V&V)을 강화한 생명주기 모델.",
-      "diagram": "[요구분석]━━━━━━━━━[인수테스트]\n [기본설계]━━━━━━[시스템테스트]\n  [상세설계]━━━[통합테스트]\n   [구현]━━━[단위테스트]",
+      "diagram": "[요구분석]━━━━━━━[인수테스트]\n [기본설계]━━━━[시스템테스트]\n  [상세설계]━━[통합테스트]\n   [구현] → 단위테스트: 코드 정확성\n 좌=Verification · 우=Validation 요구 부합",
       "diagramNote": "※ 좌(개발)·우(검증) 단계별 매핑",
       "table": {
         "head": [
@@ -320,7 +320,7 @@
       "keyword": "짜깁기·비동작형",
       "keywords": "프로토타입 4유형 patch up non-operational first of a series selected features 짜깁기 비동작 파일럿 선택기능",
       "def": "구현 정도·목적에 따라 프로토타입을 짜깁기·비동작·시리즈 선두·선택기능형 4가지로 구분한 분류.",
-      "diagram": "[Patch-Up]→기존 부품 짜깁기(재사용 조합)\n[Non-Operational]→동작X·화면(설계)만 검토\n[First-of-Series]→파일럿(운영 첫 버전)\n[Selected Features]→핵심 기능 일부만 구현\n      ↓ 구현 정도 기준 → [요구·위험 조기 검증]",
+      "diagram": "[Patch-Up]→기존 부품 짜깁기(재사용 조합)\n[Non-Operational]→동작X·화면(설계)만 검토\n[First-of-Series]→파일럿(운영 첫 버전)\n[Selected Features]→핵심 기능 일부만 구현\n      ↓ 구현 정도 기준 → [요구·위험 검증]",
       "diagramNote": "※ 비동작형=폐기, 선두형=진화(운영 승계)",
       "table": {
         "head": [
@@ -372,7 +372,7 @@
       "keyword": "위험 주도형",
       "keywords": "나선형 spiral 위험주도 risk 보엠 boehm",
       "def": "계획→위험분석→개발→평가 4단계를 반복하며, 위험을 주도적으로 식별·완화하는 위험주도 생명주기 모델(Boehm).",
-      "diagram": "[계획·목표 설정]→[위험분석·프로토타입]\n      ↑             ↓ 완화 대안 검증\n[고객평가·차기계획]←[개발·검증·테스트]\n      ↺ 위험 완화 후 다음 나선 진입(Boehm)",
+      "diagram": "[①계획·목표]→[②위험분석]\n      ↑      ↓ 프로토타입 완화 검증\n[④고객평가]←[③개발·검증]\n   ↺ 위험 완화 후 다음 나선 진입(Boehm)",
       "diagramNote": "※ 나선 한 바퀴=한 반복, 회차마다 위험↓·완성도↑",
       "table": {
         "head": [
@@ -424,7 +424,7 @@
       "keyword": "부분 릴리즈",
       "keywords": "증분형 incremental 증분 increment 릴리즈 release 부분인도 delivery 핵심기능 우선순위 조기ROI 점진 아키텍처 통합",
       "def": "시스템을 기능 단위(증분)로 분할, 핵심 기능부터 릴리즈하며 점진적으로 완성하는 생명주기 모델.",
-      "diagram": "[전체 요구·아키텍처 골격]\n      ↓ 기능 단위 분할(우선순위)\n[증분1: 설계·구현·시험]→[릴리즈1(조기 운영)]\n[증분2: 설계·구현·시험]→[릴리즈2(기능 확장)]\n[증분N: 반복]→[완성 시스템]",
+      "diagram": "[아키텍처 골격] 전체 요구·사전 설계\n      ↓ 기능 단위 분할(우선순위)\n[증분1 설계·구현]→[릴리즈1] 조기 ROI\n[증분2 설계·구현]→[릴리즈2] 기능 확장\n[증분N 반복]→[완성 시스템] 통합 누적",
       "diagramNote": "※ 핵심기능 조기 인도, 증분 누적",
       "table": {
         "head": [
@@ -476,7 +476,7 @@
       "keyword": "운영 피드백 진화",
       "keywords": "진화형 evolutionary 점진 evolution 요구변동 운영피드백 탐색적 버전확장 반복 조기인도 미확정요구 점진완성",
       "def": "불완전한 시스템을 먼저 인도하고 운영 피드백으로 요구를 점진적으로 진화시키는 생명주기 모델.",
-      "diagram": "[핵심 요구도출] → [초기 버전 개발]\n      ↑                    ↓\n[요구 진화·기능 확장] ← [운영·사용자 피드백]\n      ↺ 점진 반복으로 완성도 단계 향상",
+      "diagram": "[핵심 요구도출]→[초기 버전 개발]\n      ↑        ↓ 실사용 투입\n[요구 진화·확장]←[운영·피드백]\n   ↺ 점진 반복으로 완성도 단계 향상",
       "diagramNote": "※ 매 회차 시스템 자체가 진화(요구가 미리 확정 안 됨)",
       "table": {
         "head": [
@@ -528,7 +528,7 @@
       "keyword": "변화 적응형",
       "keywords": "애자일 agile 반복 iteration 적응 adaptive 스프린트 sprint 4가치 12원칙 동작SW 고객협력 변화대응 Scrum XP 피드백루프",
       "def": "짧은 반복(Sprint)으로 동작 SW를 증분 인도하고 변화에 적응하는 적응형 생명주기 모델(애자일 선언 4가치·12원칙).",
-      "diagram": "[제품 백로그]→[Sprint 계획]→[반복 개발(2~4주)]\n                              ↓ 데일리 스크럼\n[스프린트 회고]←[리뷰·검수]←[동작 SW 증분]\n      ↺ 백로그 재정비 후 다음 Sprint 착수",
+      "diagram": "[제품 백로그]→[Sprint 계획]→[반복 개발]\n                        ↓ 2~4주 반복\n[스프린트 회고]←[리뷰·검수]←[동작 SW 증분]\n   ↺ 백로그 재정비 후 다음 Sprint 착수",
       "diagramNote": "※ 짧은 피드백 루프로 변화 수용",
       "table": {
         "head": [
@@ -736,7 +736,7 @@
       "keyword": "UML 기반",
       "keywords": "객체지향 OOAD UML 캡슐화 encapsulation 상속 inheritance 다형성 polymorphism 추상화 abstraction OOA OOD OOP 재사용 확장성",
       "def": "현실을 객체(데이터+메서드) 단위로 추상화하고 UML로 분석·설계하여 재사용·확장성을 높이는 방법론.",
-      "diagram": "[요구]→[OOA 유스케이스·클래스]\n          ↓\n[OOD 시퀀스·상태·설계클래스]→[OOP 구현]",
+      "diagram": "[요구 분석]→[OOA 유스케이스]\n              ↓ UML 표기(클래스·시퀀스)\n[OOD 설계클래스]→[OOP 구현]\n   캡슐화·상속·다형성 → 재사용·확장성",
       "diagramNote": "※ UML 기반 분석→설계→구현 일관 추적",
       "table": {
         "head": [
@@ -840,7 +840,7 @@
       "keyword": "MARTE·UML-RT",
       "keywords": "ESUML embedded software UML 임베디드 실시간 MARTE SysML UML-RT 상태머신 모델링 코드생성 검증",
       "def": "UML과 임베디드 전용 프로파일(MARTE·UML-RT)로 실시간·자원제약 임베디드 SW를 모델링·검증하는 개발 방법.",
-      "diagram": "[요구]→[UML 모델링(상태·시퀀스)]\n        ↓ MARTE·SysML 프로파일\n[실시간 검증·시뮬레이션]→[코드 생성]",
+      "diagram": "[임베디드 요구]→[UML 모델링]\n    ↓ MARTE·SysML 프로파일 적용\n[상태머신·시퀀스]→[시뮬레이션 검증]\n    ↓ 모델 기반 코드 변환\n[코드 자동생성] 모델→임베디드 코드",
       "diagramNote": "※ 모델 수준에서 실시간·제약 선제 검증",
       "table": {
         "head": [
@@ -996,7 +996,7 @@
       "keyword": "Core Asset",
       "keywords": "제품계열 product line SPL software 핵심자산 core asset 도메인공학 애플리케이션공학 변동성 variability feature model 재사용",
       "def": "공통 핵심자산(Core Asset)을 기반으로 변동성(Variability)을 관리하며 제품군을 체계적으로 생산하는 재사용 중심 방법론(SPL).",
-      "diagram": "[도메인 공학]→[Core Asset(공통+가변)]\n                    ↓ Feature 선택\n[애플리케이션 공학]→[제품1][제품2][제품3]\n   ※ 공통성+가변성으로 제품군 파생",
+      "diagram": "[도메인 공학]→[Core Asset(공통+가변)]\n                    ↓ Feature 선택\n[Application 공학]→[제품1][제품2][제품3]\n   ※ 공통성+가변성으로 제품군 파생",
       "diagramNote": "※ 핵심자산 1회 개발 → 제품군 반복 생산",
       "table": {
         "head": [
@@ -1100,7 +1100,7 @@
       "keyword": "코드 자동생성",
       "keywords": "ASD automated software development 자동화 개발 CASE 코드생성 low-code no-code AI 자동 테스트 CICD 생산성",
       "def": "CASE·코드생성·AI 도구로 설계·코딩·테스트·배포를 기계화하여 생산성·품질을 높이는 자동화 개발 방법.",
-      "diagram": "[요구·모델]→[자동 생성(코드·테스트)]\n        ↓ CASE·Low-Code·AI\n[자동 빌드·테스트·배포(CI/CD)]",
+      "diagram": "[요구·모델]→[CASE 분석·설계]\n      ↓ 모델→코드 자동 변환\n[코드 자동생성]→[Low-Code·AI 보조]\n      ↓ 검증·배포 자동화\n[자동 테스트]→[CI/CD 빌드·배포]",
       "diagramNote": "※ 반복·정형 작업을 도구로 기계화",
       "table": {
         "head": [
@@ -1152,7 +1152,7 @@
       "keyword": "4가치 12원칙",
       "keywords": "agile manifesto 애자일 선언 4가치 12원칙 2001 변화대응 동작SW 고객협력 경량 철학",
       "def": "2001년 17인이 선언한 애자일 4가치·12원칙으로, 변화 적응과 동작 SW를 중시하는 경량 개발 철학.",
-      "diagram": "[4 가치 선언] 2001년 17인·경량 개발\n[개인·상호작용]＞[프로세스·도구]\n[동작 SW]＞[문서] / [고객 협력]＞[계약]\n[변화 대응]＞[계획 준수]\n   ↓ 12 원칙 → [Scrum·XP·Kanban] 실천",
+      "diagram": "[4 가치 선언] 2001년 17인·경량 개발 철학\n   ↓ 좌항 우선(＞ = ~보다 중시)\n[개인·상호작용]＞프로세스·도구\n[동작 SW]＞문서 · [고객 협력]＞계약 협상\n[변화 대응]＞계획 준수 ↺ 12 원칙→Scrum·XP",
       "diagramNote": "※ 오른쪽도 가치있으나 왼쪽을 더 중시",
       "table": {
         "head": [
@@ -1256,7 +1256,7 @@
       "keyword": "서번트 리더",
       "keywords": "스크럼 마스터 scrum master 서번트 리더 servant leader 장애제거 impediment 코칭 촉진 자기조직화",
       "def": "스크럼 프로세스를 촉진하고 장애물을 제거하며 팀의 자기조직화를 지원하는 서번트 리더 역할.",
-      "diagram": "[PO·백로그 관리] ⇄ [Scrum Master] ⇄ [개발팀·자율]\n                        ↓\n      [장애 제거·데일리 스크럼 촉진]\n                        ↓\n      [프로세스 코칭·팀 보호·자율 보장]",
+      "diagram": "[PO·백로그]⇄[Scrum Master]⇄[개발팀·자율]\n     ↓ 서번트 리더로 팀 지원\n[장애 제거]→[이벤트 촉진] 프로세스 준수\n     ↓ 애자일 코칭·팀 성숙\n[외부 간섭 차단] 팀 집중 보호·자기조직화",
       "diagramNote": "※ 지시자 아닌 촉진자(서번트 리더)",
       "table": {
         "head": [
@@ -1308,7 +1308,7 @@
       "keyword": "Velocity·번다운",
       "keywords": "스크럼 측정지표 metrics velocity 번다운 burndown 번업 burnup cycle time 결함 목표달성률 CFD 성과",
       "def": "스크럼의 진척·생산성을 Velocity·번다운차트로 정량 측정해 개선 근거를 제공하는 지표 집합.",
-      "diagram": "[스프린트 백로그 SP]→[일일 진척 기록]\n          ↓ 잔여 SP 감소 추이\n[번다운 차트]→[이상선 대비 실제 진척]\n[Velocity]→[완료 SP/스프린트]→[차기 예측]\n   ↺ 회고 반영: Cycle Time·결함 탈출률",
+      "diagram": "[스프린트 백로그 SP]→[일일 진척 기록]\n          ↓ 잔여 SP 감소 추이\n[번다운 차트]→[이상선 대비 진척]\n[Velocity]→[완료 SP/스프린트]→[차기 예측]\n   ↺ 회고 반영: Cycle Time·결함 탈출률",
       "diagramNote": "※ 지표는 개선 근거, 팀 간 비교·평가 금지",
       "table": {
         "head": [
@@ -1360,7 +1360,7 @@
       "keyword": "TDD·페어",
       "keywords": "XP extreme programming 익스트림 프로그래밍 TDD 페어 pair CI 리팩토링 beck 켄트벡 5가치 12실천",
       "def": "5가치(소통·단순·피드백·용기·존중) 아래 TDD·페어 프로그래밍·CI 등 공학적 실천을 강조하는 애자일 방법론(K.Beck).",
-      "diagram": "[5가치] 소통·단순·피드백·용기·존중\n   ↓ 12 실천(Practice)으로 구체화\n[TDD]→[페어 프로그래밍]→[CI]→[리팩토링]\n[작은 릴리즈]→[고객 상주]→[공동 코드 소유]\n      ↺ 짧은 릴리즈 주기로 피드백 순환",
+      "diagram": "[5가치] 소통·단순·피드백·용기·존중\n   ↓ 12 실천(Practice)으로 구체화\n[TDD]→[페어 프로그래밍]→[CI 지속통합]\n   ↓ 구조 개선·짧은 인도 주기\n[리팩토링]→[작은 릴리즈] ↺ 피드백 순환",
       "diagramNote": "※ 실천 상호보완, 일부만 도입 시 효과↓",
       "table": {
         "head": [
@@ -1412,7 +1412,7 @@
       "keyword": "테스트 우선",
       "keywords": "TDD test driven development 테스트 주도 개발 red green refactor 단위테스트 회귀 XP 테스트우선",
       "def": "실패 테스트를 먼저 작성(Red)하고 통과 코드를 구현(Green)한 뒤 구조를 개선(Refactor)하는 테스트 우선 개발 기법.",
-      "diagram": "[Red 실패 테스트 작성]\n        ↓\n[Green 최소 통과 코드 구현]\n        ↓\n[Refactor 중복 제거·구조 개선]\n        ↺ 짧은 주기 반복 (Kent Beck)",
+      "diagram": "[①Red 실패 테스트]\n        ↓ 통과시킬 최소 코드 작성\n[②Green 최소 구현]\n        ↓ 중복 제거·구조 개선(Kent Beck)\n[③Refactor 리팩토링] ↺ 짧은 주기 반복",
       "diagramNote": "※ Red→Green→Refactor 짧은 순환 반복",
       "table": {
         "head": [
@@ -1516,7 +1516,7 @@
       "keyword": "KPT 개선",
       "keywords": "회고 retrospective 스크럼 KPT inspect adapt 지속개선 4Ls 스프린트 점검 개선",
       "def": "스프린트 종료 시 팀이 프로세스·협업을 점검하고 개선안을 도출하는 스크럼의 지속 개선 이벤트(Inspect & Adapt).",
-      "diagram": "[분위기 조성]→[자료 수집]→[통찰 도출]\n                        ↓ KPT·4Ls로 사실 수집\n            [개선안 결정(Action)] 팀 전원 합의\n                        ↓ 다음 스프린트 반영\n            [마무리·자기조직화] 팀 프로세스 개선",
+      "diagram": "[분위기 조성]→[자료 수집]→[통찰 도출]\n      ↓ KPT·4Ls로 사실·감정 수집\n[개선안 결정] 팀 전원 합의(Action)\n      ↓ 다음 스프린트에 반영\n[마무리] 자기조직화·팀 프로세스 개선",
       "diagramNote": "※ 심리적 안전감 확보가 회고 성패 좌우",
       "table": {
         "head": [
@@ -1568,7 +1568,7 @@
       "keyword": "스토리 포인트",
       "keywords": "planning poker 플래닝 포커 스토리 포인트 상대 추정 피보나치 wideband delphi 합의 산정",
       "def": "팀이 카드로 작업 규모(Story Point)를 동시 제시·토론해 합의하는 상대적 추정 기법(Wideband Delphi 기반).",
-      "diagram": "[백로그 항목 설명]→[각자 카드 비공개]\n                       ↓ 동시 공개(앵커링 차단)\n                  [최고·최저 근거 토론]\n                       ↓ 재투표로 합의 수렴\n                  [스토리 포인트 확정] 피보나치 척도",
+      "diagram": "[①항목 설명]→[②카드 비공개]\n      ↓ 동시 공개(앵커링 차단)\n[③근거 토론] 최고·최저 제시자 설명\n      ↓ 재투표로 합의 수렴\n[④SP 확정] 피보나치 척도(Wideband Delphi)",
       "diagramNote": "※ 추정 오차는 속도(Velocity)로 사후 보정",
       "table": {
         "head": [
@@ -1620,7 +1620,7 @@
       "keyword": "사람 중심",
       "keywords": "crystal 크리스탈 방법론 cockburn 콕번 애자일 인적 사람중심 clear 규모 위험 적응",
       "def": "사람(People)을 1차 요소로 보고 프로젝트 규모·위험도에 따라 방법론 강도를 차등 적용하는 애자일 계열 방법론군(Cockburn).",
-      "diagram": "[Sapphire] 대형·고위험 → 엄격·정형 프로세스\n   ↑ 인원·심각도 커지면 강도 상향(테일러링)\n[Red][Orange][Yellow] 중형·다인원 프로젝트\n   ↑ 규모 확대 시 등급 상향(문서·검증 추가)\n[Clear] 소형·저위험 → 경량·사람 중심(삼투적 소통)",
+      "diagram": "[Sapphire] 대형·고위험 → 엄격·정형 프로세스\n   ↑ 인원·심각도 커지면 강도 상향(테일러링)\n[Red][Orange][Yellow] 중형·다인원 프로젝트\n   ↑ 규모 확대 시 등급 상향(문서·검증 추가)\n[Clear] 소형·저위험 → 사람 중심·삼투 소통",
       "diagramNote": "※ 사람·삼투적 소통이 프로세스보다 우선",
       "table": {
         "head": [
@@ -1724,7 +1724,7 @@
       "keyword": "상황 맞춤",
       "keywords": "방법론 테일러링 tailoring 조정 맞춤 프로젝트 특성 규모 위험 가감 표준 프로세스 PMBOK",
       "def": "프로젝트 특성(규모·위험·도메인)에 맞춰 표준 방법론의 활동·산출물·절차를 가감·조정하는 적응 활동.",
-      "diagram": "[표준 방법론]→[테일러링 기준 분석]\n              규모·위험·기술·팀\n        ↓ 추가/삭제/수정/대체\n[프로젝트 맞춤 방법론]",
+      "diagram": "[표준 방법론]→[테일러링 기준]\n                규모·위험·기간·팀\n      ↓ 활동·산출물 추가/삭제/수정/대체\n[맞춤 방법론]→[조정 근거 승인]\n      과/미달 방지 · 적정 강도 유지",
       "diagramNote": "※ 기준 분석 → 활동·산출물 조정",
       "table": {
         "head": [
@@ -1776,7 +1776,7 @@
       "keyword": "CI/CD 자동화",
       "keywords": "DevOps DevSecOps CI CD IaC GitOps shift-left 파이프라인",
       "def": "개발·운영(·보안)을 통합, CI/CD 자동화로 배포주기를 단축하고 보안을 좌측 이동(Shift-Left)하는 방법론.",
-      "diagram": "[Plan]→[Code]→[Build]→[Test] ── CI(자동 빌드)\n  ↓ SAST·SCA·DAST(Shift-Left 보안 내재)\n[Release]→[Deploy]→[Operate] ── CD(IaC·GitOps)\n  ↓ Metric·Log·Trace 관측 수집\n[모니터링·DORA 지표] ↺ 배포주기 단축 피드백",
+      "diagram": "[Plan·Code]→[Build]→[Test] ─ CI 자동 빌드\n  ↓ SAST·SCA·DAST(Shift-Left 보안 내재)\n[Release]→[Deploy]→[Operate] ─ CD·IaC·GitOps\n  ↓ Metric·Log·Trace 관측 수집\n[모니터링·DORA 지표] ↺ 배포주기 단축 피드백",
       "diagramNote": "※ 문화·조직(CALMS) 없이 도구만 도입 시 실패",
       "table": {
         "head": [
@@ -1880,7 +1880,7 @@
       "keyword": "IDP 셀프서비스",
       "keywords": "platform engineering IDP golden path 셀프서비스 내부개발자플랫폼",
       "def": "내부 개발자 플랫폼(IDP)과 Golden Path를 제공해 개발자 셀프서비스·인지부하 감소를 실현하는 방법론.",
-      "diagram": "[개발자]→[셀프서비스 포털]\n            ↓ Golden Path(표준 템플릿)\n[IDP: CI/CD·환경·관측·보안 추상화]\n            ↓\n[클라우드 인프라 자동 프로비저닝]",
+      "diagram": "[개발자]→[셀프서비스 포털]\n      ↓ Golden Path(검증된 표준 경로)\n[IDP 내부 플랫폼] CI/CD·환경·관측 추상화\n      ↓ 인프라 은닉(인지부하 감소)\n[자동 프로비저닝]→[플랫폼 팀] SLO·채택률",
       "diagramNote": "※ 플랫폼을 '제품'으로 운영(Platform as Product)",
       "table": {
         "head": [
@@ -1984,7 +1984,7 @@
       "keyword": "품질속성·ASR",
       "keywords": "architecture driver 아키텍처 드라이버 품질속성 quality attribute 제약 비즈니스 ASR 요구",
       "def": "아키텍처 설계 의사결정을 주도하는 핵심 요인(기능요구·품질속성·제약·비즈니스 목표)의 집합.",
-      "diagram": "[기능요구][품질속성][제약][비즈니스 목표]\n        ↓ 우선순위·선별(핵심요구 추출)\n[ASR 아키텍처 핵심요구]→[품질속성 시나리오]\n        ↓ 설계 결정 주도(자극-응답 측정)\n[아키텍처 설계 결정] 구조·전술 선택",
+      "diagram": "[기능요구][품질속성][제약][비즈니스 목표]\n        ↓ 우선순위·선별(핵심요구 추출)\n[ASR 핵심요구]→[QA 시나리오] 자극-응답\n        ↓ 설계 결정 주도\n[설계 결정] 구조·전술 선택(아키텍처)",
       "diagramNote": "※ 품질속성이 구조 결정의 1차 동인",
       "table": {
         "head": [
@@ -2140,7 +2140,7 @@
       "keyword": "다중 뷰",
       "keywords": "4+1 view 4plus1 크루첸 kruchten 논리 프로세스 개발 물리 유스케이스 시나리오 뷰",
       "def": "아키텍처를 이해관계자 관심사별 4개 뷰와 이를 통합하는 시나리오로 다각도 기술하는 아키텍처 기술 모델(Kruchten).",
-      "diagram": "[논리 뷰·기능] ⇄ [프로세스 뷰·동시성]\n      ↓                      ↓\n      [+1 시나리오·유스케이스]\n      ↑                      ↑\n[개발 뷰·모듈] ⇄ [물리 뷰·배치]",
+      "diagram": "[논리 뷰·기능] ⇄ [프로세스 뷰]\n      ↓ 사용자·통합자 관심사\n   [+1 시나리오] 유스케이스 통합\n      ↑ 개발자·운영자 관심사\n[개발 뷰·모듈] ⇄ [물리 뷰·배치]",
       "diagramNote": "※ 시나리오가 4개 뷰를 통합·검증",
       "table": {
         "head": [
@@ -2192,7 +2192,7 @@
       "keyword": "ISO 42010",
       "keywords": "SAD software architecture document 아키텍처 문서 ISO 42010 뷰 viewpoint 이해관계자 산출물 명세",
       "def": "아키텍처 결정·구조를 이해관계자 관점(View)별로 기술·공유하는 표준 산출물(ISO/IEC 42010 기반).",
-      "diagram": "[이해관계자·관심사]\n        ↓ Viewpoint(관점)\n[다중 View(논리·프로세스·물리…)]\n        ↓ 근거(Rationale)\n[아키텍처 결정·제약 문서화]",
+      "diagram": "[이해관계자] 문서 독자·관심사 식별\n    ↓ Viewpoint(뷰 작성 규약)\n[다중 View]→[QA·드라이버] 논리·프로세스 뷰\n    ↓ 근거(Rationale) 기록\n[결정·제약 문서] ISO/IEC 42010 표준",
       "diagramNote": "※ 관심사→관점→뷰로 구조화, 결정 근거 기록",
       "table": {
         "head": [
@@ -2296,7 +2296,7 @@
       "keyword": "역공학·복원",
       "keywords": "역방향 분석 reverse engineering 역공학 상향식 bottom up 아키텍처 복원 recovery 레거시 재문서화 재공학",
       "def": "기존 코드·실행 시스템에서 구체→추상 방향으로 구조·설계를 복원하는 상향식(Bottom-Up) 분석(역공학).",
-      "diagram": "[기존 코드·바이너리]→[정적·동적 분석]\n   ↓ 추출(상향식 Bottom-Up)\n[의존성·구조 복원]→[아키텍처 모델]\n   구체 ──────→ 추상",
+      "diagram": "[코드·바이너리]→[정적·동적 분석]\n   ↓ 추출(상향식 Bottom-Up)\n[의존성·구조 복원]→[아키텍처 모델]\n   구체 ──────→ 추상(재문서화)",
       "diagramNote": "※ 산출물에서 설계·구조를 역추출(복원)",
       "table": {
         "head": [
@@ -2400,7 +2400,7 @@
       "keyword": "변경 격리",
       "keywords": "캡슐화 encapsulation 정보은닉 information hiding 파나스 parnas 추상화 인터페이스 결합도 응집도",
       "def": "데이터·기능을 한 단위로 묶고(캡슐화), 변경 가능성 높은 내부 결정을 인터페이스 뒤로 감추는(정보은닉) 설계 원리(Parnas).",
-      "diagram": "[클라이언트]→[공개 인터페이스(public)]\n               ↓ 접근 제한자로 호출 경로 한정\n         [내부 구현 은닉(private)]\n               ↓ 데이터+메서드를 한 단위로 묶기\n         [캡슐화 모듈]→[결합도 낮춤·응집도 높임]",
+      "diagram": "[클라이언트]→[공개 IF(public)]\n        ↓ 접근 제한자로 호출 경로 한정\n   [내부 구현 은닉(private)] 변경점 비공개\n        ↓ 데이터+메서드 한 단위 묶기\n   [캡슐화 모듈]→[결합도↓·응집도↑] 변경 격리",
       "diagramNote": "※ 캡슐화=묶기, 정보은닉=감추기(변경 격리)",
       "table": {
         "head": [
@@ -2504,7 +2504,7 @@
       "keyword": "기능적 응집",
       "keywords": "응집도 cohesion 기능적 순차적 교환적 절차적 시간적 논리적 우연적 모듈 강도 내부",
       "def": "모듈 내부 요소가 단일 목적에 결속된 정도로, 기능적~우연적 7단계로 구분하며 높을수록 우수한 응집 척도.",
-      "diagram": "[기능적] 단일 기능 수행 = 최강 응집(지향)\n   ↑ 단일 목적으로 결속 강화(모듈 품질 향상)\n[순차적]→[교환적]→[절차적] 출력-입력·자료 공유(강·중)\n   ↑ 결속 약화 시 변경 파급·재사용성 저하\n[시간적]→[논리적]→[우연적] 최약(무관 요소 혼재)",
+      "diagram": "[기능적] 단일 기능 수행 = 최강 응집(지향)\n   ↑ 단일 목적 결속 강화(모듈 품질↑)\n[순차적]→[교환적]→[절차적] 출력→입력 연결\n   ↑ 결속 약화 시 변경 파급·재사용성 저하\n[시간적]→[논리적]→[우연적] 최약(무관 혼재)",
       "diagramNote": "※ 우연적·논리적 응집은 리팩터링 1순위",
       "table": {
         "head": [
@@ -2608,7 +2608,7 @@
       "keyword": "추상화·분할",
       "keywords": "소프트웨어 설계 software design 추상화 분할 상위 하위 아키텍처 상세 모듈 설계원리",
       "def": "요구사항을 구현 가능한 구조로 변환하는 활동으로, 상위(아키텍처)·하위(상세) 설계로 구분.",
-      "diagram": "[요구사항 분석] → [상위 설계·아키텍처]\n        ↓\n[하위 설계·상세 모듈] → [인터페이스 설계]\n        ↓\n[구현·코딩] → [단위 테스트·검증]",
+      "diagram": "[요구사항 분석]→[상위 설계] 아키텍처\n    ↓ 구조 분해(추상화·모듈화)\n[하위 설계]→[인터페이스 설계] 모듈 내부\n    ↓ 정보은닉·응집도↑·결합도↓\n[구현·코딩]→[단위 테스트·검증]",
       "diagramNote": "※ 아키텍처→상세로 점진 구체화",
       "table": {
         "head": [
@@ -2660,7 +2660,7 @@
       "keyword": "비기능 요구",
       "keywords": "아키텍처 품질속성 quality attribute 비기능 성능 가용성 보안 변경용이성 시나리오 ATAM 드라이버",
       "def": "성능·가용성·보안·변경용이성 등 아키텍처가 충족할 비기능 특성으로, 구조 설계를 주도하는 품질 요구(ISO 25010).",
-      "diagram": "[품질속성 시나리오]\n 자극→[아키텍처]→응답(측정)\n 예) 성능·가용성·보안·변경용이성",
+      "diagram": "[QA 시나리오] 품질속성 = 설계 주도 요구\n 자극→[아키텍처 구조]→응답(측정 가능)\n      ↓ ISO 25010 8특성 분해\n [성능]·[가용성]·[보안] 실행 품질\n [변경용이성]·[시험용이성] 개발 품질",
       "diagramNote": "※ 시나리오로 측정 가능하게 구체화",
       "table": {
         "head": [
@@ -2712,7 +2712,7 @@
       "keyword": "검증된 구조",
       "keywords": "아키텍처 스타일 architecture style layered client server pipe filter event driven 검증된 구조 골격",
       "def": "반복되는 구조 문제에 대한 검증된 조직 형태(Layered·Client-Server·Pipe-Filter 등).",
-      "diagram": "[품질속성 드라이버]→[스타일 선택]\n                        ↓ 구조 조직 형태 결정\n[Layered] 계층 분리 → [Client-Server] 요청-응답\n[Pipe-Filter] 변환 연쇄 → [Event-Driven] 비동기 협력\n[Repository] 공유 데이터 ⇄ 다수 컴포넌트 접근",
+      "diagram": "[QA 드라이버]→[스타일 선택] 품질속성 기반\n    ↓ 검증된 구조 조직 형태\n[Layered] 계층화 → [Client-Server] 요청-응답\n[Pipe-Filter] 변환 → [Event-Driven] 비동기\n[Repository] 공유 데이터 ⇄ 다수 컴포넌트",
       "diagramNote": "※ 단일 스타일보다 혼합(하이브리드) 적용이 일반",
       "table": {
         "head": [
@@ -2868,7 +2868,7 @@
       "keyword": "생성·구조·행위",
       "keywords": "GoF 디자인패턴 design pattern gang of four 생성 구조 행위 23패턴 factory singleton builder adapter decorator proxy facade observer strategy 카탈로그 SOLID 재사용 과설계",
       "def": "객체지향 설계에서 반복되는 문제의 검증된 해법을 생성·구조·행위 3범주 23패턴으로 정리한 카탈로그.",
-      "diagram": "[반복되는 설계 문제]→[GoF 23 패턴 카탈로그]\n                       ↓ 목적별 3범주 선택\n[생성] Factory·Singleton → 객체 생성 캡슐화\n[구조] Adapter·Proxy·Decorator → 조합·접근 제어\n[행위] Observer·Strategy → 객체 간 협력·상태",
+      "diagram": "[설계 문제] 반복 → [GoF 23 패턴 카탈로그]\n   ↓ 목적별 3범주 분류\n[생성] Factory·Singleton → 객체 생성 캡슐화\n[구조] Adapter·Proxy·Decorator → 조합·제어\n[행위] Observer·Strategy → 협력·상태 관리",
       "diagramNote": "※ 문제-해법-결과의 재사용 템플릿",
       "table": {
         "head": [
@@ -2920,7 +2920,7 @@
       "keyword": "도메인 모델",
       "keywords": "DDD domain driven design 도메인 주도 설계 bounded context aggregate 유비쿼터스언어 ubiquitous language entity VO repository domain event 전략적 전술적 설계 MSA 경계",
       "def": "도메인 모델을 중심으로 Bounded Context·Aggregate로 복잡성을 다루고 코드-도메인을 정렬하는 설계 방법.",
-      "diagram": "[Bounded Context ─ 모델 경계]\n        ↓ 경계 내 모델 응집\n[Aggregate ─ 일관성·트랜잭션 경계]\n  ├→[Root Entity]→[Entity·Value Object]\n  └→[Repository 영속]→[Domain Event 전파]",
+      "diagram": "[Bounded Context ─ 모델 경계]\n        ↓ 경계 내 모델 응집\n[Aggregate ─ 일관성·TX 경계]\n  ├→[Root Entity]→[Entity·Value Object]\n  └→[Repository 영속]→[Domain Event 전파]",
       "diagramNote": "※ Ubiquitous Language로 도메인-코드 정렬",
       "table": {
         "head": [
@@ -3024,7 +3024,7 @@
       "keyword": "ESB 통합",
       "keywords": "SOA service oriented architecture 서비스지향 ESB 재사용 느슨한결합 WSDL BPEL 오케스트레이션",
       "def": "비즈니스 기능을 표준 인터페이스의 서비스로 모듈화하고 ESB로 느슨하게 통합·재사용하는 아키텍처.",
-      "diagram": "[서비스 소비자]\n      ↓ 요청·중개 위임(느슨한 결합)\n[ESB 버스 ─ 라우팅·변환]→[BPEL 오케스트레이션]\n      ↓ 등록·검색 연계\n[서비스 제공자]⇄[서비스 레지스트리]",
+      "diagram": "[서비스 소비자]\n      ↓ 요청·중개 위임(느슨한 결합)\n[ESB ─ 라우팅·변환]→[BPEL 오케스트레이션]\n      ↓ 등록·검색 연계\n[서비스 제공자]⇄[레지스트리]",
       "diagramNote": "※ ESB 중심 통합, 표준 계약(WSDL) 기반 재사용",
       "table": {
         "head": [
@@ -3180,7 +3180,7 @@
       "keyword": "독립 배포",
       "keywords": "MSA microservice 마이크로서비스 독립배포 bounded context API gateway database per service saga circuit breaker service discovery config devops platform engineering 장애격리 부분확장",
       "def": "시스템을 비즈니스 능력 단위 독립 서비스로 분할해 독립 배포·확장·장애격리를 실현하는 아키텍처.",
-      "diagram": "[API Gateway]→라우팅·인증→[Service Discovery]\n  ↓ 요청 분배·인증 전파\n[주문]·[결제]·[배송] ─ 독립 서비스·독립 DB\n  ↓ 비동기 이벤트(Saga)\n[Message Broker Kafka] ─ 버퍼·Circuit Breaker 격리",
+      "diagram": "[API Gateway]→인증·라우팅→[Discovery]\n  ↓ 요청 분배·인증 전파\n[주문]·[결제]·[배송] ─ 독립 서비스·독립 DB\n  ↓ 비동기 이벤트(Saga)\n[Kafka Broker] ─ 버퍼·Circuit Breaker 격리",
       "diagramNote": "※ Bounded Context 단위 분할",
       "table": {
         "head": [
@@ -3336,7 +3336,7 @@
       "keyword": "Pub/Sub",
       "keywords": "EDA event driven 이벤트 구동 비동기 producer consumer broker pub sub kafka",
       "def": "상태 변화를 이벤트로 발행·구독해 구성요소가 비동기로 느슨하게 협력하는 이벤트 구동 아키텍처.",
-      "diagram": "[Producer 발행]→[Event Channel]→[Consumer 구독]\n                      ↓ Pub/Sub 라우팅\n              [Broker Kafka ─ 버퍼·순서 보장]\n                      ↓ 팬아웃 전달\n              [다수 소비자 ─ 비동기·결과적 일관성]",
+      "diagram": "[Producer 발행]→[Event Channel]→[Consumer]\n   ↓ Pub/Sub 라우팅·구독 분리\n[Broker Kafka] 버퍼·순서 보장·스트림 처리\n   ↓ 팬아웃 비동기 전달\n[다수 소비자] 결과적 일관성(Eventual)",
       "diagramNote": "※ 발행자·구독자 시간·공간 분리(비동기)",
       "table": {
         "head": [
@@ -3388,7 +3388,7 @@
       "keyword": "오케스트레이션",
       "keywords": "mediator topology 중재자 토폴로지 EDA 오케스트레이션 event mediator 다단계 워크플로우 조정",
       "def": "중앙 이벤트 중재자가 다단계 이벤트를 조정(오케스트레이션)하여 처리 순서·흐름을 통제하는 EDA 토폴로지.",
-      "diagram": "[Event Queue]→[Event Mediator]\n                  ↓ 단계별 분배\n[Channel A]   [Channel B]   [Channel C]\n   ↓             ↓             ↓\n[Processor]  [Processor]  [Processor]",
+      "diagram": "[Event Queue]→[Event Mediator] 이벤트 수신\n   ↓ 단계·흐름 오케스트레이션\n[Channel A]   [Channel B]   [Channel C]\n   ↓ 처리 이벤트 분배·조정\n[Event Processor] 단위 처리 실행·오류 복구",
       "diagramNote": "※ 중재자가 처리 흐름 오케스트레이션",
       "table": {
         "head": [
@@ -3544,7 +3544,7 @@
       "keyword": "FaaS·BaaS",
       "keywords": "serverless 서버리스 faas baas function as a service lambda azure functions cold start scale to zero 이벤트기반 사용량과금 벤더종속 클라우드네이티브 자동확장",
       "def": "서버 관리 없이 이벤트 기반 함수(FaaS)·관리형 서비스(BaaS)로 구성, 사용량 기반 자동 확장하는 아키텍처.",
-      "diagram": "[이벤트 트리거(HTTP·큐·스케줄)]\n        ↓\n[Function(FaaS)] ── 무상태·자동 확장\n        ↓\n[BaaS: 관리형 DB·인증·스토리지]",
+      "diagram": "[이벤트 트리거] HTTP·큐·스케줄 이벤트 소스\n    ↓ 함수 단위 호출\n[Function(FaaS)] ── 무상태·Scale-to-Zero\n    ↓ 관리형 백엔드·사용량 과금\n[BaaS 관리형] DB·인증·스토리지 연동",
       "diagramNote": "※ 유휴 시 0 인스턴스(Scale-to-Zero)",
       "table": {
         "head": [
@@ -3596,7 +3596,7 @@
       "keyword": "코어·인프라 분리",
       "keywords": "hexagonal port adapter 포트 어댑터 도메인 격리 클린 아키텍처",
       "def": "도메인 코어를 포트(인터페이스)·어댑터로 인프라와 분리해 교체성·테스트성을 확보하는 아키텍처.",
-      "diagram": "[UI/API]·[Test] ─ 인바운드 어댑터\n      ↓ Port(IN) 인터페이스 호출\n[도메인 코어 ─ 순수 비즈니스 로직]\n      ↓ Port(OUT) 의존 역전\n[DB]·[외부 API]·[MQ] ─ 아웃바운드 어댑터",
+      "diagram": "[UI/API]·[Test] ─ 인바운드 어댑터\n      ↓ Port(IN) 인터페이스 호출\n[도메인 코어] 순수 비즈니스 로직·기술 무관\n      ↓ Port(OUT) 의존 역전\n[DB]·[외부 API]·[MQ] ─ 아웃바운드 어댑터",
       "diagramNote": "※ 도메인이 인프라에 비의존",
       "table": {
         "head": [
@@ -3700,7 +3700,7 @@
       "keyword": "통신 계약",
       "keywords": "API REST GraphQL gRPC 통신 protobuf http",
       "def": "서비스 간·클라이언트 간 통신 계약. 자원 기반(REST)·질의 기반(GraphQL)·RPC(gRPC)로 구분되는 인터페이스.",
-      "diagram": "[Client 호출자]→[API 계약 ─ 인터페이스]\n  ├→[REST]→고정 EP·HTTP/JSON·캐시 용이\n  ├→[GraphQL]→단일 EP·필요필드만 질의\n  └→[gRPC]→HTTP/2·Protobuf·고성능 RPC\n     ↓ 계약 이행 →[Server ─ 자원·스키마·스텁 제공]",
+      "diagram": "[Client 호출자]→[API 계약 ─ 인터페이스]\n  ├→[REST]→고정 EP·HTTP/JSON·캐시 용이\n  ├→[GraphQL]→단일 EP·필요필드만 질의\n  └→[gRPC]→HTTP/2·Protobuf·고성능 RPC\n     ↓ 계약 이행 →[Server 스키마·스텁 제공]",
       "diagramNote": "※ 공개 API=REST, 복잡 조회=GraphQL, 내부 MSA=gRPC",
       "table": {
         "head": [
@@ -3759,7 +3759,7 @@
       "keyword": "hUMA",
       "keywords": "HSA heterogeneous system architecture 이기종 시스템 CPU GPU hUMA 공유메모리 HSAIL 가속기 병렬",
       "def": "CPU·GPU·가속기를 통합 가상 메모리(hUMA)로 묶어 단일 주소공간에서 협업 처리하는 이기종 컴퓨팅 하드웨어 아키텍처(HSA Foundation).",
-      "diagram": "[CPU] · [GPU] · [DSP·가속기]\n   ↓      ↓       ↓ 통합\n[hUMA ─ 공유가상메모리·단일주소공간]\n   ↓ 공통 실행모델\n[User-mode Queue · HSAIL 중간언어]",
+      "diagram": "[CPU] · [GPU] · [DSP·가속기]\n   ↓      ↓       ↓ 통합\n[hUMA 통합메모리] 공유가상·단일주소공간\n   ↓ 공통 실행모델\n[User-mode Queue · HSAIL 중간언어]",
       "diagramNote": "※ 데이터 복사 없이 메모리 공유(Zero-copy)",
       "table": {
         "head": [
@@ -3863,7 +3863,7 @@
       "keyword": "트레이드오프",
       "keywords": "ATAM architecture tradeoff analysis method 트레이드오프 분석 SEI 민감점 sensitivity 절충점 위험",
       "def": "품질속성 시나리오 기반으로 아키텍처 결정의 민감점·트레이드오프·위험을 분석하는 시나리오 기반 평가 기법(SEI).",
-      "diagram": "[발표]→[드라이버·접근법 제시]\n   ↓ Utility Tree\n[QA 시나리오]→[아키텍처 접근 분석]\n   ↓\n[민감점·트레이드오프·위험/비위험]",
+      "diagram": "[발표]→[드라이버·접근법] 비즈니스 목표\n   ↓ Utility Tree 우선순위화\n[QA 시나리오]→[접근법 분석] 자극-응답\n   ↓ 민감점·트레이드오프 식별\n[위험·비위험] 위험 테마 → 개선 우선순위",
       "diagramNote": "※ 9단계, 품질속성 충돌(트레이드오프) 규명",
       "table": {
         "head": [
@@ -3915,7 +3915,7 @@
       "keyword": "비용편익 ROI",
       "keywords": "CBAM cost benefit analysis method 비용 편익 분석 ROI 투자수익 의사결정 SEI 정량",
       "def": "ATAM 결과에 비용·편익·ROI를 정량화해 아키텍처 전략의 경제적 의사결정을 지원하는 비용편익 분석 기법(SEI).",
-      "diagram": "[ATAM 시나리오·전략]\n   ↓ 효용(Utility) 산정\n[전략별 편익]─[비용 추정]\n   ↓ ROI = 편익/비용\n[우선순위 전략 선정]",
+      "diagram": "[ATAM 시나리오·전략]\n   ↓ 효용(Utility) 산정\n[전략별 편익]─[비용 추정]\n   ↓ ROI = 편익/비용\n[전략 선정] ROI 우선순위 → 경제적 결정",
       "diagramNote": "※ ATAM의 후속, 경제성(ROI)으로 의사결정",
       "table": {
         "head": [
@@ -3967,7 +3967,7 @@
       "keyword": "ADR·시나리오",
       "keywords": "ARID active reviews intermediate designs 중간 설계 평가 ADR 능동검토 시나리오 부분 설계 SEI",
       "def": "완성 전 부분·중간 설계를 능동 설계검토(ADR)와 시나리오 기반 질문으로 조기 평가하는 기법(SEI, ADR+ATAM 결합).",
-      "diagram": "[중간 설계 발표]→[시나리오 도출]\n        ↓ 우선순위 투표\n[시나리오로 설계 능동 적용·검토]\n        ↓\n[이슈·결함 조기 식별]",
+      "diagram": "[중간 설계 발표]→[시나리오 도출]\n    ↓ 우선순위 투표(ADR+ATAM)\n[능동 검토] 설계로 시나리오 풀이·실효성\n    ↓ 사용가능성·충분성 평가\n[이슈 목록] 조기 결함 식별",
       "diagramNote": "※ 미완성 설계를 시나리오로 능동 검토",
       "table": {
         "head": [
@@ -4019,7 +4019,7 @@
       "keyword": "SOLID",
       "keywords": "객체지향 5원칙 SOLID SRP OCP LSP ISP DIP 설계원칙 유지보수 확장성",
       "def": "객체지향 설계의 유지보수성·확장성을 높이는 5대 원칙(SRP·OCP·LSP·ISP·DIP)의 집합.",
-      "diagram": "[SRP][OCP][LSP][ISP][DIP]\n   ↓ 결합도↓·응집도↑\n[유지보수성·확장성 향상]",
+      "diagram": "[SRP] 단일책임 · [OCP] 개방-폐쇄 원칙\n[LSP] 리스코프 치환 · [ISP] 인터페이스 분리\n[DIP] 의존 역전(추상에 의존)\n   ↓ 결합도↓·응집도↑\n[유지보수·확장성] 구조 품질 향상",
       "diagramNote": "※ 결합도↓·응집도↑로 변경 영향 최소화",
       "table": {
         "head": [
@@ -4071,7 +4071,7 @@
       "keyword": "책임 분리",
       "keywords": "SRP single responsibility 단일책임 원칙 변경 이유 응집도 책임 분리 액터",
       "def": "클래스는 단 하나의 변경 이유(책임)만 가져야 한다는 객체지향 설계 원칙.",
-      "diagram": "[하나의 클래스] → [하나의 책임 보유]\n        ↓\n책임 多 → [변경 이유 다수·응집 저하]\n        ↓\n[책임별 클래스 분리] → 결합도↓·유지보수↑",
+      "diagram": "[하나의 클래스]→[하나의 책임] 변경 이유 1개\n    ↓ 책임 혼재 = 변경 이유 다수\n[응집 저하] 액터(변경 요청 주체) 충돌\n    ↓ 책임별 분할\n[클래스 분리] 응집도↑·변경 영향 국소화",
       "diagramNote": "※ 변경 이유(액터)가 둘 이상이면 분리",
       "table": {
         "head": [
@@ -4175,7 +4175,7 @@
       "keyword": "동적 바인딩",
       "keywords": "다형성 polymorphism 오버라이딩 오버로딩 동적 바인딩 업캐스팅 인터페이스 OCP",
       "def": "동일 인터페이스(메시지)에 객체 타입별로 다르게 반응하는 객체지향 특성.",
-      "diagram": "[부모 타입 참조]→메시지→[실제 객체 메서드]\n   ↓ 런타임 결정(동적 바인딩)\n[오버라이딩 / 오버로딩]",
+      "diagram": "[부모 타입 참조]→메시지→[실제 객체 메서드]\n   ↓ 런타임 결정(동적 바인딩)\n[오버라이딩] 재정의 · [오버로딩] 중복정의\n   ↓ 상속·인터페이스 타입 계층\n[확장성] 코드 변경 최소(OCP·전략패턴)",
       "diagramNote": "※ 분기(if/switch)를 다형성으로 대체",
       "table": {
         "head": [
@@ -4279,7 +4279,7 @@
       "keyword": "공통 추상화",
       "keywords": "추상클래스 abstract class 부분 구현 공통 추상화 템플릿 메서드 상속 단일",
       "def": "공통 상태·일부 구현과 추상 메서드를 함께 제공해 하위 클래스의 골격을 정의하는 클래스.",
-      "diagram": "[추상클래스] 공통 상태·구현 + 추상 메서드 선언\n    ↑ extends (is-a 관계·단일 상속)\n[하위클래스] 추상 메서드 오버라이드 구현\n    ↓ new (추상클래스 자체는 인스턴스 불가)\n[구체 객체] → 상위 타입으로 참조·골격 재사용",
+      "diagram": "[추상클래스] 공통 상태·구현 + 추상 메서드\n    ↑ extends (is-a 관계·단일 상속)\n[하위클래스] 추상 메서드 오버라이드 구현\n    ↓ new (추상클래스 자체는 인스턴스 불가)\n[구체 객체] → 상위 타입으로 참조·골격 재사용",
       "diagramNote": "※ 공통 골격 제공 + 차이만 하위 구현",
       "table": {
         "head": [
@@ -4331,7 +4331,7 @@
       "keyword": "약한 has-a",
       "keywords": "집합관계 aggregation 약한 결합 has-a 부분 전체 독립 생명주기 UML 빈 마름모",
       "def": "전체–부분이 has-a로 연결되되 부분이 독립 생명주기를 갖는 약한 결합 관계.",
-      "diagram": "[전체·팀] ◇→ [부분·팀원]\n        ↓\n[빈 마름모◇ = 약한 전체-부분 관계]\n        ↓\n[부분은 독립 생명주기·다중 공유 가능]",
+      "diagram": "[전체·팀] ◇→ [부분·팀원] has-a 전체-부분\n    ↓ 빈 마름모(◇) UML 표기\n[약한 결합] 포함관계 대비 느슨한 연결\n    ↓ 생명주기 독립\n[부분 독립] 다중 공유·교체 가능(재사용)",
       "diagramNote": "※ 부분이 전체와 무관히 존재 가능",
       "table": {
         "head": [
@@ -4435,7 +4435,7 @@
       "keyword": "구성 재사용",
       "keywords": "위임 delegation 합성 재사용 책임 전가 has-a 상속 대안 래핑 전략 프록시",
       "def": "한 객체가 요청을 다른 객체에 넘겨 처리하게 하는 합성 기반 재사용 기법.",
-      "diagram": "[객체 A] → 요청 위임 → [객체 B]\n        ↓\n[A는 B의 기능을 합성으로 호출]\n        ↓\n상속 대신 위임 → 결합↓·유연성·재사용↑",
+      "diagram": "[객체 A]→요청 위임→[객체 B] 책임 전가\n    ↓ 합성(has-a)으로 포함·호출\n[위임 대상] 런타임 교체 가능(전략·프록시)\n    ↓ 상속 대신 위임\n[낮은 결합] 유연성·재사용↑",
       "diagramNote": "※ 상속의 강결합 대안(합성 기반)",
       "table": {
         "head": [
@@ -4591,7 +4591,7 @@
       "keyword": "관심사 분리",
       "keywords": "MVC model view controller 모델 뷰 컨트롤러 관심사 분리 presentation MVP MVVM Spring",
       "def": "UI를 Model·View·Controller로 분리해 표현과 로직의 독립적 변경을 지원하는 패턴.",
-      "diagram": "[Controller] → 사용자 입력 해석·흐름 중재\n    ↓ 모델 갱신 요청\n[Model 데이터] → 상태·업무규칙 보유\n    ↓ 상태 변경 통지\n[View 화면] → UI 렌더링 ↺ 입력 재유입(제어로 복귀)",
+      "diagram": "[Controller] → 사용자 입력 해석·흐름 중재\n    ↓ 모델 갱신 요청\n[Model 데이터] → 상태·업무규칙 보유\n    ↓ 상태 변경 통지\n[View 화면] → UI 렌더링 ↺ 입력 재유입",
       "diagramNote": "※ 표현·제어·데이터 3분할",
       "table": {
         "head": [
@@ -4695,7 +4695,7 @@
       "keyword": "도출~검증",
       "keywords": "요구공학 requirements engineering 도출 elicitation 분석 명세 검증 확인 SRS IEEE830 RTM 추적성 traceability MoSCoW CCB 범위크리프 프로토타입",
       "def": "이해관계자 요구를 도출→분석→명세→검증의 체계적 절차로 정의·관리하고 추적성을 확보하는 공학 활동.",
-      "diagram": "[요구 도출] → [요구 분석] → [요구 명세] → [요구 검증]\n  인터뷰·워크숍    MoSCoW      IEEE830      리뷰·V&V\n     ↑ 변경 승인 시 재도출·재명세(피드백)\n[변경 통제 CCB] ⇄ [추적성 RTM] → 요구·설계·시험 연결",
+      "diagram": "[①도출]→[②분석]→[③명세]→[④검증]\n 인터뷰   MoSCoW   IEEE830  리뷰·V&V\n   ↑ 변경 승인 시 재도출·재명세(피드백)\n[변경 통제 CCB]⇄[추적성 RTM]\n   요구·설계·시험 추적 연결",
       "diagramNote": "※ 추적성(RTM)으로 누락·범위크리프 방지",
       "table": {
         "head": [
@@ -4747,7 +4747,7 @@
       "keyword": "SQuaRE",
       "keywords": "ISO 25010 품질 quality SQuaRE 스퀘어 제품품질 8특성 기능적합성 성능효율성 사용성 신뢰성 보안성 유지보수성 호환성 이식성 25000",
       "def": "SW 제품 품질을 8대 특성으로 정의·측정하는 국제표준(SQuaRE 체계)으로 품질 평가·개선의 기준.",
-      "diagram": "[ISO 25010 제품품질] → SQuaRE 계열 품질 모델\n      ↓ 8대 특성 분해\n[기능적합·성능효율] → 요구 충족·자원 대비 응답\n[호환성·사용성·신뢰성] → 공존·학습 편의·가용성\n[보안성·유지보수·이식성] → 기밀·무결·수정·적응성",
+      "diagram": "[ISO 25010] SQuaRE 계열 제품품질 8특성\n   ↓ 실행·개발 관점 분해\n[기능·성능] 요구 충족·자원 대비 응답\n[호환·사용·신뢰] 공존·학습 편의·가용성\n[보안·유지·이식] 기밀·무결·수정·적응성",
       "diagramNote": "※ 8대 특성을 외부·내부 지표로 측정 가능화",
       "table": {
         "head": [
@@ -4792,7 +4792,7 @@
       "keyword": "베이스라인",
       "keywords": "형상관리 SCM software configuration management 형상식별 형상통제 형상감사 형상기록 베이스라인 baseline CCB 변경통제 git svn gitops gitflow trunk based 버전관리 무결성 추적성",
       "def": "SW 산출물의 형상항목을 식별·통제·감사·기록하여 변경을 통제하고 무결성·추적성을 보장하는 활동.",
-      "diagram": "[형상 식별] → 형상항목 선정·베이스라인 설정\n    ↓ 변경요청(CR) 접수\n[형상 통제] → CCB 심의·승인 후 변경 반영\n    ↓ 기준선 대비 대조\n[형상 감사·기록] → 적합성 확인·이력 보고 ↺ 재식별",
+      "diagram": "[형상 식별] → 형상항목 선정·베이스라인 설정\n    ↓ 변경요청(CR) 접수\n[형상 통제] → CCB 심의·승인 후 변경 반영\n    ↓ 기준선 대비 대조\n[형상 감사] 적합성 확인·이력 보고 ↺ 재식별",
       "diagramNote": "※ 단일 진실원천(Git)+CCB로 무결성",
       "table": {
         "head": [
@@ -4844,7 +4844,7 @@
       "keyword": "12원칙 8영역",
       "keywords": "PMBOK 7 프로젝트관리 project management 12원칙 8성과영역 테일러링 tailoring 가치전달 EVM PV EV AC SPI CPI CPM PERT 예측형 적응형 애자일 리스크",
       "def": "12원칙·8성과영역과 테일러링으로 가치를 전달하는, 프로세스 중심→원칙·가치 중심으로 전환된 PM 표준.",
-      "diagram": "[가치 전달 시스템] → 프로젝트의 최종 목적·산출\n    ↓ 행동 지침·관리 대상으로 분해\n[12 원칙] → 책무·가치·시스템사고·리더십·테일러링\n[8 성과영역] → 이해관계자·팀·개발접근·인도·측정\n    ↑ 테일러링(상황 맞춤) → 가치 전달 재확인",
+      "diagram": "[가치 전달 시스템] → 최종 목적·산출\n    ↓ 행동 지침·관리 대상으로 분해\n[12 원칙] → 책무·가치·시스템사고·리더십\n[8 성과영역] → 이해관계자·팀·인도·측정\n    ↑ 테일러링(상황 맞춤) → 가치 전달 재확인",
       "diagramNote": "※ 프로세스 중심 → 원칙·가치 중심으로 전환",
       "table": {
         "head": [
