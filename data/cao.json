@@ -203,7 +203,7 @@
       "keyword": "인출·실행",
       "keywords": "명령어 사이클 인출 해석 실행 저장 fetch decode execute 인터럽트 opcode writeback 마이크로연산",
       "def": "한 명령을 인출→해석→실행→저장의 단계로 반복 처리하는 CPU 기본 동작 주기.",
-      "diagram": "[①Fetch 인출]→[②Decode 해석]→[③Execute 실행]\n ↓ PC→MAR 인출 후 Opcode 해석·ALU 연산\n[④Store 저장]→[PC 증가]→[다음 명령 지정]\n ↺ 사이클 반복으로 다음 명령 순환\n ← 인터럽트 시 문맥저장·ISR 후 복귀",
+      "diagram": "[①Fetch]→[②Decode]→[③Execute]\n ↓ PC→MAR 인출 후 Opcode 해석·ALU 연산\n[④Store 저장]→[PC 증가]→[다음 명령 지정]\n ↺ 사이클 반복으로 다음 명령 순환\n ← 인터럽트 시 문맥저장·ISR 후 복귀",
       "diagramNote": "※ 클럭 단위로 단계 진행",
       "table": {
         "head": [

@@ -112,7 +112,7 @@
       "keyword": "선형 순차형",
       "keywords": "폭포수 waterfall 선형 linear 순차 sequential SDLC 생명주기 고전 Royce 로이스 단계동결 Phase SRS V-Model",
       "def": "각 단계(요구분석→설계→구현→시험→유지보수)를 순차·하향식으로 진행하고 완료 후 다음 단계로 이행하는 선형 고전 생명주기 모델.",
-      "diagram": "[①요구분석]→[②설계]→[③구현]\n  확정       명세    코딩\n  ↓ 순차 진행(폭포수)\n[④시험]→[⑤유지보수]\n  검증    운영",
+      "diagram": "[①요구분석]→[②설계]→[③구현]┐\n  확정      명세    코딩      │\n         [⑤유지보수]←[④시험]┘\n            운영       검증",
       "diagramNote": "※ 단계 역행 없음(Phase 동결)·산출물 기반 검토",
       "table": {
         "head": [
@@ -3648,7 +3648,7 @@
       "keyword": "의존성 규칙",
       "keywords": "clean architecture 클린 아키텍처 동심원 의존성 규칙 entity use case 로버트 마틴",
       "def": "동심원 계층의 의존성을 안쪽(도메인)으로만 향하게 해 프레임워크·UI·DB에 독립적인 구조를 만드는 아키텍처(R.Martin).",
-      "diagram": "[Frameworks·Driver] 최외곽\n   ↓ [Interface Adapter]\n      ↓ [Use Case]\n         ↓ [Entity] 최내핵\n   ⟹ 의존성은 안쪽으로만",
+      "diagram": "[Frameworks·Driver] 최외곽\n   ↓ [Interface Adapter]\n      ↓ [Use Case]\n         ↓ [Entity] 최내핵\n   → 의존성은 안쪽으로만",
       "diagramNote": "※ 의존성 규칙: 외부→내부 단방향(DIP)",
       "table": {
         "head": [

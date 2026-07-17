@@ -1,3 +1,11 @@
+/* 구성도 격자용 번들 폰트 — D2Coding(OFL, 서브셋 52KB). 사용 글자만 포함.
+   ★ 뷰어 OS 에 코딩폰트가 없어도 ASCII 1셀·한글 2셀 격자가 보장된다(build.py _disp_width 와 실측 일치).
+   FCP 보호: swap 으로 폰트 로드가 초기 렌더를 막지 않게 한다(로드 전엔 폴백 격자, 로드 후 확정). */
+@font-face{
+  font-family:"D2CodingDiag";
+  src:url("D2Coding-diag.woff2") format("woff2");
+  font-weight:400;font-style:normal;font-display:swap;
+}
 /* ===== 디자인 토큰(단일 소스) — 값 변경은 여기서만. 근거는 DESIGN.md =====
    레거시 토큰명(--ink·--muted·--line…)은 새 스케일의 별칭으로 동일 값 유지(무회귀).
    하드코딩 색·폰트·radius 의 토큰 치환은 P2 이후 단계적으로 진행. */
@@ -24,8 +32,10 @@
   --fw-normal:400; --fw-semibold:600; --fw-bold:800;
   --lh-body:1.55; --lh-title:1.3;
   --font-sans:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
-  /* D4: 라틴 전용 mono 로 떨어지기 전 CJK 고정폭 후보를 경유 — 한글 2배폭 미보장 시 ASCII 격자 붕괴 방지 */
-  --font-mono:"D2Coding","Nanum Gothic Coding","NanumGothicCoding","Sarasa Mono K",ui-monospace,"Consolas","Courier New",monospace;
+  /* D4: 번들 D2CodingDiag(사용 글자 완전 포함) → generic monospace 만 폴백.
+     ★ 중간 named 폰트(Consolas 등 CJK 없는 mono)를 스택에서 뺀다 — 서브셋에 없는 글자가
+       그런 폰트로 새면 한글이 2셀을 잃어 격자가 붕괴한다. 서브셋이 완전하므로 폴백은 사실상 미발생. */
+  --font-mono:"D2CodingDiag",monospace;
 
   /* 구성도(ASCII 도식) 공용 토큰 — 6개 렌더 면(그리드·모달·답안지·시트·퀴즈)이 동일 상(像)을 갖도록 일원화 */
   --diag-fs:12px; --diag-lh:1.35;

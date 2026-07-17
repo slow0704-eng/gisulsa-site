@@ -398,7 +398,7 @@
       "keyword": "조인종속 제거",
       "keywords": "제5정규화 5NF PJNF 조인종속 join dependency 무손실 분해 다중 분해 후보키 정규형",
       "def": "조인종속(JD)을 제거하여 모든 JD가 후보키로 함의되고 무손실 분해가 완결된 최종 정규형(PJNF).",
-      "diagram": "[4NF: 다치종속 제거]\n →조인종속(JD) 제거→ [5NF/PJNF]\n R = R1 ⋈ R2 ⋈ R3 (무손실)\n 모든 JD ← 후보키 함의",
+      "diagram": "[4NF: 다치종속 제거]\n →조인종속(JD) 제거→ [5NF/PJNF]\n R = R1 ▷◁ R2 ▷◁ R3 (무손실)\n 모든 JD ← 후보키 함의",
       "diagramNote": "※ 3개 이상 분해로만 무손실인 경우 대상",
       "table": {
         "head": [
@@ -842,7 +842,7 @@
       "keyword": "절차적 질의",
       "keywords": "관계대수 relational algebra 순수관계연산 일반집합연산 select project join division 관계해석",
       "def": "릴레이션을 입력받아 릴레이션을 출력하는 절차적 질의 언어로, 순수·일반집합 연산으로 구성.",
-      "diagram": "[입력 릴레이션 R·S] → [관계대수 연산]\n  ↓ 순수 관계연산 · 일반 집합연산\n[단항] σ Select 행 · π Project 열\n[이항] ⋈ Join 결합 · ÷ Division 전칭\n[집합] ∪ 합·∩ 교·− 차·× 곱 → [결과]",
+      "diagram": "[입력 릴레이션 R·S] → [관계대수 연산]\n  ↓ 순수 관계연산 · 일반 집합연산\n[단항] σ Select 행 · π Project 열\n[이항] ▷◁ Join 결합 · ÷ Division 전칭\n[집합] ∪ 합·∩ 교·− 차·× 곱 → [결과]",
       "diagramNote": "※ 관계해석(비절차)과 표현력 동등",
       "table": {
         "head": [

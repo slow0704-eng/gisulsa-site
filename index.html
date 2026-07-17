@@ -17,6 +17,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
 <!-- mermaid·vis-network 는 카드 첫 화면엔 불필요 → app.js 가 필요 시점(소단원 지도·관계도)에 온디맨드 로드(초기 로딩 단축) -->
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<!-- 구성도 격자 폰트(번들 서브셋 52KB) 조기 로드 — swap 이라 FCP 는 막지 않고, 도식 렌더 시점엔 격자 확정 -->
+<link rel="preload" href="assets/D2Coding-diag.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="assets/styles.css" />
 <script>
   /* 테마·글자크기 조기 적용(FOUC 방지) — localStorage 우선, 없으면 시스템 설정 */
