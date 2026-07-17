@@ -82,7 +82,7 @@
       "id": "gov",
       "title": "⑤ AI 거버넌스 · MLOps",
       "desc": "AI 윤리·위험관리·법제도와 모델 운영(MLOps)·품질검증.",
-      "mermaid": "flowchart LR\n  S([\"⑤ AI 거버넌스 · MLOps\"]):::hub\n  n0[\"AI 윤리·거버넌스\"] --> n1[\"AI 위험관리\"] --> n2[\"인공지능기본법\"] --> n3[\"MLOps\"] --> n4[\"AI 학습데이터 품질\"] --> n5[\"AI 신뢰성·품질검증\"]\n  S --> n0\n  n6[\"머신러닝 파이프라인\"] --> n7[\"AI 신뢰성 (Trustworthy AI)\"] --> n8[\"적대적 공격 (Adversarial Attack)\"] --> n9[\"에이전틱 AI 보안위협\"] --> n10[\"에이전틱 AI 보안대책\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
+      "mermaid": "flowchart LR\n  S([\"⑤ AI 거버넌스 · MLOps\"]):::hub\n  n0[\"AI 윤리·거버넌스\"] --> n1[\"AI 위험관리\"] --> n2[\"인공지능기본법\"] --> n3[\"MLOps\"] --> n4[\"AI 학습데이터 품질\"] --> n5[\"AI 신뢰성·품질검증\"]\n  S --> n0\n  n6[\"머신러닝 파이프라인\"] --> n7[\"AI 신뢰성 (Trustworthy AI)\"] --> n8[\"적대적 공격 (Adversarial Attack)\"] --> n9[\"에이전틱 AI 보안위협\"] --> n10[\"에이전틱 AI 보안대책\"] --> n11[\"ISO/IEC 42001 (AI 경영시스템)\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;"
     },
     {
       "id": "essay",
@@ -12461,6 +12461,59 @@
       },
       "note": "※ 위협(보안위협)과 1:1 대응, 제로트러스트·지속검증.",
       "level": "심화"
+    },
+    {
+      "category": "gov",
+      "subcat": "신뢰성·품질",
+      "title": "ISO/IEC 42001 (AI 경영시스템)",
+      "tag": "AI 거버넌스·표준",
+      "keyword": "신뢰가능 AI",
+      "keywords": "ISO 42001 IEC AIMS AI경영시스템 신뢰가능 책임성 투명성 PDCA AIIA 영향평가 Annex SL 거버넌스 EU AI Act 27001",
+      "def": "AI 고유 위험을 PDCA 경영시스템으로 관리하여 책임성·투명성·안전성을 확보하는 세계 최초 AI 경영시스템 인증표준.",
+      "diagram": "[①Plan 정책·위험평가]\n ↓ AI 영향평가(AIIA)\n[②Do 운영·통제]\n ↓ Annex A 통제 적용\n[③Check 심사]→[④Act 개선] ↺ 경영검토",
+      "dtype": "순서",
+      "diagramNote": "※ Annex SL 구조로 ISO27001·9001과 통합 인증",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할·기술"
+        ],
+        "rows": [
+          [
+            "계획",
+            "AI 정책·목표",
+            "경영진 방침·리더십(Clause 5)"
+          ],
+          [
+            "",
+            "AI 영향평가",
+            "개인·사회 영향 사전평가(AIIA)"
+          ],
+          [
+            "운영",
+            "Annex A 통제",
+            "AI 생명주기 참조통제 적용"
+          ],
+          [
+            "",
+            "데이터·모델",
+            "개발~폐기 생명주기 관리"
+          ],
+          [
+            "점검",
+            "내부심사·지표",
+            "성과 모니터링·부적합 식별"
+          ],
+          [
+            "개선",
+            "경영검토",
+            "시정조치·지속 개선(PDCA)"
+          ]
+        ]
+      },
+      "note": "※ EU AI Act 대응·ISO23894(위험)·22989(용어) 연계로 거버넌스 강화.",
+      "level": "핵심"
     }
   ]
 }
