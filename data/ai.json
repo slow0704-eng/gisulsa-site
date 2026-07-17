@@ -64,7 +64,7 @@
       "id": "algo",
       "title": "② 학습 알고리즘 · 모델",
       "desc": "군집·트리·SVM·앙상블·GNN 등 대표 학습 모델.",
-      "mermaid": "flowchart LR\n  S([\"② 학습 알고리즘 · 모델\"]):::hub\n  n0[\"군집화\"] --> n1[\"의사결정나무\"] --> n2[\"서포트 벡터 머신\"] --> n3[\"앙상블 학습\"] --> n4[\"그래프 신경망\"] --> n5[\"연관규칙 분석\"]\n  S --> n0\n  n6[\"지니지수 / 엔트로피\"] --> n7[\"점근표기법\"] --> n8[\"K-NN / K-means\"] --> n9[\"LSTM / GRU\"] --> n10[\"백트래킹 (Backtracking)\"] --> n11[\"분할정복 (Divide and Conquer)\"]\n  S --> n6\n  n12[\"탐욕법 (Greedy)\"] --> n13[\"동적계획법 (DP)\"] --> n14[\"K-NN (K-최근접이웃)\"] --> n15[\"K-Means (K-평균 군집)\"] --> n16[\"CNN (합성곱 신경망)\"] --> n17[\"순환신경망 (RNN)\"]\n  S --> n12\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n6,n8,n9 cmp;"
+      "mermaid": "flowchart LR\n  S([\"② 학습 알고리즘 · 모델\"]):::hub\n  n0[\"군집화\"] --> n1[\"의사결정나무\"] --> n2[\"서포트 벡터 머신\"] --> n3[\"앙상블 학습\"] --> n4[\"그래프 신경망\"] --> n5[\"연관규칙 분석\"]\n  S --> n0\n  n6[\"지니지수 / 엔트로피\"] --> n7[\"점근표기법\"] --> n8[\"K-NN / K-means\"] --> n9[\"LSTM / GRU\"] --> n10[\"백트래킹 (Backtracking)\"] --> n11[\"분할정복 (Divide and Conquer)\"]\n  S --> n6\n  n12[\"탐욕법 (Greedy)\"] --> n13[\"크루스칼 알고리즘 (Kruskal)\"] --> n14[\"스택 (Stack)\"] --> n15[\"동적계획법 (DP)\"] --> n16[\"K-NN (K-최근접이웃)\"] --> n17[\"K-Means (K-평균 군집)\"]\n  S --> n12\n  n18[\"CNN (합성곱 신경망)\"] --> n19[\"순환신경망 (RNN)\"]\n  S --> n18\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n6,n8,n9 cmp;"
     },
     {
       "id": "gen",
@@ -11506,6 +11506,112 @@
         ]
       },
       "note": "※ 전역 최적 미보장, 반례 검증·DP 대안 고려.",
+      "level": "핵심"
+    },
+    {
+      "category": "algo",
+      "subcat": "알고리즘설계",
+      "title": "크루스칼 알고리즘 (Kruskal)",
+      "tag": "알고리즘 설계·MST",
+      "keyword": "간선 오름차순",
+      "keywords": "크루스칼 kruskal MST 최소신장트리 간선 union-find 서로소집합 disjoint 그리디 정렬 프림",
+      "def": "간선을 가중치 오름차순 정렬한 뒤 사이클을 피해 최소 간선부터 채택하는 그리디 기반 최소신장트리(MST) 구성 알고리즘.",
+      "diagram": "[①전체 간선]→[②오름차순 정렬]\n ↓ 최소 간선부터 선택\n[③사이클 검사(Union-Find)]\n ↓ 없으면 채택·있으면 버림\n[④간선 V-1개]→[⑤MST 완성]",
+      "dtype": "순서",
+      "diagramNote": "※ 간선 정렬이 지배 → O(E log E)",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할·기술"
+        ],
+        "rows": [
+          [
+            "입력",
+            "가중 그래프",
+            "정점 V·간선 E(가중치)"
+          ],
+          [
+            "정렬",
+            "간선 정렬",
+            "가중치 오름차순 O(E log E)"
+          ],
+          [
+            "판정",
+            "Union-Find",
+            "서로소집합 사이클 검출"
+          ],
+          [
+            "",
+            "Find·Union",
+            "대표원소 비교·집합 병합"
+          ],
+          [
+            "종료",
+            "간선 V-1개",
+            "신장트리 완성 조건"
+          ],
+          [
+            "결과",
+            "MST",
+            "최소 비용 연결 트리"
+          ]
+        ]
+      },
+      "note": "※ 프림=정점 중심, 크루스칼=간선 중심 → 희소그래프 유리.",
+      "level": "핵심"
+    },
+    {
+      "category": "algo",
+      "subcat": "자료구조",
+      "title": "스택 (Stack)",
+      "tag": "자료구조·LIFO",
+      "keyword": "후입선출(LIFO)",
+      "keywords": "스택 stack LIFO 후입선출 top push pop peek 오버플로 언더플로 함수호출 재귀 DFS 백트래킹",
+      "def": "한쪽 끝(Top)에서만 삽입·삭제가 일어나 마지막에 넣은 원소가 먼저 나오는 선형 자료구조(LIFO).",
+      "diagram": "[스택] Top 포인터·크기 N\n ↓ Push 삽입 / Pop 삭제 (Top만)\n[D ← Top] 최상단·마지막 삽입\n[C]·[B]·[A] 하위·먼저 삽입\n[LIFO] 후입선출 — 삽입=삭제 지점",
+      "dtype": "구조",
+      "diagramNote": "※ Push=Overflow·Pop=Underflow 검사 필수",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할·기술"
+        ],
+        "rows": [
+          [
+            "연산",
+            "Push",
+            "Top에 삽입(Overflow 주의)"
+          ],
+          [
+            "",
+            "Pop",
+            "Top 삭제·반환(Underflow 주의)"
+          ],
+          [
+            "",
+            "Peek/Top",
+            "최상단 조회(삭제 없음)"
+          ],
+          [
+            "상태",
+            "Top 포인터",
+            "최상단 위치 지시(-1=공백)"
+          ],
+          [
+            "구현",
+            "배열·연결리스트",
+            "고정크기 vs 동적크기"
+          ],
+          [
+            "활용",
+            "함수호출·DFS",
+            "되돌리기·괄호검사·백트래킹"
+          ]
+        ]
+      },
+      "note": "※ 재귀 호출은 시스템 스택 활용, 과도하면 스택 오버플로 발생.",
       "level": "핵심"
     },
     {
