@@ -354,7 +354,7 @@
       "tag": "머신러닝 기초",
       "keyword": "편향-분산",
       "keywords": "과적합 overfitting 정규화 regularization 편향 분산 bias variance dropout l1 l2",
-      "diagram": "[과소적합 편향]→[최적 균형]→[과적합 분산]\n ↓ 편향-분산 균형 이탈 억제\n[L1·L2 규제]→[Dropout 공적응]\n ↓ 일반화 측정·데이터 확대\n[교차검증·증강]→[조기종료]",
+      "diagram": "문제: [과소적합]⇄[최적 균형]⇄[과적합]\n      ↓ 정규화로 과적합 억제·일반화\n규제: [L1·L2]·[Dropout] 가중치·공적응\n검증·증강: [교차검증]·[조기종료]·증강",
       "dtype": "구조",
       "diagramNote": "※ 규제 강도는 검증셋으로 결정",
       "table": {
@@ -937,7 +937,7 @@
       "tag": "생성형 AI·LLM",
       "keyword": "자율·도구사용",
       "keywords": "에이전틱 ai agentic agent mcp 자율 계획 도구 reasoning 오케스트레이션 model context protocol",
-      "diagram": "[목표]→[Perception]→[Planning 분해]\n ↓ 계획대로 도구 실행\n[Tool Use API]→[관찰·반성] ↺ 재계획\n ↓ Memory 맥락 유지·표준 연동\n[MCP 도구 표준]→[Multi-Agent 협업]",
+      "diagram": "인지·계획: [목표]→[Perception]→[Planning]\n           ↓ 계획대로 도구 실행·관찰\n실행·기억: [Tool Use]→[관찰·반성] ↺ 재계획\n연동·협업: [MCP 표준]·[Multi-Agent] 협업",
       "dtype": "구조",
       "diagramNote": "※ MCP=모델-도구 연결 표준 프로토콜",
       "table": {

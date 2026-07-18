@@ -1139,7 +1139,7 @@
       "keyword": "검증·최소권한",
       "keywords": "제로 트러스트 zero trust never trust 검증 최소권한 마이크로세그먼테이션 zta sdp 성숙도",
       "def": "모든 접근을 신뢰 않고 지속 검증하는 보안모델로, 최소권한 기반 경계 방어 한계 보완(NIST SP 800-207).",
-      "diagram": "[모든 접근 요청]→[식별·인증·인가]\n      ↓ Never Trust · Always Verify\n[최소권한 세분]→[마이크로세그]\n      ↓ NIST 800-207 · 측면이동 차단\n[SDP·ZTNA 허용]→[지속 검증]→[CISA 성숙도]",
+      "diagram": "원칙·인증: [모든 접근]→[식별·인증]\n             ↓ Never Trust · Always Verify\n인가·분할: [최소권한]→[마이크로세그]\n구현·성숙: [SDP·ZTNA]→[지속검증]→[성숙도]",
       "dtype": "구조",
       "diagramNote": "※ 경계 소멸(클라우드·원격) 대응",
       "table": {
