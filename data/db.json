@@ -192,7 +192,7 @@
       "keyword": "FD 추론규칙",
       "keywords": "암스트롱 공리 Armstrong axioms 반사 첨가 이행 폐포 closure 추론규칙",
       "def": "함수종속성(FD)의 완전한 추론 규칙 집합으로, 주어진 FD로부터 유도 가능한 모든 FD를 도출하는 공리.",
-      "diagram": "[기본공리 3종] 반사: Y⊆X 이면 X→Y\n[첨가] X→Y 이면 XZ→YZ\n[이행] X→Y·Y→Z 이면 X→Z\n  ↓ 3공리 조합으로 유도\n[추가규칙] 합집합·분해·의사이행 규칙",
+      "diagram": "[암스트롱 공리]→FD 추론 규칙\n ├ 반사:[Y⊆X] X→Y 자명\n ├ 첨가:[XZ→YZ] 속성 첨가\n ├ 이행:[X→Y→Z] X→Z 유도\n └ 유도규칙:[합집합·분해] 의사이행",
       "dtype": "구조",
       "diagramNote": "※ 속성 폐포(X⁺) 계산의 기반",
       "table": {
@@ -245,7 +245,7 @@
       "keyword": "X→Y 결정",
       "keywords": "함수 종속성 functional dependency FD 완전 부분 이행 다치종속 결정자",
       "def": "속성집합 X의 값이 Y의 값을 유일하게 결정하는(X→Y) 속성 간 의존 관계.",
-      "diagram": "[결정자 X] →결정→ [종속자 Y] : X→Y\n  ↓ 종속 유형 분류\n[완전 FD] 후보키 전체에 종속\n[부분 FD] 후보키 일부에 종속(2NF 위배)\n[이행 FD] X→Y→Z 간접 종속(3NF 위배)",
+      "diagram": "[함수 종속성]→결정자 X→종속자 Y\n ├ 완전 FD:[후보키 전체] 종속\n ├ 부분 FD:[후보키 일부] 2NF 위배\n └ 이행 FD:[X→Y→Z 간접] 3NF 위배",
       "dtype": "구조",
       "diagramNote": "※ 정규화 분해의 판단 기준",
       "table": {
