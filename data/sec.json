@@ -248,7 +248,7 @@
       "keyword": "경량 공개키",
       "keywords": "타원곡선 암호 ecc elliptic curve ecdlp 공개키 경량 ecdsa eddsa ecdh 키길이 모바일 curve25519 secp256r1 부채널",
       "def": "타원곡선 이산대수 난해성을 이용한 공개키 암호로, 짧은 키로 RSA급 안전성을 제공.",
-      "diagram": "[타원곡선 점연산]→[ECDLP 난해성]\n        ↓\n[짧은 키 256bit]→[RSA3072 동등]\n        ↓\n[ECDH 키교환]→[ECDSA 서명]→[모바일·IoT]",
+      "diagram": "[타원곡선 점연산]→[ECDLP 난해성]\n        ↓ 동일 보안, 키 길이 단축\n[짧은 키 256bit]→[RSA3072 동등]\n        ↓ 저연산·저대역 경량성\n[ECDH 키교환]→[ECDSA 서명]→[모바일·IoT]",
       "dtype": "구조",
       "diagramNote": "※ 양자컴퓨터엔 취약, PQC 전환 필요",
       "table": {
