@@ -1583,7 +1583,7 @@
       "keyword": "제약조건",
       "keywords": "데이터 무결성 integrity 개체 참조 도메인 사용자정의 제약 PK FK check 트리거",
       "def": "데이터의 정확성·일관성을 보장하기 위해 부적합한 값의 입력·갱신을 제약하는 규칙.",
-      "diagram": "[데이터 입력·갱신] → [DBMS 제약 검증]\n  ↓ 위반 시 거부(Reject)\n[개체] PK 유일·Not Null / [참조] FK 정합\n[도메인] 타입·범위·CHECK 제약\n[사용자정의] 업무규칙 → 트리거·앱 계층 구현",
+      "diagram": "[데이터 무결성]→제약 대상별 분류\n ├ 개체:[PK 유일] Not Null 보장\n ├ 참조:[FK 정합] 부모키 존재\n ├ 도메인:[타입·범위] CHECK 제약\n └ 사용자정의:[업무규칙] 트리거 구현",
       "dtype": "나열",
       "diagramNote": "※ 위반 시 롤백·연쇄(CASCADE) 처리",
       "table": {
@@ -2252,7 +2252,7 @@
       "keyword": "워크로드 특화",
       "keywords": "특수목적 DB in-memory graph vector 인메모리 redis 임베딩 ANN HNSW milvus RAG",
       "def": "특정 워크로드에 최적화된 DB — 메모리 상주(In-memory)·관계 탐색(Graph)·유사도 검색(Vector).",
-      "diagram": "[워크로드 특성] → [특수목적 DB 선택]\n  ↓ 지연·관계·유사도 요구\n[In-memory] RAM 상주 → 초저지연 (Redis)\n[Graph] 노드·엣지 → 관계 탐색 (Neo4j)\n[Vector] 임베딩 → 유사도 검색 ANN (Milvus)",
+      "diagram": "[특수목적 DB]→워크로드별 최적화 분류\n ├ In-memory:[RAM 상주] 초저지연 (Redis)\n ├ Graph:[노드·엣지] 관계 탐색 (Neo4j)\n └ Vector:[임베딩] 유사도 검색 ANN",
       "dtype": "나열",
       "diagramNote": "※ 워크로드 특성별 선택",
       "table": {

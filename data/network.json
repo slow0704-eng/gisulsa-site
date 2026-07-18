@@ -510,7 +510,7 @@
       "keyword": "OSPF·BGP",
       "keywords": "라우팅 프로토콜 RIP OSPF BGP EIGRP 거리벡터 링크상태 경로벡터 IGP EGP AS 수렴 메트릭",
       "def": "최적 경로를 동적 계산·공유하는 프로토콜로, 도메인 내부(IGP)·외부(EGP)와 거리벡터·링크상태로 분류.",
-      "diagram": "[AS 내부 IGP] → [RIP 거리벡터] 홉 수·소규모\n   ↓ 대규모는 링크상태\n[OSPF 링크상태] SPF로 최단경로·빠른 수렴\n   ↓ AS 경계 통과\n[AS 간 EGP] → [BGP 경로벡터] 정책 기반 선택",
+      "diagram": "[라우팅 프로토콜]→알고리즘·범위별 분류\n ├ 거리벡터:[RIP] 홉 수·소규모 IGP\n ├ 링크상태:[OSPF] SPF 최단경로·대규모\n ├ 하이브리드:[EIGRP] 빠른 수렴\n └ 경로벡터:[BGP] AS 간 정책·EGP",
       "dtype": "나열",
       "diagramNote": "※ 수렴 지연 시 라우팅 루프 발생",
       "table": {
@@ -1252,7 +1252,7 @@
       "keyword": "근거리·저전력",
       "keywords": "블루투스 BLE 저전력 근거리 페어링 비콘 PAN 웨어러블",
       "def": "저전력(BLE) 모드로 웨어러블·IoT·비콘을 연결하는 2.4GHz 근거리 무선 PAN 기술.",
-      "diagram": "[기기A] ⇄ 페어링 ⇄ [기기B] 2.4GHz ISM 대역\n   ↓ 용도별 모드 분기\n[Classic BR/EDR] 오디오 스트리밍·연속 연결\n   ↓ 코인전지 저전력 요구 시\n[BLE 4.0+] 비콘·GATT → [IoT·웨어러블]",
+      "diagram": "[블루투스]→용도별 모드 분류 (2.4GHz)\n ├ Classic:[BR/EDR] 오디오·연속 연결\n ├ 저전력:[BLE] 비콘·GATT·코인전지\n └ 듀얼모드:[BR/EDR+LE] 양쪽 지원",
       "dtype": "나열",
       "diagramNote": "※ BLE는 간헐 통신에 최적",
       "table": {
