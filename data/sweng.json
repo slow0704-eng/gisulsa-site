@@ -907,7 +907,7 @@
       "keyword": "재사용 조립",
       "keywords": "CBD component based development 컴포넌트 재사용 조립 assembly 인터페이스 interface 저장소 repository 블랙박스 도메인분석 EJB COM",
       "def": "독립적·재사용 가능한 컴포넌트를 조립(Assembly)하여 시스템을 구축하는 재사용 중심 방법론.",
-      "diagram": "[①도메인 분석]→[②컴포넌트 식별]\n      ↓                ↓\n[③인터페이스 정의]→[④조립]→[시스템]",
+      "diagram": "[①도메인 분석]→[②컴포넌트 식별]\n                        ↓\n[시스템]←[④조립]←[③인터페이스 정의]",
       "dtype": "순서",
       "diagramNote": "※ 인터페이스 기반 결합, 블랙박스 재사용",
       "table": {

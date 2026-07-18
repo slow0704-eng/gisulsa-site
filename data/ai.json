@@ -1680,7 +1680,7 @@
       "keyword": "귀무·대립 판정",
       "keywords": "가설검정 hypothesis test 유의수준 기각역 검정통계량 p-value",
       "def": "표본 검정통계량과 기각역 비교로 모집단 가설을 확률적으로 판정하는 통계 추론 절차.",
-      "diagram": "[①가설설정 H0·H1]→[②유의수준 α 결정]\n         ↓\n[③검정통계량 산출]→[④기각역·p-value 비교]\n         ↓\n[⑤H0 기각/채택 판정]→[⑥결론 해석]",
+      "diagram": "[①가설설정 H0·H1]→[②유의수준 α 결정]\n                            ↓\n[④기각역·p-value 비교]←[③검정통계량 산출]\n           ↓\n [⑤H0 기각/채택 판정]→[⑥결론 해석]",
       "dtype": "순서",
       "diagramNote": "※ 단측·양측 검정에 따라 기각역 위치 상이",
       "table": {
@@ -3864,7 +3864,7 @@
       "tag": "최적화·튜닝",
       "keyword": "대리모델·획득",
       "keywords": "베이지안최적화 bayesian optimization 대리모델 가우시안프로세스 획득함수 acquisition ei ucb pi 하이퍼파라미터 hpo 탐색",
-      "diagram": "[①관측]→[②대리모델 GP]→[③획득함수 EI·UCB]\n  ↓\n[④다음 후보 선택]→[⑤관측 갱신]↺반복 수렴\n  ↓\n[탐색 exploration]⇄[활용 exploitation]",
+      "diagram": "[①관측]→[②대리모델 GP]→[③획득함수 EI·UCB]\n                                  ↓\n            [⑤관측 갱신]←[④다음 후보 선택]\n  ↺ 관측→갱신 반복 수렴\n[탐색 exploration]⇄[활용 exploitation]",
       "dtype": "순서",
       "diagramNote": "※ 적은 시행으로 전역 최적 근접",
       "table": {
