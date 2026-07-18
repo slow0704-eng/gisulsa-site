@@ -831,7 +831,7 @@
       "tag": "생성형 AI·LLM",
       "keyword": "RAG",
       "keywords": "검색증강생성 rag retrieval augmented generation 벡터db retriever 임베딩 청킹 재순위 reranking 환각 최신성 지식",
-      "diagram": "질의→[임베딩·벡터검색]→관련문서\n →컨텍스트 주입→ LLM 생성\n 근거기반 답변·출처 제시",
+      "diagram": "질의→[①임베딩·벡터검색]→관련문서\n →[②컨텍스트 주입]→[③LLM 생성]\n 근거기반 답변·출처 제시",
       "dtype": "순서",
       "diagramNote": "※ 환각↓·최신지식 반영",
       "table": {

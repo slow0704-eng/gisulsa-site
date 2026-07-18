@@ -3068,7 +3068,7 @@
       "keyword": "7단계 공격사슬",
       "keywords": "사이버 킬체인 cyber kill chain lockheed 정찰 무기화 침투 c2 apt 단계 방어 mitre attack",
       "def": "공격을 정찰부터 목표달성까지 7단계로 모델링해 단계별 차단을 지향하는 방어 프레임워크(Lockheed Martin).",
-      "diagram": "정찰→무기화→유포→악용→설치→C2→목표달성\n 각 단계 차단 시 공격 사슬 붕괴\n 좌측(초기)일수록 방어 효과↑\n[확장] MITRE ATT&CK 전술·기법 매핑",
+      "diagram": "①정찰→②무기화→③유포→④악용\n →⑤설치→⑥C2→⑦목표달성\n 각 단계 차단 시 공격 사슬 붕괴\n 좌측(초기)일수록 방어 효과↑\n[확장] MITRE ATT&CK 전술·기법 매핑",
       "dtype": "순서",
       "diagramNote": "※ 한 단계만 끊어도 공격 실패 — 조기 차단 지향",
       "table": {
