@@ -456,7 +456,7 @@
       "keyword": "적용 예외",
       "keywords": "ISP ISMP 수립 제외 유형 세부 사례 단순 HW 운영 유지보수 상용SW 구매 소규모 적용 예외",
       "def": "사업 성격·규모상 ISP/ISMP 수립이 불필요하거나 간소화되는 적용 제외 유형(세부 사례).",
-      "diagram": "[단순 HW 도입] · [운영·유지보수]\n[상용SW 단순구매] · [소액·단순 사업]\n[상위계획 존재] ISP 기반 후속 사업\n   ↓ 사업 성격·규모별 적용 판단\n[수립 제외·간소화] 기획 절차 생략",
+      "diagram": "[단순 HW]·[운영·유지] ─┐\n[상용SW]·[소액사업]   ─┼→[수립 제외·간소화]\n[상위계획 존재]       ─┘",
       "dtype": "나열",
       "diagramNote": "※ 사업 성격·규모로 제외 여부 판단",
       "table": {
@@ -721,7 +721,7 @@
       "keyword": "Zachman·TOGAF",
       "keywords": "EA 프레임워크 framework zachman 자크만 TOGAF FEAF DoDAF 범정부EAF 관점 view 절차 분류 표준",
       "def": "EA 산출물을 일관되게 구성·표현하기 위한 관점(View)·절차의 표준 틀로, Zachman·TOGAF·FEAF·DoDAF 등이 대표적.",
-      "diagram": "[Zachman] 6W×6관점 분류 매트릭스\n[TOGAF]   ADM 절차 중심\n[FEAF]    미 연방 참조모델\n[DoDAF]   국방 다중 View\n   ↓ 국내: [범정부 EAF] RM 기반",
+      "diagram": "[Zachman] 6W×6관점 매트릭스 ─┐\n[TOGAF] ADM 절차 중심       ─┤\n[FEAF] 미 연방 참조모델     ─┼→[범정부 EAF]\n[DoDAF] 국방 다중 View      ─┘",
       "dtype": "나열",
       "diagramNote": "※ 분류(Zachman)·절차(TOGAF)로 성격 구분",
       "table": {
@@ -2576,7 +2576,7 @@
       "keyword": "기능·비기능",
       "keywords": "정보시스템 요건 기술서 요구사항 기능 성능 인터페이스 데이터 보안 품질 제약 비기능 공공 SW 분류",
       "def": "정보시스템 구축을 위해 요건 기술서(RFP 과업)에 포함해야 하는 기능·비기능 요구사항 유형의 집합.",
-      "diagram": "[기능 요구사항] 시스템 기능\n[비기능 요구] 성능·보안·품질·연계·데이터\n[제약·관리] 제약·PM·지원 요구\n   ↓ 3대 요구 유형 종합\n[요건 기술서] RFP 과업 명세 확정",
+      "diagram": "[기능 요구]   ─┐\n[비기능 요구] ─┼→[요건 기술서] RFP 명세\n[제약·관리]   ─┘",
       "dtype": "나열",
       "diagramNote": "※ 기능+비기능+제약을 빠짐없이 명세",
       "table": {
