@@ -1626,7 +1626,7 @@
       "tag": "AI 거버넌스·MLOps",
       "keyword": "검증·설명·강건",
       "keywords": "ai 신뢰성 품질 검증 trustworthy 설명가능성 강건성 robustness 테스트 검인증 xai",
-      "diagram": "[기능 정확]·[강건 적대입력]·[설명 XAI]\n  ↓\n[AI SW 테스트]→데이터·메타모픽 기법\n  ↓\n[검·인증 제도]→[신뢰성 보증]",
+      "diagram": "속성:[기능 정확]·[강건 적대입력]·[설명 XAI]\n        ↓ 검증 대상 도출\n검증:[AI SW 테스트]→데이터·메타모픽 기법\n        ↓ 제도적 보증\n인증:[검·인증 제도]→[신뢰성 보증]",
       "dtype": "구조",
       "diagramNote": "※ 전통 SW 테스트로 한계 → AI 특화 기법",
       "table": {
