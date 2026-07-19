@@ -695,7 +695,7 @@
       "keyword": "형식 검증",
       "keywords": "클린룸 clean room 무결점 결함예방 형식검증 통계적 테스트 box structure mills MTTF 신뢰도 고신뢰",
       "def": "형식적 명세·검증과 통계적 사용 기반 테스트로 결함을 사전 예방하는 무결점 지향 개발 방법론(H.Mills).",
-      "diagram": "[①점진 개발(Increment)]\n   ↓ Box Structure 명세\n[②정확성 형식 검증]\n   ↓ 사용모델 기반\n[③통계적 테스트]→[④신뢰도 인증(MTTF)]",
+      "diagram": "개발사상:  [①점진 개발(Increment)]\n           ↓ Box Structure 명세\n명세·검증: [②정확성 형식 검증]\n           ↓ 사용모델 기반\n통계·보증: [③통계 테스트]→[④신뢰도·MTTF]",
       "dtype": "순서",
       "diagramNote": "※ 디버깅 대신 검증으로 결함 예방",
       "table": {
@@ -2232,7 +2232,7 @@
       "keyword": "ISO 42010",
       "keywords": "SAD software architecture document 아키텍처 문서 ISO 42010 뷰 viewpoint 이해관계자 산출물 명세",
       "def": "아키텍처 결정·구조를 이해관계자 관점(View)별로 기술·공유하는 표준 산출물(ISO/IEC 42010 기반).",
-      "diagram": "[①이해관계자] 문서 독자·관심사 식별\n    ↓ Viewpoint(뷰 작성 규약)\n[②다중 View]→[QA·드라이버] 논리·프로세스 뷰\n    ↓ 근거(Rationale) 기록\n[③결정·제약 문서] ISO/IEC 42010 표준",
+      "diagram": "대상·관점: [①이해관계자] 독자·관심사 식별\n           ↓ Viewpoint(뷰 작성 규약)\n본문:      [②다중 View]→[QA·드라이버] 4+1\n           ↓ 근거(Rationale) 기록\n근거·표준: [③결정·제약 문서] ISO/IEC 42010",
       "dtype": "순서",
       "diagramNote": "※ 관심사→관점→뷰로 구조화, 결정 근거 기록",
       "table": {
@@ -3829,7 +3829,7 @@
       "keyword": "hUMA",
       "keywords": "HSA heterogeneous system architecture 이기종 시스템 CPU GPU hUMA 공유메모리 HSAIL 가속기 병렬",
       "def": "CPU·GPU·가속기를 통합 가상 메모리(hUMA)로 묶어 단일 주소공간에서 협업 처리하는 이기종 컴퓨팅 하드웨어 아키텍처(HSA Foundation).",
-      "diagram": "[CPU] · [GPU] · [DSP·가속기]\n   ↓      ↓       ↓ 통합\n[hUMA 통합메모리] 공유가상·단일주소공간\n   ↓ 공통 실행모델\n[User-mode Queue · HSAIL 중간언어]",
+      "diagram": "연산장치:    [CPU] · [GPU] · [DSP·가속기]\n                ↓      ↓       ↓ 통합\n메모리·실행: [hUMA 통합메모리] 단일주소공간\n             ↓ 공통 실행모델\n작업·표준:   [User-mode Queue·HSAIL]",
       "dtype": "구조",
       "diagramNote": "※ 데이터 복사 없이 메모리 공유(Zero-copy)",
       "table": {
