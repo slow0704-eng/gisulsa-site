@@ -245,7 +245,7 @@
       "keyword": "CSMA/CD·MAC",
       "keywords": "이더넷 Ethernet CSMA/CD MAC 프레임 LAN IEEE 802.3 충돌",
       "def": "유선 LAN의 사실상 표준으로, MAC 주소 기반 프레임을 CSMA/CD·스위칭으로 전달하는 IEEE 802.3 기술.",
-      "diagram": "[단말A] ⇄ [L2 스위치] ⇄ [단말B]\n  ↓ CSMA/CD 충돌 감지·전이중 전환\n[프레임] Preamble·MAC48·Type·Data·FCS\n  ↓ IEEE 802.3 물리 규격\n[10M~400G] 대역 확장 → [스위칭] 전이중",
+      "diagram": "연결: [단말A] ⇄ [L2 스위치] ⇄ [단말B]\n      ↓ CSMA/CD 충돌 감지·전이중 전환\n구조: [프레임] MAC48·Type·Data·FCS\n      ↓ IEEE 802.3 물리 규격\n물리: [10M~400G] 대역 확장 → [스위칭] 전이중",
       "dtype": "구조",
       "diagramNote": "※ 현재는 스위치 기반 전이중",
       "table": {
@@ -351,7 +351,7 @@
       "keyword": "검출·재전송",
       "keywords": "오류제어 흐름제어 패리티 CRC 체크섬 해밍코드 FEC ARQ 정지대기 GBN SR 슬라이딩윈도우",
       "def": "전송 중 비트오류를 검출·정정하고 송수신 속도차를 조절해 신뢰성·효율을 확보하는 데이터링크 제어 기법.",
-      "diagram": "[송신] → [검출: CRC·패리티·해밍]\n   ↓ 오류 검출 시\n[재전송 ARQ: Stop&Wait/GBN/SR]\n   ↓ 송수신 속도차 조절\n[흐름 제어] 슬라이딩 윈도우 ← ACK/NAK",
+      "diagram": "검출:   [CRC·패리티·해밍]→[비트오류 검출]\n        ↓ 오류 검출 시 재전송\n재전송: [Stop&Wait]→[GBN·SR ARQ]\n        ↓ 송수신 속도차 조절\n흐름:   [슬라이딩 윈도우]⇄[ACK/NAK 조절]",
       "dtype": "나열",
       "diagramNote": "※ 검출(EDC)·정정(ECC) 구분",
       "table": {
@@ -563,7 +563,7 @@
       "keyword": "L2·논리분할",
       "keywords": "스위칭 VLAN L2 트렁크 802.1Q 브로드캐스트 도메인 STP",
       "def": "MAC 학습으로 프레임을 포워딩하는 스위칭과, 물리망을 논리 분할해 브로드캐스트 도메인을 격리하는 VLAN 기술.",
-      "diagram": "[프레임 수신] → [MAC 학습] → [포트 포워딩]\n   ↓ 포트 단위 논리 분할\n[VLAN10 영업] [VLAN20 개발] 도메인 격리\n   ↓ 트렁크 802.1Q 태깅\n[VLAN 다중화] → [L3 스위치] VLAN 간 통신",
+      "diagram": "학습: [프레임 수신]→[MAC 학습]→[포트 포워딩]\n      ↓ 포트 단위 논리 분할\n격리: [VLAN10 영업]⇄[VLAN20 개발]\n      ↓ 트렁크 802.1Q 태깅\n통신: [VLAN 다중화]→[L3 스위치]",
       "dtype": "구조",
       "diagramNote": "※ STP로 루프 방지",
       "table": {
@@ -669,7 +669,7 @@
       "keyword": "오류·진단",
       "keywords": "ICMP 오류보고 진단 ping traceroute Echo TTL 도달불가",
       "def": "IP 전달 과정의 오류·상태를 보고하고 ping·traceroute 진단을 지원하는 네트워크 계층 제어 프로토콜.",
-      "diagram": "[송신 호스트] → Echo Request → [대상 호스트]\n   ↓ Echo Reply 회신·도달 확인\n[ping 진단] 왕복지연(RTT)·손실률 확인\n   ↓ TTL 1씩 증가\n[traceroute] TTL 초과 → [오류 통보] 도달불가",
+      "diagram": "[ICMP]→기능별 분류\n ├ 진단:[ping] Echo RTT·손실률\n ├ 추적:[traceroute] TTL 증가 경로\n └ 오류:[도달불가·TTL초과] 오류 통보",
       "dtype": "나열",
       "diagramNote": "※ 제어용, 데이터 전달 아님",
       "table": {
@@ -1146,7 +1146,7 @@
       "keyword": "테라헤르츠·AI",
       "keywords": "6g 6세대 이동통신 테라헤르츠 thz ai-native 위성 ntn tbps 초저지연 초공간",
       "def": "5G를 잇는 6세대 이동통신으로, 테라헤르츠 대역·AI 내장·위성 융합으로 초고속·초공간 통신을 지향.",
-      "diagram": "[5G] → [6G] 6세대 이동통신 진화\n  ↓ THz 대역 확장\n[초고속] Tbps급 전송·초저지연 100μs급\n  ↓ 지능·공간 확장\n[AI-Native] 망 자율운영 → [위성 NTN] 초공간",
+      "diagram": "진화: [5G]→[6G] 6세대 이동통신 진화\n      ↓ THz 대역 확장·Tbps급 전송\n성능: [초고속 Tbps]→[초저지연 100μs]\n      ↓ 지능·공간 확장\n비전: [AI-Native 자율운영]→[위성 NTN 초공간]",
       "dtype": "구조",
       "diagramNote": "※ 2030년대 상용화 목표",
       "table": {
@@ -1464,7 +1464,7 @@
       "keyword": "터널·암호",
       "keywords": "VPN 가상사설망 터널링 IPsec SSL TLS 암호화 원격접속 사이트 ZTNA SDP 제로트러스트",
       "def": "공중망 위에 암호화 터널을 구성해 사설망처럼 안전 통신하는 가상사설망(IPsec·SSL 방식).",
-      "diagram": "[지사망]→[캡슐화·AES 암호터널]→[본사망]\n              ↓ 공중망 위 가상 전용선\n         [IPsec(사이트)·SSL(원격)]\n              ↓ 인증서·MFA 검증\n         [ZTNA·SDP 제로트러스트]",
+      "diagram": "터널: [지사망]→[캡슐화·AES 터널]→[본사망]\n      ↓ 공중망 위 가상 전용선\n유형: [IPsec 사이트]⇄[SSL 원격]\n      ↓ 인증서·MFA 검증\n보안: [ZTNA·SDP 제로트러스트]",
       "dtype": "구조",
       "diagramNote": "※ 기밀·무결·인증 동시 보장",
       "table": {
