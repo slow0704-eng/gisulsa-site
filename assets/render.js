@@ -258,6 +258,10 @@
     var dcap = card.diagramNote ? '<div class="note diag">'+escHTML(card.diagramNote)+'</div>' : '';
     var fnote = card.note ? '<div class="note">'+escHTML(card.note)+'</div>' : '';
     var diag = card.diagram ? '<pre class="diagram">'+diagHTML(card.diagram)+'</pre>' : '';
+    // III(합격선용 마지막 단락) — 활용·발전방향 4줄 구성도(선택 필드 apply). 있으면 II 뒤에 붙는다.
+    var apply3 = card.apply ? '<pre class="diagram">'+diagHTML(card.apply)+'</pre>' : '';
+    var acap3 = card.applyNote ? '<div class="note diag">'+escHTML(card.applyNote)+'</div>' : '';
+    var sect3 = card.apply ? '<div class="blk"><div class="lbl tier1 ink">III. '+escHTML(card.applyTitle||'활용 및 발전방향')+'</div>'+apply3+acap3+'</div>' : '';
     var head = '<h3>'+escHTML(card.title)+'</h3><span class="tag">'+escHTML(card.tag)+'</span>'+lvlBadge(card);
     if(card.essay){
       return '<div '+cardAttrs(card, domId, 'essay')+' style="'+cstyle+'">'+
@@ -277,7 +281,7 @@
         '<div class="blk"><div class="lbl tier1">'+defLead+'</div><div class="def">'+escHTML(_stripLeadKw(card.def))+'</div></div>'+
         '<div class="blk"><div class="lbl tier2">1. 구성도</div>'+diag+dcap+'</div>'+
         '<div class="blk"><div class="lbl tier2">2. 구성요소</div>'+tableHTML(card.table, '', card.title+' 구성요소')+'</div>'+
-        fnote;
+        fnote+sect3;
     }
     return '<div '+cardAttrs(card, domId)+' style="'+cstyle+'">'+
       markCtl()+zoomCtl(card)+head+body+sixKeyMeter(card)+
