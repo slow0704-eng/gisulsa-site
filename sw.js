@@ -4,7 +4,7 @@
  *       CDN(mermaid·vis-network·lucide·pretendard)은 cache-first로 최초 방문 후 오프라인 재사용.
  * 캐시 무효화: 배포로 핵심 파일 바뀌면 SWR가 백그라운드로 새 응답을 캐시에 갱신.
  *              강제 초기화가 필요하면 아래 VERSION 을 올린다. */
-const VERSION = 'gs-v5';
+const VERSION = 'gs-v6';
 const SHELL = VERSION + '-shell';
 const RUNTIME = VERSION + '-runtime';
 const CORE = [
