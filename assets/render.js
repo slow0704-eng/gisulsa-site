@@ -54,40 +54,88 @@
 
   // 도메인 → {categoryId: category} 맵(app.js·graph.js 공용 — 중복 제거)
   function buildCatMap(d){ var m={}; ((d&&d.categories)||[]).forEach(function(c){ m[c.id]=c; }); return m; }
-  // 검색식 파서(표준화). 지원 문법:
-  //   "여러 단어"  → 공백 포함 한 구문으로 매칭   ·  -제외어(또는 !제외어) → 해당어 포함 시 탈락
-  //   OR / |       → 결과를 OR 결합(하나라도 포함)  ·  AND / & → 기본(모두 포함)이라 소비만
-  // 반환 {pos:[구문…], not:[제외어…], orOp:bool}. 미지정 시 결합은 qmode(and/or) 토글을 따름.
-  function parseQuery(q){
-    var toks = [], re = /"([^"]*)"|(\S+)/g, m;
-    while((m = re.exec(String(q||'')))){ toks.push({ p: m[1]!=null, v: m[1]!=null ? m[1] : m[2] }); }
-    var pos = [], not = [], orOp = false;
-    toks.forEach(function(t){
-      var v = t.v;
-      if(!t.p){
-        var up = v.toUpperCase();
-        if(up==='OR' || v==='|'){ orOp = true; return; }
-        if(up==='AND' || v==='&'){ return; }                       // AND=기본, 연산자로만 소비
-        if((v.charAt(0)==='-' || v.charAt(0)==='!') && v.length>1){ not.push(v.slice(1).toLowerCase()); return; }
-      }
-      v = v.toLowerCase(); if(v) pos.push(v);
-    });
-    return { pos: pos, not: not, orOp: orOp };
-  }
-  // 카드/시트 행 공용 필터 술어(순수). 과목·단원·검색식(소문자 q) 일치 여부.
-  function cardMatches(domId, catId, text, q, selDom, selSec, qmode){
-    if(selDom!=='all' && selDom!==domId) return false;
-    if(selSec!=='all' && selSec!==catId) return false;
-    if(q){
-      var pq = parseQuery(q), s = String(text);
-      if(pq.not.length && pq.not.some(function(t){ return s.indexOf(t) >= 0; })) return false;   // 제외어
-      if(pq.pos.length){
-        var useOr = pq.orOp || qmode==='or';
-        var hit = useOr ? pq.pos.some(function(t){ return s.indexOf(t) >= 0; })
-                        : pq.pos.every(function(t){ return s.indexOf(t) >= 0; });
-        if(!hit) return false;
+  // ── 검색식(질의 문법) 파서 ─────────────────────────────────────────────
+  // AND/OR 토글 버튼 대신 **입력한 문법**으로 결합을 정한다. 지원 문법:
+  //   "여러 단어"        구문(공백 포함 한 덩어리로 매칭)
+  //   공백               암묵 AND — `제로 트러스트` = 둘 다 포함
+  //   OR · | · or        합집합 — `AR OR MA`
+  //   AND · & · and      명시 AND(암묵 AND와 동일, 가독성용)
+  //   -단어 · !단어 · NOT 단어   제외
+  //   ( … )              그룹 — `(AR OR MA) -2교시`
+  // 우선순위: NOT > AND > OR (일반적 불리언 규약). AST 로 평가한다.
+  //   ※ 연산자는 대소문자 무관. 한글 검색어에 섞여도 '단독 토큰'일 때만 연산자로 본다
+  //     (예 `ORACLE` 은 검색어, `OR` 만 연산자).
+  function lexQuery(q){
+    var toks = [], re = /"([^"]*)"|([()|&])|([^\s()|&"]+)/g, m;
+    while((m = re.exec(String(q||'')))){
+      if(m[1] != null)      toks.push({ t:'phrase', v:m[1] });        // "구문"
+      else if(m[2] != null) toks.push({ t: (m[2]==='(' ? 'lp' : m[2]===')' ? 'rp' : m[2]==='|' ? 'or' : 'and') });
+      else {
+        var v = m[3], up = v.toUpperCase();
+        if(up==='OR')       toks.push({ t:'or' });
+        else if(up==='AND') toks.push({ t:'and' });
+        else if(up==='NOT') toks.push({ t:'not' });
+        else if((v.charAt(0)==='-' || v.charAt(0)==='!') && v.length>1)
+                            toks.push({ t:'not' }, { t:'phrase', v:v.slice(1) });
+        else                toks.push({ t:'phrase', v:v });
       }
     }
+    return toks;
+  }
+  // 재귀하강 파서 → AST({op:'term'|'not'|'and'|'or'}). 문법 오류는 던지지 않고
+  // 남는 토큰을 무시·보정한다(사용자가 타이핑 중인 미완성 질의도 계속 동작해야 하므로).
+  function parseQuery(q){
+    var toks = lexQuery(q), i = 0;
+    function peek(){ return toks[i]; }
+    function parseOr(){
+      var l = parseAnd();
+      while(peek() && peek().t==='or'){ i++; var r = parseAnd(); l = r ? (l ? {op:'or', l:l, r:r} : r) : l; }
+      return l;
+    }
+    function parseAnd(){
+      var l = parseUnary();
+      for(;;){
+        var t = peek();
+        if(!t || t.t==='or' || t.t==='rp') break;
+        if(t.t==='and'){ i++; continue; }                 // 명시 AND = 암묵 AND
+        var r = parseUnary(); if(!r) break;
+        l = l ? {op:'and', l:l, r:r} : r;
+      }
+      return l;
+    }
+    function parseUnary(){
+      var t = peek(); if(!t) return null;
+      if(t.t==='not'){ i++; var x = parseUnary(); return x ? {op:'not', x:x} : null; }
+      if(t.t==='lp'){ i++; var g = parseOr(); if(peek() && peek().t==='rp') i++; return g; }
+      if(t.t==='phrase'){ i++; var v = t.v.toLowerCase(); return v ? {op:'term', v:v} : null; }
+      i++; return null;                                    // 고아 연산자(and/or/rp) — 무시
+    }
+    var ast = parseOr();
+    while(i < toks.length){ var more = parseOr(); if(!more){ i++; continue; }  // 닫힘 불일치 잔여 보정
+      ast = ast ? {op:'and', l:ast, r:more} : more; }
+    return ast;
+  }
+  function evalQuery(ast, s){
+    if(!ast) return true;
+    switch(ast.op){
+      case 'term': return s.indexOf(ast.v) >= 0;
+      case 'not' : return !evalQuery(ast.x, s);
+      case 'and' : return evalQuery(ast.l, s) && evalQuery(ast.r, s);
+      case 'or'  : return evalQuery(ast.l, s) || evalQuery(ast.r, s);
+    }
+    return true;
+  }
+  // 파싱 캐시 — cardMatches 는 키 입력마다 카드 수(650+)만큼 호출되므로 질의당 1회만 파싱.
+  var qCacheKey = null, qCacheAst = null;
+  function queryAst(q){
+    if(q !== qCacheKey){ qCacheKey = q; qCacheAst = parseQuery(q); }
+    return qCacheAst;
+  }
+  // 카드/시트 행 공용 필터 술어(순수). 과목·단원·검색식(소문자 q) 일치 여부.
+  function cardMatches(domId, catId, text, q, selDom, selSec){
+    if(selDom!=='all' && selDom!==domId) return false;
+    if(selSec!=='all' && selSec!==catId) return false;
+    if(q && !evalQuery(queryAst(q), String(text))) return false;
     return true;
   }
   // 카드 공통 속성 — 컨테이너는 role=group(그룹 라벨). 확대·진도 컨트롤은 카드 내부의

@@ -64,7 +64,7 @@
   }
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
-  var state = { q:'', qmode:'and', qscope:'both', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards' };
+  var state = { q:'', qscope:'both', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards' };
   // 검색 범위별 대상 문자열 — 제목만 / 내용만(제목 제외 + 키워드) / 제목+내용(전부).
   //   제목은 카드 aria-label, 시트행은 data-key(dom|title) 에서 얻는다. 내용은 title 문자열을 본문에서 제거.
   function searchTextFor(el){
@@ -287,7 +287,7 @@
       var groupVisible = false;
       g.querySelectorAll('.card').forEach(function(c){
         var text = q ? searchTextFor(c) : '';
-        var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
+        var ok = GS.cardMatches(domId, c.getAttribute('data-cat'), text, q, state.dom, state.sec)
                  && (state.sub==='all' || c.getAttribute('data-sub')===state.sub)
                  && lvlOk(c.getAttribute('data-lvl'))
                  && progOk(c.getAttribute('data-key'));
@@ -412,7 +412,7 @@
     var rows = sheetBody.querySelectorAll('.sheet-row');
     rows.forEach(function(r){
       var text = q ? searchTextFor(r) : '';
-      var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec, state.qmode)
+      var ok = GS.cardMatches(r.getAttribute('data-dom'), r.getAttribute('data-cat'), text, q, state.dom, state.sec)
                && (state.sub==='all' || r.getAttribute('data-sub')===state.sub)
                && lvlOk(r.getAttribute('data-lvl'))
                && progOk(r.getAttribute('data-key'));
@@ -466,7 +466,6 @@
       searchEl.placeholder = searchable ? '토픽 검색 (예: 제로트러스트)'
         : (v==='graph' ? '관계도 뷰 — 검색 미적용' : (v==='practice' ? '연습 뷰 — 아래 과목/모드로 범위 조절' : (v==='gloss' ? '용어 뷰 — 아래 검색창 사용' : '퀴즈 뷰 — 아래 필터로 출제 범위 조절')));
     }
-    var smBtn=document.getElementById('searchMode'); if(smBtn) smBtn.disabled = !searchable;
     if(v==='graph' || v==='quiz' || v==='practice' || v==='gloss') toggleEmpty(false);
     if(v==='graph') countEl.textContent = '🗺 관계도';
 
@@ -534,7 +533,7 @@
       (d.cards||[]).forEach(function(c){
         var def = GS.defText ? GS.defText(c) : (c.def || '');
         var text = q ? (c.keywords + ' ' + c.title + ' ' + def).toLowerCase() : '';
-        if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec, state.qmode)) return;
+        if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec)) return;
         if(state.sub!=='all' && (c.subcat||'')!==state.sub) return;
         items.push({ domLabel: d.label, secTitle: (secTitle[c.category] || catLabel[c.category] || '기타'), card: c });
       });
@@ -842,25 +841,9 @@
     applyActiveFilter();
   });
 
-  // ---- 검색 방식 토글(AND: 모두 포함 / OR: 하나라도 포함) ----
-  var smodeEl = document.getElementById('searchMode');
-  function renderSmode(){
-    if(!smodeEl) return;
-    var or = state.qmode==='or';
-    smodeEl.textContent = or ? 'OR' : 'AND';
-    smodeEl.classList.toggle('is-or', or);
-    smodeEl.setAttribute('aria-pressed', or);
-    smodeEl.title = or ? '검색 방식: OR(단어 중 하나라도 포함) — 눌러 AND로'
-                       : '검색 방식: AND(단어 모두 포함) — 눌러 OR로';
-  }
-  if(smodeEl){
-    renderSmode();
-    smodeEl.addEventListener('click', function(){
-      state.qmode = (state.qmode==='or') ? 'and' : 'or';
-      renderSmode();
-      if(state.q && state.view!=='quiz') applyActiveFilter();
-    });
-  }
+  // ---- 검색 결합은 질의 문법이 결정(AND/OR 토글 버튼 제거) ----
+  //   공백=암묵 AND · OR/| · AND/& · -단어(!·NOT)=제외 · ( )=그룹 · "구문"
+  //   우선순위 NOT > AND > OR. 파싱·평가는 render.js 의 parseQuery/evalQuery.
 
   // ---- 검색 범위 토글(제목+내용 → 제목 → 내용 순환) ----
   var scopeEl = document.getElementById('searchScope');
