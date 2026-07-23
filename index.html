@@ -88,16 +88,21 @@
 <div id="sheet" class="hidden">
   <div class="sheet-tools">
     <label><input type="checkbox" id="maskDef" /> 정의 가리기 — 행 클릭해 확인(암기 모드)</label>
-    <label><input type="checkbox" id="maskMore" /> 구성도·요소·첨언까지 가리기(백지 재현)</label>
-    <label><input type="checkbox" id="diagOrig" /> 구성도 원래대로</label>
+    <label><input type="checkbox" id="maskMore" /> 구성도·요소·III까지 가리기(백지 재현)</label>
+    <label><input type="checkbox" id="diagOrig" /> 구성도·III 원래대로</label>
     <label><input type="checkbox" id="tblOrig" /> 구성요소표 원래대로</label>
+    <span class="sheet-sel">
+      <label title="체크한 행만 내보내기 — 검색·과목/단원 필터와 교집합으로 적용"><input type="checkbox" id="selOnly" /> ☑ 선택만 내보내기</label>
+      <span id="selCount" class="sel-count" aria-live="polite">선택 0</span>
+      <button type="button" id="selClear" class="sel-clear" disabled title="체크한 항목 전부 해제">해제</button>
+    </span>
     <span class="sheet-export">
       <button type="button" id="exportTxt" class="exp-btn" title="현재 필터된 정의 시트를 TXT(들여쓰기·줄바꿈 가독형)로 다운로드 — 한글(HWP)·메모장에서 열림"><i data-lucide="file-text"></i>TXT</button>
       <button type="button" id="exportDoc" class="exp-btn" title="현재 필터된 정의 시트를 Word(.doc)로 다운로드 — MS Word·한글(HWP)에서 열림"><i data-lucide="file-type"></i>Word</button>
       <button type="button" id="exportCsv" class="exp-btn" title="현재 필터된 정의 시트를 CSV로 다운로드"><i data-lucide="file-spreadsheet"></i>CSV</button>
       <button type="button" id="exportXlsx" class="exp-btn" title="현재 필터된 정의 시트를 Excel(xlsx)로 다운로드"><i data-lucide="table"></i>Excel</button>
     </span>
-    <span class="tool-hint">전 토픽 정의문 모음 · 상단 검색·과목/단원 필터 적용 · 내보내기는 현재 표시분 기준</span>
+    <span class="tool-hint">전 토픽 정의문 모음 · 상단 검색·과목/단원 필터 적용 · 내보내기는 현재 표시분 기준(왼쪽 ☑ 로 고른 뒤 <b>선택만</b> 을 켜면 체크한 것만 다운로드 · 선택은 브라우저에 저장)</span>
   </div>
   <div id="sheetBody"></div>
 </div>

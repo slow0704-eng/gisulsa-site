@@ -355,44 +355,50 @@
     t.rows.forEach(function(r){ parts.push(r.map(function(x){ return (x === '' ? '〃' : x); }).join(' | ')); });   // 셀=" | ", 빈 구분셀(병합)은 〃
     return parts.join('  ‖  ');   // 행 구분 = "‖"
   }
-  // 시트 첨언 셀: 구성도 첨언(diagramNote)·구성요소 첨언(note) 둘 다 표시(라벨 구분).
-  function sheetNotes(c){
-    function line(lab, t){
-      if(!t) return '';
-      t = String(t).replace(/^\s*※\s*/, '');
-      return '<div class="st-nline"><span class="st-nlab">'+lab+'</span>'+escHTML(t)+'</div>';
-    }
-    return line('구성도', c.diagramNote) + line('구성요소', c.note);
+  // III(활용 및 발전방향) 4줄 구성도 — 시트/내보내기용 1줄 직렬화
+  function flatApply(card){
+    var g = (card && card.apply) || '';
+    return g.split('\n').map(function(s){ return s.trim(); }).filter(Boolean).join('  /  ');
+  }
+  // 첨언은 별도 열이 아니라 **해당 셀 바로 아래**에 붙인다(구성도→diagramNote,
+  // 구성요소→note, III→applyNote). 답안에서도 첨언은 그 블록의 마지막 줄이라 배치가 일치한다.
+  function noteLine(t){
+    if(!t) return '';
+    return '<div class="st-nin">※ '+escHTML(String(t).replace(/^\s*※\s*/, ''))+'</div>';
   }
   function sheetHTML(domains, catMapByDom){
+    // 1열 = 내보내기 선택 체크박스(app.js 가 상태·집계 관리). 나머지 6열이 본문.
     var h = '<table class="sheet-table"><thead><tr class="sheet-head">'+
-      '<th>토픽</th><th>리드키워드</th><th>정의</th><th>구성도</th><th>구성요소</th><th>첨언</th></tr></thead><tbody>';
+      '<th class="st-sel"><input type="checkbox" id="selAll" class="st-chk" title="표시된 행 전체 선택/해제" aria-label="표시된 행 전체 선택" /></th>'+
+      '<th>토픽</th><th>리드키워드</th><th>정의</th><th>구성도</th><th>구성요소</th><th>활용·발전방향 (III)</th></tr></thead><tbody>';
     domains.forEach(function(d){
       var catMap = catMapByDom[d.id] || {};
       var secIds = (d.sections || []).map(function(s){ return s.id; });
-      h += '<tr class="sheet-dom" data-dom="'+escAttr(d.id)+'"><td colspan="6">'+escHTML((d.icon||'')+' '+d.label)+'</td></tr>';
+      h += '<tr class="sheet-dom" data-dom="'+escAttr(d.id)+'"><td colspan="7">'+escHTML((d.icon||'')+' '+d.label)+'</td></tr>';
       function rowsFor(catId){
         return (d.cards || []).filter(function(c){ return c.category === catId; }).map(function(c){
           // 구성도·구성요소는 1줄 직렬화(st-flat)와 원본(st-orig)을 함께 렌더 → 체크박스로 CSS 전환
           var origD = c.diagram ? '<pre class="st-orig st-orig-diag">'+escHTML(c.diagram)+'</pre>' : '';
           var origT = (c.table && c.table.rows && c.table.rows.length) ? '<div class="st-orig">'+tableHTML(c.table, '', c.title+' 구성요소')+'</div>' : '';
+          var origA = c.apply ? '<pre class="st-orig st-orig-diag">'+escHTML(c.apply)+'</pre>' : '';
           return '<tr class="sheet-row" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(c.category)+'" data-sub="'+escAttr(c.subcat||'')+'" data-key="'+escAttr(d.id+'|'+c.title)+'" data-lvl="'+escAttr(c.level||'')+'" data-k="'+escAttr(c.keywords)+'">'+
+            '<td class="st-sel"><input type="checkbox" class="st-chk" aria-label="'+escAttr(c.title)+' 내보내기 선택" /></td>'+
             '<td class="st-title">'+lvlBadge(c)+' '+escHTML(c.title)+(c.compare?' <span class="st-badge">비교</span>':'')+(c.essay?' <span class="st-badge st-essay">2교시</span>':'')+'</td>'+
             '<td class="st-kw">'+escHTML(c.keyword||'')+'</td>'+
             '<td class="st-def">'+escHTML(defText(c))+'</td>'+
-            '<td class="st-diag"><span class="st-flat">'+escHTML(flatDiagram(c))+'</span>'+origD+'</td>'+
-            '<td class="st-tbl"><span class="st-flat">'+escHTML(flatTable(c.table))+'</span>'+origT+'</td>'+
-            '<td class="st-note">'+sheetNotes(c)+'</td></tr>';
+            '<td class="st-diag"><span class="st-flat">'+escHTML(flatDiagram(c))+'</span>'+origD+noteLine(c.diagramNote)+'</td>'+
+            '<td class="st-tbl"><span class="st-flat">'+escHTML(flatTable(c.table))+'</span>'+origT+noteLine(c.note)+'</td>'+
+            '<td class="st-apply"><span class="st-flat">'+escHTML(flatApply(c))+'</span>'+origA+noteLine(c.applyNote)+'</td></tr>';
         }).join('');
       }
       (d.sections || []).forEach(function(s){
-        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(s.id)+'"><td colspan="6">'+escHTML(s.title)+'</td></tr>';
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(s.id)+'"><td colspan="7">'+escHTML(s.title)+'</td></tr>';
         h += rowsFor(s.id);
       });
       var orphan = {};
       (d.cards || []).forEach(function(c){ if(secIds.indexOf(c.category) < 0) orphan[c.category] = 1; });
       Object.keys(orphan).forEach(function(catId){
-        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(catId)+'"><td colspan="6">기타</td></tr>';
+        h += '<tr class="sheet-sec" data-dom="'+escAttr(d.id)+'" data-cat="'+escAttr(catId)+'"><td colspan="7">기타</td></tr>';
         h += rowsFor(catId);
       });
     });
@@ -522,6 +528,7 @@
   GS.defText = defText;   // 정의 시트 내보내기(app.js)에서 재사용
   GS.flatDiagram = flatDiagram;   // 구성도 1줄 직렬화
   GS.flatTable = flatTable;       // 구성요소 표 1줄 직렬화
+  GS.flatApply = flatApply;       // III(활용·발전방향) 1줄 직렬화
   GS.buildCatMap = buildCatMap;
   GS.cardMatches = cardMatches;
 })();

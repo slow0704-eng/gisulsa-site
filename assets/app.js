@@ -64,7 +64,7 @@
   }
 
   // 상태: 전역 검색어 q, 과목 dom('all'|domId), 단원 sec('all'|sectionId), 뷰 view('cards'|'graph'|'sheet'|'quiz')
-  var state = { q:'', qscope:'both', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards' };
+  var state = { q:'', qscope:'both', dom:'all', sec:'all', sub:'all', only:'all', lvl:'all', view:'cards', selOnly:false };
   // 검색 범위별 대상 문자열 — 제목만 / 내용만(제목 제외 + 키워드) / 제목+내용(전부).
   //   제목은 카드 aria-label, 시트행은 data-key(dom|title) 에서 얻는다. 내용은 title 문자열을 본문에서 제거.
   function searchTextFor(el){
@@ -109,6 +109,14 @@
     if(el) el.classList.toggle('is-wrong', !!PROG.wrong[k]);
     if(progFacetEl) buildProgFacet();
   };
+  // ---- 내보내기 선택(localStorage): 정의 시트에서 체크한 토픽만 다운로드 ----
+  //   키는 진도(PROG)와 동일한 `도메인id|토픽명`. 시트를 다시 그려도 체크가 유지된다.
+  var SEL = {};
+  try{ SEL = JSON.parse(localStorage.getItem('gs_sel')||'{}') || {}; }catch(e){ SEL = {}; }
+  function saveSel(){ try{ localStorage.setItem('gs_sel', JSON.stringify(SEL)); }catch(e){} }
+  function selCount(){ return Object.keys(SEL).length; }
+  function selHas(key){ return !!SEL[key]; }
+
   function saveResume(){ try{ localStorage.setItem('gs_resume', JSON.stringify({ dom:state.dom, sec:state.sec, sub:state.sub, view:state.view })); }catch(e){} }
   var domById = {}, catMapByDom = {}, mapDone = {};
   DOMAINS.forEach(function(d){
@@ -333,6 +341,9 @@
   // ---- 정의 시트(모든 토픽의 정의문만) ----
   var sheetEl     = document.getElementById('sheet');
   var sheetBody   = document.getElementById('sheetBody');
+  var selOnlyEl   = document.getElementById('selOnly');    // ☑ 선택만 내보내기
+  var selClearEl  = document.getElementById('selClear');   // 선택 해제
+  var selCountEl  = document.getElementById('selCount');   // 선택 n 표시
   var graphEl     = document.getElementById('graph');
   var graphCanvas = document.getElementById('graphCanvas');
   var quizEl      = document.getElementById('quiz');
@@ -399,12 +410,59 @@
     if(sheetBuilt) return;
     sheetBody.innerHTML = GS.sheetHTML(DOMAINS, catMapByDom);
     applyProgClasses();   // 시트 행에 학습완료·북마크 상태 반영
+    applySelChecks();     // 저장된 내보내기 선택 복원
     // 가리기 모드일 때 행 클릭 → 그 행 정의만 펼쳐보기(암기 자가확인)
+    //   ※ 선택 체크박스 칸 클릭은 제외 — 체크하려다 정의가 펼쳐지면 암기 모드가 무너진다.
     sheetBody.addEventListener('click', function(e){
-      var r = e.target && e.target.closest ? e.target.closest('.sheet-row') : null;
+      var t = e.target;
+      if(t && t.closest && t.closest('.st-sel')) return;
+      var r = t && t.closest ? t.closest('.sheet-row') : null;
       if(r) r.classList.toggle('reveal');
     });
+    // 선택 체크박스(행 개별 / 헤더 전체) — 위임 처리
+    sheetBody.addEventListener('change', function(e){
+      var t = e.target;
+      if(!t || !t.classList || !t.classList.contains('st-chk')) return;
+      if(t.id === 'selAll'){                                  // 헤더: 표시된 행 일괄 토글
+        var on = t.checked;
+        sheetBody.querySelectorAll('.sheet-row:not(.hidden)').forEach(function(r){
+          var k = r.getAttribute('data-key');
+          if(on) SEL[k] = 1; else delete SEL[k];
+          var cb = r.querySelector('.st-chk'); if(cb) cb.checked = on;
+          r.classList.toggle('is-sel', on);
+        });
+      } else {                                                // 행 개별
+        var row = t.closest('.sheet-row'); if(!row) return;
+        var key = row.getAttribute('data-key');
+        if(t.checked) SEL[key] = 1; else delete SEL[key];
+        row.classList.toggle('is-sel', t.checked);
+      }
+      saveSel(); renderSelUI();
+    });
     sheetBuilt = true;
+  }
+  // 저장된 선택을 체크박스·행 클래스에 반영(시트 최초 생성 / 선택 해제 후 동기화)
+  function applySelChecks(){
+    sheetBody.querySelectorAll('.sheet-row').forEach(function(r){
+      var on = selHas(r.getAttribute('data-key'));
+      var cb = r.querySelector('.st-chk'); if(cb) cb.checked = on;
+      r.classList.toggle('is-sel', on);
+    });
+    renderSelUI();
+  }
+  // 선택 개수 표시·'선택만' 토글 활성화·헤더 체크박스(전체/부분/해제 3상태) 갱신
+  function renderSelUI(){
+    var n = selCount();
+    if(selCountEl) selCountEl.textContent = n ? ('선택 ' + n) : '선택 0';
+    if(selCountEl) selCountEl.classList.toggle('has-sel', n > 0);
+    if(selClearEl) selClearEl.disabled = !n;
+    var head = document.getElementById('selAll');
+    if(head){
+      var vis = sheetBody.querySelectorAll('.sheet-row:not(.hidden)');
+      var on = 0; vis.forEach(function(r){ if(selHas(r.getAttribute('data-key'))) on++; });
+      head.checked = vis.length > 0 && on === vis.length;
+      head.indeterminate = on > 0 && on < vis.length;
+    }
   }
 
   function applySheetFilter(){
@@ -433,6 +491,7 @@
     });
     countEl.textContent = '표시 ' + shown + ' / ' + totalCards();
     toggleEmpty(shown===0);
+    renderSelUI();
   }
 
   // 활성 뷰에 맞춰 검색·필터 적용(관계도는 필터 미적용)
@@ -520,9 +579,16 @@
   if(diagOrig){ diagOrig.addEventListener('change', function(){ sheetBody.classList.toggle('diag-orig', diagOrig.checked); }); }
   var tblOrig = document.getElementById('tblOrig');
   if(tblOrig){ tblOrig.addEventListener('change', function(){ sheetBody.classList.toggle('tbl-orig', tblOrig.checked); }); }
+  // 내보내기 대상 = 현재 필터 전체 ↔ 체크한 행만. 선택은 필터와 AND(교집합)로 적용되므로
+  //   "선택만" 이 켜져 있어도 검색·과목/단원 필터 밖의 체크는 나가지 않는다(화면과 결과 일치).
+  if(selOnlyEl){ selOnlyEl.addEventListener('change', function(){ state.selOnly = selOnlyEl.checked; }); }
+  if(selClearEl){ selClearEl.addEventListener('click', function(){
+    if(!selCount()) return;
+    SEL = {}; saveSel(); applySelChecks();
+  }); }
 
   // ---- 정의 시트 내보내기(TXT / Word / CSV / Excel) — 현재 검색·과목·단원 필터 반영 ----
-  var EXP_COLS = ['과목','단원','토픽','유형','리드키워드','정의','구성도','구성도첨언','구성요소','첨언'];
+  var EXP_COLS = ['과목','단원','토픽','유형','리드키워드','정의','구성도','구성도첨언','구성요소','첨언','활용·발전방향','III첨언'];
   // 필터를 통과한 항목을 {domLabel, secTitle, card} 로 수집(도메인·섹션 노출 순서 유지).
   function sheetExportItems(){
     var q = state.q, items = [];
@@ -533,6 +599,7 @@
       (d.cards||[]).forEach(function(c){
         var def = GS.defText ? GS.defText(c) : (c.def || '');
         var text = q ? (c.keywords + ' ' + c.title + ' ' + def).toLowerCase() : '';
+        if(state.selOnly && !selHas(d.id + '|' + c.title)) return;   // ☑ 선택만 내보내기
         if(!GS.cardMatches(d.id, c.category, text, q, state.dom, state.sec)) return;
         if(state.sub!=='all' && (c.subcat||'')!==state.sub) return;
         items.push({ domLabel: d.label, secTitle: (secTitle[c.category] || catLabel[c.category] || '기타'), card: c });
@@ -551,7 +618,9 @@
         '구성도': GS.flatDiagram ? GS.flatDiagram(c) : '',
         '구성도첨언': c.diagramNote || '',
         '구성요소': GS.flatTable ? GS.flatTable(c.table) : '',
-        '첨언': c.note || ''
+        '첨언': c.note || '',
+        '활용·발전방향': GS.flatApply ? GS.flatApply(c) : '',
+        'III첨언': c.applyNote || ''
       };
     });
   }
@@ -559,6 +628,7 @@
   function expStampHuman(){ var d = new Date(), p = function(n){ return (n<10?'0':'')+n; }; return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
   function expDomLabel(){ if(state.dom==='all') return '전체'; var f = state.dom; DOMAINS.forEach(function(d){ if(d.id===state.dom) f = d.label; }); return f; }
   function expSecLabel(){ if(state.sec==='all') return '전체'; var f = state.sec; DOMAINS.forEach(function(d){ (d.sections||[]).forEach(function(s){ if(s.id===state.sec) f = s.title; }); }); return f; }
+  function expSelLabel(){ return state.selOnly ? (' / 선택=☑ 체크한 ' + selCount() + '건만') : ''; }
   function expDownload(blob, name){
     var url = URL.createObjectURL(blob), a = document.createElement('a');
     a.href = url; a.download = name; document.body.appendChild(a); a.click();
@@ -605,11 +675,11 @@
   // TXT — 들여쓰기·줄바꿈으로 가독성 확보(한글(HWP)·메모장에서 바로 열림). BOM 부여로 한글 인코딩 안전.
   function exportTxt(){
     var items = sheetExportItems();
-    if(!items.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    if(!items.length){ alert(state.selOnly ? '내보낼 항목이 없습니다 — ☑ 선택만이 켜져 있고 체크된 토픽이 (현재 필터 안에) 없습니다.' : '내보낼 항목이 없습니다(필터 결과 0건).'); return; }
     var bar = new Array(65).join('='), sub = new Array(65).join('─');
     var L = ['정보관리기술사 정의시트',
              '추출 ' + expStampHuman() + '  ·  총 ' + items.length + '토픽',
-             '필터  과목=' + expDomLabel() + ' / 단원=' + expSecLabel() + ' / 검색=' + (state.q || '(없음)'),
+             '필터  과목=' + expDomLabel() + ' / 단원=' + expSecLabel() + ' / 검색=' + (state.q || '(없음)') + expSelLabel(),
              bar];
     var curDom = null, curSec = null;
     items.forEach(function(it){
@@ -627,6 +697,8 @@
         if(c.table && c.table.rows && c.table.rows.length){ L.push('       · 구성요소'); L.push(txtTable(c.table, '           ')); }
         else if(c.compare && c.defTable && c.defTable.rows){ L.push('       · 정의비교'); L.push(txtTable(c.defTable, '           ')); }
         if(c.note) L.push('           ' + c.note);
+        if(c.apply){ L.push('       · ' + (c.applyTitle || '활용 및 발전방향')); L.push(txtDiagram(c.apply, '           ')); }
+        if(c.applyNote) L.push('           ' + c.applyNote);
       }
     });
     var blob = new Blob(['﻿' + L.join('\r\n')], { type:'text/plain;charset=utf-8;' });
@@ -660,11 +732,11 @@
   }
   function exportDoc(){
     var items = sheetExportItems();
-    if(!items.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    if(!items.length){ alert(state.selOnly ? '내보낼 항목이 없습니다 — ☑ 선택만이 켜져 있고 체크된 토픽이 (현재 필터 안에) 없습니다.' : '내보낼 항목이 없습니다(필터 결과 0건).'); return; }
     var h = ['<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>정의시트</title>',
       '<style>body{font-family:"맑은 고딕","Malgun Gothic",sans-serif;font-size:10.5pt;line-height:1.5;} h1{font-size:16pt;margin:0 0 4pt;} h2{font-size:13pt;border-bottom:1.5pt solid #333;margin:16pt 0 6pt;} h3{font-size:11.5pt;color:#333;margin:10pt 0 4pt;} .meta{color:#666;font-size:9pt;} .topic{font-weight:bold;font-size:11pt;margin:10pt 0 2pt;} .kind{font-weight:normal;color:#888;font-size:9pt;} .lbl{color:#1d4ed8;font-weight:bold;margin:4pt 0 1pt;} .sec{font-weight:bold;margin:6pt 0 2pt;} .note{color:#666;} pre{font-family:Consolas,"D2Coding","맑은 고딕",monospace;font-size:9pt;white-space:pre-wrap;margin:2pt 0;background:#f6f6f6;padding:3pt 5pt;} table{border-collapse:collapse;margin:3pt 0 6pt;} td,th{border:0.75pt solid #999;padding:2pt 6pt;font-size:9.5pt;vertical-align:top;} th{background:#eee;} ul{margin:2pt 0 4pt 18pt;}</style></head><body>',
       '<h1>정보관리기술사 정의시트</h1>',
-      '<p class="meta">추출 ' + docEsc(expStampHuman()) + ' · 총 ' + items.length + '토픽 · 필터 과목=' + docEsc(expDomLabel()) + ' / 단원=' + docEsc(expSecLabel()) + ' / 검색=' + docEsc(state.q || '(없음)') + '</p>'];
+      '<p class="meta">추출 ' + docEsc(expStampHuman()) + ' · 총 ' + items.length + '토픽 · 필터 과목=' + docEsc(expDomLabel()) + ' / 단원=' + docEsc(expSecLabel()) + ' / 검색=' + docEsc(state.q || '(없음)') + docEsc(expSelLabel()) + '</p>'];
     var curDom = null, curSec = null;
     items.forEach(function(it){
       if(it.domLabel !== curDom){ curDom = it.domLabel; curSec = null; h.push('<h2>' + docEsc(curDom) + '</h2>'); }
@@ -681,6 +753,8 @@
         if(c.table && c.table.rows && c.table.rows.length){ h.push('<p class="lbl">구성요소</p>' + docTable(c.table)); }
         else if(c.compare && c.defTable && c.defTable.rows){ h.push('<p class="lbl">정의비교</p>' + docTable(c.defTable)); }
         if(c.note) h.push('<p class="note">' + docEsc(c.note) + '</p>');
+        if(c.apply){ h.push('<p class="lbl">' + docEsc(c.applyTitle || '활용 및 발전방향') + '</p><pre>' + docEsc(c.apply) + '</pre>'); }
+        if(c.applyNote) h.push('<p class="note">' + docEsc(c.applyNote) + '</p>');
       }
     });
     h.push('</body></html>');
@@ -689,7 +763,7 @@
   }
   function exportCsv(){
     var rows = sheetExportRows();
-    if(!rows.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    if(!rows.length){ alert(state.selOnly ? '내보낼 항목이 없습니다 — ☑ 선택만이 켜져 있고 체크된 토픽이 (현재 필터 안에) 없습니다.' : '내보낼 항목이 없습니다(필터 결과 0건).'); return; }
     var esc = function(v){ v = String(v==null?'':v); return /[",\n\r]/.test(v) ? '"' + v.replace(/"/g,'""') + '"' : v; };
     var lines = [EXP_COLS.join(',')].concat(rows.map(function(r){ return EXP_COLS.map(function(k){ return esc(r[k]); }).join(','); }));
     var blob = new Blob(['﻿' + lines.join('\r\n')], { type:'text/csv;charset=utf-8;' });   // BOM: Excel 한글 호환
@@ -697,7 +771,7 @@
   }
   function exportXlsx(){
     var rows = sheetExportRows();
-    if(!rows.length){ alert('내보낼 항목이 없습니다(필터 결과 0건).'); return; }
+    if(!rows.length){ alert(state.selOnly ? '내보낼 항목이 없습니다 — ☑ 선택만이 켜져 있고 체크된 토픽이 (현재 필터 안에) 없습니다.' : '내보낼 항목이 없습니다(필터 결과 0건).'); return; }
     var btn = document.getElementById('exportXlsx');
     function go(){
       if(btn) btn.disabled = false;
@@ -997,6 +1071,7 @@
   buildSecFacet();
   buildSubFacet();
   buildProgFacet();
+  renderSelUI();                 // 저장된 내보내기 선택 개수를 시트 툴바에 즉시 표시
   if(_r && _r.view && _r.view!=='cards' && document.querySelector('#viewsw button[data-v="'+_r.view+'"]')) setView(_r.view);
   else applyFilter();
   if(window.lucide) lucide.createIcons();   // 정적 [data-lucide] 아이콘(앱바·뷰스위처·툴·모달) 렌더

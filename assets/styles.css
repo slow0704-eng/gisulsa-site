@@ -453,20 +453,31 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 .sheet-dom td{background:var(--surface-dark);color:var(--surface);font-weight:800;font-size:var(--fs-3);padding:9px 12px;}
 .sheet-sec td{background:var(--surface-3);color:var(--ink-700);font-weight:700;font-size:var(--fs-2);}
 .sheet-head th{background:var(--ink-700);color:#fff;font-size:var(--fs-1);font-weight:800;text-align:left;padding:7px 12px;letter-spacing:.2px;white-space:nowrap;}
+/* 내보내기 선택 열 — 헤더 ☑ = 표시된 행 일괄 토글(부분 선택 시 indeterminate) */
+.sheet-table th.st-sel,.sheet-row .st-sel{width:34px;padding-left:10px;padding-right:4px;text-align:center;}
+.st-chk{width:15px;height:15px;cursor:pointer;accent-color:var(--brand);vertical-align:middle;margin:0;}
+.sheet-row.is-sel{background:rgba(56,189,248,.10);}
+.sheet-row.is-sel .st-title{box-shadow:inset 3px 0 0 var(--brand);}
+.sheet-sel{display:inline-flex;align-items:center;gap:8px;}
+.sel-count{font-size:var(--fs-1);font-weight:700;color:var(--muted);white-space:nowrap;}
+.sel-count.has-sel{color:var(--brand-strong);}
+.sel-clear{cursor:pointer;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-600);
+  padding:3px 9px;border-radius:var(--r-sm);font-size:var(--fs-1);font-weight:700;font-family:inherit;transition:all .12s;}
+.sel-clear:hover:not(:disabled){border-color:var(--brand-strong);color:var(--ink);background:var(--ink-50);}
+.sel-clear:disabled{opacity:.45;cursor:default;}
 .sheet-row .st-title{width:14%;font-weight:700;color:var(--ink);white-space:normal;}
 .sheet-row .st-kw{width:10%;color:var(--brand-strong);font-weight:700;font-size:var(--fs-1);white-space:normal;}
-.sheet-row .st-def{width:24%;color:var(--ink-700);}
-.sheet-row .st-diag,.sheet-row .st-tbl{font-size:11px;color:var(--ink-600);line-height:1.5;white-space:normal;word-break:break-word;}
+.sheet-row .st-def{width:22%;color:var(--ink-700);}
+.sheet-row .st-diag,.sheet-row .st-tbl,.sheet-row .st-apply{font-size:11px;color:var(--ink-600);line-height:1.5;white-space:normal;word-break:break-word;}
 .sheet-row .st-diag{width:20%;}
 .sheet-row .st-tbl{width:20%;}
-.sheet-row .st-note{width:12%;font-size:11px;color:var(--ink-600);line-height:1.5;white-space:normal;word-break:break-word;}
-.sheet-row .st-nline{margin-bottom:4px;}
-.sheet-row .st-nline:last-child{margin-bottom:0;}
-.sheet-row .st-nlab{display:inline-block;font-size:9px;font-weight:800;color:var(--muted);background:var(--surface-3);border-radius:4px;padding:0 4px;margin-right:4px;vertical-align:1px;}
+.sheet-row .st-apply{width:16%;}
+/* 셀 안 첨언(※) — 별도 열이 아니라 구성도·구성요소·III 각 셀 아래에 붙는다 */
+.st-nin{margin-top:5px;padding-top:4px;border-top:1px dashed var(--line-strong);font-size:10.5px;color:var(--muted);line-height:1.45;}
 /* 구성도/구성요소 '원래대로' 토글 — 1줄(st-flat) ↔ 원본(st-orig) */
 .st-orig{display:none;}
-#sheetBody.diag-orig .st-diag .st-flat{display:none;}
-#sheetBody.diag-orig .st-diag .st-orig{display:block;}
+#sheetBody.diag-orig .st-diag .st-flat,#sheetBody.diag-orig .st-apply .st-flat{display:none;}
+#sheetBody.diag-orig .st-diag .st-orig,#sheetBody.diag-orig .st-apply .st-orig{display:block;}
 #sheetBody.tbl-orig .st-tbl .st-flat{display:none;}
 #sheetBody.tbl-orig .st-tbl .st-orig{display:block;}
 /* D7: 정의시트 원본 도식 — 카드와 동일 정렬 규칙(pre·mono·토큰 크기), 테마 차이는 배경·글자색만 */
@@ -484,8 +495,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
 #sheetBody.masked .st-kw,#sheetBody.masked .st-def{filter:blur(5px);user-select:none;transition:filter .12s;}
 #sheetBody.masked .sheet-row{cursor:pointer;}
 #sheetBody.masked .sheet-row.reveal .st-kw,#sheetBody.masked .sheet-row.reveal .st-def{filter:none;}
-#sheetBody.masked-more .st-diag,#sheetBody.masked-more .st-tbl,#sheetBody.masked-more .st-note{filter:blur(5px);user-select:none;transition:filter .12s;}
-#sheetBody.masked-more .sheet-row.reveal .st-diag,#sheetBody.masked-more .sheet-row.reveal .st-tbl,#sheetBody.masked-more .sheet-row.reveal .st-note{filter:none;}
+#sheetBody.masked-more .st-diag,#sheetBody.masked-more .st-tbl,#sheetBody.masked-more .st-apply{filter:blur(5px);user-select:none;transition:filter .12s;}
+#sheetBody.masked-more .sheet-row.reveal .st-diag,#sheetBody.masked-more .sheet-row.reveal .st-tbl,#sheetBody.masked-more .sheet-row.reveal .st-apply{filter:none;}
 
 /* ===== 퀴즈 뷰 ===== */
 #quiz{max-width:900px;margin:0 auto;padding:14px 18px 90px;}
@@ -763,6 +774,8 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
   .mapcard,#graph{display:none;}
   .card{break-inside:avoid;box-shadow:none;border:1px solid var(--ink-400);}
   #sheetBody.masked .st-kw,#sheetBody.masked .st-def{filter:none;}
+  .sheet-table th.st-sel,.sheet-row .st-sel{display:none;}
+  .sheet-row.is-sel{background:none;}
   body{background:#fff;}
   /* 다크 블록(구성도·문제박스)을 밝게 — 인쇄 시 배경 미출력으로 글자가 사라지는 것 방지 */
   pre.diagram,.qdiag,.es-prob{background:#fff !important;color:#000 !important;border:1px solid var(--ink-400);box-shadow:none !important;}
