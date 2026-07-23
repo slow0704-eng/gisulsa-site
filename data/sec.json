@@ -64,7 +64,7 @@
       "id": "threat",
       "title": "② 공격 · 악성코드",
       "desc": "랜섬웨어·계정도용·사회공학·공급망·APT 등 위협.",
-      "mermaid": "flowchart LR\n  S([\"② 공격 · 악성코드\"]):::hub\n  n0[\"랜섬웨어·RaaS\"] --> n1[\"크리덴셜 스터핑\"] --> n2[\"피싱·스미싱·큐싱\"] --> n3[\"악성코드\"] --> n4[\"공급망 공격\"] --> n5[\"APT·공격체계\"]\n  S --> n0\n  n6[\"워터링홀 / 스피어피싱\"] --> n7[\"사이버 킬 체인\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n6 cmp;"
+      "mermaid": "flowchart LR\n  S([\"② 공격 · 악성코드\"]):::hub\n  n0[\"랜섬웨어·RaaS\"] --> n1[\"크리덴셜 스터핑\"] --> n2[\"피싱·스미싱·큐싱\"] --> n3[\"악성코드\"] --> n4[\"공급망 공격\"] --> n5[\"APT·공격체계\"]\n  S --> n0\n  n6[\"워터링홀 / 스피어피싱\"] --> n7[\"사이버 킬 체인\"] --> n8[\"TTPs (전술·기술·절차)\"]\n  S --> n6\n  classDef hub fill:#0f172a,color:#fff,stroke:#0f172a;\n  classDef cmp fill:#fce7f3,stroke:#ec4899,color:#111;\n  class n6 cmp;"
     },
     {
       "id": "aisec",
@@ -3619,6 +3619,61 @@
       "applyNote": "※ OWASP API Top10 기준 게이트웨이 통제 강화.",
       "subcat": "접근·전송보안",
       "level": "표준"
+    },
+    {
+      "category": "threat",
+      "title": "TTPs (전술·기술·절차)",
+      "tag": "공격·악성코드",
+      "keyword": "공격 행위 패턴",
+      "keywords": "TTP TTPs tactics techniques procedures 전술 기술 절차 MITRE ATT&CK 고통의 피라미드 위협 인텔리전스 CTI 위협 헌팅 행위기반 탐지",
+      "def": "\"공격 행위 패턴\" 공격자의 전술(목적)·기술(수단)·절차(구현)를 계층화해 위협 행위를 기술하는 체계.",
+      "diagram": "[전술] 목적·의도 → 왜 공격하는가(Tactics)\n  ↓ 목적 달성 수단으로 구체화\n[기술] 공격 방법 → 침투 수단(Techniques)\n  ↓ 도구·명령 수준 상세화\n[절차]→[ATT&CK 매트릭스] 탐지 규칙 매핑",
+      "dtype": "구조",
+      "diagramNote": "※ 도구·해시보다 상위 행위 지표가 회피 곤란",
+      "table": {
+        "head": [
+          "구분",
+          "구성요소",
+          "역할"
+        ],
+        "rows": [
+          [
+            "계층 구조",
+            "전술(Tactics)",
+            "공격 목적·단계"
+          ],
+          [
+            "",
+            "기술(Techniques)",
+            "목적 달성 방법"
+          ],
+          [
+            "",
+            "절차(Procedures)",
+            "도구·명령 구현"
+          ],
+          [
+            "표준·활용",
+            "MITRE ATT&CK",
+            "행위 지식베이스"
+          ],
+          [
+            "",
+            "위협 인텔(CTI)",
+            "공격그룹 프로파일"
+          ],
+          [
+            "",
+            "탐지 규칙",
+            "SIEM·EDR 매핑"
+          ]
+        ]
+      },
+      "note": "※ 고통의 피라미드 상단, 공격자 변경 비용 최대.",
+      "apply": "적용: [위협 헌팅]→[탐지 룰 개발]\n효과: [행위 기반 탐지]·[대응 표준화]\n고려: [매핑 공수]→[커버리지 편중]\n전망: [자동 시뮬레이션] BAS 검증",
+      "applyNote": "※ D3FEND로 방어기술까지 매핑 확장.",
+      "subcat": "APT·공격체계",
+      "level": "핵심"
     }
   ]
 }
