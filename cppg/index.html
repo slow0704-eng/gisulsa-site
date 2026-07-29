@@ -414,7 +414,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     <div class="kbrow"><span class="keys"><kbd>O</kbd> / <kbd>X</kbd></span><span class="desc">OX 문제 정답 선택 (<kbd>1</kbd>/<kbd>2</kbd> 도 동일)</span></div>
     <div class="kbrow"><span class="keys"><kbd>Enter</kbd></span><span class="desc">단답 제출 · 다음 문제 · 채점하기</span></div>
     <div class="kbrow"><span class="keys"><kbd>Space</kbd></span><span class="desc">다음 문제 (단답 입력 중 제외)</span></div>
-    <div class="kbrow"><span class="keys"><kbd>←</kbd> <kbd>→</kbd></span><span class="desc">이전 / 다음 문제</span></div>
+    <div class="kbrow"><span class="keys"><kbd>←</kbd> <kbd>→</kbd></span><span class="desc">이전 / 다음 문제 — <b>아직 풀지 않았어도 이동</b>(건너뛰기). 마지막 문제에서 <kbd>→</kbd> 는 채점</span></div>
     <div class="kbrow"><span class="keys"><kbd>Esc</kbd></span><span class="desc">퀴즈 그만두고 채점</span></div>
     <div class="kbsec">📋 핵심시트</div>
     <div class="kbrow"><span class="keys"><kbd>/</kbd></span><span class="desc">검색창으로 이동</span></div>
@@ -544,7 +544,8 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
       </div>
       <div class="hintbar">
         <span>⌨ <kbd>1</kbd>~<kbd>4</kbd> 보기 선택</span><span><kbd>O</kbd>/<kbd>X</kbd> OX</span>
-        <span><kbd>Enter</kbd> 다음</span><span><kbd>?</kbd> 전체 단축키</span>
+        <span><kbd>Enter</kbd> 다음</span><span><kbd>←</kbd><kbd>→</kbd> 문제 이동·건너뛰기</span>
+        <span><kbd>Esc</kbd> 채점</span><span><kbd>?</kbd> 전체 단축키</span>
       </div>
     </div>
 
@@ -976,8 +977,18 @@ document.addEventListener('keydown',e=>{
       return;
     }
     if(k==='Enter'||k===' '){e.preventDefault();const n=$('qNext');if(n)n.click();return}
-    if(k==='ArrowLeft'){const p=$('qPrev');if(p){e.preventDefault();p.click()}return}
-    if(k==='ArrowRight'){const n=$('qNext');if(n){e.preventDefault();n.click()}return}
+    // ←/→ 는 버튼 유무와 무관하게 항상 이동 (아직 풀지 않은 문제도 건너뛰기 가능)
+    if(k==='ArrowLeft'){
+      e.preventDefault();
+      if(quiz.i>0){quiz.i--;renderQ()}
+      return;
+    }
+    if(k==='ArrowRight'){
+      e.preventDefault();
+      if(quiz.i<quiz.items.length-1){quiz.i++;renderQ()}
+      else finishQuiz();          // 마지막 문제에서 → 는 채점
+      return;
+    }
     return;
   }
 
