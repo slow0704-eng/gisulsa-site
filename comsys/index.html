@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CPPG 개인정보관리사 — 암기·퀴즈 학습</title>
+<style>
+/* ═══ 토큰 ═══ */
+:root{
+  --bg:#0f1420; --bg2:#161d2e; --card:#1b2436; --card2:#212c42;
+  --line:#2b3852; --line2:#3a4a6b;
+  --tx:#e8edf7; --tx2:#a7b4cc; --tx3:#6f7f9d;
+  --ac:#5b9dff; --ac2:#7c5cff;
+  --ok:#34d399; --no:#fb7185; --wa:#fbbf24;
+  --sh:0 6px 24px rgba(0,0,0,.35);
+  --r:14px;
+}
+html[data-theme="light"]{
+  --bg:#f4f6fb; --bg2:#eaeef7; --card:#ffffff; --card2:#f7f9fd;
+  --line:#dde3ee; --line2:#c6cfe0;
+  --tx:#141a26; --tx2:#4a5568; --tx3:#8593ab;
+  --ac:#2563eb; --ac2:#7c3aed;
+  --ok:#059669; --no:#e11d48; --wa:#d97706;
+  --sh:0 4px 18px rgba(20,30,60,.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--tx);
+  font-family:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+
+/* ═══ 헤더 ═══ */
+header{
+  position:sticky; top:0; z-index:50;
+  background:color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.hwrap{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:18px;letter-spacing:-.3px;white-space:nowrap}
+.logo b{background:linear-gradient(92deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo span{font-size:12px;color:var(--tx3);font-weight:500;margin-left:6px}
+nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+nav button{
+  padding:7px 14px;border-radius:999px;font-size:14px;font-weight:600;color:var(--tx2);
+  transition:.15s;
+}
+nav button:hover{background:var(--card);color:var(--tx)}
+nav button.on{background:linear-gradient(92deg,var(--ac),var(--ac2));color:#fff}
+nav button kbd{margin-left:3px;opacity:.5;font-size:10px;padding:0 4px;background:transparent;border-color:currentColor}
+nav button.on kbd{opacity:.75}
+.themebtn{padding:7px 11px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:15px}
+
+/* ═══ 레이아웃 ═══ */
+main{max-width:1180px;margin:0 auto;padding:22px 20px 80px}
+.view{display:none;animation:fade .22s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+h2.vt{font-size:20px;font-weight:800;margin:2px 0 4px;letter-spacing:-.3px}
+p.vd{color:var(--tx3);font-size:13.5px;margin-bottom:16px}
+
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.chip{
+  padding:6px 13px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--tx2);font-size:13px;font-weight:600;transition:.15s;
+}
+.chip:hover{border-color:var(--line2);color:var(--tx)}
+.chip.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.chip .n{opacity:.65;font-weight:500;margin-left:4px;font-size:11.5px}
+.sp{flex:1}
+input.search,select.sel{
+  padding:7px 12px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--tx);font-size:13.5px;outline:none;
+}
+input.search:focus,select.sel:focus{border-color:var(--ac)}
+input.search{min-width:190px}
+
+.btn{
+  padding:9px 18px;border-radius:11px;font-weight:700;font-size:14px;
+  background:linear-gradient(92deg,var(--ac),var(--ac2));color:#fff;transition:.15s;
+}
+.btn:hover{filter:brightness(1.1)}
+.btn.gh{background:var(--card);border:1px solid var(--line);color:var(--tx2)}
+.btn.gh:hover{border-color:var(--line2);color:var(--tx)}
+.btn.gh.on{border-color:var(--ac);color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,var(--card))}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.box{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+
+/* ═══ 홈 ═══ */
+.hero{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--ac) 16%,var(--card)),var(--card));
+  border:1px solid var(--line); border-radius:18px; padding:26px 28px; margin-bottom:18px;
+}
+.hero h1{font-size:26px;font-weight:800;letter-spacing:-.6px;margin-bottom:6px}
+.hero .sub{color:var(--tx2);font-size:14px;margin-bottom:16px}
+.hero .slog{
+  display:inline-block;padding:9px 16px;border-radius:12px;
+  background:color-mix(in srgb,var(--wa) 16%,transparent);
+  border:1px solid color-mix(in srgb,var(--wa) 34%,transparent);
+  color:var(--wa);font-weight:700;font-size:13.5px;
+}
+.metas{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:16px}
+.metas div{font-size:13px;color:var(--tx2)}
+.metas div b{display:block;color:var(--tx3);font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase}
+
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+.stat .k{font-size:11.5px;color:var(--tx3);font-weight:700;letter-spacing:.4px}
+.stat .v{font-size:27px;font-weight:800;letter-spacing:-1px;margin-top:2px}
+.stat .m{font-size:12px;color:var(--tx3)}
+
+.prog{height:7px;border-radius:99px;background:var(--bg2);overflow:hidden;margin-top:9px}
+.prog i{display:block;height:100%;background:linear-gradient(92deg,var(--ac),var(--ac2));border-radius:99px;transition:width .4s}
+
+.subrow{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.subrow:last-child{border-bottom:none}
+.subrow .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.subrow .nm{flex:1;font-weight:600;font-size:14px}
+.subrow .ct{font-size:12px;color:var(--tx3);white-space:nowrap}
+.subrow .pb{width:110px;height:6px;border-radius:99px;background:var(--bg2);overflow:hidden;flex:none}
+.subrow .pb i{display:block;height:100%;border-radius:99px}
+
+/* ═══ 플래시카드 ═══ */
+.fcwrap{max-width:760px;margin:0 auto}
+.fc{
+  position:relative;min-height:290px;border-radius:20px;cursor:pointer;
+  perspective:1400px; margin-bottom:16px;
+}
+.fcin{
+  position:relative;width:100%;min-height:290px;transition:transform .5s cubic-bezier(.4,.2,.2,1);
+  transform-style:preserve-3d;
+}
+.fc.flip .fcin{transform:rotateY(180deg)}
+.fcf,.fcb{
+  position:absolute;inset:0;backface-visibility:hidden;
+  border-radius:20px;border:1px solid var(--line);padding:30px 32px;
+  display:flex;flex-direction:column;justify-content:center;box-shadow:var(--sh);
+}
+.fcf{background:var(--card)}
+.fcb{background:linear-gradient(150deg,color-mix(in srgb,var(--ac) 13%,var(--card)),var(--card));transform:rotateY(180deg)}
+.fctag{
+  position:absolute;top:16px;left:32px;font-size:11px;font-weight:800;letter-spacing:.5px;
+  color:var(--tx3);text-transform:uppercase;
+}
+.fcq{font-size:23px;font-weight:800;letter-spacing:-.4px;line-height:1.45}
+.fckey{
+  margin-top:14px;font-size:30px;font-weight:800;letter-spacing:1px;
+  background:linear-gradient(92deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.fca{font-size:17px;font-weight:600;line-height:1.7}
+.fctip{
+  margin-top:14px;padding-top:13px;border-top:1px dashed var(--line2);
+  font-size:13.5px;color:var(--wa);
+}
+.fchint{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:11.5px;color:var(--tx3)}
+.fcctl{display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap}
+.fcctl .idx{font-size:13px;color:var(--tx3);min-width:86px;text-align:center;font-variant-numeric:tabular-nums}
+.kbtn{padding:9px 20px;border-radius:11px;font-weight:700;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--tx2)}
+.kbtn.no:hover{border-color:var(--no);color:var(--no)}
+.kbtn.ok:hover{border-color:var(--ok);color:var(--ok)}
+
+/* ═══ 시트 ═══ */
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--card2);font-weight:700;font-size:12.5px;color:var(--tx2);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600;white-space:nowrap;color:var(--tx2)}
+.tw{overflow-x:auto;border-radius:11px;border:1px solid var(--line);margin-top:12px}
+.sheet h3{font-size:16px;font-weight:800;letter-spacing:-.2px;display:flex;align-items:center;gap:9px}
+.sbadge{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;color:#fff;flex:none}
+ul.sl{margin-top:12px;padding-left:0;list-style:none}
+ul.sl li{padding:7px 0 7px 20px;position:relative;font-size:14px;border-bottom:1px solid var(--line)}
+ul.sl li:last-child{border-bottom:none}
+ul.sl li::before{content:"▸";position:absolute;left:2px;color:var(--ac)}
+.trap{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.trap:last-child{border-bottom:none}
+.trap .w{color:var(--wa);flex:none}
+
+/* ═══ 퀴즈 ═══ */
+.qsetup{max-width:640px;margin:0 auto}
+.qrow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.qrow:last-child{border-bottom:none}
+.qrow>label{font-weight:700;font-size:14px;min-width:92px}
+.qopts{display:flex;gap:7px;flex-wrap:wrap}
+
+.qhead{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.qcount{font-size:13px;color:var(--tx3);font-variant-numeric:tabular-nums}
+.timer{font-weight:800;font-variant-numeric:tabular-nums;font-size:15px;color:var(--wa)}
+.qbar{height:5px;border-radius:99px;background:var(--bg2);overflow:hidden;margin-bottom:18px}
+.qbar i{display:block;height:100%;background:linear-gradient(92deg,var(--ac),var(--ac2));transition:width .3s}
+
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh)}
+.qmeta{font-size:11.5px;font-weight:800;letter-spacing:.4px;color:var(--tx3);margin-bottom:10px;text-transform:uppercase}
+.qtext{font-size:18px;font-weight:700;line-height:1.6;margin-bottom:20px;letter-spacing:-.2px}
+.ch{
+  display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;
+  padding:13px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card2);
+  margin-bottom:9px;transition:.13s;font-size:14.5px;line-height:1.55;
+}
+.ch:hover:not(:disabled){border-color:var(--ac);background:color-mix(in srgb,var(--ac) 9%,var(--card2))}
+.ch .no{
+  width:23px;height:23px;border-radius:7px;background:var(--bg2);color:var(--tx3);
+  display:grid;place-items:center;font-size:12.5px;font-weight:800;flex:none;margin-top:1px;
+}
+.ch.sel{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 13%,var(--card2))}
+.ch.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 15%,var(--card2))}
+.ch.right .no{background:var(--ok);color:#fff}
+.ch.wrong{border-color:var(--no);background:color-mix(in srgb,var(--no) 15%,var(--card2))}
+.ch.wrong .no{background:var(--no);color:#fff}
+.ch:disabled{cursor:default}
+
+.expl{
+  margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.65;
+  background:var(--card2);border-left:3px solid var(--ac);
+}
+.expl b{color:var(--ac)}
+.expl.bad{border-left-color:var(--no)}
+.expl.bad b{color:var(--no)}
+.expl.good{border-left-color:var(--ok)}
+.expl.good b{color:var(--ok)}
+
+.fillin{
+  width:100%;padding:13px 16px;border-radius:12px;border:1px solid var(--line);
+  background:var(--card2);outline:none;font-size:15px;
+}
+.fillin:focus{border-color:var(--ac)}
+
+.res{text-align:center;padding:34px 20px}
+.res .sc{font-size:58px;font-weight:800;letter-spacing:-2px;line-height:1}
+.res .sc.p{color:var(--ok)} .res .sc.f{color:var(--no)}
+.res .lb{font-size:15px;color:var(--tx2);margin-top:6px}
+.resgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:22px 0}
+.resgrid div{background:var(--card2);border-radius:11px;padding:12px}
+.resgrid .k{font-size:11px;color:var(--tx3);font-weight:700}
+.resgrid .v{font-size:20px;font-weight:800}
+
+/* ═══ 오답노트 ═══ */
+.wrong-item{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--no);border-radius:12px;padding:15px 18px;margin-bottom:11px}
+.wrong-item .q{font-weight:700;font-size:14.5px;margin-bottom:7px}
+.wrong-item .a{font-size:13.5px;color:var(--ok);font-weight:600}
+.wrong-item .e{font-size:13px;color:var(--tx2);margin-top:5px}
+.wrong-item .meta{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.wrong-item .cnt{font-size:11px;color:var(--no);font-weight:800}
+
+.empty{text-align:center;padding:60px 20px;color:var(--tx3)}
+.empty .ic{font-size:44px;margin-bottom:10px;opacity:.5}
+
+.ckrow{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px;cursor:pointer}
+.ckrow:last-child{border-bottom:none}
+.ckrow input{width:17px;height:17px;accent-color:var(--ac);margin-top:3px;flex:none;cursor:pointer}
+.ckrow.done span{color:var(--tx3);text-decoration:line-through}
+.gtitle{font-size:12px;font-weight:800;color:var(--ac);letter-spacing:.4px;margin:14px 0 2px;text-transform:uppercase}
+.gtitle:first-child{margin-top:0}
+.chip.dim{opacity:.45}
+.lvl{
+  display:inline-block;padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:800;
+  letter-spacing:.2px;color:#fff;flex:none;vertical-align:middle;
+}
+.chip .dot2{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.lvlbar{display:flex;height:8px;border-radius:99px;overflow:hidden;margin:8px 0 4px}
+.lvlbar i{display:block;height:100%}
+.lvlkey{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--tx3)}
+.lvlkey b{font-weight:700}
+button.cell{
+  font-variant-numeric:tabular-nums;font-weight:700;font-size:13.5px;color:var(--tx);
+  padding:2px 9px;border-radius:8px;border:1px solid transparent;transition:.13s;
+}
+button.cell:hover:not(:disabled){border-color:var(--ac);background:color-mix(in srgb,var(--ac) 14%,transparent);color:var(--ac)}
+button.cell:disabled{color:var(--tx3);cursor:default}
+
+footer{max-width:1180px;margin:0 auto;padding:20px;color:var(--tx3);font-size:12px;border-top:1px solid var(--line);line-height:1.9}
+kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;font-size:11.5px;font-family:ui-monospace,monospace}
+
+/* ═══ 🎉 보상 연출(FX) ═══ */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:900;overflow:hidden}
+.conf{position:absolute;width:10px;height:14px;border-radius:2px;will-change:transform,opacity;animation:confFall var(--d,1.5s) cubic-bezier(.2,.6,.5,1) forwards}
+@keyframes confFall{
+  0%{transform:translate3d(0,0,0) rotate(0deg) scale(1);opacity:1}
+  100%{transform:translate3d(var(--x,0px),var(--y,120vh),0) rotate(var(--r,720deg)) scale(.7);opacity:0}
+}
+.spark{position:absolute;width:7px;height:7px;border-radius:50%;animation:sparkOut .62s ease-out forwards}
+@keyframes sparkOut{0%{transform:translate3d(0,0,0) scale(1);opacity:1}100%{transform:translate3d(var(--x),var(--y),0) scale(0);opacity:0}}
+
+/* 화면 가장자리 글로우 */
+#glow{position:fixed;inset:0;pointer-events:none;z-index:880;opacity:0}
+#glow.on{animation:glowFlash .55s ease-out}
+@keyframes glowFlash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
+
+/* 토스트 */
+#toasts{position:fixed;left:50%;top:74px;transform:translateX(-50%);z-index:950;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{
+  padding:11px 22px;border-radius:999px;font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 10px 30px rgba(0,0,0,.3);animation:toastIn .34s cubic-bezier(.2,1.3,.4,1), toastOut .3s ease-in forwards var(--hold,1.5s);
+  white-space:nowrap;
+}
+.toast.good{background:linear-gradient(92deg,var(--ok),#22c55e);color:#04241a}
+.toast.bad{background:linear-gradient(92deg,var(--no),#f43f5e);color:#2b0710}
+.toast.hype{background:linear-gradient(92deg,var(--wa),#f97316);color:#2b1500;font-size:17px;padding:13px 26px}
+@keyframes toastIn{from{opacity:0;transform:translateY(-14px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes toastOut{to{opacity:0;transform:translateY(-10px) scale(.96)}}
+
+/* 콤보 배지 */
+.combo{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:999px;
+  font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;
+  background:color-mix(in srgb,var(--wa) 18%,transparent);
+  border:1px solid color-mix(in srgb,var(--wa) 42%,transparent);color:var(--wa);
+}
+.combo.hot{background:linear-gradient(92deg,var(--wa),#f97316);color:#2b1500;border-color:transparent;animation:comboPulse .45s ease}
+@keyframes comboPulse{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+
+/* 정답/오답 반응 */
+.ch.right{animation:chPop .42s cubic-bezier(.2,1.4,.4,1)}
+@keyframes chPop{0%{transform:scale(1)}40%{transform:scale(1.035)}100%{transform:scale(1)}}
+.ch.wrong{animation:chShake .38s ease}
+@keyframes chShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(2px)}}
+.qcard.flash-ok{box-shadow:0 0 0 2px var(--ok),0 8px 34px color-mix(in srgb,var(--ok) 32%,transparent)}
+.qcard.flash-no{box-shadow:0 0 0 2px var(--no),0 8px 34px color-mix(in srgb,var(--no) 28%,transparent)}
+.qcard{transition:box-shadow .3s}
+
+/* 진행바 마일스톤 */
+.qbar i{position:relative}
+.qbar.milestone i::after{content:"";position:absolute;inset:0;background:linear-gradient(92deg,transparent,rgba(255,255,255,.85),transparent);animation:sweep .7s ease}
+@keyframes sweep{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+/* 결과 점수 카운트업 */
+.res .sc{transition:none}
+.res.pop .sc{animation:scorePop .6s cubic-bezier(.2,1.3,.4,1)}
+@keyframes scorePop{0%{transform:scale(.5);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+
+/* 카드 '알아요' 반응 */
+.fc.yay{animation:chPop .42s cubic-bezier(.2,1.4,.4,1)}
+
+/* ═══ ⌨ 단축키 도움말 ═══ */
+#kbHelp{position:fixed;inset:0;z-index:960;background:rgba(4,8,16,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:20px}
+#kbHelp.on{display:flex;animation:fade .2s ease}
+.kbbox{background:var(--card);border:1px solid var(--line2);border-radius:18px;padding:24px 26px;max-width:640px;width:100%;max-height:82vh;overflow:auto;box-shadow:var(--sh)}
+.kbbox h3{font-size:18px;font-weight:800;margin-bottom:4px}
+.kbbox .sub{color:var(--tx3);font-size:12.5px;margin-bottom:14px}
+.kbsec{font-size:11.5px;font-weight:800;color:var(--ac);letter-spacing:.5px;text-transform:uppercase;margin:16px 0 6px}
+.kbsec:first-of-type{margin-top:0}
+.kbrow{display:flex;gap:12px;align-items:baseline;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.kbrow:last-child{border-bottom:none}
+.kbrow .keys{min-width:160px;flex:none;display:flex;gap:4px;flex-wrap:wrap}
+.kbrow .desc{color:var(--tx2)}
+.hintbar{font-size:12px;color:var(--tx3);display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.focus-ring:focus-visible,.chip:focus-visible,.btn:focus-visible,nav button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  #fx{display:none}
+}
+
+@media(max-width:640px){
+  .hwrap{padding:10px 14px;gap:10px}
+  main{padding:16px 14px 60px}
+  .hero{padding:20px}
+  .hero h1{font-size:21px}
+  .fcq{font-size:19px} .fckey{font-size:24px}
+  .qcard{padding:18px}
+  .qtext{font-size:16px}
+  nav button{padding:6px 11px;font-size:13px}
+  nav button kbd{display:none}
+  .kbrow{flex-direction:column;gap:2px}
+  .kbrow .keys{min-width:0}
+  #toasts{top:66px;width:92%}
+  .toast{white-space:normal;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="logo"><b id="brand">CPPG</b><span id="brandTag">개인정보관리사 2026</span></div>
+    <nav id="nav">
+      <button data-v="home" class="on">🏠 홈 <kbd>1</kbd></button>
+      <button data-v="cards">🃏 암기카드 <kbd>2</kbd></button>
+      <button data-v="sheet">📋 핵심시트 <kbd>3</kbd></button>
+      <button data-v="quiz">🧩 퀴즈 <kbd>4</kbd></button>
+      <button data-v="note">📕 오답노트 <kbd>5</kbd></button>
+    </nav>
+    <button class="themebtn" id="sound" title="효과음 켜기/끄기 (S)">🔊</button>
+    <button class="themebtn" id="theme" title="테마 전환 (T)">🌙</button>
+    <button class="themebtn" id="help" title="단축키 도움말 (?)">⌨</button>
+  </div>
+</header>
+
+<!-- 보상 연출 레이어 -->
+<div id="fx"></div>
+<div id="glow"></div>
+<div id="toasts"></div>
+
+<!-- 단축키 도움말 -->
+<div id="kbHelp">
+  <div class="kbbox">
+    <h3>⌨ 키보드 단축키</h3>
+    <div class="sub">마우스 없이 전부 조작할 수 있습니다. <kbd>?</kbd> 또는 <kbd>Esc</kbd> 로 이 창을 닫습니다.</div>
+    <div class="kbsec">전역</div>
+    <div class="kbrow"><span class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd><kbd>5</kbd></span><span class="desc">홈 / 암기카드 / 핵심시트 / 퀴즈 / 오답노트 전환<br><span style="color:var(--tx3);font-size:12.5px">단, 암기카드의 <kbd>1</kbd><kbd>2</kbd> 와 퀴즈 풀이 중 <kbd>1</kbd>~<kbd>4</kbd> 는 그 화면의 동작이 우선합니다</span></span></div>
+    <div class="kbrow"><span class="keys"><kbd>T</kbd></span><span class="desc">다크 / 라이트 테마 전환</span></div>
+    <div class="kbrow"><span class="keys"><kbd>S</kbd></span><span class="desc">효과음 켜기 / 끄기</span></div>
+    <div class="kbrow"><span class="keys"><kbd>/</kbd></span><span class="desc">어디서든 핵심시트 검색창으로 이동</span></div>
+    <div class="kbrow"><span class="keys"><kbd>?</kbd> <kbd>Esc</kbd></span><span class="desc">단축키 도움말 열기 / 닫기</span></div>
+    <div class="kbsec">🃏 암기카드</div>
+    <div class="kbrow"><span class="keys"><kbd>Space</kbd> <kbd>↑</kbd><kbd>↓</kbd></span><span class="desc">카드 뒤집기</span></div>
+    <div class="kbrow"><span class="keys"><kbd>←</kbd> <kbd>→</kbd></span><span class="desc">이전 / 다음 카드</span></div>
+    <div class="kbrow"><span class="keys"><kbd>1</kbd> / <kbd>2</kbd></span><span class="desc">모름 / 알아요 (자동으로 다음 카드)</span></div>
+    <div class="kbrow"><span class="keys"><kbd>F</kbd></span><span class="desc">카드 섞기</span></div>
+    <div class="kbrow"><span class="keys"><kbd>U</kbd></span><span class="desc">"모르는 것만" 토글</span></div>
+    <div class="kbsec">🧩 퀴즈 — 설정</div>
+    <div class="kbrow"><span class="keys"><kbd>Enter</kbd></span><span class="desc">퀴즈 시작</span></div>
+    <div class="kbrow"><span class="keys"><kbd>W</kbd></span><span class="desc">오답만 다시 풀기</span></div>
+    <div class="kbsec">🧩 퀴즈 — 풀이 중</div>
+    <div class="kbrow"><span class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd></span><span class="desc">보기 선택 (4지선다)</span></div>
+    <div class="kbrow"><span class="keys"><kbd>O</kbd> / <kbd>X</kbd></span><span class="desc">OX 문제 정답 선택 (<kbd>1</kbd>/<kbd>2</kbd> 도 동일)</span></div>
+    <div class="kbrow"><span class="keys"><kbd>Enter</kbd></span><span class="desc">단답 제출 · 다음 문제 · 채점하기</span></div>
+    <div class="kbrow"><span class="keys"><kbd>Space</kbd></span><span class="desc">다음 문제 (단답 입력 중 제외)</span></div>
+    <div class="kbrow"><span class="keys"><kbd>←</kbd> <kbd>→</kbd></span><span class="desc">이전 / 다음 문제 — <b>아직 풀지 않았어도 이동</b>(건너뛰기). 마지막 문제에서 <kbd>→</kbd> 는 채점</span></div>
+    <div class="kbrow"><span class="keys"><kbd>Esc</kbd></span><span class="desc">퀴즈 그만두고 채점</span></div>
+    <div class="kbsec">📋 핵심시트</div>
+    <div class="kbrow"><span class="keys"><kbd>/</kbd></span><span class="desc">검색창으로 이동</span></div>
+    <div class="kbrow"><span class="keys"><kbd>Esc</kbd></span><span class="desc">검색어 지우기</span></div>
+    <div style="margin-top:18px;text-align:right"><button class="btn" id="kbClose">닫기</button></div>
+  </div>
+</div>
+
+<main>
+
+<!-- ══════════ 홈 ══════════ -->
+<section class="view on" id="v-home">
+  <div class="hero">
+    <h1 id="heroH1">CPPG 개인정보관리사</h1>
+    <div class="sub" id="heroSub"></div>
+    <div class="slog" id="heroSlog"></div>
+    <div class="metas" id="heroMeta"></div>
+  </div>
+
+  <div class="grid g3" style="margin-bottom:14px" id="stats"></div>
+
+  <div class="grid g2">
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">과목별 출제 비중 · 암기 진도</h3>
+      <div id="subList"></div>
+    </div>
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">자가 진단 체크리스트</h3>
+      <div style="font-size:12.5px;color:var(--tx3);margin-bottom:8px">13개 이상 ✓ → 합격선 도달 / 10~12 → 보강 / 9 이하 → 8주 코스</div>
+      <div id="selfcheck"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:10px">학습 우선순위 (출제 빈도)</h3>
+      <div id="tiers"></div>
+    </div>
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:10px">학습 로드맵</h3>
+      <div id="roadmap"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 암기카드 ══════════ -->
+<section class="view" id="v-cards">
+  <h2 class="vt">🃏 두음·핵심 암기카드</h2>
+  <p class="vd"><kbd>Space</kbd> 뒤집기 · <kbd>1</kbd> 모름 / <kbd>2</kbd> 알아요 · <kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>F</kbd> 섞기 · <kbd>U</kbd> 모르는 것만 · <kbd>?</kbd> 전체 단축키</p>
+
+  <div class="bar" id="cardFilter"></div>
+  <div class="bar">
+    <button class="btn gh" id="shuffle">🔀 섞기</button>
+    <button class="btn gh" id="onlyUnknown">❓ 모르는 것만</button>
+    <button class="btn gh" id="resetCards">↺ 진도 초기화</button>
+    <div class="sp"></div>
+    <span style="font-size:13px;color:var(--tx3)" id="cardStat"></span>
+  </div>
+
+  <div class="fcwrap">
+    <div class="fc" id="fc">
+      <div class="fcin">
+        <div class="fcf">
+          <div class="fctag" id="fcTag"></div>
+          <div class="fcq" id="fcQ"></div>
+          <div class="fchint">클릭 또는 Space 로 뒤집기</div>
+        </div>
+        <div class="fcb">
+          <div class="fctag" id="fcTag2"></div>
+          <div class="fckey" id="fcKey"></div>
+          <div class="fca" id="fcA"></div>
+          <div class="fctip" id="fcTip"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fcctl">
+      <button class="btn gh" id="prev">← 이전</button>
+      <button class="kbtn no" id="markNo">1 · 모름</button>
+      <button class="kbtn ok" id="markOk">2 · 알아요</button>
+      <button class="btn gh" id="next">다음 →</button>
+    </div>
+    <div class="fcctl" style="margin-top:10px"><span class="idx" id="fcIdx"></span></div>
+  </div>
+</section>
+
+<!-- ══════════ 핵심시트 ══════════ -->
+<section class="view" id="v-sheet">
+  <h2 class="vt">📋 핵심 정리 시트 · 함정 노트</h2>
+  <p class="vd">비교표·기간표는 그대로 출제됩니다. 함정 노트는 오답 유도 패턴 모음입니다.</p>
+  <div class="bar" id="sheetFilter"></div>
+  <div class="bar">
+    <input class="search" id="sheetSearch" placeholder="🔍 시트·함정 내용 검색 (예: 72시간, 위탁, SHA)" />
+  </div>
+  <div class="grid" id="sheetList"></div>
+  <div class="box" style="margin-top:16px">
+    <h3 style="font-size:15px;font-weight:800;margin-bottom:4px">⚠️ 자주 틀리는 함정 포인트</h3>
+    <div id="trapList"></div>
+  </div>
+</section>
+
+<!-- ══════════ 퀴즈 ══════════ -->
+<section class="view" id="v-quiz">
+  <div id="quizSetup">
+    <h2 class="vt">🧩 퀴즈</h2>
+    <p class="vd">4지선다 · OX · 단답형 문제은행에서 출제합니다. 틀린 문제는 자동으로 오답노트에 저장되고, 다시 맞히면 빠집니다.</p>
+    <div class="box qsetup">
+      <div class="qrow">
+        <label>과목</label>
+        <div class="qopts" id="quizSubj"></div>
+      </div>
+      <div class="qrow">
+        <label>유형</label>
+        <div class="qopts" id="quizType"></div>
+      </div>
+      <div class="qrow">
+        <label>난이도</label>
+        <div class="qopts" id="quizLevel"></div>
+      </div>
+      <div class="qrow">
+        <label>문항 수</label>
+        <div class="qopts" id="quizCount"></div>
+      </div>
+      <div class="qrow">
+        <label>모드</label>
+        <div class="qopts" id="quizMode"></div>
+      </div>
+      <div class="qrow" id="quizPoolRow" style="color:var(--tx3);font-size:13px"></div>
+      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="startQuiz">▶ 시작하기 <kbd>Enter</kbd></button>
+        <button class="btn gh" id="startWrong">📕 오답만 다시 풀기 <kbd>W</kbd></button>
+      </div>
+      <div class="hintbar">
+        <span>⌨ <kbd>1</kbd>~<kbd>4</kbd> 보기 선택</span><span><kbd>O</kbd>/<kbd>X</kbd> OX</span>
+        <span><kbd>Enter</kbd> 다음</span><span><kbd>←</kbd><kbd>→</kbd> 문제 이동·건너뛰기</span>
+        <span><kbd>Esc</kbd> 채점</span><span><kbd>?</kbd> 전체 단축키</span>
+      </div>
+    </div>
+
+    <div class="box" style="max-width:640px;margin:16px auto 0">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:2px">📚 문제은행 현황</h3>
+      <div style="font-size:12.5px;color:var(--tx3);margin-bottom:6px">과목 × 유형별 보유 문항 수 — 셀을 누르면 그 조합으로 바로 출제됩니다.</div>
+      <div class="tw" id="bankTable"></div>
+      <div id="bankLevels" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <div id="quizRun" style="display:none">
+    <div class="qhead">
+      <span class="qcount" id="qCount"></span>
+      <span class="timer" id="qTimer"></span>
+      <span class="combo" id="qCombo" style="display:none"></span>
+      <div class="sp"></div>
+      <span class="qcount" id="qScore"></span>
+      <button class="btn gh" id="quitQuiz">그만두기 <kbd>Esc</kbd></button>
+    </div>
+    <div class="qbar" id="qBarWrap"><i id="qBar"></i></div>
+    <div class="qcard" id="qCard"></div>
+    <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end" id="qNav"></div>
+  </div>
+
+  <div id="quizResult" style="display:none"></div>
+</section>
+
+<!-- ══════════ 오답노트 ══════════ -->
+<section class="view" id="v-note">
+  <h2 class="vt">📕 오답노트</h2>
+  <p class="vd">틀린 문제가 누적됩니다. 반복해서 틀릴수록 위로 올라옵니다.</p>
+  <div class="bar">
+    <button class="btn" id="reviewWrong">▶ 오답만 다시 풀기</button>
+    <button class="btn gh" id="clearWrong">🗑 오답노트 비우기</button>
+    <div class="sp"></div>
+    <span style="font-size:13px;color:var(--tx3)" id="noteStat"></span>
+  </div>
+  <div id="noteList"></div>
+</section>
+
+</main>
+
+<footer id="foot"></footer>
+
+<script src="data.js"></script>
+<script>
+/* ═══════════ 저장소 ═══════════ */
+/* 자격증마다 저장소를 분리 (같은 도메인에 여러 학습사이트가 올라가므로) */
+const KEY=(CPPG.meta.storeKey||'exam')+'-study-v1';
+const S=Object.assign({theme:'dark',sound:true,best:0,cards:{},wrong:{},quizzes:[],check:{}},JSON.parse(localStorage.getItem(KEY)||'{}'));
+const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+
+const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
+const subName=id=>SUB[id]?`${SUB[id].no}과목 ${SUB[id].name}`:'공통';
+const subShort=id=>SUB[id]?`${SUB[id].no}과목`:'공통';
+const subColor=id=>SUB[id]?SUB[id].color:'#888';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const $=id=>document.getElementById(id);
+
+/* 문제 통합 ID */
+CPPG.mcq.forEach((q,i)=>{q.id='m'+i;q.type='mcq'});
+CPPG.ox.forEach((q,i)=>{q.id='o'+i;q.type='ox'});
+CPPG.fill.forEach((q,i)=>{q.id='f'+i;q.type='fill'});
+const ALLQ=[...CPPG.mcq,...CPPG.ox,...CPPG.fill];
+const QBYID={}; ALLQ.forEach(q=>QBYID[q.id]=q);
+const TYPES=[{k:'mcq',n:'4지선다'},{k:'ox',n:'OX'},{k:'fill',n:'단답형'}];
+const typeName=k=>(TYPES.find(t=>t.k===k)||{}).n||k;
+const LV={}; (CPPG.levels||[]).forEach(l=>LV[l.d]=l);
+const lvName=d=>(LV[d]||{}).name||'표준';
+const lvColor=d=>(LV[d]||{}).color||'#888';
+/** 과목(sub)·유형(type)·난이도(lv)별 문항 수. 'all'/미지정이면 전체 */
+const bankCount=(sub,type,lv)=>ALLQ.filter(q=>
+  (sub==='all'||q.s===sub)&&(!type||q.type===type)&&(!lv||q.d===lv)).length;
+
+/* ═══════════ 🎉 보상 연출(FX) ═══════════ */
+const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FX=(()=>{
+  const layer=()=>document.getElementById('fx');
+  const PAL=['#5b9dff','#7c5cff','#34d399','#fbbf24','#fb7185','#22d3ee'];
+  let actx=null;
+
+  /** WebAudio 짧은 톤. 사용자 제스처 이후에만 컨텍스트가 열린다. */
+  function tone(freqs,dur,type,gain){
+    if(!S.sound)return;
+    try{
+      actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+      if(actx.state==='suspended')actx.resume();
+      freqs.forEach((f,i)=>{
+        const o=actx.createOscillator(),g=actx.createGain();
+        const t0=actx.currentTime+i*0.075;
+        o.type=type||'sine'; o.frequency.setValueAtTime(f,t0);
+        g.gain.setValueAtTime(0,t0);
+        g.gain.linearRampToValueAtTime(gain||0.14,t0+0.012);
+        g.gain.exponentialRampToValueAtTime(0.0001,t0+(dur||0.18));
+        o.connect(g); g.connect(actx.destination);
+        o.start(t0); o.stop(t0+(dur||0.18)+0.02);
+      });
+    }catch(e){/* 오디오 불가 환경은 무시 */}
+  }
+
+  /** 화면 상단에서 쏟아지는 색종이 */
+  function confetti(n,originY){
+    if(REDUCED)return;
+    const L=layer(); if(!L)return;
+    const frag=document.createDocumentFragment();
+    for(let i=0;i<n;i++){
+      const d=document.createElement('i');
+      d.className='conf';
+      const x=(Math.random()*100);
+      d.style.left=x+'vw';
+      d.style.top=(originY==null?-4:originY)+'vh';
+      d.style.background=PAL[(Math.random()*PAL.length)|0];
+      d.style.setProperty('--x',((Math.random()-0.5)*280)+'px');
+      d.style.setProperty('--y',(90+Math.random()*40)+'vh');
+      d.style.setProperty('--r',((Math.random()*4-2)*360)+'deg');
+      d.style.setProperty('--d',(1.1+Math.random()*1.1)+'s');
+      d.style.width=(6+Math.random()*7)+'px';
+      d.style.height=(9+Math.random()*9)+'px';
+      d.style.opacity=String(0.75+Math.random()*0.25);
+      frag.appendChild(d);
+      setTimeout(()=>d.remove(),2600);
+    }
+    L.appendChild(frag);
+  }
+
+  /** 특정 요소에서 터지는 스파크 */
+  function burst(el,n){
+    if(REDUCED||!el)return;
+    const L=layer(); if(!L)return;
+    const r=el.getBoundingClientRect();
+    const cx=r.left+r.width/2, cy=r.top+r.height/2;
+    for(let i=0;i<(n||14);i++){
+      const d=document.createElement('i');
+      d.className='spark';
+      d.style.left=cx+'px'; d.style.top=cy+'px';
+      d.style.background=PAL[(Math.random()*PAL.length)|0];
+      const a=Math.random()*Math.PI*2, dist=40+Math.random()*90;
+      d.style.setProperty('--x',Math.cos(a)*dist+'px');
+      d.style.setProperty('--y',Math.sin(a)*dist+'px');
+      L.appendChild(d);
+      setTimeout(()=>d.remove(),700);
+    }
+  }
+
+  function toast(msg,kind,hold){
+    const box=document.getElementById('toasts'); if(!box)return;
+    const t=document.createElement('div');
+    t.className='toast '+(kind||'good');
+    t.style.setProperty('--hold',(hold||1500)+'ms');
+    t.textContent=msg;
+    box.appendChild(t);
+    setTimeout(()=>t.remove(),(hold||1500)+700);
+  }
+
+  function glow(color){
+    if(REDUCED)return;
+    const g=document.getElementById('glow'); if(!g)return;
+    g.style.background=`radial-gradient(ellipse at center, transparent 55%, ${color} 130%)`;
+    g.classList.remove('on'); void g.offsetWidth; g.classList.add('on');
+  }
+
+  return {
+    right(el,combo){
+      glow('color-mix(in srgb, var(--ok) 45%, transparent)');
+      burst(el,14);
+      // 콤보가 높을수록 음이 올라간다 → 상승감
+      const base=[523.25,659.25,783.99];      // C5 E5 G5
+      const step=Math.min(combo||1,8);
+      tone(base.map(f=>f*Math.pow(1.0595,(step-1)*2)),0.2,'triangle',0.13);
+      if(combo>=3)confetti(Math.min(14+combo*4,60));
+    },
+    wrong(){
+      glow('color-mix(in srgb, var(--no) 40%, transparent)');
+      tone([196,155],0.22,'sine',0.09);       // 낮은 2음
+    },
+    milestone(msg){
+      toast(msg,'hype',2200);
+      confetti(70);
+      tone([523.25,659.25,783.99,1046.5],0.26,'triangle',0.15);
+    },
+    finish(pass,pct){
+      if(pass){
+        confetti(pct>=90?170:110);
+        tone([523.25,659.25,783.99,1046.5,1318.5],0.3,'triangle',0.16);
+      }else{
+        tone([392,311],0.3,'sine',0.1);
+      }
+    },
+    card(el){ burst(el,10); tone([659.25,880],0.14,'triangle',0.1); },
+    toast, confetti, tone
+  };
+})();
+
+/* ═══════════ 테마 ═══════════ */
+function applyTheme(){
+  document.documentElement.dataset.theme=S.theme;
+  $('theme').textContent=S.theme==='dark'?'🌙':'☀️';
+}
+$('theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';save();applyTheme()};
+applyTheme();
+
+/* ═══════════ 효과음 · 단축키 도움말 ═══════════ */
+function applySound(){
+  $('sound').textContent=S.sound?'🔊':'🔇';
+  $('sound').title=(S.sound?'효과음 끄기':'효과음 켜기')+' (S)';
+}
+function toggleSound(){
+  S.sound=!S.sound; save(); applySound();
+  if(S.sound)FX.tone([659.25,880],0.12,'triangle',0.1);
+  FX.toast(S.sound?'🔊 효과음 켬':'🔇 효과음 끔','good',1100);
+}
+$('sound').onclick=toggleSound;
+applySound();
+
+const helpOpen=()=>$('kbHelp').classList.contains('on');
+const toggleHelp=f=>$('kbHelp').classList.toggle('on',f);
+$('help').onclick=()=>toggleHelp(!helpOpen());
+$('kbClose').onclick=()=>toggleHelp(false);
+$('kbHelp').onclick=e=>{ if(e.target===$('kbHelp'))toggleHelp(false) };
+
+/* ═══════════ 뷰 전환 ═══════════ */
+let view='home';
+function go(v){
+  view=v;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(v==='home')renderHome();
+  if(v==='note')renderNote();
+}
+$('nav').onclick=e=>{const b=e.target.closest('button[data-v]'); if(b)go(b.dataset.v)};
+
+/* ═══════════ 홈 ═══════════ */
+function cardStats(){
+  const t=CPPG.cards.length; let ok=0,no=0;
+  CPPG.cards.forEach((c,i)=>{const v=S.cards['c'+i]; if(v==='ok')ok++; else if(v==='no')no++});
+  return{t,ok,no,rest:t-ok-no};
+}
+/* 브랜딩은 data.js 의 meta 에서 읽는다 → 같은 index.html 을 다른 자격증에도 재사용 */
+function applyBrand(){
+  const m=CPPG.meta;
+  document.title=m.title||`${m.name} — 암기·퀴즈 학습`;
+  $('brand').textContent=m.brand||m.name;
+  $('brandTag').textContent=m.tag||'';
+  $('heroH1').textContent=m.h1||m.name;
+  $('foot').innerHTML=(m.footer||[]).map(l=>`<div>${l}</div>`).join('');
+}
+
+function renderHome(){
+  const m=CPPG.meta;
+  $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
+  $('heroSlog').textContent='★ '+m.slogan+' ★';
+  $('heroMeta').innerHTML=[
+    ['검정 방법',m.type],['시험 시간',m.time],['합격 기준',m.pass],['기본서',m.book]
+  ].map(([k,v])=>`<div><b>${k}</b>${esc(v)}</div>`).join('');
+
+  const cs=cardStats();
+  const qz=S.quizzes||[];
+  const last=qz.length?qz[qz.length-1]:null;
+  const avg=qz.length?Math.round(qz.reduce((a,b)=>a+b.pct,0)/qz.length):0;
+  const wrongN=Object.keys(S.wrong).length;
+  const pct=cs.t?Math.round(cs.ok/cs.t*100):0;
+
+  $('stats').innerHTML=`
+    <div class="stat"><div class="k">암기카드 숙지</div><div class="v">${cs.ok}<span style="font-size:15px;color:var(--tx3)"> / ${cs.t}</span></div>
+      <div class="prog"><i style="width:${pct}%"></i></div><div class="m">모름 ${cs.no} · 미학습 ${cs.rest}</div></div>
+    <div class="stat"><div class="k">문제은행</div><div class="v">${ALLQ.length}</div>
+      <div class="m">4지선다 ${CPPG.mcq.length} · OX ${CPPG.ox.length} · 단답 ${CPPG.fill.length}<br>
+        ${CPPG.levels.map(l=>`<span style="color:${l.color}">${l.name} ${bankCount('all',null,l.d)}</span>`).join(' · ')}</div></div>
+    <div class="stat"><div class="k">퀴즈 평균 / 최근</div><div class="v" style="color:${avg>=60?'var(--ok)':'var(--tx)'}">${qz.length?avg+'점':'—'}</div>
+      <div class="m">${last?`최근 ${last.pct}점 (${last.right}/${last.total})`:'응시 기록 없음'} · ${qz.length}회</div></div>
+    <div class="stat"><div class="k">오답노트</div><div class="v" style="color:${wrongN?'var(--no)':'var(--tx)'}">${wrongN}</div>
+      <div class="m">${wrongN?'복습이 필요합니다':'깨끗합니다 👍'}</div></div>`;
+
+  $('subList').innerHTML=CPPG.subjects.map(s=>{
+    const cds=CPPG.cards.map((c,i)=>({c,i})).filter(x=>x.c.s===s.id);
+    const done=cds.filter(x=>S.cards['c'+x.i]==='ok').length;
+    const p=cds.length?Math.round(done/cds.length*100):0;
+    const qn=ALLQ.filter(q=>q.s===s.id).length;
+    return `<div class="subrow"><span class="dot" style="background:${s.color}"></span>
+      <span class="nm">${s.no}. ${esc(s.name)}<div style="font-size:11.5px;color:var(--tx3);font-weight:400">${esc(s.desc)}</div></span>
+      <span class="ct">약 ${s.out}문제 · 문제 ${qn}</span>
+      <span class="pb"><i style="width:${p}%;background:${s.color}"></i></span>
+      <span class="ct" style="width:34px;text-align:right">${p}%</span></div>`;
+  }).join('');
+
+  let g='';
+  CPPG.selfcheck.forEach((c,i)=>{
+    if(i===0||c.g!==CPPG.selfcheck[i-1].g)g+=`<div class="gtitle">${esc(c.g)}</div>`;
+    const on=!!S.check['k'+i];
+    g+=`<label class="ckrow ${on?'done':''}"><input type="checkbox" data-ck="${i}" ${on?'checked':''}><span>${esc(c.t)}</span></label>`;
+  });
+  const n=Object.values(S.check).filter(Boolean).length;
+  g+=`<div style="margin-top:12px;font-weight:800;font-size:14px;color:${n>=13?'var(--ok)':n>=10?'var(--wa)':'var(--no)'}">
+    ✓ ${n} / 15 — ${n>=13?'합격선 도달':n>=10?'보강 후 응시 가능':'8주 표준 코스 권장'}</div>`;
+  $('selfcheck').innerHTML=g;
+
+  $('tiers').innerHTML=Object.entries(CPPG.tiers).map(([k,v])=>
+    `<div class="gtitle">${esc(k)}</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
+  $('roadmap').innerHTML=Object.entries(CPPG.roadmap).map(([k,v])=>
+    `<div class="gtitle">${esc(k)} 코스</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
+}
+$('selfcheck').addEventListener('change',e=>{
+  const i=e.target.dataset.ck; if(i===undefined)return;
+  S.check['k'+i]=e.target.checked; save(); renderHome();
+});
+
+/* ═══════════ 암기카드 ═══════════ */
+let cSub='all', deck=[], di=0, unknownOnly=false;
+function buildDeck(keepPos){
+  deck=CPPG.cards.map((c,i)=>i)
+    .filter(i=>cSub==='all'||CPPG.cards[i].s===cSub)
+    .filter(i=>!unknownOnly||S.cards['c'+i]!=='ok');
+  if(!keepPos||di>=deck.length)di=0;
+  renderCard();
+}
+function renderCardFilter(){
+  const cnt=id=>CPPG.cards.filter(c=>id==='all'||c.s===id).length;
+  $('cardFilter').innerHTML=`<button class="chip ${cSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
+    CPPG.subjects.map(s=>`<button class="chip ${cSub===s.id?'on':''}" data-s="${s.id}">${s.no}과목<span class="n">${cnt(s.id)}</span></button>`).join('');
+}
+$('cardFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cSub=b.dataset.s;renderCardFilter();buildDeck()};
+
+function renderCard(){
+  const fc=$('fc'); fc.classList.remove('flip');
+  const cs=cardStats();
+  $('cardStat').textContent=`알아요 ${cs.ok} · 모름 ${cs.no} · 미학습 ${cs.rest}`;
+  if(!deck.length){
+    $('fcQ').textContent='표시할 카드가 없습니다 🎉';
+    $('fcTag').textContent=''; $('fcKey').textContent=''; $('fcA').textContent=''; $('fcTip').textContent='';
+    $('fcIdx').textContent='0 / 0'; return;
+  }
+  const c=CPPG.cards[deck[di]];
+  const st=S.cards['c'+deck[di]];
+  const tag=`${subShort(c.s)} · ${c.g}${st==='ok'?' · ✅ 알아요':st==='no'?' · ❓ 모름':''}`;
+  $('fcTag').textContent=tag; $('fcTag2').textContent=tag;
+  $('fcQ').textContent=c.front;
+  $('fcKey').textContent=c.key||'';
+  $('fcKey').style.display=c.key?'block':'none';
+  $('fcA').textContent=c.back;
+  $('fcTip').textContent=c.tip?'⚠ '+c.tip:'';
+  $('fcTip').style.display=c.tip?'block':'none';
+  $('fcIdx').textContent=`${di+1} / ${deck.length}`;
+}
+const flip=()=>$('fc').classList.toggle('flip');
+$('fc').onclick=flip;
+$('prev').onclick=()=>{if(deck.length){di=(di-1+deck.length)%deck.length;renderCard()}};
+$('next').onclick=()=>{if(deck.length){di=(di+1)%deck.length;renderCard()}};
+function mark(v){
+  if(!deck.length)return;
+  const wasNew=S.cards['c'+deck[di]]!=='ok';
+  S.cards['c'+deck[di]]=v; save();
+  if(v==='ok'){
+    const el=$('fc');
+    el.classList.remove('yay'); void el.offsetWidth; el.classList.add('yay');
+    FX.card(el);
+    if(wasNew){
+      const st=cardStats();
+      if(st.ok===st.t)FX.milestone('🎓 전체 카드 암기 완료!');
+      else if(st.ok%10===0)FX.milestone(`📚 ${st.ok}장 암기 완료!`);
+    }
+  }
+  if(unknownOnly&&v==='ok'){deck.splice(di,1); if(di>=deck.length)di=0; renderCard(); return}
+  di=(di+1)%deck.length; renderCard();
+}
+$('markNo').onclick=()=>mark('no');
+$('markOk').onclick=()=>mark('ok');
+$('shuffle').onclick=()=>{for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}di=0;renderCard()};
+$('onlyUnknown').onclick=e=>{unknownOnly=!unknownOnly;e.target.classList.toggle('on');
+  e.target.textContent=unknownOnly?'📚 전체 보기':'❓ 모르는 것만'; buildDeck()};
+$('resetCards').onclick=()=>{if(confirm('암기카드 진도를 모두 초기화할까요?')){S.cards={};save();buildDeck();renderHome()}};
+
+/* ═══════════ ⌨ 키보드 조작 (전 화면) ═══════════ */
+const VIEWS=['home','cards','sheet','quiz','note'];
+document.addEventListener('keydown',e=>{
+  if(e.ctrlKey||e.metaKey||e.altKey)return;      // 브라우저 단축키 침범 금지
+  const k=e.key;
+  const tag=(e.target.tagName||'').toLowerCase();
+  const typing=tag==='input'||tag==='textarea'||tag==='select';
+
+  // ── 도움말이 열려 있으면 닫기만 처리 ──
+  if(helpOpen()){
+    if(k==='Escape'||k==='?'){e.preventDefault();toggleHelp(false)}
+    return;
+  }
+  // ── 입력 중: Esc 로 빠져나오기만 허용 ──
+  if(typing){
+    if(k==='Escape'){
+      if(e.target===$('sheetSearch')){e.target.value='';shQ='';renderSheet()}
+      e.target.blur();
+    }
+    return;   // 나머지 키는 입력에 그대로 전달 (단답 Enter 제출은 input 자체 핸들러)
+  }
+
+  if(k==='?'){e.preventDefault();toggleHelp(true);return}
+
+  const quizRunning = view==='quiz' && $('quizRun').style.display!=='none';
+
+  // ── 전역 ──
+  if(k==='t'||k==='T'){e.preventDefault();$('theme').click();return}
+  if(k==='s'||k==='S'){e.preventDefault();toggleSound();return}
+  if(k==='/'){e.preventDefault();go('sheet');setTimeout(()=>$('sheetSearch').focus(),60);return}
+
+  // ── 뷰 전환(숫자) — 현재 화면이 그 숫자를 쓰지 않을 때만 ──
+  if(/^[1-5]$/.test(k)){
+    const consumed = quizRunning || (view==='cards' && (k==='1'||k==='2'));
+    if(!consumed){e.preventDefault();go(VIEWS[+k-1]);return}
+  }
+
+  // ── 🃏 암기카드 ──
+  if(view==='cards'){
+    if(k===' '||k==='ArrowUp'||k==='ArrowDown'){e.preventDefault();flip()}
+    else if(k==='ArrowLeft'){e.preventDefault();$('prev').click()}
+    else if(k==='ArrowRight'){e.preventDefault();$('next').click()}
+    else if(k==='1'){e.preventDefault();mark('no')}
+    else if(k==='2'){e.preventDefault();mark('ok')}
+    else if(k==='f'||k==='F'){e.preventDefault();$('shuffle').click()}
+    else if(k==='u'||k==='U'){e.preventDefault();$('onlyUnknown').click()}
+    return;
+  }
+
+  // ── 🧩 퀴즈 ──
+  if(view==='quiz'){
+    if(!quizRunning){                                   // 설정 화면
+      if(k==='Enter'){e.preventDefault();$('startQuiz').click()}
+      else if(k==='w'||k==='W'){e.preventDefault();$('startWrong').click()}
+      return;
+    }
+    if(k==='Escape'){e.preventDefault();$('quitQuiz').click();return}
+    const q=quiz&&quiz.items[quiz.i];
+    const chs=document.querySelectorAll('#qCard .ch');
+    // OX 는 O / X 키로도 선택
+    if(q&&q.type==='ox'&&/^[oxOX]$/.test(k)){
+      const b=chs[(k==='o'||k==='O')?0:1];
+      if(b&&!b.disabled){e.preventDefault();b.click()}
+      return;
+    }
+    if(/^[1-4]$/.test(k)){
+      const b=chs[+k-1];
+      if(b&&!b.disabled){e.preventDefault();b.click()}
+      return;
+    }
+    if(k==='Enter'||k===' '){e.preventDefault();const n=$('qNext');if(n)n.click();return}
+    // ←/→ 는 버튼 유무와 무관하게 항상 이동 (아직 풀지 않은 문제도 건너뛰기 가능)
+    if(k==='ArrowLeft'){
+      e.preventDefault();
+      if(quiz.i>0){quiz.i--;renderQ()}
+      return;
+    }
+    if(k==='ArrowRight'){
+      e.preventDefault();
+      if(quiz.i<quiz.items.length-1){quiz.i++;renderQ()}
+      else finishQuiz();          // 마지막 문제에서 → 는 채점
+      return;
+    }
+    return;
+  }
+
+  // ── 📕 오답노트 ──
+  if(view==='note'&&(k==='w'||k==='W')){e.preventDefault();$('reviewWrong').click()}
+});
+
+/* ═══════════ 핵심시트 ═══════════ */
+let shSub='all', shQ='';
+function renderSheetFilter(){
+  $('sheetFilter').innerHTML=`<button class="chip ${shSub==='all'?'on':''}" data-s="all">전체</button>`+
+    CPPG.subjects.map(s=>`<button class="chip ${shSub===s.id?'on':''}" data-s="${s.id}">${s.no}과목</button>`).join('');
+}
+$('sheetFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;shSub=b.dataset.s;renderSheetFilter();renderSheet()};
+$('sheetSearch').oninput=e=>{shQ=e.target.value.trim().toLowerCase();renderSheet()};
+
+function renderSheet(){
+  const hit=txt=>!shQ||txt.toLowerCase().includes(shQ);
+  const list=CPPG.sheets.filter(s=>(shSub==='all'||s.s===shSub));
+  $('sheetList').innerHTML=list.map(s=>{
+    const flat=s.title+' '+(s.type==='table'?s.head.join(' ')+s.rows.flat().join(' '):s.items.join(' '));
+    if(!hit(flat))return '';
+    const badge=`<span class="sbadge" style="background:${subColor(s.s)}">${subShort(s.s)}</span>`;
+    let body;
+    if(s.type==='table'){
+      body=`<div class="tw"><table><thead><tr>${s.head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>
+        <tbody>${s.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }else{
+      body=`<ul class="sl">${s.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
+    }
+    return `<div class="box sheet"><h3>${badge}${esc(s.title)}</h3>${body}</div>`;
+  }).join('')||`<div class="empty"><div class="ic">🔍</div>검색 결과가 없습니다</div>`;
+
+  $('trapList').innerHTML=CPPG.traps
+    .filter(t=>(shSub==='all'||t.s===shSub)&&hit(t.t))
+    .map(t=>`<div class="trap"><span class="w">⚠</span><span><b style="color:${subColor(t.s)}">${subShort(t.s)}</b> · ${esc(t.t)}</span></div>`)
+    .join('')||`<div style="color:var(--tx3);font-size:13px;padding:10px 0">해당 함정 항목이 없습니다</div>`;
+}
+
+/* ═══════════ 퀴즈 ═══════════ */
+const Q={sub:'all',types:['mcq','ox','fill'],levels:[1,2,3],count:20,mode:'practice'};
+let quiz=null, timerId=null;
+/** 콤보: 연속 정답 수. best 는 역대 최고(저장됨) */
+let combo=0, comboMax=0;
+const MILESTONES={3:'🔥 3연속! 불붙었다',5:'⚡ 5연속! 완벽해요',8:'💎 8연속! 대단합니다',12:'👑 12연속! 합격각',20:'🚀 20연속! 무결점'};
+
+function renderQuizSetup(){
+  // 각 칩의 개수는 "그 칩을 제외한 나머지 조건"을 적용해 센다 → 선택을 바꿨을 때의 결과가 보인다
+  const match=(q,{sub,types,levels})=>
+    (sub==='all'||q.s===sub)&&types.includes(q.type)&&levels.includes(q.d);
+
+  const subCnt=id=>ALLQ.filter(q=>match(q,{sub:id,types:Q.types,levels:Q.levels})).length;
+  $('quizSubj').innerHTML=`<button class="chip ${Q.sub==='all'?'on':''}" data-q="sub" data-v="all">전체<span class="n">${subCnt('all')}</span></button>`+
+    CPPG.subjects.map(s=>`<button class="chip ${Q.sub===s.id?'on':''}" data-q="sub" data-v="${s.id}">${s.no}과목<span class="n">${subCnt(s.id)}</span></button>`).join('');
+
+  $('quizType').innerHTML=TYPES.map(t=>{
+    const c=ALLQ.filter(q=>match(q,{sub:Q.sub,types:[t.k],levels:Q.levels})).length;
+    return `<button class="chip ${Q.types.includes(t.k)?'on':''}" data-q="type" data-v="${t.k}">${t.n}<span class="n">${c}</span></button>`;
+  }).join('');
+
+  $('quizLevel').innerHTML=CPPG.levels.map(l=>{
+    const c=ALLQ.filter(q=>match(q,{sub:Q.sub,types:Q.types,levels:[l.d]})).length;
+    return `<button class="chip ${Q.levels.includes(l.d)?'on':''}" data-q="level" data-v="${l.d}" title="${esc(l.desc)}">
+      <span class="dot2" style="background:${l.color}"></span>${l.name}<span class="n">${c}</span></button>`;
+  }).join('');
+
+  const pool=pickPool();
+  $('quizCount').innerHTML=[10,20,30,50,100].map(n=>
+    `<button class="chip ${Q.count===n?'on':''} ${n>pool.length?'dim':''}" data-q="count" data-v="${n}">${n}문항</button>`).join('')+
+    `<button class="chip ${Q.count===0?'on':''}" data-q="count" data-v="0">전체<span class="n">${pool.length}</span></button>`;
+  $('quizMode').innerHTML=`
+    <button class="chip ${Q.mode==='practice'?'on':''}" data-q="mode" data-v="practice">연습 (즉시 채점)</button>
+    <button class="chip ${Q.mode==='exam'?'on':''}" data-q="mode" data-v="exam">모의고사 (타이머·끝나고 채점)</button>`;
+
+  const n=Q.count===0?pool.length:Math.min(Q.count,pool.length);
+  const byType=TYPES.filter(t=>Q.types.includes(t.k)).map(t=>`${t.n} ${pool.filter(q=>q.type===t.k).length}`).join(' · ');
+  const byLv=CPPG.levels.filter(l=>Q.levels.includes(l.d)).map(l=>`${l.name} ${pool.filter(q=>q.d===l.d).length}`).join(' · ');
+  $('quizPoolRow').innerHTML=`출제 가능 <b style="color:var(--ac)">${pool.length}</b>문항 · 실제 출제 <b>${n}</b>문항`
+    +(Q.mode==='exam'?` · 제한시간 <b>${Math.max(1,Math.round(n*1.2))}</b>분`:'')
+    +`<br><span style="color:var(--tx3)">${esc(byType)} &nbsp;|&nbsp; ${esc(byLv)}</span>`;
+  renderBank();
+}
+
+/** 과목 × 유형 문항 수 매트릭스. 셀 클릭 → 해당 조합으로 바로 출제 */
+function renderBank(){
+  const rows=CPPG.subjects.map(s=>{
+    const cells=TYPES.map(t=>{
+      const c=bankCount(s.id,t.k);
+      return `<td style="text-align:right"><button class="cell" data-bs="${s.id}" data-bt="${t.k}" ${c?'':'disabled'}>${c}</button></td>`;
+    }).join('');
+    const tot=ALLQ.filter(q=>q.s===s.id).length;
+    return `<tr><td><span class="sbadge" style="background:${s.color}">${s.no}과목</span> ${esc(s.name)}</td>${cells}
+      <td style="text-align:right;font-weight:800">${tot}</td></tr>`;
+  }).join('');
+  const tots=TYPES.map(t=>`<td style="text-align:right;font-weight:800">${bankCount('all',t.k)}</td>`).join('');
+  $('bankTable').innerHTML=`<table><thead><tr><th>과목</th>${TYPES.map(t=>`<th style="text-align:right">${t.n}</th>`).join('')}<th style="text-align:right">합계</th></tr></thead>
+    <tbody>${rows}<tr style="background:var(--card2)"><td style="font-weight:800">합계</td>${tots}
+    <td style="text-align:right;font-weight:800;color:var(--ac)">${ALLQ.length}</td></tr></tbody></table>`;
+  renderLevelBar('bankLevels');
+}
+
+/** 난이도 분포 막대 + 범례 */
+function renderLevelBar(id){
+  const el=$(id); if(!el)return;
+  const tot=ALLQ.length;
+  el.innerHTML=`<div class="lvlbar">`+
+    CPPG.levels.map(l=>{
+      const c=bankCount('all',null,l.d);
+      return `<i style="width:${c/tot*100}%;background:${l.color}" title="${l.name} ${c}"></i>`;
+    }).join('')+`</div><div class="lvlkey">`+
+    CPPG.levels.map(l=>{
+      const c=bankCount('all',null,l.d);
+      return `<span><span class="dot2" style="background:${l.color}"></span><b>${l.name}</b> ${c}문항 (${Math.round(c/tot*100)}%) — ${esc(l.desc.split(' — ')[1]||l.desc)}</span>`;
+    }).join('')+`</div>`;
+}
+$('bankTable').onclick=e=>{
+  const b=e.target.closest('[data-bs]'); if(!b||b.disabled)return;
+  Q.sub=b.dataset.bs; Q.types=[b.dataset.bt]; Q.levels=[1,2,3];   // 난이도는 전체로 되돌려 표의 숫자와 일치시킨다
+  renderQuizSetup();
+  const pool=shuffle(pickPool());
+  startQuiz(Q.count===0?pool:pool.slice(0,Q.count),Q.mode);
+};
+function pickPool(){
+  return ALLQ.filter(q=>Q.types.includes(q.type)&&Q.levels.includes(q.d)&&(Q.sub==='all'||q.s===Q.sub));
+}
+document.querySelectorAll('#quizSubj,#quizType,#quizLevel,#quizCount,#quizMode').forEach(el=>{
+  el.onclick=e=>{
+    const b=e.target.closest('[data-q]'); if(!b)return;
+    const k=b.dataset.q, v=b.dataset.v;
+    if(k==='sub')Q.sub=v;
+    else if(k==='count')Q.count=+v;
+    else if(k==='mode')Q.mode=v;
+    else if(k==='type'){
+      const i=Q.types.indexOf(v);
+      if(i>=0){ if(Q.types.length>1)Q.types.splice(i,1); } else Q.types.push(v);
+    }
+    else if(k==='level'){
+      const n=+v, i=Q.levels.indexOf(n);
+      if(i>=0){ if(Q.levels.length>1)Q.levels.splice(i,1); } else Q.levels.push(n);
+      Q.levels.sort();
+    }
+    renderQuizSetup();
+  };
+});
+
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function startQuiz(items,mode){
+  if(!items.length){alert('출제할 문제가 없습니다.');return}
+  if(view!=='quiz')go('quiz');   // 어디서 호출되든 퀴즈 뷰를 보장 (키보드 컨텍스트도 여기에 맞춰짐)
+  combo=0; comboMax=0; renderQ._m=0;
+  quiz={items,i:0,ans:new Array(items.length).fill(null),mode,
+        left:mode==='exam'?Math.max(60,Math.round(items.length*1.2*60)):0};
+  $('quizSetup').style.display='none'; $('quizResult').style.display='none'; $('quizRun').style.display='block';
+  if(timerId)clearInterval(timerId);
+  if(mode==='exam'){
+    timerId=setInterval(()=>{
+      quiz.left--; updTimer();
+      if(quiz.left<=0){clearInterval(timerId);finishQuiz()}
+    },1000);
+  }
+  updTimer(); renderQ();
+}
+function updTimer(){
+  if(!quiz)return;
+  if(quiz.mode!=='exam'){$('qTimer').textContent='';return}
+  const m=Math.floor(quiz.left/60),s=quiz.left%60;
+  $('qTimer').textContent=`⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+$('startQuiz').onclick=()=>{
+  const pool=shuffle(pickPool());
+  startQuiz(Q.count===0?pool:pool.slice(0,Q.count),Q.mode);
+};
+$('startWrong').onclick=$('reviewWrong').onclick=()=>{
+  const ids=Object.keys(S.wrong).sort((a,b)=>S.wrong[b]-S.wrong[a]);
+  const items=ids.map(id=>QBYID[id]).filter(Boolean);
+  if(!items.length){alert('오답노트가 비어 있습니다. 먼저 퀴즈를 풀어보세요.');return}
+  go('quiz'); startQuiz(items,'practice');
+};
+$('quitQuiz').onclick=()=>{
+  if(!confirm('퀴즈를 그만두시겠습니까? 지금까지 푼 문제로 채점합니다.'))return;
+  finishQuiz();
+};
+
+function renderQ(){
+  const q=quiz.items[quiz.i], a=quiz.ans[quiz.i];
+  const revealed=quiz.mode==='practice'&&a!==null;
+  $('qCount').textContent=`${quiz.i+1} / ${quiz.items.length}`;
+  const done=quiz.ans.filter(x=>x!==null).length;
+  const right=quiz.ans.filter((x,i)=>x!==null&&isRight(quiz.items[i],x)).length;
+  $('qScore').textContent=quiz.mode==='practice'?`정답 ${right} / 푼 문제 ${done}`:`푼 문제 ${done}`;
+  const pct=done/quiz.items.length*100;
+  $('qBar').style.width=pct+'%';
+  // 25·50·75·100% 통과 시 진행바 스윕 연출
+  const mark4=Math.floor(pct/25);
+  if(mark4>(renderQ._m||0)&&mark4>0&&!REDUCED){
+    const w=$('qBarWrap'); w.classList.remove('milestone'); void w.offsetWidth; w.classList.add('milestone');
+  }
+  renderQ._m=mark4;
+  updCombo();
+
+  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} · ${typeName(q.type)}
+           <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span></div>
+         <div class="qtext">${esc(q.q)}</div>`;
+
+  if(q.type==='mcq'){
+    h+=q.c.map((c,i)=>{
+      let cls='ch';
+      if(revealed){ if(i===q.a)cls+=' right'; else if(i===a)cls+=' wrong'; }
+      else if(a===i)cls+=' sel';
+      return `<button class="${cls}" data-i="${i}">
+        <span class="no">${'①②③④'[i]}</span><span>${esc(c)}</span></button>`;
+    }).join('');
+  }else if(q.type==='ox'){
+    h+=[['O',true],['X',false]].map(([lb,val],i)=>{
+      let cls='ch';
+      if(revealed){ if(val===q.a)cls+=' right'; else if(val===a)cls+=' wrong'; }
+      else if(a===val)cls+=' sel';
+      return `<button class="${cls}" data-i="${val}"><span class="no">${lb}</span><span>${val?'맞다 (O)':'틀리다 (X)'}</span></button>`;
+    }).join('');
+  }else{
+    h+=`<input class="fillin" id="fillIn" placeholder="답 입력 — 여러 개면 쉼표(,)로 구분. 키워드만 맞아도 정답" value="${a&&a.txt?esc(a.txt):''}" ${revealed?'disabled':''}/>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" id="fillSubmit" ${revealed?'disabled':''}>제출</button>
+          <button class="btn gh" id="fillShow" ${revealed?'disabled':''}>모르겠어요 · 정답 보기</button>
+        </div>`;
+  }
+
+  if(revealed){
+    const ok=isRight(q,a);
+    let ansTxt = q.type==='mcq' ? `${'①②③④'[q.a]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)') : q.a;
+    h+=`<div class="expl ${ok?'good':'bad'}"><b>${ok?'✅ 정답':'❌ 오답'}</b> — 정답: <b>${esc(ansTxt)}</b><br>${esc(q.e||'')}</div>`;
+  }
+  $('qCard').innerHTML=h;
+
+  $('qCard').querySelectorAll('.ch').forEach(b=>{
+    if(revealed){b.disabled=true;return}
+    b.onclick=()=>{
+      const v=b.dataset.i==='true'?true:b.dataset.i==='false'?false:+b.dataset.i;
+      answer(v);
+    };
+  });
+  const fi=$('fillIn');
+  if(fi){
+    if(!revealed)setTimeout(()=>fi.focus(),50);
+    $('fillSubmit').onclick=()=>answer({txt:fi.value,self:null});
+    $('fillShow').onclick=()=>answer({txt:fi.value,self:false,gaveup:true});
+    fi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('fillSubmit').click()}};
+  }
+  renderQNav(revealed);
+}
+function renderQNav(revealed){
+  const last=quiz.i===quiz.items.length-1;
+  const answered=quiz.ans[quiz.i]!==null;
+  let h='';
+  if(quiz.i>0)h+=`<button class="btn gh" id="qPrev"><kbd>←</kbd> 이전</button>`;
+  if(quiz.mode==='practice'){
+    if(revealed)h+=`<button class="btn" id="qNext">${last?'채점하기 ✓':'다음 문제'} <kbd>Enter</kbd></button>`;
+  }else{
+    h+=`<button class="btn ${answered?'':'gh'}" id="qNext">${last?'제출하기 ✓':'다음 문제'} <kbd>Enter</kbd></button>`;
+  }
+  $('qNav').innerHTML=h;
+  const p=$('qPrev'); if(p)p.onclick=()=>{quiz.i--;renderQ()};
+  const n=$('qNext'); if(n)n.onclick=()=>{ if(last)finishQuiz(); else{quiz.i++;renderQ()} };
+}
+const norm=s=>String(s).toLowerCase().replace(/[\s·,./\-()]/g,'');
+function isRight(q,a){
+  if(a===null||a===undefined)return false;
+  if(q.type==='mcq')return a===q.a;
+  if(q.type==='ox')return a===q.a;
+  if(a.self!==null&&a.self!==undefined)return a.self;
+  const t=norm(a.txt||'');
+  if(!t)return false;
+  return (q.k||[]).every(k=>t.includes(norm(k)));
+}
+function answer(v){
+  const q=quiz.items[quiz.i];
+  const first=quiz.ans[quiz.i]===null;   // 이 문제에 처음 답하는가(모의고사는 답 변경 가능)
+  quiz.ans[quiz.i]=v;
+  if(q.type==='fill'&&v.gaveup)v.self=false;
+  const ok=isRight(q,v);
+  if(!ok){S.wrong[q.id]=(S.wrong[q.id]||0)+1}
+  else if(S.wrong[q.id]){ delete S.wrong[q.id] }
+
+  // 콤보·연출은 즉시 채점(연습) 모드에서만.
+  // 모의고사에서 정답 여부를 티내면 시험 시뮬레이션이 깨진다.
+  const react=quiz.mode==='practice'&&first;
+  if(react){
+    if(ok){ combo++; comboMax=Math.max(comboMax,combo); if(combo>S.best)S.best=combo; }
+    else combo=0;
+  }
+  save();
+  renderQ();   // 모의고사 모드는 선택만 표시하고 '다음'으로 이동 (답 변경 가능)
+  if(react)celebrate(ok);
+}
+
+/** 정답/오답 순간의 보상 연출 */
+function celebrate(ok){
+  const card=$('qCard');
+  card.classList.remove('flash-ok','flash-no'); void card.offsetWidth;
+  if(ok){
+    card.classList.add('flash-ok');
+    FX.right(card.querySelector('.ch.right')||card, combo);
+    const m=MILESTONES[combo];
+    if(m)FX.milestone(m);
+    else FX.toast(combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨','good',1000);
+  }else{
+    card.classList.add('flash-no');
+    FX.wrong();
+    FX.toast('아쉬워요 — 해설을 확인하세요','bad',1300);
+  }
+  setTimeout(()=>card.classList.remove('flash-ok','flash-no'),800);
+  updCombo();
+}
+function updCombo(){
+  const el=$('qCombo'); if(!el)return;
+  if(quiz&&quiz.mode==='practice'&&combo>0){
+    el.style.display='';
+    el.textContent=`🔥 ${combo}연속`+(S.best>combo?`  ·  최고 ${S.best}`:'');
+    el.classList.remove('hot'); void el.offsetWidth;
+    if(combo>=3)el.classList.add('hot');
+  }else el.style.display='none';
+}
+function finishQuiz(){
+  if(timerId)clearInterval(timerId);
+  const total=quiz.items.length;
+  const right=quiz.items.filter((q,i)=>isRight(q,quiz.ans[i])).length;
+  const pct=Math.round(right/total*100);
+  // 과목별 · 난이도별 집계
+  const per={}, lv={};
+  quiz.items.forEach((q,i)=>{
+    const ok=isRight(q,quiz.ans[i]);
+    per[q.s]=per[q.s]||{t:0,r:0}; per[q.s].t++; if(ok)per[q.s].r++;
+    lv[q.d]=lv[q.d]||{t:0,r:0};   lv[q.d].t++;  if(ok)lv[q.d].r++;
+  });
+  S.quizzes.push({pct,right,total,mode:quiz.mode}); if(S.quizzes.length>50)S.quizzes.shift();
+  save();
+
+  const wrongList=quiz.items.map((q,i)=>({q,a:quiz.ans[i]})).filter(x=>!isRight(x.q,x.a));
+  const perOk=Object.entries(per).every(([,v])=>v.r/v.t>=0.4);
+  const pass=pct>=60&&perOk;
+
+  $('quizRun').style.display='none'; $('quizResult').style.display='block';
+  $('quizResult').innerHTML=`
+    <div class="box res pop">
+      <div class="sc ${pass?'p':'f'}" id="scNum">0점</div>
+      <div class="lb">${right} / ${total} 정답 · ${pass?'✅ 합격선 통과 (평균 60 + 과목별 40)':'❌ 합격선 미달'}</div>
+      ${comboMax>=3?`<div style="margin-top:8px"><span class="combo hot">🔥 최고 ${comboMax}연속${S.best>comboMax?`  ·  역대 ${S.best}`:'  ·  신기록!'}</span></div>`:''}
+      <div class="resgrid">
+        ${CPPG.subjects.filter(s=>per[s.id]).map(s=>{
+          const v=per[s.id], p=Math.round(v.r/v.t*100);
+          return `<div><div class="k" style="color:${s.color}">${s.no}과목</div>
+            <div class="v" style="color:${p>=40?'var(--tx)':'var(--no)'}">${p}점</div>
+            <div class="k">${v.r}/${v.t}</div></div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:12px;color:var(--tx3);margin:-8px 0 14px">난이도별 정답률</div>
+      <div class="resgrid" style="margin-top:0">
+        ${CPPG.levels.filter(l=>lv[l.d]).map(l=>{
+          const v=lv[l.d], p=Math.round(v.r/v.t*100);
+          return `<div><div class="k" style="color:${l.color}">${l.name}</div>
+            <div class="v">${p}%</div><div class="k">${v.r}/${v.t}</div></div>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn" id="againQuiz">🔁 새 퀴즈</button>
+        ${wrongList.length?`<button class="btn gh" id="reviewNow">📕 틀린 ${wrongList.length}문제 다시 풀기</button>`:''}
+        <button class="btn gh" id="toNote">오답노트 보기</button>
+      </div>
+    </div>
+    ${wrongList.length?`<h3 style="font-size:16px;font-weight:800;margin:22px 0 10px">틀린 문제 ${wrongList.length}개</h3>`:''}
+    ${wrongList.map(x=>wrongCard(x.q)).join('')}`;
+
+  $('againQuiz').onclick=()=>{$('quizResult').style.display='none';$('quizSetup').style.display='block';renderQuizSetup()};
+  const rn=$('reviewNow'); if(rn)rn.onclick=()=>startQuiz(shuffle(wrongList.map(x=>x.q)),'practice');
+  $('toNote').onclick=()=>go('note');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // 점수 카운트업 + 합격 축포
+  const el=$('scNum');
+  if(REDUCED){ el.textContent=pct+'점'; }
+  else{
+    const t0=performance.now(), dur=900;
+    (function step(t){
+      const p=Math.min(1,(t-t0)/dur);
+      el.textContent=Math.round(pct*(1-Math.pow(1-p,3)))+'점';   // easeOutCubic
+      if(p<1)requestAnimationFrame(step);
+    })(t0);
+  }
+  setTimeout(()=>{
+    FX.finish(pass,pct);
+    if(pass)FX.toast(pct>=90?`🏆 ${pct}점 — 최상위권!`:`🎉 합격선 통과 ${pct}점`,'hype',2400);
+    else FX.toast(`${pct}점 — 오답노트로 보강하세요`,'bad',2000);
+  },420);
+  updCombo();
+}
+function wrongCard(q,cnt){
+  const ansTxt = q.type==='mcq' ? `${'①②③④'[q.a]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)') : q.a;
+  return `<div class="wrong-item">
+    <div class="meta"><span class="sbadge" style="background:${subColor(q.s)}">${subShort(q.s)}</span>
+      <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>
+      ${cnt?`<span class="cnt">✗ ${cnt}회 오답</span>`:''}</div>
+    <div class="q">${esc(q.q)}</div>
+    ${q.type==='mcq'?`<div style="font-size:13px;color:var(--tx3);margin-bottom:5px">${q.c.map((c,i)=>`${'①②③④'[i]} ${esc(c)}`).join(' &nbsp; ')}</div>`:''}
+    <div class="a">정답: ${esc(ansTxt)}</div>
+    <div class="e">${esc(q.e||'')}</div></div>`;
+}
+
+/* ═══════════ 오답노트 ═══════════ */
+function renderNote(){
+  const ids=Object.keys(S.wrong).sort((a,b)=>S.wrong[b]-S.wrong[a]);
+  $('noteStat').textContent=ids.length?`${ids.length}문제 누적`:'';
+  if(!ids.length){
+    $('noteList').innerHTML=`<div class="empty"><div class="ic">📗</div>오답노트가 비어 있습니다.<br>퀴즈를 풀면 틀린 문제가 자동으로 쌓입니다.</div>`;
+    return;
+  }
+  $('noteList').innerHTML=ids.map(id=>{const q=QBYID[id];return q?wrongCard(q,S.wrong[id]):''}).join('');
+}
+$('clearWrong').onclick=()=>{if(confirm('오답노트를 모두 비울까요?')){S.wrong={};save();renderNote();renderHome()}};
+
+/* ═══════════ 초기화 ═══════════ */
+applyBrand();
+renderHome();
+renderCardFilter(); buildDeck();
+renderSheetFilter(); renderSheet();
+renderQuizSetup();
+</script>
+</body>
+</html>
