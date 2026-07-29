@@ -259,6 +259,15 @@ ul.sl li::before{content:"▸";position:absolute;left:2px;color:var(--ac)}
 .gtitle{font-size:12px;font-weight:800;color:var(--ac);letter-spacing:.4px;margin:14px 0 2px;text-transform:uppercase}
 .gtitle:first-child{margin-top:0}
 .chip.dim{opacity:.45}
+.lvl{
+  display:inline-block;padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:800;
+  letter-spacing:.2px;color:#fff;flex:none;vertical-align:middle;
+}
+.chip .dot2{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.lvlbar{display:flex;height:8px;border-radius:99px;overflow:hidden;margin:8px 0 4px}
+.lvlbar i{display:block;height:100%}
+.lvlkey{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--tx3)}
+.lvlkey b{font-weight:700}
 button.cell{
   font-variant-numeric:tabular-nums;font-weight:700;font-size:13.5px;color:var(--tx);
   padding:2px 9px;border-radius:8px;border:1px solid transparent;transition:.13s;
@@ -530,6 +539,10 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
         <div class="qopts" id="quizType"></div>
       </div>
       <div class="qrow">
+        <label>난이도</label>
+        <div class="qopts" id="quizLevel"></div>
+      </div>
+      <div class="qrow">
         <label>문항 수</label>
         <div class="qopts" id="quizCount"></div>
       </div>
@@ -553,6 +566,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
       <h3 style="font-size:15px;font-weight:800;margin-bottom:2px">📚 문제은행 현황</h3>
       <div style="font-size:12.5px;color:var(--tx3);margin-bottom:6px">과목 × 유형별 보유 문항 수 — 셀을 누르면 그 조합으로 바로 출제됩니다.</div>
       <div class="tw" id="bankTable"></div>
+      <div id="bankLevels" style="margin-top:12px"></div>
     </div>
   </div>
 
@@ -616,8 +630,12 @@ const ALLQ=[...CPPG.mcq,...CPPG.ox,...CPPG.fill];
 const QBYID={}; ALLQ.forEach(q=>QBYID[q.id]=q);
 const TYPES=[{k:'mcq',n:'4지선다'},{k:'ox',n:'OX'},{k:'fill',n:'단답형'}];
 const typeName=k=>(TYPES.find(t=>t.k===k)||{}).n||k;
-/** 과목(sub)·유형(type)별 문항 수. 'all' 이면 전체 */
-const bankCount=(sub,type)=>ALLQ.filter(q=>(sub==='all'||q.s===sub)&&(!type||q.type===type)).length;
+const LV={}; (CPPG.levels||[]).forEach(l=>LV[l.d]=l);
+const lvName=d=>(LV[d]||{}).name||'표준';
+const lvColor=d=>(LV[d]||{}).color||'#888';
+/** 과목(sub)·유형(type)·난이도(lv)별 문항 수. 'all'/미지정이면 전체 */
+const bankCount=(sub,type,lv)=>ALLQ.filter(q=>
+  (sub==='all'||q.s===sub)&&(!type||q.type===type)&&(!lv||q.d===lv)).length;
 
 /* ═══════════ 🎉 보상 연출(FX) ═══════════ */
 const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -802,7 +820,8 @@ function renderHome(){
     <div class="stat"><div class="k">암기카드 숙지</div><div class="v">${cs.ok}<span style="font-size:15px;color:var(--tx3)"> / ${cs.t}</span></div>
       <div class="prog"><i style="width:${pct}%"></i></div><div class="m">모름 ${cs.no} · 미학습 ${cs.rest}</div></div>
     <div class="stat"><div class="k">문제은행</div><div class="v">${ALLQ.length}</div>
-      <div class="m">4지선다 ${CPPG.mcq.length} · OX ${CPPG.ox.length} · 단답 ${CPPG.fill.length}</div></div>
+      <div class="m">4지선다 ${CPPG.mcq.length} · OX ${CPPG.ox.length} · 단답 ${CPPG.fill.length}<br>
+        ${CPPG.levels.map(l=>`<span style="color:${l.color}">${l.name} ${bankCount('all',null,l.d)}</span>`).join(' · ')}</div></div>
     <div class="stat"><div class="k">퀴즈 평균 / 최근</div><div class="v" style="color:${avg>=60?'var(--ok)':'var(--tx)'}">${qz.length?avg+'점':'—'}</div>
       <div class="m">${last?`최근 ${last.pct}점 (${last.right}/${last.total})`:'응시 기록 없음'} · ${qz.length}회</div></div>
     <div class="stat"><div class="k">오답노트</div><div class="v" style="color:${wrongN?'var(--no)':'var(--tx)'}">${wrongN}</div>
@@ -1029,21 +1048,31 @@ function renderSheet(){
 }
 
 /* ═══════════ 퀴즈 ═══════════ */
-const Q={sub:'all',types:['mcq','ox','fill'],count:20,mode:'practice'};
+const Q={sub:'all',types:['mcq','ox','fill'],levels:[1,2,3],count:20,mode:'practice'};
 let quiz=null, timerId=null;
 /** 콤보: 연속 정답 수. best 는 역대 최고(저장됨) */
 let combo=0, comboMax=0;
 const MILESTONES={3:'🔥 3연속! 불붙었다',5:'⚡ 5연속! 완벽해요',8:'💎 8연속! 대단합니다',12:'👑 12연속! 합격각',20:'🚀 20연속! 무결점'};
 
 function renderQuizSetup(){
-  // 과목 칩 — 선택된 유형 기준 문항 수 표기
-  const subCnt=id=>ALLQ.filter(q=>(id==='all'||q.s===id)&&Q.types.includes(q.type)).length;
+  // 각 칩의 개수는 "그 칩을 제외한 나머지 조건"을 적용해 센다 → 선택을 바꿨을 때의 결과가 보인다
+  const match=(q,{sub,types,levels})=>
+    (sub==='all'||q.s===sub)&&types.includes(q.type)&&levels.includes(q.d);
+
+  const subCnt=id=>ALLQ.filter(q=>match(q,{sub:id,types:Q.types,levels:Q.levels})).length;
   $('quizSubj').innerHTML=`<button class="chip ${Q.sub==='all'?'on':''}" data-q="sub" data-v="all">전체<span class="n">${subCnt('all')}</span></button>`+
     CPPG.subjects.map(s=>`<button class="chip ${Q.sub===s.id?'on':''}" data-q="sub" data-v="${s.id}">${s.no}과목<span class="n">${subCnt(s.id)}</span></button>`).join('');
 
-  // 유형 칩 — 선택된 과목 기준 문항 수 표기
-  $('quizType').innerHTML=TYPES.map(t=>
-    `<button class="chip ${Q.types.includes(t.k)?'on':''}" data-q="type" data-v="${t.k}">${t.n}<span class="n">${bankCount(Q.sub,t.k)}</span></button>`).join('');
+  $('quizType').innerHTML=TYPES.map(t=>{
+    const c=ALLQ.filter(q=>match(q,{sub:Q.sub,types:[t.k],levels:Q.levels})).length;
+    return `<button class="chip ${Q.types.includes(t.k)?'on':''}" data-q="type" data-v="${t.k}">${t.n}<span class="n">${c}</span></button>`;
+  }).join('');
+
+  $('quizLevel').innerHTML=CPPG.levels.map(l=>{
+    const c=ALLQ.filter(q=>match(q,{sub:Q.sub,types:Q.types,levels:[l.d]})).length;
+    return `<button class="chip ${Q.levels.includes(l.d)?'on':''}" data-q="level" data-v="${l.d}" title="${esc(l.desc)}">
+      <span class="dot2" style="background:${l.color}"></span>${l.name}<span class="n">${c}</span></button>`;
+  }).join('');
 
   const pool=pickPool();
   $('quizCount').innerHTML=[10,20,30,50,100].map(n=>
@@ -1054,9 +1083,11 @@ function renderQuizSetup(){
     <button class="chip ${Q.mode==='exam'?'on':''}" data-q="mode" data-v="exam">모의고사 (타이머·끝나고 채점)</button>`;
 
   const n=Q.count===0?pool.length:Math.min(Q.count,pool.length);
-  const byType=TYPES.filter(t=>Q.types.includes(t.k)).map(t=>`${t.n} ${bankCount(Q.sub,t.k)}`).join(' · ');
-  $('quizPoolRow').innerHTML=`출제 가능 <b style="color:var(--ac)">${pool.length}</b>문항 (${esc(byType)}) · 실제 출제 <b>${n}</b>문항`
-    +(Q.mode==='exam'?` · 제한시간 <b>${Math.max(1,Math.round(n*1.2))}</b>분`:'');
+  const byType=TYPES.filter(t=>Q.types.includes(t.k)).map(t=>`${t.n} ${pool.filter(q=>q.type===t.k).length}`).join(' · ');
+  const byLv=CPPG.levels.filter(l=>Q.levels.includes(l.d)).map(l=>`${l.name} ${pool.filter(q=>q.d===l.d).length}`).join(' · ');
+  $('quizPoolRow').innerHTML=`출제 가능 <b style="color:var(--ac)">${pool.length}</b>문항 · 실제 출제 <b>${n}</b>문항`
+    +(Q.mode==='exam'?` · 제한시간 <b>${Math.max(1,Math.round(n*1.2))}</b>분`:'')
+    +`<br><span style="color:var(--tx3)">${esc(byType)} &nbsp;|&nbsp; ${esc(byLv)}</span>`;
   renderBank();
 }
 
@@ -1075,18 +1106,34 @@ function renderBank(){
   $('bankTable').innerHTML=`<table><thead><tr><th>과목</th>${TYPES.map(t=>`<th style="text-align:right">${t.n}</th>`).join('')}<th style="text-align:right">합계</th></tr></thead>
     <tbody>${rows}<tr style="background:var(--card2)"><td style="font-weight:800">합계</td>${tots}
     <td style="text-align:right;font-weight:800;color:var(--ac)">${ALLQ.length}</td></tr></tbody></table>`;
+  renderLevelBar('bankLevels');
+}
+
+/** 난이도 분포 막대 + 범례 */
+function renderLevelBar(id){
+  const el=$(id); if(!el)return;
+  const tot=ALLQ.length;
+  el.innerHTML=`<div class="lvlbar">`+
+    CPPG.levels.map(l=>{
+      const c=bankCount('all',null,l.d);
+      return `<i style="width:${c/tot*100}%;background:${l.color}" title="${l.name} ${c}"></i>`;
+    }).join('')+`</div><div class="lvlkey">`+
+    CPPG.levels.map(l=>{
+      const c=bankCount('all',null,l.d);
+      return `<span><span class="dot2" style="background:${l.color}"></span><b>${l.name}</b> ${c}문항 (${Math.round(c/tot*100)}%) — ${esc(l.desc.split(' — ')[1]||l.desc)}</span>`;
+    }).join('')+`</div>`;
 }
 $('bankTable').onclick=e=>{
   const b=e.target.closest('[data-bs]'); if(!b||b.disabled)return;
-  Q.sub=b.dataset.bs; Q.types=[b.dataset.bt];
+  Q.sub=b.dataset.bs; Q.types=[b.dataset.bt]; Q.levels=[1,2,3];   // 난이도는 전체로 되돌려 표의 숫자와 일치시킨다
   renderQuizSetup();
   const pool=shuffle(pickPool());
   startQuiz(Q.count===0?pool:pool.slice(0,Q.count),Q.mode);
 };
 function pickPool(){
-  return ALLQ.filter(q=>Q.types.includes(q.type)&&(Q.sub==='all'||q.s===Q.sub));
+  return ALLQ.filter(q=>Q.types.includes(q.type)&&Q.levels.includes(q.d)&&(Q.sub==='all'||q.s===Q.sub));
 }
-document.querySelectorAll('#quizSubj,#quizType,#quizCount,#quizMode').forEach(el=>{
+document.querySelectorAll('#quizSubj,#quizType,#quizLevel,#quizCount,#quizMode').forEach(el=>{
   el.onclick=e=>{
     const b=e.target.closest('[data-q]'); if(!b)return;
     const k=b.dataset.q, v=b.dataset.v;
@@ -1096,6 +1143,11 @@ document.querySelectorAll('#quizSubj,#quizType,#quizCount,#quizMode').forEach(el
     else if(k==='type'){
       const i=Q.types.indexOf(v);
       if(i>=0){ if(Q.types.length>1)Q.types.splice(i,1); } else Q.types.push(v);
+    }
+    else if(k==='level'){
+      const n=+v, i=Q.levels.indexOf(n);
+      if(i>=0){ if(Q.levels.length>1)Q.levels.splice(i,1); } else Q.levels.push(n);
+      Q.levels.sort();
     }
     renderQuizSetup();
   };
@@ -1157,7 +1209,8 @@ function renderQ(){
   renderQ._m=mark4;
   updCombo();
 
-  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} · ${typeName(q.type)}</div>
+  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} · ${typeName(q.type)}
+           <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span></div>
          <div class="qtext">${esc(q.q)}</div>`;
 
   if(q.type==='mcq'){
@@ -1283,11 +1336,12 @@ function finishQuiz(){
   const total=quiz.items.length;
   const right=quiz.items.filter((q,i)=>isRight(q,quiz.ans[i])).length;
   const pct=Math.round(right/total*100);
-  // 과목별
-  const per={};
+  // 과목별 · 난이도별 집계
+  const per={}, lv={};
   quiz.items.forEach((q,i)=>{
-    per[q.s]=per[q.s]||{t:0,r:0};
-    per[q.s].t++; if(isRight(q,quiz.ans[i]))per[q.s].r++;
+    const ok=isRight(q,quiz.ans[i]);
+    per[q.s]=per[q.s]||{t:0,r:0}; per[q.s].t++; if(ok)per[q.s].r++;
+    lv[q.d]=lv[q.d]||{t:0,r:0};   lv[q.d].t++;  if(ok)lv[q.d].r++;
   });
   S.quizzes.push({pct,right,total,mode:quiz.mode}); if(S.quizzes.length>50)S.quizzes.shift();
   save();
@@ -1308,6 +1362,14 @@ function finishQuiz(){
           return `<div><div class="k" style="color:${s.color}">${s.no}과목</div>
             <div class="v" style="color:${p>=40?'var(--tx)':'var(--no)'}">${p}점</div>
             <div class="k">${v.r}/${v.t}</div></div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:12px;color:var(--tx3);margin:-8px 0 14px">난이도별 정답률</div>
+      <div class="resgrid" style="margin-top:0">
+        ${CPPG.levels.filter(l=>lv[l.d]).map(l=>{
+          const v=lv[l.d], p=Math.round(v.r/v.t*100);
+          return `<div><div class="k" style="color:${l.color}">${l.name}</div>
+            <div class="v">${p}%</div><div class="k">${v.r}/${v.t}</div></div>`;
         }).join('')}
       </div>
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
@@ -1346,6 +1408,7 @@ function wrongCard(q,cnt){
   const ansTxt = q.type==='mcq' ? `${'①②③④'[q.a]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)') : q.a;
   return `<div class="wrong-item">
     <div class="meta"><span class="sbadge" style="background:${subColor(q.s)}">${subShort(q.s)}</span>
+      <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>
       ${cnt?`<span class="cnt">✗ ${cnt}회 오답</span>`:''}</div>
     <div class="q">${esc(q.q)}</div>
     ${q.type==='mcq'?`<div style="font-size:13px;color:var(--tx3);margin-bottom:5px">${q.c.map((c,i)=>`${'①②③④'[i]} ${esc(c)}`).join(' &nbsp; ')}</div>`:''}
