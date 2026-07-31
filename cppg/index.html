@@ -379,7 +379,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 
 <header>
   <div class="hwrap">
-    <div class="logo"><b>CPPG</b><span>개인정보관리사 2026</span></div>
+    <div class="logo"><b id="brand">CPPG</b><span id="brandTag">개인정보관리사 2026</span></div>
     <nav id="nav">
       <button data-v="home" class="on">🏠 홈 <kbd>1</kbd></button>
       <button data-v="cards">🃏 암기카드 <kbd>2</kbd></button>
@@ -437,7 +437,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 <!-- ══════════ 홈 ══════════ -->
 <section class="view on" id="v-home">
   <div class="hero">
-    <h1>CPPG 개인정보관리사</h1>
+    <h1 id="heroH1">CPPG 개인정보관리사</h1>
     <div class="sub" id="heroSub"></div>
     <div class="slog" id="heroSlog"></div>
     <div class="metas" id="heroMeta"></div>
@@ -447,7 +447,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 
   <div class="grid g2">
     <div class="box">
-      <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">과목별 출제 비중 · 암기 진도</h3>
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:6px" id="lblSubList">과목별 출제 비중 · 암기 진도</h3>
       <div id="subList"></div>
     </div>
     <div class="box">
@@ -531,7 +531,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     <p class="vd">4지선다 · OX · 단답형 문제은행에서 출제합니다. 틀린 문제는 자동으로 오답노트에 저장되고, 다시 맞히면 빠집니다.</p>
     <div class="box qsetup">
       <div class="qrow">
-        <label>과목</label>
+        <label id="lblQuizSubj">과목</label>
         <div class="qopts" id="quizSubj"></div>
       </div>
       <div class="qrow">
@@ -564,7 +564,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 
     <div class="box" style="max-width:640px;margin:16px auto 0">
       <h3 style="font-size:15px;font-weight:800;margin-bottom:2px">📚 문제은행 현황</h3>
-      <div style="font-size:12.5px;color:var(--tx3);margin-bottom:6px">과목 × 유형별 보유 문항 수 — 셀을 누르면 그 조합으로 바로 출제됩니다.</div>
+      <div style="font-size:12.5px;color:var(--tx3);margin-bottom:6px" id="lblBank">과목 × 유형별 보유 문항 수 — 셀을 누르면 그 조합으로 바로 출제됩니다.</div>
       <div class="tw" id="bankTable"></div>
       <div id="bankLevels" style="margin-top:12px"></div>
     </div>
@@ -602,22 +602,23 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 
 </main>
 
-<footer>
-  <div>출처 · <b>2026 원큐패스 개인정보관리사 CPPG</b> (김창중, 다락원) / 한국 CPO 포럼 · KISA · 개인정보보호위원회 · 국가법령정보센터</div>
-  <div>데이터 소스: <code>02_타자격증_학습자료/CPPG_2026/*.txt</code> → <code>학습사이트/data.js</code> · 진도·오답노트는 브라우저(localStorage)에만 저장됩니다.</div>
-  <div>법령·통계 수치는 시험 직전 <b>개인정보보호위원회·KISA 공지</b>로 재확인하세요.</div>
-</footer>
+<footer id="foot"></footer>
 
 <script src="data.js"></script>
 <script>
 /* ═══════════ 저장소 ═══════════ */
-const KEY='cppg-study-v1';
+/* 자격증마다 저장소를 분리 (같은 도메인에 여러 학습사이트가 올라가므로) */
+const KEY=(CPPG.meta.storeKey||'exam')+'-study-v1';
 const S=Object.assign({theme:'dark',sound:true,best:0,cards:{},wrong:{},quizzes:[],check:{}},JSON.parse(localStorage.getItem(KEY)||'{}'));
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 
 const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
-const subName=id=>SUB[id]?`${SUB[id].no}과목 ${SUB[id].name}`:'공통';
-const subShort=id=>SUB[id]?`${SUB[id].no}과목`:'공통';
+/* 자격증마다 구분 단위가 다르다 — 필기 종목은 '과목', AWS 같은 종목은 '영역' */
+const UNIT=CPPG.meta.unit||'과목';
+/* subjects[].out 의 단위 — 필기 종목은 문항 수, 실기·배점제 종목은 점수 */
+const OUTU=CPPG.meta.outUnit||'문제';
+const subName=id=>SUB[id]?`${SUB[id].no}${UNIT} ${SUB[id].name}`:'공통';
+const subShort=id=>SUB[id]?`${SUB[id].no}${UNIT}`:'공통';
 const subColor=id=>SUB[id]?SUB[id].color:'#888';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $=id=>document.getElementById(id);
@@ -801,6 +802,20 @@ function cardStats(){
   CPPG.cards.forEach((c,i)=>{const v=S.cards['c'+i]; if(v==='ok')ok++; else if(v==='no')no++});
   return{t,ok,no,rest:t-ok-no};
 }
+/* 브랜딩은 data.js 의 meta 에서 읽는다 → 같은 index.html 을 다른 자격증에도 재사용 */
+function applyBrand(){
+  const m=CPPG.meta;
+  document.title=m.title||`${m.name} — 암기·퀴즈 학습`;
+  $('brand').textContent=m.brand||m.name;
+  $('brandTag').textContent=m.tag||'';
+  $('heroH1').textContent=m.h1||m.name;
+  $('foot').innerHTML=(m.footer||[]).map(l=>`<div>${l}</div>`).join('');
+  /* 구분 단위(과목·영역) 라벨도 meta 를 따른다 */
+  $('lblSubList').textContent=`${UNIT}별 출제 비중 · 암기 진도`;
+  $('lblQuizSubj').textContent=UNIT;
+  $('lblBank').textContent=`${UNIT} × 유형별 보유 문항 수 — 셀을 누르면 그 조합으로 바로 출제됩니다.`;
+}
+
 function renderHome(){
   const m=CPPG.meta;
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
@@ -834,7 +849,7 @@ function renderHome(){
     const qn=ALLQ.filter(q=>q.s===s.id).length;
     return `<div class="subrow"><span class="dot" style="background:${s.color}"></span>
       <span class="nm">${s.no}. ${esc(s.name)}<div style="font-size:11.5px;color:var(--tx3);font-weight:400">${esc(s.desc)}</div></span>
-      <span class="ct">약 ${s.out}문제 · 문제 ${qn}</span>
+      <span class="ct">약 ${s.out}${OUTU} · 문제 ${qn}</span>
       <span class="pb"><i style="width:${p}%;background:${s.color}"></i></span>
       <span class="ct" style="width:34px;text-align:right">${p}%</span></div>`;
   }).join('');
@@ -872,7 +887,7 @@ function buildDeck(keepPos){
 function renderCardFilter(){
   const cnt=id=>CPPG.cards.filter(c=>id==='all'||c.s===id).length;
   $('cardFilter').innerHTML=`<button class="chip ${cSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
-    CPPG.subjects.map(s=>`<button class="chip ${cSub===s.id?'on':''}" data-s="${s.id}">${s.no}과목<span class="n">${cnt(s.id)}</span></button>`).join('');
+    CPPG.subjects.map(s=>`<button class="chip ${cSub===s.id?'on':''}" data-s="${s.id}">${s.no}${UNIT}<span class="n">${cnt(s.id)}</span></button>`).join('');
 }
 $('cardFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cSub=b.dataset.s;renderCardFilter();buildDeck()};
 
@@ -1019,7 +1034,7 @@ document.addEventListener('keydown',e=>{
 let shSub='all', shQ='';
 function renderSheetFilter(){
   $('sheetFilter').innerHTML=`<button class="chip ${shSub==='all'?'on':''}" data-s="all">전체</button>`+
-    CPPG.subjects.map(s=>`<button class="chip ${shSub===s.id?'on':''}" data-s="${s.id}">${s.no}과목</button>`).join('');
+    CPPG.subjects.map(s=>`<button class="chip ${shSub===s.id?'on':''}" data-s="${s.id}">${s.no}${UNIT}</button>`).join('');
 }
 $('sheetFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;shSub=b.dataset.s;renderSheetFilter();renderSheet()};
 $('sheetSearch').oninput=e=>{shQ=e.target.value.trim().toLowerCase();renderSheet()};
@@ -1061,7 +1076,7 @@ function renderQuizSetup(){
 
   const subCnt=id=>ALLQ.filter(q=>match(q,{sub:id,types:Q.types,levels:Q.levels})).length;
   $('quizSubj').innerHTML=`<button class="chip ${Q.sub==='all'?'on':''}" data-q="sub" data-v="all">전체<span class="n">${subCnt('all')}</span></button>`+
-    CPPG.subjects.map(s=>`<button class="chip ${Q.sub===s.id?'on':''}" data-q="sub" data-v="${s.id}">${s.no}과목<span class="n">${subCnt(s.id)}</span></button>`).join('');
+    CPPG.subjects.map(s=>`<button class="chip ${Q.sub===s.id?'on':''}" data-q="sub" data-v="${s.id}">${s.no}${UNIT}<span class="n">${subCnt(s.id)}</span></button>`).join('');
 
   $('quizType').innerHTML=TYPES.map(t=>{
     const c=ALLQ.filter(q=>match(q,{sub:Q.sub,types:[t.k],levels:Q.levels})).length;
@@ -1099,11 +1114,11 @@ function renderBank(){
       return `<td style="text-align:right"><button class="cell" data-bs="${s.id}" data-bt="${t.k}" ${c?'':'disabled'}>${c}</button></td>`;
     }).join('');
     const tot=ALLQ.filter(q=>q.s===s.id).length;
-    return `<tr><td><span class="sbadge" style="background:${s.color}">${s.no}과목</span> ${esc(s.name)}</td>${cells}
+    return `<tr><td><span class="sbadge" style="background:${s.color}">${s.no}${UNIT}</span> ${esc(s.name)}</td>${cells}
       <td style="text-align:right;font-weight:800">${tot}</td></tr>`;
   }).join('');
   const tots=TYPES.map(t=>`<td style="text-align:right;font-weight:800">${bankCount('all',t.k)}</td>`).join('');
-  $('bankTable').innerHTML=`<table><thead><tr><th>과목</th>${TYPES.map(t=>`<th style="text-align:right">${t.n}</th>`).join('')}<th style="text-align:right">합계</th></tr></thead>
+  $('bankTable').innerHTML=`<table><thead><tr><th>${UNIT}</th>${TYPES.map(t=>`<th style="text-align:right">${t.n}</th>`).join('')}<th style="text-align:right">합계</th></tr></thead>
     <tbody>${rows}<tr style="background:var(--card2)"><td style="font-weight:800">합계</td>${tots}
     <td style="text-align:right;font-weight:800;color:var(--ac)">${ALLQ.length}</td></tr></tbody></table>`;
   renderLevelBar('bankLevels');
@@ -1347,19 +1362,21 @@ function finishQuiz(){
   save();
 
   const wrongList=quiz.items.map((q,i)=>({q,a:quiz.ans[i]})).filter(x=>!isRight(x.q,x.a));
-  const perOk=Object.entries(per).every(([,v])=>v.r/v.t>=0.4);
-  const pass=pct>=60&&perOk;
+  /* 합격 판정 기준도 자격증마다 다르다 (meta.passRule 없으면 평균 60 + 과락 40) */
+  const PR=CPPG.meta.passRule||{pct:60,per:40};
+  const perOk=Object.entries(per).every(([,v])=>v.r/v.t>=(PR.per||0)/100);
+  const pass=pct>=PR.pct&&perOk;
 
   $('quizRun').style.display='none'; $('quizResult').style.display='block';
   $('quizResult').innerHTML=`
     <div class="box res pop">
       <div class="sc ${pass?'p':'f'}" id="scNum">0점</div>
-      <div class="lb">${right} / ${total} 정답 · ${pass?'✅ 합격선 통과 (평균 60 + 과목별 40)':'❌ 합격선 미달'}</div>
+      <div class="lb">${right} / ${total} 정답 · ${pass?`✅ 합격선 통과 (${esc(CPPG.meta.pass)})`:'❌ 합격선 미달'}</div>
       ${comboMax>=3?`<div style="margin-top:8px"><span class="combo hot">🔥 최고 ${comboMax}연속${S.best>comboMax?`  ·  역대 ${S.best}`:'  ·  신기록!'}</span></div>`:''}
       <div class="resgrid">
         ${CPPG.subjects.filter(s=>per[s.id]).map(s=>{
           const v=per[s.id], p=Math.round(v.r/v.t*100);
-          return `<div><div class="k" style="color:${s.color}">${s.no}과목</div>
+          return `<div><div class="k" style="color:${s.color}">${s.no}${UNIT}</div>
             <div class="v" style="color:${p>=40?'var(--tx)':'var(--no)'}">${p}점</div>
             <div class="k">${v.r}/${v.t}</div></div>`;
         }).join('')}
@@ -1429,6 +1446,7 @@ function renderNote(){
 $('clearWrong').onclick=()=>{if(confirm('오답노트를 모두 비울까요?')){S.wrong={};save();renderNote();renderHome()}};
 
 /* ═══════════ 초기화 ═══════════ */
+applyBrand();
 renderHome();
 renderCardFilter(); buildDeck();
 renderSheetFilter(); renderSheet();

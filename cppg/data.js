@@ -9,6 +9,14 @@ const CPPG = {};
 /* ── 0. 시험 메타 ───────────────────────────────────────── */
 CPPG.meta = {
   name: 'CPPG 개인정보관리사',
+  brand: 'CPPG', tag: '개인정보관리사 2026', storeKey: 'cppg',
+  title: 'CPPG 개인정보관리사 — 암기·퀴즈 학습',
+  h1: 'CPPG 개인정보관리사',
+  footer: [
+    '출처 · <b>2026 원큐패스 개인정보관리사 CPPG</b> (김창중, 다락원) / 한국 CPO 포럼 · KISA · 개인정보보호위원회 · 국가법령정보센터',
+    '데이터 소스: <code>02_타자격증_학습자료/CPPG_2026/*.txt</code> → <code>학습사이트/data.js</code> · 진도·오답노트는 브라우저(localStorage)에만 저장됩니다.',
+    '법령·통계 수치는 시험 직전 <b>개인정보보호위원회·KISA 공지</b>로 재확인하세요.'
+  ],
   full: 'Certified Privacy Protection General',
   host: '한국 CPO 포럼 / KISA',
   type: '객관식 4지선다 · 5과목 100문항',
