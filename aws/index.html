@@ -629,7 +629,9 @@ CPPG.ox.forEach((q,i)=>{q.id='o'+i;q.type='ox'});
 CPPG.fill.forEach((q,i)=>{q.id='f'+i;q.type='fill'});
 const ALLQ=[...CPPG.mcq,...CPPG.ox,...CPPG.fill];
 const QBYID={}; ALLQ.forEach(q=>QBYID[q.id]=q);
-const TYPES=[{k:'mcq',n:'4지선다'},{k:'ox',n:'OX'},{k:'fill',n:'단답형'}];
+/* 문항이 하나도 없는 유형은 칩·표·필터에서 아예 감춘다 (예: 단답형을 쓰지 않는 종목) */
+const ALLTYPES=[{k:'mcq',n:'4지선다'},{k:'ox',n:'OX'},{k:'fill',n:'단답형'}];
+const TYPES=ALLTYPES.filter(t=>ALLQ.some(q=>q.type===t.k));
 const typeName=k=>(TYPES.find(t=>t.k===k)||{}).n||k;
 const LV={}; (CPPG.levels||[]).forEach(l=>LV[l.d]=l);
 const lvName=d=>(LV[d]||{}).name||'표준';
@@ -835,7 +837,7 @@ function renderHome(){
     <div class="stat"><div class="k">암기카드 숙지</div><div class="v">${cs.ok}<span style="font-size:15px;color:var(--tx3)"> / ${cs.t}</span></div>
       <div class="prog"><i style="width:${pct}%"></i></div><div class="m">모름 ${cs.no} · 미학습 ${cs.rest}</div></div>
     <div class="stat"><div class="k">문제은행</div><div class="v">${ALLQ.length}</div>
-      <div class="m">4지선다 ${CPPG.mcq.length} · OX ${CPPG.ox.length} · 단답 ${CPPG.fill.length}<br>
+      <div class="m">${TYPES.map(t=>`${t.n} ${bankCount('all',t.k)}`).join(' · ')}<br>
         ${CPPG.levels.map(l=>`<span style="color:${l.color}">${l.name} ${bankCount('all',null,l.d)}</span>`).join(' · ')}</div></div>
     <div class="stat"><div class="k">퀴즈 평균 / 최근</div><div class="v" style="color:${avg>=60?'var(--ok)':'var(--tx)'}">${qz.length?avg+'점':'—'}</div>
       <div class="m">${last?`최근 ${last.pct}점 (${last.right}/${last.total})`:'응시 기록 없음'} · ${qz.length}회</div></div>
@@ -1063,7 +1065,7 @@ function renderSheet(){
 }
 
 /* ═══════════ 퀴즈 ═══════════ */
-const Q={sub:'all',types:['mcq','ox','fill'],levels:[1,2,3],count:20,mode:'practice'};
+const Q={sub:'all',types:TYPES.map(t=>t.k),levels:[1,2,3],count:20,mode:'practice'};
 let quiz=null, timerId=null;
 /** 콤보: 연속 정답 수. best 는 역대 최고(저장됨) */
 let combo=0, comboMax=0;
