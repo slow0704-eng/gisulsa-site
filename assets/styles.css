@@ -786,3 +786,56 @@ footer{margin-top:56px;padding:22px 16px 40px;border-top:1px solid var(--line);b
   .es-reqs,.es-prob *{color:#000 !important;}
   .note{background:#fff !important;border-left:3px solid var(--ink-400);}
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   모바일 UI/UX 보강 (2026-08)
+   · 한국어 어절 단위 줄바꿈 — "관계/도", "정의/시트" 처럼 글자가 쪼개지지 않게
+   · 노치·홈 인디케이터(safe-area) 반영
+   · iOS 포커스 시 자동 확대 방지(입력 글자 16px 이상)
+   · 터치 타깃 확대 · 표 관성 스크롤
+   ═══════════════════════════════════════════════════════════════ */
+html,body{-webkit-text-size-adjust:100%;}
+body{word-break:keep-all;overflow-wrap:anywhere;}
+button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+/* 표·구성도는 어절 단위 줄바꿈이 더 중요하다 */
+.card table th,.card table td,.sheet-row,.blk{word-break:keep-all;}
+/* 구성도(고정폭 도식)는 원문 줄바꿈을 유지해야 하므로 예외 */
+.diag,pre,code{word-break:normal;overflow-wrap:normal;}
+
+@media (max-width:640px){
+  /* 안전영역 */
+  .topbar{
+    padding-top:calc(8px + env(safe-area-inset-top));
+    padding-left:max(12px,env(safe-area-inset-left));
+    padding-right:max(12px,env(safe-area-inset-right));
+  }
+  #content,#gloss{
+    padding-bottom:calc(80px + env(safe-area-inset-bottom));
+    padding-left:max(12px,env(safe-area-inset-left));
+    padding-right:max(12px,env(safe-area-inset-right));
+  }
+
+  /* iOS 자동 확대 방지 */
+  input,select,textarea,.gsearch,.gl-search{font-size:16px;}
+
+  /* 뷰 전환 버튼 — 글자가 쪼개지지 않게, 터치 타깃 확보 */
+  .viewsw button{min-height:42px;white-space:nowrap;word-break:keep-all;}
+
+  /* 터치 타깃 */
+  .chip{min-height:38px;display:inline-flex;align-items:center;}
+  .card-zoom{width:32px;height:32px;}
+  .cm-btn{width:28px;height:28px;}
+
+  /* 표: 관성 스크롤 + 좁은 폭에서 글자 쪼개짐 방지 */
+  .card .tw,.tablewrap,.card table{-webkit-overflow-scrolling:touch;}
+  .card table{word-break:keep-all;}
+
+  /* 모달: 모바일 주소창 높이 변화 대응 */
+  .cmodal-box{max-height:min(88vh,88dvh);}
+}
+
+@media (hover:none){
+  /* 터치 기기에서는 hover 대신 누르는 순간 반응 */
+  .chip:active,.viewsw button:active,.cm-btn:active{transform:scale(.97);}
+  .card:hover{transform:none;box-shadow:var(--sh-1);}   /* 터치 시 들뜸 방지 */
+}
