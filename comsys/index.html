@@ -31,8 +31,12 @@ body{
 }
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
 html,body{overflow-x:hidden;-webkit-text-size-adjust:100%}
-/* 한국어는 어절 단위로 끊고, 긴 수식·코드만 강제 줄바꿈을 허용한다 */
-body{word-break:keep-all;overflow-wrap:anywhere}
+/* 한국어는 어절 단위로 끊는다.
+   overflow-wrap 은 break-word — anywhere 를 쓰면 min-content 가 1글자로 떨어져
+   keep-all 이 무력화되고 버튼·칩 글자가 세로로 쪼개진다. */
+body{word-break:keep-all;overflow-wrap:break-word}
+/* 긴 수식·SQL·코드만 어디서든 끊을 수 있게 */
+.ansbox,.fca,.fctip,code,kbd,.expl{overflow-wrap:anywhere}
 button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 button{cursor:pointer;border:none;background:none}
 
