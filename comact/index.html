@@ -31,6 +31,8 @@ body{
 }
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
 html,body{overflow-x:hidden;-webkit-text-size-adjust:100%}
+/* 한국어는 어절 단위로 끊고, 긴 수식·코드만 강제 줄바꿈을 허용한다 */
+body{word-break:keep-all;overflow-wrap:anywhere}
 button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 button{cursor:pointer;border:none;background:none}
 
@@ -492,8 +494,10 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     linear-gradient(90deg,var(--card) 30%,transparent) left/28px 100% no-repeat,
     linear-gradient(270deg,var(--card) 30%,transparent) right/28px 100% no-repeat;
     background-attachment:local,local}
-  .tw table{min-width:560px}
-  th,td{white-space:normal}
+  .tw table{min-width:600px}
+  th,td{white-space:normal;word-break:keep-all}
+  input.search{min-width:0;width:100%}
+  .bar .inp,.bar input{flex:1 1 100%}
 
   /* ── 암기카드 조작 버튼: 2×2 격자로 ── */
   .fcctl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
