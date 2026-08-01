@@ -19,7 +19,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <!-- 구성도 격자 폰트(번들 서브셋 52KB) 조기 로드 — swap 이라 FCP 는 막지 않고, 도식 렌더 시점엔 격자 확정 -->
 <link rel="preload" href="assets/D2Coding-diag.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="stylesheet" href="assets/styles.css" />
+<link rel="stylesheet" href="assets/styles.css?v=df1ba2c5" />
 <script>
   /* 테마·글자크기 조기 적용(FOUC 방지) — localStorage 우선, 없으면 시스템 설정 */
   (function(){ try{
@@ -159,9 +159,9 @@
 
 <!-- 초기 로드: 렌더러·데이터·앱 코어만. 뷰 모듈(graph·quiz·practice·glossary·info)은
      app.js 가 해당 뷰/버튼 사용 시점에 온디맨드 로드(초기 파싱·메모리 절감, P4) -->
-<script defer src="assets/render.js"></script>
+<script defer src="assets/render.js?v=c4a71591"></script>
 <script defer src="data/bundle.js"></script>
-<script defer src="assets/app.js"></script>
+<script defer src="assets/app.js?v=187def22"></script>
 <script>
   /* PWA 서비스 워커 등록(오프라인 지원) — file:// 직접 열람 시엔 건너뜀 */
   if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
