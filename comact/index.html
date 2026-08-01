@@ -476,6 +476,30 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   .kbrow{flex-direction:column;gap:2px}
   .kbrow .keys{min-width:0}
 
+  /* ── 키보드 안내는 터치 기기에서 숨긴다 ── */
+  .kbhint{display:none}
+
+  /* ── 칩만 있는 필터 줄은 한 줄 가로 스크롤 ── */
+  #cardFilter,#sheetFilter,#exFilter{
+    flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;margin:0 -14px 14px;padding:0 14px 2px;
+  }
+  #cardFilter::-webkit-scrollbar,#sheetFilter::-webkit-scrollbar,#exFilter::-webkit-scrollbar{display:none}
+  #cardFilter .chip,#sheetFilter .chip,#exFilter .chip{flex:none}
+
+  /* ── 표: 너무 좁아 글자가 쪼개지지 않도록 최소 폭 + 스크롤 힌트 ── */
+  .tw{position:relative;background:
+    linear-gradient(90deg,var(--card) 30%,transparent) left/28px 100% no-repeat,
+    linear-gradient(270deg,var(--card) 30%,transparent) right/28px 100% no-repeat;
+    background-attachment:local,local}
+  .tw table{min-width:560px}
+  th,td{white-space:normal}
+
+  /* ── 암기카드 조작 버튼: 2×2 격자로 ── */
+  .fcctl{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .fcctl .btn,.fcctl .kbtn{width:100%;justify-content:center;min-height:46px}
+  .fcctl .idx{grid-column:1/-1;text-align:center}
+
   #toasts{top:calc(58px + env(safe-area-inset-top));width:92%}
   .toast{white-space:normal;text-align:center}
 }
@@ -593,7 +617,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 <!-- ══════════ 암기카드 ══════════ -->
 <section class="view" id="v-cards">
   <h2 class="vt">🃏 두음·핵심 암기카드</h2>
-  <p class="vd"><kbd>Space</kbd> 뒤집기 · <kbd>1</kbd> 모름 / <kbd>2</kbd> 알아요 · <kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>F</kbd> 섞기 · <kbd>U</kbd> 모르는 것만 · <kbd>?</kbd> 전체 단축키</p>
+  <p class="vd kbhint"><kbd>Space</kbd> 뒤집기 · <kbd>1</kbd> 모름 / <kbd>2</kbd> 알아요 · <kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>F</kbd> 섞기 · <kbd>U</kbd> 모르는 것만 · <kbd>?</kbd> 전체 단축키</p>
 
   <div class="bar" id="cardFilter"></div>
   <div class="bar">
@@ -649,7 +673,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 <section class="view" id="v-quiz">
   <div id="quizSetup">
     <h2 class="vt">🧩 퀴즈</h2>
-    <p class="vd">4지선다 · OX · 단답형 문제은행에서 출제합니다. 틀린 문제는 자동으로 오답노트에 저장되고, 다시 맞히면 빠집니다.</p>
+    <p class="vd" id="quizDesc"></p>
     <div class="box qsetup">
       <div class="qrow">
         <label id="lblQuizSubj">과목</label>
@@ -1259,6 +1283,8 @@ function renderTopicChips(match){
 }
 
 function renderQuizSetup(){
+  $('quizDesc').textContent=`${TYPES.map(t=>t.n).join(' · ')} 문제은행에서 출제합니다. `+
+    '틀린 문제는 자동으로 오답노트에 저장되고, 다시 맞히면 빠집니다.';
   // 각 칩의 개수는 "그 칩을 제외한 나머지 조건"을 적용해 센다 → 선택을 바꿨을 때의 결과가 보인다
   const match=(q,{sub,types,levels,topic})=>
     (sub==='all'||q.s===sub)&&types.includes(q.type)&&levels.includes(q.d)&&
