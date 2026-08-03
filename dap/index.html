@@ -196,7 +196,9 @@ ul.sl li::before{content:"▸";position:absolute;left:2px;color:var(--ac)}
 .qrow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
 .qrow:last-child{border-bottom:none}
 .qrow>label{font-weight:700;font-size:14px;min-width:92px}
-.qopts{display:flex;gap:7px;flex-wrap:wrap}
+.qopts{display:flex;gap:7px;flex-wrap:wrap;min-width:0}
+/* hidden 속성이 .qrow 의 display:flex 에 눌리지 않도록 */
+.qrow[hidden]{display:none}
 
 .qhead{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
 .qcount{font-size:13px;color:var(--tx3);font-variant-numeric:tabular-nums}
@@ -455,8 +457,10 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   /* ── 퀴즈 설정: 라벨을 한 줄 위로 빼고 칩은 가로 스크롤 ── */
   .qrow{flex-direction:column;align-items:stretch;gap:8px;padding:12px 0}
   .qrow>label{min-width:0;font-size:13px;color:var(--tx3)}
+  /* 칩 줄은 박스 폭에 갇힌 채 가로 스크롤 — min-width:0 이 없으면
+     flex 아이템의 자동 최소 크기(콘텐츠 폭) 때문에 박스를 뚫고 나간다 */
   .qopts{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
-    scrollbar-width:none;padding-bottom:2px;margin:0 -2px;padding-left:2px}
+    scrollbar-width:none;min-width:0;width:100%;padding-bottom:2px}
   .qopts::-webkit-scrollbar{display:none}
   .qopts .chip{flex:none}
 
@@ -605,7 +609,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     </div>
     <div class="box">
       <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">자가 진단 체크리스트</h3>
-      <div id="ckGuide" style="font-size:12.5px;color:var(--tx3);margin-bottom:8px">13개 이상 ✓ → 합격선 도달 / 10~12 → 보강 / 9 이하 → 8주 코스</div>
+      <div style="font-size:12.5px;color:var(--tx3);margin-bottom:8px">13개 이상 ✓ → 합격선 도달 / 10~12 → 보강 / 9 이하 → 8주 코스</div>
       <div id="selfcheck"></div>
     </div>
   </div>
@@ -812,28 +816,10 @@ const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
 const UNIT=CPPG.meta.unit||'과목';
 /* subjects[].out 의 단위 — 필기 종목은 문항 수, 실기·배점제 종목은 점수 */
 const OUTU=CPPG.meta.outUnit||'문제';
-const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-/* ── 구분 라벨 정책 ──────────────────────────────────────────
-   자격증은 "1과목·2영역" 이 공식 호칭이라 번호가 곧 이름이지만,
-   면접 준비처럼 번호 호칭이 없는 종목은 ★이름 자체가 명칭★이다.
-   라벨을 만드는 책임을 이 한 곳에 모아 두고(호출부는 subShort/subName/subBadge 만 안다),
-   종목별 차이는 meta.labelStyle 로 갈아 끼운다 — 엔진에 종목 분기를 넣지 않는다.
-     numbered(기본) : 1영역 / 1영역 접근권한
-     named          : 접근권한 (subjects[].short 로 짧은 이름 별도 지정 가능) */
-const LABEL_STYLES={
-  numbered:{ short:s=>`${s.no}${UNIT}`, full:s=>`${s.no}${UNIT} ${s.name}`, row:s=>`${s.no}. ${s.name}`, shortIsName:false },
-  named:   { short:s=>s.short||s.name,  full:s=>s.name,                     row:s=>s.name,              shortIsName:true  }
-};
-const LABEL=LABEL_STYLES[CPPG.meta.labelStyle]||LABEL_STYLES.numbered;
-const subName=id=>SUB[id]?esc(LABEL.full(SUB[id])):'공통';
-const subRow=id=>SUB[id]?esc(LABEL.row(SUB[id])):'공통';   /* 목록 행 머리 */
-const subShort=id=>SUB[id]?esc(LABEL.short(SUB[id])):'공통';
-/* 색 배지 + 이름 — 번호식은 배지 뒤에 이름을 덧붙이고, 이름식은 배지가 곧 이름이라 덧붙이지 않는다 */
-const subBadge=id=>{const s=SUB[id]; if(!s)return '공통';
-  const b=`<span class="sbadge" style="background:${s.color}">${subShort(id)}</span>`;
-  return LABEL.shortIsName?b:`${b} ${esc(s.name)}`;};
+const subName=id=>SUB[id]?`${SUB[id].no}${UNIT} ${SUB[id].name}`:'공통';
+const subShort=id=>SUB[id]?`${SUB[id].no}${UNIT}`:'공통';
 const subColor=id=>SUB[id]?SUB[id].color:'#888';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const $=id=>document.getElementById(id);
 
 /* 문제 통합 ID */
@@ -1068,27 +1054,22 @@ function renderHome(){
     const p=cds.length?Math.round(done/cds.length*100):0;
     const qn=ALLQ.filter(q=>q.s===s.id).length;
     return `<div class="subrow"><span class="dot" style="background:${s.color}"></span>
-      <span class="nm">${subRow(s.id)}<div style="font-size:11.5px;color:var(--tx3);font-weight:400">${esc(s.desc)}</div></span>
+      <span class="nm">${s.no}. ${esc(s.name)}<div style="font-size:11.5px;color:var(--tx3);font-weight:400">${esc(s.desc)}</div></span>
       <span class="ct">약 ${s.out}${OUTU} · 문제 ${qn}</span>
       <span class="pb"><i style="width:${p}%;background:${s.color}"></i></span>
       <span class="ct" style="width:34px;text-align:right">${p}%</span></div>`;
   }).join('');
 
   let g='';
-  /* 그룹 머리글: s(구분 id)를 주면 subjects 의 이름을 그대로 쓰고, 없으면 g 문자열을 쓴다 — 이름을 두 곳에 적지 않는다 */
-  const ckKey=c=>c.s||c.g, ckTitle=c=>c.s?subShort(c.s):esc(c.g);
   CPPG.selfcheck.forEach((c,i)=>{
-    if(i===0||ckKey(c)!==ckKey(CPPG.selfcheck[i-1]))g+=`<div class="gtitle">${ckTitle(c)}</div>`;
+    if(i===0||c.g!==CPPG.selfcheck[i-1].g)g+=`<div class="gtitle">${esc(c.g)}</div>`;
     const on=!!S.check['k'+i];
     g+=`<label class="ckrow ${on?'done':''}"><input type="checkbox" data-ck="${i}" ${on?'checked':''}><span>${esc(c.t)}</span></label>`;
   });
-  /* 기준선은 항목 수에서 계산한다 — 종목마다 체크 항목 수가 다르므로 15개로 못박지 않는다 */
-  const ckN=CPPG.selfcheck.length, ckOK=Math.ceil(ckN*.87), ckMID=Math.ceil(ckN*.67);
   const n=Object.values(S.check).filter(Boolean).length;
-  g+=`<div style="margin-top:12px;font-weight:800;font-size:14px;color:${n>=ckOK?'var(--ok)':n>=ckMID?'var(--wa)':'var(--no)'}">
-    ✓ ${n} / ${ckN} — ${n>=ckOK?'합격선 도달':n>=ckMID?'보강 후 응시 가능':'8주 표준 코스 권장'}</div>`;
+  g+=`<div style="margin-top:12px;font-weight:800;font-size:14px;color:${n>=13?'var(--ok)':n>=10?'var(--wa)':'var(--no)'}">
+    ✓ ${n} / 15 — ${n>=13?'합격선 도달':n>=10?'보강 후 응시 가능':'8주 표준 코스 권장'}</div>`;
   $('selfcheck').innerHTML=g;
-  $('ckGuide').textContent=`${ckOK}개 이상 ✓ → 합격선 도달 / ${ckMID}~${ckOK-1} → 보강 / ${ckMID-1} 이하 → 8주 코스`;
 
   $('tiers').innerHTML=Object.entries(CPPG.tiers).map(([k,v])=>
     `<div class="gtitle">${esc(k)}</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
@@ -1112,7 +1093,7 @@ function buildDeck(keepPos){
 function renderCardFilter(){
   const cnt=id=>CPPG.cards.filter(c=>id==='all'||c.s===id).length;
   $('cardFilter').innerHTML=`<button class="chip ${cSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
-    CPPG.subjects.map(s=>`<button class="chip ${cSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}<span class="n">${cnt(s.id)}</span></button>`).join('');
+    CPPG.subjects.map(s=>`<button class="chip ${cSub===s.id?'on':''}" data-s="${s.id}">${s.no}${UNIT}<span class="n">${cnt(s.id)}</span></button>`).join('');
 }
 $('cardFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cSub=b.dataset.s;renderCardFilter();buildDeck()};
 
@@ -1262,7 +1243,7 @@ document.addEventListener('keydown',e=>{
 let shSub='all', shQ='';
 function renderSheetFilter(){
   $('sheetFilter').innerHTML=`<button class="chip ${shSub==='all'?'on':''}" data-s="all">전체</button>`+
-    CPPG.subjects.map(s=>`<button class="chip ${shSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}</button>`).join('');
+    CPPG.subjects.map(s=>`<button class="chip ${shSub===s.id?'on':''}" data-s="${s.id}">${s.no}${UNIT}</button>`).join('');
 }
 $('sheetFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;shSub=b.dataset.s;renderSheetFilter();renderSheet()};
 $('sheetSearch').oninput=e=>{shQ=e.target.value.trim().toLowerCase();renderSheet()};
@@ -1323,7 +1304,7 @@ function renderQuizSetup(){
 
   const subCnt=id=>ALLQ.filter(q=>match(q,{sub:id,types:Q.types,levels:Q.levels})).length;
   $('quizSubj').innerHTML=`<button class="chip ${Q.sub==='all'?'on':''}" data-q="sub" data-v="all">전체<span class="n">${subCnt('all')}</span></button>`+
-    CPPG.subjects.map(s=>`<button class="chip ${Q.sub===s.id?'on':''}" data-q="sub" data-v="${s.id}">${subShort(s.id)}<span class="n">${subCnt(s.id)}</span></button>`).join('');
+    CPPG.subjects.map(s=>`<button class="chip ${Q.sub===s.id?'on':''}" data-q="sub" data-v="${s.id}">${s.no}${UNIT}<span class="n">${subCnt(s.id)}</span></button>`).join('');
 
   $('quizType').innerHTML=TYPES.map(t=>{
     const c=ALLQ.filter(q=>match(q,{sub:Q.sub,types:[t.k],levels:Q.levels,topic:Q.topic})).length;
@@ -1362,7 +1343,7 @@ function renderBank(){
       return `<td style="text-align:right"><button class="cell" data-bs="${s.id}" data-bt="${t.k}" ${c?'':'disabled'}>${c}</button></td>`;
     }).join('');
     const tot=ALLQ.filter(q=>q.s===s.id).length;
-    return `<tr><td>${subBadge(s.id)}</td>${cells}
+    return `<tr><td><span class="sbadge" style="background:${s.color}">${s.no}${UNIT}</span> ${esc(s.name)}</td>${cells}
       <td style="text-align:right;font-weight:800">${tot}</td></tr>`;
   }).join('');
   const tots=TYPES.map(t=>`<td style="text-align:right;font-weight:800">${bankCount('all',t.k)}</td>`).join('');
@@ -1666,7 +1647,7 @@ function finishQuiz(){
       <div class="resgrid">
         ${CPPG.subjects.filter(s=>per[s.id]).map(s=>{
           const v=per[s.id], p=Math.round(v.r/v.t*100);
-          return `<div><div class="k" style="color:${s.color}">${subShort(s.id)}</div>
+          return `<div><div class="k" style="color:${s.color}">${s.no}${UNIT}</div>
             <div class="v" style="color:${p>=40?'var(--tx)':'var(--no)'}">${p}점</div>
             <div class="k">${v.r}/${v.t}</div></div>`;
         }).join('')}
@@ -1735,7 +1716,7 @@ function renderExFilter(){
   const cnt=id=>EXS.filter(e=>id==='all'||e.s===id).length;
   $('exFilter').innerHTML=`<button class="chip ${exSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
     CPPG.subjects.filter(s=>cnt(s.id)).map(s=>
-      `<button class="chip ${exSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}<span class="n">${cnt(s.id)}</span></button>`).join('');
+      `<button class="chip ${exSub===s.id?'on':''}" data-s="${s.id}">${s.no}${UNIT}<span class="n">${cnt(s.id)}</span></button>`).join('');
 }
 function exCard(e,i,opts){
   const o=opts||{};
@@ -1823,7 +1804,7 @@ function renderInfo(){
   const rows=CPPG.subjects.map(s=>{
     const qn=ALLQ.filter(q=>q.s===s.id).length, cn=CPPG.cards.filter(c=>c.s===s.id).length;
     const pct=totOut?Math.round((+s.out||0)/totOut*100):0;
-    return [subBadge(s.id),
+    return [`<span class="sbadge" style="background:${s.color}">${s.no}${UNIT}</span> ${esc(s.name)}`,
             (+s.out||0)?`${s.out}${OUTU}`:'-', totOut?`${pct}%`:'-', String(cn), String(qn)];
   });
   rows.push(['<b>합계</b>', totOut?`<b>${totOut}${OUTU}</b>`:'-','<b>100%</b>',
