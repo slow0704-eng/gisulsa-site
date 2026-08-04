@@ -227,7 +227,11 @@ ul.sl li::before{content:"▸";position:absolute;left:2px;color:var(--ac)}
 
 .qcard{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px 26px;box-shadow:var(--sh)}
 .qmeta{font-size:11.5px;font-weight:800;letter-spacing:.4px;color:var(--tx3);margin-bottom:10px;text-transform:uppercase}
-.qtext{font-size:18px;font-weight:700;line-height:1.6;margin-bottom:20px;letter-spacing:-.2px}
+/* 기출 유형(〈보기〉 ㄱㄴㄷ 나열·사례 지문)을 위해 줄바꿈을 그대로 살린다 */
+.qtext{font-size:18px;font-weight:700;line-height:1.6;margin-bottom:20px;letter-spacing:-.2px;
+  white-space:pre-wrap;word-break:keep-all;overflow-wrap:break-word}
+/* 지문이 길어지면 본문 크기를 살짝 줄여 한 화면에 담는다 */
+.qtext.long{font-size:15.5px;font-weight:600;line-height:1.7}
 .ch{
   display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;
   padding:13px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card2);
@@ -1599,7 +1603,7 @@ function renderQ(){
 
   let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} · ${typeName(q.type)}
            <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span></div>
-         <div class="qtext">${esc(q.q)}</div>`;
+         <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}">${esc(q.q)}</div>`;
 
   if(q.type==='mcq'){
     h+=q.c.map((c,i)=>{
