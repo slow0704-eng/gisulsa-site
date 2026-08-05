@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>자바 백엔드 이직 면접 — 원문 뷰어</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --panel:#fff; --ink:#1c2128; --dim:#6b7684; --line:#e3e6ea;
+    --accent:#1f6feb; --accent-bg:#e8f0fe;
+    --star:#b4380a; --star-bg:#fff1e8;
+    --warn:#8a5a00; --warn-bg:#fff6d8;
+    --need:#9333ea; --need-bg:#f4e8ff;
+    --draft:#0f766e; --draft-bg:#dffaf4;
+    --hit:#ffd84d; --hit-ink:#1c2128;
+    --mono:"D2Coding","Cascadia Mono","Consolas","Menlo","Noto Sans Mono CJK KR","맑은 고딕",monospace;
+    --fs:14px; --lh:1.62;
+  }
+  html[data-theme="dark"]{
+    --bg:#0d1117; --panel:#161b22; --ink:#d7dde5; --dim:#8b949e; --line:#2a313a;
+    --accent:#58a6ff; --accent-bg:#12233d;
+    --star:#ff9e64; --star-bg:#3a2415;
+    --warn:#e3b341; --warn-bg:#3a3016;
+    --need:#c99bff; --need-bg:#2e2140;
+    --draft:#5fd3bc; --draft-bg:#12332e;
+    --hit:#8a6d00; --hit-ink:#fff;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","맑은 고딕",sans-serif;
+       -webkit-text-size-adjust:100%}
+
+  /* ── 상단 바 ── */
+  header{position:sticky;top:0;z-index:30;background:var(--panel);border-bottom:1px solid var(--line);
+         display:flex;align-items:center;gap:10px;padding:9px 12px;flex-wrap:wrap}
+  header h1{font-size:15px;margin:0;font-weight:700;white-space:nowrap}
+  header h1 small{font-weight:500;color:var(--dim);font-size:12px;margin-left:6px}
+  .grow{flex:1 1 120px}
+  .btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);
+       border-radius:7px;padding:6px 10px;font-size:13px;cursor:pointer;white-space:nowrap}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn[aria-pressed="true"]{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+  #q{flex:1 1 220px;min-width:140px;padding:7px 10px;border:1px solid var(--line);
+     border-radius:7px;background:var(--bg);color:var(--ink);font-size:13px}
+  #q:focus{outline:2px solid var(--accent);outline-offset:-1px}
+
+  /* ── 3단 레이아웃 ── */
+  .wrap{display:grid;grid-template-columns:250px minmax(0,1fr) 230px;gap:0;
+        height:calc(100vh - 47px)}
+  nav,aside{overflow:auto;background:var(--panel);padding:10px 8px}
+  nav{border-right:1px solid var(--line)}
+  aside{border-left:1px solid var(--line)}
+  main{overflow:auto;padding:14px 16px 60px}
+
+  nav .grp{font-size:11px;color:var(--dim);margin:10px 6px 4px;letter-spacing:.4px}
+  nav a{display:block;padding:7px 9px;border-radius:7px;text-decoration:none;color:var(--ink);
+        font-size:13px;line-height:1.35;border:1px solid transparent}
+  nav a small{display:block;color:var(--dim);font-size:11px;margin-top:2px}
+  nav a:hover{background:var(--bg)}
+  nav a.on{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700}
+  nav a.on small{color:var(--accent)}
+  nav a .cnt{float:right;color:var(--dim);font-size:11px;font-weight:400}
+
+  aside .t{font-size:11px;color:var(--dim);margin:4px 6px 8px;letter-spacing:.4px}
+  aside a{display:block;padding:4px 8px;border-radius:6px;text-decoration:none;color:var(--dim);
+          font-size:12px;line-height:1.4;border-left:2px solid transparent}
+  aside a.l2{padding-left:18px;font-size:11.5px}
+  aside a:hover{color:var(--accent);background:var(--bg)}
+  aside a.on{color:var(--accent);border-left-color:var(--accent);font-weight:700}
+
+  /* ── 본문 ── */
+  #head{margin:0 0 10px}
+  #head h2{margin:0 0 3px;font-size:17px}
+  #head p{margin:0;color:var(--dim);font-size:12.5px}
+  pre#doc{margin:0;font-family:var(--mono);font-size:var(--fs);line-height:var(--lh);
+          white-space:pre;overflow-x:auto;tab-size:4;
+          background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+  pre#doc .ln{display:block}
+  pre#doc .ln:target,pre#doc .ln.flash{background:var(--accent-bg)}
+  /* 강조 */
+  .st{color:var(--star);background:var(--star-bg);border-radius:3px;padding:0 2px;font-weight:700}
+  .wn{color:var(--warn);background:var(--warn-bg);border-radius:3px;padding:0 2px}
+  .nd{color:var(--need);background:var(--need-bg);border-radius:3px;padding:0 2px;font-weight:700}
+  .df{color:var(--draft);background:var(--draft-bg);border-radius:3px;padding:0 2px}
+  .rule{color:var(--dim)}
+  .h1{color:var(--accent);font-weight:700}
+  .blank{color:var(--dim);opacity:.55}
+  .hit{background:var(--hit);color:var(--hit-ink);border-radius:2px}
+  .hit.cur{outline:2px solid var(--accent)}
+  a.lnk{color:var(--accent)}
+
+  #meter{font-size:12px;color:var(--dim);white-space:nowrap}
+  #noSrc{display:none;padding:24px;background:var(--panel);border:1px solid var(--line);
+         border-radius:10px;line-height:1.7;font-size:14px}
+  #noSrc code{background:var(--bg);padding:2px 6px;border-radius:5px;font-family:var(--mono)}
+
+  .navToggle{display:none}
+  @media (max-width:1100px){
+    .wrap{grid-template-columns:230px minmax(0,1fr)}
+    aside{display:none}
+  }
+  @media (max-width:760px){
+    .wrap{grid-template-columns:minmax(0,1fr);height:auto}
+    nav{position:fixed;inset:47px auto 0 0;width:82%;max-width:300px;z-index:25;
+        border-right:1px solid var(--line);transform:translateX(-101%);transition:transform .18s}
+    nav.open{transform:none;box-shadow:0 0 40px rgba(0,0,0,.28)}
+    main{padding:12px 10px 60px}
+    .navToggle{display:inline-block}
+    pre#doc{padding:10px;border-radius:8px}
+    header h1 small{display:none}
+  }
+  @media print{
+    header,nav,aside{display:none}
+    .wrap{display:block;height:auto}
+    pre#doc{border:0;padding:0}
+  }
+</style>
+</head>
+<body>
+<header>
+  <button class="btn navToggle" id="navBtn" aria-label="목록 열기">☰</button>
+  <h1>자바 백엔드 이직 면접 <small>원문 뷰어</small></h1>
+  <input id="q" type="search" placeholder="전체 검색 (Enter 다음, Shift+Enter 이전)" autocomplete="off">
+  <span id="meter"></span>
+  <button class="btn" id="fsDown" title="글자 작게">A−</button>
+  <button class="btn" id="fsUp" title="글자 크게">A+</button>
+  <button class="btn" id="wrapBtn" aria-pressed="false" title="줄바꿈 (원문은 고정폭 정렬)">줄바꿈</button>
+  <button class="btn" id="themeBtn" title="테마">🌙</button>
+  <a class="btn" href="index.html" title="암기카드·퀴즈로">🃏 학습·퀴즈</a>
+</header>
+
+<div class="wrap">
+  <nav id="nav" aria-label="문서 목록"></nav>
+  <main>
+    <div id="noSrc">
+      <b>docs.js 가 없습니다.</b><br><br>
+      원문 데이터를 먼저 생성하세요:<br>
+      <code>python 학습사이트/build_docs.py</code><br><br>
+      생성 후 이 페이지를 새로고침하면 됩니다.
+    </div>
+    <div id="head"></div>
+    <pre id="doc" tabindex="0"></pre>
+  </main>
+  <aside id="toc" aria-label="문서 내 목차"></aside>
+</div>
+
+<script src="docs.js" onerror="document.getElementById('noSrc').style.display='block'"></script>
+<script>
+(function(){
+  "use strict";
+  var DOCS = window.JAVABE_DOCS || [];
+  var KEY = "javabe-docs-v1";
+  var el = function(id){ return document.getElementById(id); };
+  var nav = el("nav"), toc = el("toc"), doc = el("doc"), head = el("head"), meter = el("meter");
+
+  if(!DOCS.length){ el("noSrc").style.display="block"; return; }
+
+  var st = {};
+  try{ st = JSON.parse(localStorage.getItem(KEY) || "{}"); }catch(e){ st = {}; }
+  var cur = 0, hits = [], hitIdx = -1;
+
+  /* ── 저장/복원 ── */
+  function save(){
+    st.cur = cur; st.fs = getComputedStyle(document.documentElement).getPropertyValue("--fs").trim();
+    try{ localStorage.setItem(KEY, JSON.stringify(st)); }catch(e){}
+  }
+
+  /* ── 이스케이프 + 강조 ── */
+  function esc(s){
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+  var RULE = /^[\s═─━╔╗║╚╝┌┐└┘├┤┬┴┼│]*$/;
+  function deco(line){
+    var raw = line;
+    var s = esc(line);
+    // URL → 링크
+    s = s.replace(/(https?:\/\/[^\s)"'<>]+)/g, '<a class="lnk" href="$1" target="_blank" rel="noopener">$1</a>');
+    // ★강조★
+    s = s.replace(/★([^★]{1,120})★/g, '<span class="st">★$1★</span>');
+    // [확인필요] / 「가안」 / ⚠
+    s = s.replace(/\[확인필요\]/g, '<span class="nd">[확인필요]</span>');
+    s = s.replace(/「가안」/g, '<span class="df">「가안」</span>');
+    s = s.replace(/(⚠[^<]{0,80})/g, '<span class="wn">$1</span>');
+    // 빈칸(____) 흐리게
+    s = s.replace(/(_{4,})/g, '<span class="blank">$1</span>');
+    // 구분선·박스 라인은 흐리게, 박스 안 제목은 강조
+    if(RULE.test(raw)) return '<span class="rule">'+s+'</span>';
+    if(/^\s*║/.test(raw)) return '<span class="h1">'+s+'</span>';
+    if(/^\s{0,4}§/.test(raw)) return '<span class="h1">'+s+'</span>';
+    return s;
+  }
+
+  /* ── 렌더 ── */
+  function renderNav(){
+    var h = '<div class="grp">문서 '+DOCS.length+'개</div>';
+    DOCS.forEach(function(d,i){
+      h += '<a href="#" data-i="'+i+'" class="'+(i===cur?"on":"")+'">'
+         + '<span class="cnt">'+d.lines+'</span>'
+         + esc(d.file.replace(/\.txt$/,""))
+         + (d.subtitle ? '<small>'+esc(d.subtitle)+'</small>' : '')
+         + '</a>';
+    });
+    nav.innerHTML = h;
+  }
+
+  function renderDoc(){
+    var d = DOCS[cur];
+    head.innerHTML = '<h2>'+esc(d.title)+'</h2><p>'+esc(d.file)+' · '+d.lines+'줄'
+                   + (d.subtitle ? ' · '+esc(d.subtitle) : '')+'</p>';
+    var lines = d.text.split("\n");
+    var out = new Array(lines.length);
+    for(var i=0;i<lines.length;i++){
+      out[i] = '<span class="ln" id="L'+i+'">'+(lines[i]===""?"&nbsp;":deco(lines[i]))+'</span>';
+    }
+    doc.innerHTML = out.join("\n");
+    // 목차
+    var t = '<div class="t">이 문서의 목차</div>';
+    (d.outline||[]).forEach(function(o,k){
+      t += '<a href="#" data-line="'+o.line+'" class="'+(o.level===2?"l2":"")+'">'+esc(o.text)+'</a>';
+    });
+    toc.innerHTML = (d.outline && d.outline.length) ? t : '<div class="t">목차 없음</div>';
+    document.querySelectorAll("#nav a").forEach(function(a){
+      a.classList.toggle("on", +a.dataset.i === cur);
+    });
+    doc.parentElement.scrollTop = 0;
+    if(el("q").value.trim()) runSearch(false);
+    else { meter.textContent = ""; hits = []; hitIdx = -1; }
+    save();
+  }
+
+  /* ── 검색 ── */
+  function runSearch(jump){
+    var term = el("q").value.trim();
+    document.querySelectorAll("#doc .hit").forEach(function(n){
+      var p = n.parentNode; p.replaceChild(document.createTextNode(n.textContent), n); p.normalize();
+    });
+    hits = []; hitIdx = -1;
+    if(!term){ meter.textContent=""; return; }
+
+    // 문서 내 표시
+    var re = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"), "gi");
+    var walker = document.createTreeWalker(doc, NodeFilter.SHOW_TEXT, null);
+    var targets = [], n;
+    while((n = walker.nextNode())){ if(re.test(n.nodeValue)){ targets.push(n); } re.lastIndex = 0; }
+    targets.forEach(function(node){
+      var frag = document.createDocumentFragment(), s = node.nodeValue, last = 0, m;
+      re.lastIndex = 0;
+      while((m = re.exec(s))){
+        if(m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+        var sp = document.createElement("span"); sp.className = "hit"; sp.textContent = m[0];
+        frag.appendChild(sp); hits.push(sp); last = m.index + m[0].length;
+        if(m[0].length === 0) re.lastIndex++;
+      }
+      if(last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+
+    // 다른 문서의 건수도 알려 준다
+    var others = 0, otherDocs = 0;
+    var low = term.toLowerCase();
+    DOCS.forEach(function(d,i){
+      if(i===cur) return;
+      var c = d.text.toLowerCase().split(low).length - 1;
+      if(c>0){ others += c; otherDocs++; }
+    });
+    meter.textContent = hits.length + "건"
+      + (others ? " (다른 문서 " + others + "건 / " + otherDocs + "개)" : "");
+    if(jump !== false && hits.length) step(1);
+  }
+  function step(dir){
+    if(!hits.length) return;
+    if(hitIdx >= 0 && hits[hitIdx]) hits[hitIdx].classList.remove("cur");
+    hitIdx = (hitIdx + dir + hits.length) % hits.length;
+    var h = hits[hitIdx];
+    h.classList.add("cur");
+    h.scrollIntoView({block:"center", behavior:"smooth"});
+    meter.textContent = (hitIdx+1) + "/" + hits.length + "건";
+  }
+
+  /* ── 이벤트 ── */
+  nav.addEventListener("click", function(e){
+    var a = e.target.closest("a[data-i]"); if(!a) return;
+    e.preventDefault(); cur = +a.dataset.i; renderDoc();
+    if(window.innerWidth <= 760) nav.classList.remove("open");
+  });
+  toc.addEventListener("click", function(e){
+    var a = e.target.closest("a[data-line]"); if(!a) return;
+    e.preventDefault();
+    var t = document.getElementById("L"+a.dataset.line);
+    if(t){ t.scrollIntoView({block:"start", behavior:"smooth"});
+           t.classList.add("flash"); setTimeout(function(){ t.classList.remove("flash"); }, 1400); }
+    toc.querySelectorAll("a").forEach(function(x){ x.classList.toggle("on", x===a); });
+  });
+  var timer;
+  el("q").addEventListener("input", function(){
+    clearTimeout(timer); timer = setTimeout(function(){ runSearch(false); }, 200);
+  });
+  el("q").addEventListener("keydown", function(e){
+    if(e.key === "Enter"){ e.preventDefault(); if(!hits.length) runSearch(true); else step(e.shiftKey?-1:1); }
+    if(e.key === "Escape"){ el("q").value=""; runSearch(false); }
+  });
+  el("navBtn").addEventListener("click", function(){ nav.classList.toggle("open"); });
+  el("wrapBtn").addEventListener("click", function(){
+    var on = doc.style.whiteSpace === "pre-wrap";
+    doc.style.whiteSpace = on ? "pre" : "pre-wrap";
+    this.setAttribute("aria-pressed", String(!on));
+  });
+  function setFs(px){
+    px = Math.max(11, Math.min(21, px));
+    document.documentElement.style.setProperty("--fs", px+"px"); save();
+  }
+  el("fsUp").addEventListener("click", function(){ setFs(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--fs"))+1); });
+  el("fsDown").addEventListener("click", function(){ setFs(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--fs"))-1); });
+  el("themeBtn").addEventListener("click", function(){
+    var d = document.documentElement.getAttribute("data-theme") === "dark";
+    document.documentElement.setAttribute("data-theme", d ? "light" : "dark");
+    this.textContent = d ? "🌙" : "☀";
+    st.theme = d ? "light" : "dark"; save();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.target.tagName === "INPUT") return;
+    if(e.key === "/"){ e.preventDefault(); el("q").focus(); el("q").select(); }
+    if(e.key === "j" || e.key === "ArrowRight"){ if(cur < DOCS.length-1){ cur++; renderDoc(); } }
+    if(e.key === "k" || e.key === "ArrowLeft"){ if(cur > 0){ cur--; renderDoc(); } }
+  });
+
+  /* ── 초기화 ── */
+  if(st.theme === "dark"){ document.documentElement.setAttribute("data-theme","dark"); el("themeBtn").textContent="☀"; }
+  else if(st.theme !== "light" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+    document.documentElement.setAttribute("data-theme","dark"); el("themeBtn").textContent="☀";
+  }
+  if(st.fs) document.documentElement.style.setProperty("--fs", st.fs);
+  if(typeof st.cur === "number" && st.cur >= 0 && st.cur < DOCS.length) cur = st.cur;
+  renderNav(); renderDoc();
+})();
+</script>
+</body>
+</html>
