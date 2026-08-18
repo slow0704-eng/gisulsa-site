@@ -844,6 +844,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   <h2 class="vt">📄 예시문제</h2>
   <p class="vd">실전 형식의 예시 문제입니다. 먼저 스스로 풀어 본 뒤 풀이를 펼치세요.</p>
   <div class="bar" id="exFilter"></div>
+  <div class="bar" id="exSecBar" hidden></div>
   <div class="bar">
     <button class="btn" id="makePaper">🖨 모의고사 시험지 만들기</button>
     <button class="btn gh" id="toggleAllSol">풀이 모두 펼치기</button>
@@ -1975,13 +1976,23 @@ if(HASEX)$('navExample').hidden=false;
 if(HASSC)$('navShortcut').hidden=false;
 if(HASNOTE)$('navConcept').hidden=false;
 
-let exSub='all', exOpen={}, exAllOpen=false;
+let exSub='all', exSec='all', exOpen={}, exAllOpen=false;
 function renderExFilter(){
   const cnt=id=>EXS.filter(e=>id==='all'||e.s===id).length;
   $('exFilter').innerHTML=`<button class="chip ${exSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
     CPPG.subjects.filter(s=>cnt(s.id)).map(s=>
       `<button class="chip ${exSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}<span class="n">${cnt(s.id)}</span></button>`).join('');
+  /* 두 번째 줄 — 퀴즈·암기카드와 같은 SECTION 칩. 예시문제가 있는 단원만 보여 준다 */
+  const row=$('exSecBar');
+  const list=HASSEC&&exSub!=='all'?secsOf(exSub).filter(x=>EXS.some(e=>e.sec===x.id)):[];
+  row.hidden=!list.length;
+  if(!list.length){exSec='all';return}
+  if(exSec!=='all'&&!list.some(x=>x.id===exSec))exSec='all';
+  const scnt=id=>EXS.filter(e=>e.sec===id).length;
+  row.innerHTML=`<button class="chip ${exSec==='all'?'on':''}" data-sec="all">단원 전체<span class="n">${EXS.filter(e=>e.s===exSub).length}</span></button>`+
+    list.map(x=>`<button class="chip ${exSec===x.id?'on':''}" data-sec="${x.id}">${secShort(x.id)}<span class="n">${scnt(x.id)}</span></button>`).join('');
 }
+$('exSecBar').onclick=e=>{const b=e.target.closest('[data-sec]');if(!b)return;exSec=b.dataset.sec;renderExample()};
 /* 예시문제에 딸린 자료 렌더 — 문제에서 [B3] 처럼 셀을 가리키면 실제 표를 함께 보여 준다.
    data = [{ kind:'sheet', title, cols:['A','B'..], row1:첫 행 번호, rows:[[...]], note }]
           [{ kind:'table', title, head:[...], rows:[[...]], note }]   ← 액세스 테이블·쿼리·구조
@@ -2024,13 +2035,15 @@ function exCard(e,i,opts){
 function renderExample(){
   if(!HASEX)return;
   renderExFilter();
-  const list=EXS.map((e,i)=>({e,i})).filter(x=>exSub==='all'||x.e.s===exSub);
-  $('exStat').textContent=`${list.length}문제`;
+  const list=EXS.map((e,i)=>({e,i}))
+    .filter(x=>exSub==='all'||x.e.s===exSub)
+    .filter(x=>exSec==='all'||x.e.sec===exSec);
+  $('exStat').textContent=(exSec!=='all'?`${secFull(exSec)} · `:'')+`${list.length}문제`;
   $('toggleAllSol').textContent=exAllOpen?'풀이 모두 접기':'풀이 모두 펼치기';
   $('exList').innerHTML=list.map(x=>exCard(x.e,x.i)).join('')||
-    `<div class="empty"><div class="ic">📄</div>해당 ${UNIT}의 예시문제가 없습니다</div>`;
+    `<div class="empty"><div class="ic">📄</div>해당 ${exSec!=='all'?'단원':UNIT}의 예시문제가 없습니다</div>`;
 }
-$('exFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;exSub=b.dataset.s;renderExample()};
+$('exFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;exSub=b.dataset.s;exSec='all';renderExample()};
 $('exList').onclick=e=>{
   const b=e.target.closest('[data-sol]'); if(!b)return;
   const i=b.dataset.sol; exOpen['e'+i]=!exOpen['e'+i]; renderExample();
