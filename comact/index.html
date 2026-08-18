@@ -135,6 +135,21 @@ input.search{min-width:190px}
 .subrow .pb{width:110px;height:6px;border-radius:99px;background:var(--bg2);overflow:hidden;flex:none}
 .subrow .pb i{display:block;height:100%;border-radius:99px}
 
+/* ── 교재 목차 (PART · CHAPTER · SECTION) ── */
+.tpart{font-size:12px;font-weight:800;letter-spacing:.5px;color:var(--ac);margin:16px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.tpart:first-child{margin-top:0}
+.tpart span{color:var(--tx3);font-weight:600;letter-spacing:0;margin-left:6px}
+.tch{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;margin:12px 0 6px}
+.tch .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.tch .ct{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--tx3);white-space:nowrap}
+.tsecs{display:flex;flex-wrap:wrap;gap:6px;padding-left:17px}
+.tsec{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card2);
+  border-radius:8px;padding:5px 9px;font-size:12.5px;color:var(--tx);cursor:pointer;text-align:left}
+.tsec:hover{border-color:var(--ac);color:var(--ac)}
+.tsec b{font-weight:800;font-variant-numeric:tabular-nums;color:var(--tx3)}
+.tsec .n{font-size:11px;color:var(--tx3);font-variant-numeric:tabular-nums}
+.tsec .pg{font-size:10.5px;color:var(--tx3);opacity:.75}
+
 /* ═══ 플래시카드 ═══ */
 .fcwrap{max-width:760px;margin:0 auto}
 .fc{
@@ -410,6 +425,23 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 .exq .ansbox{margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--card2);
   font-size:13px;font-weight:700;color:var(--ok);white-space:pre-wrap}
 .exq .trp{margin-top:8px;font-size:12.5px;color:var(--wa)}
+
+/* ── 예시문제에 딸린 자료(시트 데이터·테이블 구조) ── */
+.xls{margin-top:11px}
+.xls .cap{font-size:12px;font-weight:800;color:var(--tx2);margin-bottom:5px}
+.xls .tw{margin-top:0}
+.xls table{border-collapse:collapse;font-size:12.5px;min-width:100%}
+.xls th,.xls td{border:1px solid var(--line);padding:4px 9px;white-space:nowrap}
+.xls th.cl,.xls th.rn{background:var(--bg2);color:var(--tx3);font-weight:700;text-align:center;
+  font-size:11px;font-variant-numeric:tabular-nums}
+.xls th.rn{min-width:28px;position:sticky;left:0}
+.xls td{color:var(--tx2)}
+.xls td.hd{background:var(--card2);font-weight:800;color:var(--tx);text-align:center}
+.xls td.num{text-align:right;font-variant-numeric:tabular-nums}
+.xls td.mark{color:var(--ac);font-weight:800}
+.xls.acc th{background:var(--card2);color:var(--tx);font-weight:800;text-align:left}
+.xls .nt{font-size:11.5px;color:var(--tx3);margin-top:5px;line-height:1.6}
+@media print{ .xls th.rn{position:static} }
 .paperhd{border:2px solid var(--tx);border-radius:10px;padding:12px 14px;margin-bottom:14px}
 .paperhd .t{font-size:17px;font-weight:900}
 .paperhd .m{font-size:12.5px;color:var(--tx3);margin-top:4px}
@@ -638,6 +670,13 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     </div>
   </div>
 
+  <!-- 교재 목차 (sections 가 있는 종목에서만 표시) -->
+  <div class="box" id="tocBox" style="margin-top:14px" hidden>
+    <h3 style="font-size:15px;font-weight:800;margin-bottom:4px" id="tocTitle">📚 교재 목차</h3>
+    <div style="font-size:12.5px;color:var(--tx3);margin-bottom:10px">SECTION 을 누르면 그 단원 문제로 바로 출제됩니다. 숫자는 카드·시트·함정·문제를 합한 학습 항목 수입니다.</div>
+    <div id="tocList"></div>
+  </div>
+
   <div class="grid g2" style="margin-top:14px">
     <div class="box">
       <h3 style="font-size:15px;font-weight:800;margin-bottom:10px">학습 우선순위 (출제 빈도)</h3>
@@ -656,6 +695,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   <p class="vd kbhint"><kbd>Space</kbd> 뒤집기 · <kbd>1</kbd> 모름 / <kbd>2</kbd> 알아요 · <kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>F</kbd> 섞기 · <kbd>U</kbd> 모르는 것만 · <kbd>?</kbd> 전체 단축키</p>
 
   <div class="bar" id="cardFilter"></div>
+  <div class="bar" id="cardSec" hidden></div>
   <div class="bar">
     <button class="btn gh" id="shuffle">🔀 섞기</button>
     <button class="btn gh" id="onlyUnknown">❓ 모르는 것만</button>
@@ -695,6 +735,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   <h2 class="vt">📋 핵심 정리 시트 · 함정 노트</h2>
   <p class="vd">비교표·기간표는 그대로 출제됩니다. 함정 노트는 오답 유도 패턴 모음입니다.</p>
   <div class="bar" id="sheetFilter"></div>
+  <div class="bar" id="sheetSec" hidden></div>
   <div class="bar">
     <input class="search" id="sheetSearch" placeholder="🔍 시트·함정 내용 검색 (예: 72시간, 위탁, SHA)" />
   </div>
@@ -815,6 +856,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 <section class="view" id="v-paper">
   <h2 class="vt">🖨 모의고사 시험지</h2>
   <p class="vd" id="paperDesc"></p>
+  <div class="bar noprint" id="paperSet" hidden></div>
   <div class="bar noprint">
     <button class="btn" id="printPaper">🖨 인쇄</button>
     <button class="btn gh" id="reroll">🔀 다시 뽑기</button>
@@ -855,6 +897,24 @@ const UNIT=CPPG.meta.unit||'과목';
 /* subjects[].out 의 단위 — 필기 종목은 문항 수, 실기·배점제 종목은 점수 */
 const OUTU=CPPG.meta.outUnit||'문제';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ── 교재 목차 체계 ────────────────────────────────────────
+   parts = PART, subjects = CHAPTER, sections = SECTION.
+   각 항목(카드·시트·함정·문제)의 sec 가 SECTION id 를 가리킨다.
+   sections 가 없는 종목에서는 HASSEC=false 가 되어 단원 칩·목차가 통째로
+   감춰지고 기존(구분 단위) 화면이 그대로 동작한다 — 엔진은 공용이다. */
+CPPG.parts=CPPG.parts||[]; CPPG.sections=CPPG.sections||[];
+const SEC={}; CPPG.sections.forEach(x=>SEC[x.id]=x);
+const HASSEC=CPPG.sections.length>0;
+const secNo=id=>SEC[id]?String(SEC[id].no).padStart(2,'0'):'';
+const secName=id=>SEC[id]?esc(SEC[id].name):'기타';
+const secShort=id=>SEC[id]?`${secNo(id)}. ${esc(SEC[id].name)}`:'기타';
+const secFull=id=>SEC[id]?`SECTION ${secNo(id)} ${esc(SEC[id].name)}`:'기타';
+/* 구분(CHAPTER)에 속한 SECTION — 교재 순서 그대로 */
+const secsOf=sub=>CPPG.sections.filter(x=>sub==='all'||x.s===sub);
+const partOf=sub=>CPPG.parts.find(p=>p.id===(SUB[sub]||{}).part)||null;
+const chNo=id=>SUB[id]?String(SUB[id].ch||SUB[id].no).padStart(2,'0'):'';
+const chName=id=>SUB[id]?esc(String(SUB[id].name).split('—').pop().trim()):'';
 
 /* ── 구분 라벨 정책 ──────────────────────────────────────────
    자격증은 "1과목·2영역" 이 공식 호칭이라 번호가 곧 이름이지만,
@@ -1135,21 +1195,56 @@ function renderHome(){
   $('selfcheck').innerHTML=g;
   $('ckGuide').textContent=`${ckOK}개 이상 ✓ → 합격선 도달 / ${ckMID}~${ckOK-1} → 보강 / ${ckMID-1} 이하 → 8주 코스`;
 
+  renderTOC();
+
   $('tiers').innerHTML=Object.entries(CPPG.tiers).map(([k,v])=>
     `<div class="gtitle">${esc(k)}</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
   $('roadmap').innerHTML=Object.entries(CPPG.roadmap).map(([k,v])=>
     `<div class="gtitle">${esc(k)} 코스</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
 }
+/* ═══════════ 📚 교재 목차 (PART · CHAPTER · SECTION) ═══════════
+   화면의 모든 단원 메뉴가 이 하나의 체계를 쓴다 — 카드·시트·퀴즈 필터가 같은 순서·같은 이름.
+   SECTION 별 항목 수는 카드+시트+함정+문제+예시를 모두 센다. */
+const SECITEMS=[].concat(CPPG.cards||[],CPPG.sheets||[],CPPG.traps||[],CPPG.examples||[],ALLQ);
+const secCount=id=>SECITEMS.filter(x=>x.sec===id).length;
+function renderTOC(){
+  const box=$('tocBox'); if(!box)return;
+  box.hidden=!HASSEC; if(!HASSEC)return;
+  $('tocTitle').textContent=`📚 교재 목차 — ${CPPG.meta.book||'기본서'}`;
+  $('tocList').innerHTML=CPPG.parts.map(p=>{
+    const chs=CPPG.subjects.filter(s=>s.part===p.id);
+    return `<div class="tpart">PART ${String(p.no).padStart(2,'0')} ${esc(p.name)}<span>${esc(p.book||'')} · ${esc(p.desc||'')}</span></div>`+
+      chs.map(s=>{
+        const secs=secsOf(s.id);
+        return `<div class="tch"><span class="dot" style="background:${s.color}"></span>
+            CHAPTER ${chNo(s.id)} ${chName(s.id)}
+            <span class="ct">약 ${s.out}${OUTU} · 항목 ${secs.reduce((a,x)=>a+secCount(x.id),0)}</span></div>
+          <div class="tsecs">${secs.map(x=>
+            `<button class="tsec" data-toc="${x.id}" title="${secFull(x.id)} (p.${esc(x.page||'')})">
+               <b>${secNo(x.id)}</b>${esc(x.name)}<span class="n">${secCount(x.id)}</span>
+               ${x.page?`<span class="pg">p.${esc(x.page)}</span>`:''}</button>`).join('')}</div>`;
+      }).join('');
+  }).join('');
+}
+/* 목차 → 퀴즈: 해당 SECTION 으로 필터를 세팅하고 출제 화면으로 */
+$('tocList').onclick=e=>{
+  const b=e.target.closest('[data-toc]'); if(!b)return;
+  const id=b.dataset.toc;
+  Q.sub=SEC[id].s; Q.topic=id;
+  go('quiz'); renderQuizSetup();
+};
+
 $('selfcheck').addEventListener('change',e=>{
   const i=e.target.dataset.ck; if(i===undefined)return;
   S.check['k'+i]=e.target.checked; save(); renderHome();
 });
 
 /* ═══════════ 암기카드 ═══════════ */
-let cSub='all', deck=[], di=0, unknownOnly=false;
+let cSub='all', cSec='all', deck=[], di=0, unknownOnly=false;
 function buildDeck(keepPos){
   deck=CPPG.cards.map((c,i)=>i)
     .filter(i=>cSub==='all'||CPPG.cards[i].s===cSub)
+    .filter(i=>cSec==='all'||CPPG.cards[i].sec===cSec)
     .filter(i=>!unknownOnly||S.cards['c'+i]!=='ok');
   if(!keepPos||di>=deck.length)di=0;
   renderCard();
@@ -1158,8 +1253,17 @@ function renderCardFilter(){
   const cnt=id=>CPPG.cards.filter(c=>id==='all'||c.s===id).length;
   $('cardFilter').innerHTML=`<button class="chip ${cSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
     CPPG.subjects.map(s=>`<button class="chip ${cSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}<span class="n">${cnt(s.id)}</span></button>`).join('');
+  /* 두 번째 줄 — 선택한 CHAPTER 의 SECTION 칩 (교재 목차 순서) */
+  const row=$('cardSec'), list=HASSEC&&cSub!=='all'?secsOf(cSub):[];
+  row.hidden=!list.length;
+  if(!list.length){cSec='all';return}
+  if(cSec!=='all'&&!list.some(x=>x.id===cSec))cSec='all';
+  const scnt=id=>CPPG.cards.filter(c=>c.sec===id).length;
+  row.innerHTML=`<button class="chip ${cSec==='all'?'on':''}" data-sec="all">단원 전체</button>`+
+    list.map(x=>`<button class="chip ${cSec===x.id?'on':''}" data-sec="${x.id}">${secShort(x.id)}<span class="n">${scnt(x.id)}</span></button>`).join('');
 }
-$('cardFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cSub=b.dataset.s;renderCardFilter();buildDeck()};
+$('cardFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cSub=b.dataset.s;cSec='all';renderCardFilter();buildDeck()};
+$('cardSec').onclick=e=>{const b=e.target.closest('[data-sec]');if(!b)return;cSec=b.dataset.sec;renderCardFilter();buildDeck()};
 
 function renderCard(){
   const fc=$('fc'); fc.classList.remove('flip');
@@ -1172,7 +1276,9 @@ function renderCard(){
   }
   const c=CPPG.cards[deck[di]];
   const st=S.cards['c'+deck[di]];
-  const tag=`${subShort(c.s)} · ${c.g}${st==='ok'?' · ✅ 알아요':st==='no'?' · ❓ 모름':''}`;
+  /* 태그는 교재 위치(CHAPTER · SECTION)를 그대로 보여 준다 — 세부 주제(g)는 뒤에 덧붙인다 */
+  const where=HASSEC&&c.sec?`${subShort(c.s)} · ${secFull(c.sec)}`:`${subShort(c.s)} · ${c.g}`;
+  const tag=`${where}${st==='ok'?' · ✅ 알아요':st==='no'?' · ❓ 모름':''}`;
   $('fcTag').textContent=tag; $('fcTag2').textContent=tag;
   $('fcQ').textContent=c.front;
   $('fcKey').textContent=c.key||'';
@@ -1304,21 +1410,32 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ═══════════ 핵심시트 ═══════════ */
-let shSub='all', shQ='';
+let shSub='all', shSec='all', shQ='';
 function renderSheetFilter(){
   $('sheetFilter').innerHTML=`<button class="chip ${shSub==='all'?'on':''}" data-s="all">전체</button>`+
     CPPG.subjects.map(s=>`<button class="chip ${shSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}</button>`).join('');
+  const row=$('sheetSec'), list=HASSEC&&shSub!=='all'?secsOf(shSub):[];
+  row.hidden=!list.length;
+  if(!list.length){shSec='all';return}
+  if(shSec!=='all'&&!list.some(x=>x.id===shSec))shSec='all';
+  const cnt=id=>CPPG.sheets.filter(x=>x.sec===id).length+CPPG.traps.filter(x=>x.sec===id).length;
+  row.innerHTML=`<button class="chip ${shSec==='all'?'on':''}" data-sec="all">단원 전체</button>`+
+    list.map(x=>`<button class="chip ${shSec===x.id?'on':''}" data-sec="${x.id}">${secShort(x.id)}<span class="n">${cnt(x.id)}</span></button>`).join('');
 }
-$('sheetFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;shSub=b.dataset.s;renderSheetFilter();renderSheet()};
+$('sheetFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;shSub=b.dataset.s;shSec='all';renderSheetFilter();renderSheet()};
+$('sheetSec').onclick=e=>{const b=e.target.closest('[data-sec]');if(!b)return;shSec=b.dataset.sec;renderSheetFilter();renderSheet()};
 $('sheetSearch').oninput=e=>{shQ=e.target.value.trim().toLowerCase();renderSheet()};
 
 function renderSheet(){
   const hit=txt=>!shQ||txt.toLowerCase().includes(shQ);
-  const list=CPPG.sheets.filter(s=>(shSub==='all'||s.s===shSub));
+  /* sec 가 빈 항목은 그 CHAPTER 전체를 다루는 자료 — 어떤 SECTION 을 골라도 함께 보인다 */
+  const inSec=x=>shSec==='all'||x.sec===shSec||!x.sec;
+  const list=CPPG.sheets.filter(s=>(shSub==='all'||s.s===shSub)&&inSec(s));
   $('sheetList').innerHTML=list.map(s=>{
     const flat=s.title+' '+(s.type==='table'?s.head.join(' ')+s.rows.flat().join(' '):s.items.join(' '));
     if(!hit(flat))return '';
-    const badge=`<span class="sbadge" style="background:${subColor(s.s)}">${subShort(s.s)}</span>`;
+    const badge=`<span class="sbadge" style="background:${subColor(s.s)}">${subShort(s.s)}</span>`+
+      (HASSEC?`<span style="font-size:11px;color:var(--tx3);font-weight:600;margin-right:6px">${s.sec?secFull(s.sec):'CHAPTER '+chNo(s.s)+' 공통'}</span>`:'');
     let body;
     if(s.type==='table'){
       body=`<div class="tw"><table><thead><tr>${s.head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>
@@ -1330,7 +1447,7 @@ function renderSheet(){
   }).join('')||`<div class="empty"><div class="ic">🔍</div>검색 결과가 없습니다</div>`;
 
   $('trapList').innerHTML=CPPG.traps
-    .filter(t=>(shSub==='all'||t.s===shSub)&&hit(t.t))
+    .filter(t=>(shSub==='all'||t.s===shSub)&&inSec(t)&&hit(t.t))
     .map(t=>`<div class="trap"><span class="w">⚠</span><span><b style="color:${subColor(t.s)}">${subShort(t.s)}</b> · ${esc(t.t)}</span></div>`)
     .join('')||`<div style="color:var(--tx3);font-size:13px;padding:10px 0">해당 함정 항목이 없습니다</div>`;
 }
@@ -1412,9 +1529,15 @@ $('conceptList').onclick=e=>{
 
 /* ═══════════ 퀴즈 ═══════════ */
 const Q={sub:'all',topic:'all',types:TYPES.map(t=>t.k),levels:[1,2,3],count:20,mode:'practice'};
-/* 문항의 t(세부 유형)가 하나라도 있으면 과목 아래 단계 필터를 제공한다 */
-const HASTOPIC=ALLQ.some(q=>q.t);
-const topicsOf=sub=>[...new Set(ALLQ.filter(q=>(sub==='all'||q.s===sub)&&q.t).map(q=>q.t))];
+/* 과목 아래 단계 필터 — 교재 SECTION 이 있으면 그것을, 없으면 문항의 t(세부 유형)를 쓴다.
+   두 경우 모두 Q.topic 에 "칩의 값"이 들어간다(SECTION id 또는 t 문자열). */
+const HASTOPIC=HASSEC||ALLQ.some(q=>q.t);
+const topicsOf=sub=>HASSEC
+  ? secsOf(sub).filter(x=>ALLQ.some(q=>q.sec===x.id)).map(x=>x.id)
+  : [...new Set(ALLQ.filter(q=>(sub==='all'||q.s===sub)&&q.t).map(q=>q.t))];
+/* 칩 라벨 — SECTION 이면 "01. 셀 서식", 아니면 t 그대로 */
+const topicLabel=v=>HASSEC?secShort(v):esc(v);
+const topicMatch=(q,v)=>HASSEC?q.sec===v:q.t===v;
 let quiz=null, timerId=null;
 /** 콤보: 연속 정답 수. best 는 역대 최고(저장됨) */
 let combo=0, comboMax=0;
@@ -1430,7 +1553,7 @@ function renderTopicChips(match){
   const cnt=t=>ALLQ.filter(q=>match(q,{sub:Q.sub,types:Q.types,levels:Q.levels,topic:t})).length;
   $('quizTopic').innerHTML=
     `<button class="chip ${Q.topic==='all'?'on':''}" data-q="topic" data-v="all">전체<span class="n">${cnt('all')}</span></button>`+
-    list.map(t=>`<button class="chip ${Q.topic===t?'on':''}" data-q="topic" data-v="${esc(t)}">${esc(t)}<span class="n">${cnt(t)}</span></button>`).join('');
+    list.map(t=>`<button class="chip ${Q.topic===t?'on':''}" data-q="topic" data-v="${esc(t)}">${topicLabel(t)}<span class="n">${cnt(t)}</span></button>`).join('');
 }
 
 function renderQuizSetup(){
@@ -1439,7 +1562,7 @@ function renderQuizSetup(){
   // 각 칩의 개수는 "그 칩을 제외한 나머지 조건"을 적용해 센다 → 선택을 바꿨을 때의 결과가 보인다
   const match=(q,{sub,types,levels,topic})=>
     (sub==='all'||q.s===sub)&&types.includes(q.type)&&levels.includes(q.d)&&
-    (!topic||topic==='all'||q.t===topic);
+    (!topic||topic==='all'||topicMatch(q,topic));
 
   const subCnt=id=>ALLQ.filter(q=>match(q,{sub:id,types:Q.types,levels:Q.levels})).length;
   $('quizSubj').innerHTML=`<button class="chip ${Q.sub==='all'?'on':''}" data-q="sub" data-v="all">전체<span class="n">${subCnt('all')}</span></button>`+
@@ -1515,7 +1638,7 @@ $('bankTable').onclick=e=>{
 };
 function pickPool(){
   return ALLQ.filter(q=>Q.types.includes(q.type)&&Q.levels.includes(q.d)&&
-    (Q.sub==='all'||q.s===Q.sub)&&(Q.topic==='all'||q.t===Q.topic));
+    (Q.sub==='all'||q.s===Q.sub)&&(Q.topic==='all'||topicMatch(q,Q.topic)));
 }
 document.querySelectorAll('#quizSubj,#quizTopic,#quizType,#quizLevel,#quizCount,#quizMode').forEach(el=>{
   el.onclick=e=>{
@@ -1601,7 +1724,7 @@ function renderQ(){
   renderQ._m=mark4;
   updCombo();
 
-  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} · ${typeName(q.type)}
+  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)}${HASSEC&&q.sec?' · '+secFull(q.sec):''} · ${typeName(q.type)}
            <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span></div>
          <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}">${esc(q.q)}</div>`;
 
@@ -1836,6 +1959,7 @@ function wrongCard(q,cnt){
     : q.type==='order' ? q.steps.map((t,i)=>`${i+1}. ${t}`).join('  →  ') : q.a;
   return `<div class="wrong-item">
     <div class="meta"><span class="sbadge" style="background:${subColor(q.s)}">${subShort(q.s)}</span>
+      ${HASSEC&&q.sec?`<span style="font-size:11.5px;color:var(--tx3);font-weight:600">${secFull(q.sec)}</span>`:''}
       <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>
       ${cnt?`<span class="cnt">✗ ${cnt}회 오답</span>`:''}</div>
     <div class="q">${esc(q.q)}</div>
@@ -1858,6 +1982,28 @@ function renderExFilter(){
     CPPG.subjects.filter(s=>cnt(s.id)).map(s=>
       `<button class="chip ${exSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}<span class="n">${cnt(s.id)}</span></button>`).join('');
 }
+/* 예시문제에 딸린 자료 렌더 — 문제에서 [B3] 처럼 셀을 가리키면 실제 표를 함께 보여 준다.
+   data = [{ kind:'sheet', title, cols:['A','B'..], row1:첫 행 번호, rows:[[...]], note }]
+          [{ kind:'table', title, head:[...], rows:[[...]], note }]   ← 액세스 테이블·쿼리·구조
+   rows[0] 은 sheet 에서 머리글 행으로 표시된다. */
+function exData(list){
+  if(!list||!list.length)return '';
+  const isNum=v=>v!==''&&v!=null&&/^-?[\d,]+(\.\d+)?%?$/.test(String(v).trim());
+  return list.map(d=>{
+    const cap=d.title?`<div class="cap">${esc(d.title)}</div>`:'';
+    const note=d.note?`<div class="nt">${esc(d.note)}</div>`:'';
+    if(d.kind==='sheet'){
+      const cols=d.cols||[], r1=d.row1||1;
+      const hd=`<tr><th class="rn"></th>${cols.map(c=>`<th class="cl">${esc(c)}</th>`).join('')}</tr>`;
+      const bd=(d.rows||[]).map((r,ri)=>`<tr><th class="rn">${r1+ri}</th>`+
+        r.map(v=>`<td class="${ri===0?'hd':isNum(v)?'num':''}">${esc(v)}</td>`).join('')+'</tr>').join('');
+      return `<div class="xls">${cap}<div class="tw"><table>${hd}${bd}</table></div>${note}</div>`;
+    }
+    const hd=d.head?`<tr>${d.head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr>`:'';
+    const bd=(d.rows||[]).map(r=>`<tr>${r.map(v=>`<td class="${isNum(v)?'num':''}">${esc(v)}</td>`).join('')}</tr>`).join('');
+    return `<div class="xls acc">${cap}<div class="tw"><table>${hd}${bd}</table></div>${note}</div>`;
+  }).join('');
+}
 function exCard(e,i,opts){
   const o=opts||{};
   const open=o.forceOpen!==undefined?o.forceOpen:!!exOpen['e'+i];
@@ -1868,8 +2014,10 @@ function exCard(e,i,opts){
       ${e.answer?`<div class="ansbox">정답 · 핵심 입력\n${esc(e.answer)}</div>`:''}
       ${(e.traps||[]).length?`<div class="trp">${e.traps.map(x=>`⚠ ${esc(x)}`).join('<br>')}</div>`:''}
     </div>`;
-  return `<div class="exq"><h4>${badge}${lv}${esc(e.title)}</h4>
+  const sec=HASSEC&&e.sec?`<span style="font-size:11px;color:var(--tx3);font-weight:600;margin-right:6px">${secFull(e.sec)}</span>`:'';
+  return `<div class="exq"><h4>${badge}${sec}${lv}${esc(e.title)}</h4>
     <div class="pb">${esc(e.problem)}</div>
+    ${exData(e.data)}
     ${o.hideToggle?'':`<button class="btn gh noprint" data-sol="${i}" style="margin-top:10px">${open?'풀이 접기':'풀이 보기'}</button>`}
     ${sol}</div>`;
 }
@@ -1893,27 +2041,50 @@ $('toggleAllSol').onclick=()=>{
   renderExample();
 };
 
-/* 모의고사 시험지 — 구성 비율(paperSpec)이 없으면 작업마다 1문제씩 */
-let paper=[], keyOpen=false;
+/* 모의고사 시험지 — meta.paperSets 에 시험지 "유형"을 여러 개 둘 수 있다.
+   없으면 paperSpec 한 벌만, 그것도 없으면 작업마다 1문제씩. */
+const PSETS=(CPPG.meta.paperSets&&CPPG.meta.paperSets.length)?CPPG.meta.paperSets
+  :[{id:'full',name:'모의고사',time:CPPG.meta.time||'',desc:'',
+     spec:CPPG.meta.paperSpec||CPPG.subjects.map(s=>({s:s.id,n:1}))}];
+let paper=[], keyOpen=false, pSet=PSETS[0].id;
+const curSet=()=>PSETS.find(x=>x.id===pSet)||PSETS[0];
 function pickPaper(){
-  const spec=CPPG.meta.paperSpec||CPPG.subjects.map(s=>({s:s.id,n:1}));
   const out=[];
-  spec.forEach(sp=>{
+  curSet().spec.forEach(sp=>{
     const pool=EXS.map((e,i)=>({e,i})).filter(x=>x.e.s===sp.s);
     for(let k=pool.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[pool[k],pool[j]]=[pool[j],pool[k]]}
     out.push(...pool.slice(0,sp.n));
   });
   paper=out;
 }
+/* 시험지 유형 칩 — 각 칩에 그 유형으로 뽑히는 문항 수를 함께 보여 준다 */
+function renderPaperSet(){
+  const row=$('paperSet'); if(!row)return;
+  row.hidden=PSETS.length<2;
+  if(row.hidden)return;
+  const size=st=>st.spec.reduce((a,sp)=>a+Math.min(sp.n,EXS.filter(e=>e.s===sp.s).length),0);
+  row.innerHTML=PSETS.map(st=>
+    `<button class="chip ${pSet===st.id?'on':''}" data-ps="${st.id}" title="${esc(st.desc||'')}">
+       ${esc(st.name)}<span class="n">${size(st)}문항</span></button>`).join('');
+}
+$('paperSet').onclick=e=>{
+  const b=e.target.closest('[data-ps]'); if(!b)return;
+  pSet=b.dataset.ps; pickPaper(); keyOpen=false; renderPaper();
+};
 function renderPaper(){
   const m=CPPG.meta;
   const now=new Date();
   const stamp=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  $('paperDesc').textContent=`예시문제를 ${UNIT} 구성에 맞춰 뽑아 시험지 형태로 묶었습니다. 인쇄해 시간을 재고 풀어 보세요.`;
+  const st=curSet();
+  renderPaperSet();
+  $('paperDesc').textContent=`${st.name} — ${st.desc||`예시문제를 ${UNIT} 구성에 맞춰 뽑았습니다.`} 인쇄해 시간을 재고 풀어 보세요.`;
   $('toggleKey').textContent=keyOpen?'정답·해설 숨기기':'정답·해설 보기';
-  const head=`<div class="paperhd"><div class="t">${esc(m.name)} — 모의고사 시험지</div>
-    <div class="m">${esc(m.type||'')} · 제한 시간 ${esc(m.time||'-')} · 합격 ${esc(m.pass||'-')}</div>
-    <div class="m">문항 ${paper.length}개 · 생성일 ${stamp} · 수험번호 ______________ 성명 ______________</div></div>`;
+  /* 시험지 구성표 — 어느 작업에서 몇 문항이 나왔는지 한 줄로 보여 준다 */
+  const mix=CPPG.subjects.filter(s=>paper.some(x=>x.e.s===s.id))
+    .map(s=>`${subShort(s.id)} ${paper.filter(x=>x.e.s===s.id).length}`).join(' · ');
+  const head=`<div class="paperhd"><div class="t">${esc(m.name)} — ${esc(st.name)} 모의고사</div>
+    <div class="m">${esc(m.type||'')} · 제한 시간 ${esc(st.time||m.time||'-')} · 합격 ${esc(m.pass||'-')}</div>
+    <div class="m">문항 ${paper.length}개 (${esc(mix)}) · 생성일 ${stamp} · 수험번호 ______________ 성명 ______________</div></div>`;
   const body=paper.map((x,n)=>{
     const c=exCard(x.e,x.i,{forceOpen:keyOpen,hideToggle:true});
     return c.replace('<h4>',`<h4><span style="font-weight:900">문제 ${n+1}.</span> `);
