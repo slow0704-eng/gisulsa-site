@@ -1,0 +1,30 @@
+{
+  "name": "컴퓨터시스템기사",
+  "short_name": "컴시기",
+  "description": "객관식 4지 택일 · 4과목 80문항 (과목당 20문항) · 암기카드 · 핵심시트 · 퀴즈 · 오답노트 학습",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1420",
+  "theme_color": "#0891b2",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": [
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
