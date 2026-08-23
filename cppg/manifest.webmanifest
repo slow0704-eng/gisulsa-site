@@ -1,0 +1,30 @@
+{
+  "name": "CPPG 개인정보관리사",
+  "short_name": "CPPG",
+  "description": "객관식 4지선다 · 5과목 100문항 · 암기카드 · 핵심시트 · 퀴즈 · 오답노트 학습",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1420",
+  "theme_color": "#2563eb",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": [
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
