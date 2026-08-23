@@ -1,0 +1,30 @@
+{
+  "name": "정보보안기사 필기",
+  "short_name": "정보보안기사",
+  "description": "객관식 5지선다 · 5과목 100문항 (과목당 20문항) · 암기카드 · 핵심시트 · 퀴즈 · 오답노트 학습",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1420",
+  "theme_color": "#dc2626",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": [
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
