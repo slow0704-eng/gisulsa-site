@@ -1,0 +1,30 @@
+{
+  "name": "컴퓨터활용능력 1급 실기",
+  "short_name": "컴활1급",
+  "description": "컴퓨터 실기 작업형 · 스프레드시트(Excel) + 데이터베이스(Access) · 암기카드 · 핵심시트 · 퀴즈 · 오답노트 학습",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1420",
+  "theme_color": "#16a34a",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": [
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
