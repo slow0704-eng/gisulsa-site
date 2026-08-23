@@ -4,6 +4,26 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>CPPG 개인정보관리사 — 암기·퀴즈 학습</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📚%3C/text%3E%3C/svg%3E" />
+<!-- PWA: 홈 화면 설치 · 오프라인 학습 -->
+<link rel="manifest" href="manifest.webmanifest" />
+<meta name="theme-color" content="#0f1420" id="metaTheme" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="apple-touch-icon" href="icon.svg" />
+<script>
+/* 환경설정(테마·글자크기) 조기 적용 — 첫 페인트 깜빡임(FOUC) 방지.
+   data.js 가 아직 로드되기 전이라 storeKey 를 모른다 → 사이트 구분은 경로로 한다.
+   저장값이 없으면 시스템 설정(prefers-color-scheme)을 따른다. */
+(function(){try{
+  var K='gs-ui:'+location.pathname, P={};
+  try{ P=JSON.parse(localStorage.getItem(K)||'{}')||{}; }catch(e){}
+  var t=P.theme||((window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark');
+  document.documentElement.dataset.theme=t;
+  if(P.fs&&P.fs!=='m')document.documentElement.dataset.fs=P.fs;
+  window.__UIK=K; window.__UIP=P;
+}catch(e){}})();
+</script>
 <style>
 /* ═══ 토큰 ═══ */
 :root{
@@ -47,13 +67,13 @@ header{
   backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
-.hwrap{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hwrap{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap}
 .logo{font-weight:800;font-size:18px;letter-spacing:-.3px;white-space:nowrap}
 .logo b{background:linear-gradient(92deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
 .logo span{font-size:12px;color:var(--tx3);font-weight:500;margin-left:6px}
 nav{display:flex;gap:4px;flex:1;flex-wrap:wrap}
 nav button{
-  padding:7px 14px;border-radius:999px;font-size:14px;font-weight:600;color:var(--tx2);
+  padding:7px 12px;border-radius:999px;font-size:14px;font-weight:600;color:var(--tx2);
   transition:.15s;
 }
 nav button:hover{background:var(--card);color:var(--tx)}
@@ -61,6 +81,65 @@ nav button.on{background:linear-gradient(92deg,var(--ac),var(--ac2));color:#fff}
 nav button kbd{margin-left:3px;opacity:.5;font-size:10px;padding:0 4px;background:transparent;border-color:currentColor}
 nav button.on kbd{opacity:.75}
 .themebtn{padding:7px 11px;border-radius:10px;background:var(--card);border:1px solid var(--line);font-size:15px}
+.themebtn.fsbtn{font-size:13px;font-weight:800;letter-spacing:-.3px;min-width:38px}
+/* 환경설정 버튼 묶음 — 로고보다 뒤, 항상 한 줄로 붙어 다닌다.
+   ★폭 예산 주의★ 이 묶음이 커지면 남는 폭이 줄어 nav 가 둘째 줄로 밀린다.
+   밀린 메뉴는 "메뉴가 사라졌다"로 읽히므로, 1180px 헤더에서 메뉴가 한 줄에
+   들어가도록 버튼을 조밀하게 유지한다. */
+.prefs{display:flex;gap:3px;flex:none;margin-left:auto;align-items:center}
+.prefs .themebtn{padding:7px 9px}
+.prefs .themebtn.fsbtn{min-width:34px;padding:7px 5px}
+
+/* ═══ 글자 크기 (A- / A+) ═══
+   본문 글꼴이 대부분 px 고정이라 body 확대(zoom)로 전체를 함께 키운다 — 브라우저 확대와 같은 방식. */
+html[data-fs="s"] body{zoom:.9}
+html[data-fs="l"] body{zoom:1.12}
+html[data-fs="xl"] body{zoom:1.25}
+
+/* ═══ 온보딩 배너 (첫 방문 1회) ═══ */
+.onboard{
+  max-width:1180px;margin:14px auto -4px;padding:12px 16px;
+  display:flex;gap:12px;align-items:flex-start;
+  background:color-mix(in srgb,var(--ac) 10%,var(--card));
+  border:1px solid color-mix(in srgb,var(--ac) 34%,var(--line));
+  border-radius:var(--r);font-size:13.5px;color:var(--tx2);line-height:1.6;
+}
+.onboard[hidden]{display:none}
+.onboard .ob-ic{font-size:22px;line-height:1.3;flex:none}
+.onboard b{color:var(--tx)}
+.onboard .ob-x{
+  margin-left:auto;flex:none;padding:6px 12px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:var(--tx2);
+  font-size:12.5px;font-weight:700;min-height:38px;white-space:nowrap;
+}
+.onboard .ob-x:hover{border-color:var(--ac);color:var(--ac)}
+
+/* ═══ 내보내기 (TXT · Word · CSV · Excel) ═══ */
+.expbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.exp-lbl{font-size:12px;color:var(--tx3);font-weight:700}
+.exp-btn{
+  padding:7px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);
+  color:var(--tx2);font-size:12.5px;font-weight:700;min-height:38px;transition:.15s;
+}
+.exp-btn:hover{border-color:var(--ac);color:var(--ac)}
+.exp-btn:disabled{opacity:.45;cursor:progress}
+
+/* ═══ ★ 북마크 ═══ */
+.btn.gh.star.on{border-color:var(--wa);color:var(--wa);background:color-mix(in srgb,var(--wa) 14%,var(--card))}
+
+/* ═══ 빈 상태 — 필터 초기화 ═══ */
+.empty .es-reset{
+  margin-top:12px;padding:8px 16px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--tx2);font-size:13px;font-weight:700;min-height:40px;
+}
+.empty .es-reset:hover{border-color:var(--ac);color:var(--ac)}
+
+/* 검색창은 남는 폭을 차지하되 너무 길어지지 않게 — 오른쪽 내보내기 버튼과 공존 */
+#sheetSearch{flex:1 1 240px;max-width:430px}
+
+/* ═══ 검색 문법 힌트 ═══ */
+.qhint{font-size:11.5px;color:var(--tx3);line-height:1.7}
+.qhint code{background:var(--card2);border:1px solid var(--line);border-radius:5px;padding:0 4px;font-size:11px}
 
 /* ═══ 레이아웃 ═══ */
 main{max-width:1180px;margin:0 auto;padding:22px 20px 80px}
@@ -134,6 +213,21 @@ input.search{min-width:190px}
 .subrow .ct{font-size:12px;color:var(--tx3);white-space:nowrap}
 .subrow .pb{width:110px;height:6px;border-radius:99px;background:var(--bg2);overflow:hidden;flex:none}
 .subrow .pb i{display:block;height:100%;border-radius:99px}
+
+/* ── 교재 목차 (PART · CHAPTER · SECTION) ── */
+.tpart{font-size:12px;font-weight:800;letter-spacing:.5px;color:var(--ac);margin:16px 0 6px;padding-bottom:5px;border-bottom:1px solid var(--line)}
+.tpart:first-child{margin-top:0}
+.tpart span{color:var(--tx3);font-weight:600;letter-spacing:0;margin-left:6px}
+.tch{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:800;margin:12px 0 6px}
+.tch .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.tch .ct{margin-left:auto;font-size:11.5px;font-weight:600;color:var(--tx3);white-space:nowrap}
+.tsecs{display:flex;flex-wrap:wrap;gap:6px;padding-left:17px}
+.tsec{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card2);
+  border-radius:8px;padding:5px 9px;font-size:12.5px;color:var(--tx);cursor:pointer;text-align:left}
+.tsec:hover{border-color:var(--ac);color:var(--ac)}
+.tsec b{font-weight:800;font-variant-numeric:tabular-nums;color:var(--tx3)}
+.tsec .n{font-size:11px;color:var(--tx3);font-variant-numeric:tabular-nums}
+.tsec .pg{font-size:10.5px;color:var(--tx3);opacity:.75}
 
 /* ═══ 플래시카드 ═══ */
 .fcwrap{max-width:760px;margin:0 auto}
@@ -410,6 +504,23 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 .exq .ansbox{margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--card2);
   font-size:13px;font-weight:700;color:var(--ok);white-space:pre-wrap}
 .exq .trp{margin-top:8px;font-size:12.5px;color:var(--wa)}
+
+/* ── 예시문제에 딸린 자료(시트 데이터·테이블 구조) ── */
+.xls{margin-top:11px}
+.xls .cap{font-size:12px;font-weight:800;color:var(--tx2);margin-bottom:5px}
+.xls .tw{margin-top:0}
+.xls table{border-collapse:collapse;font-size:12.5px;min-width:100%}
+.xls th,.xls td{border:1px solid var(--line);padding:4px 9px;white-space:nowrap}
+.xls th.cl,.xls th.rn{background:var(--bg2);color:var(--tx3);font-weight:700;text-align:center;
+  font-size:11px;font-variant-numeric:tabular-nums}
+.xls th.rn{min-width:28px;position:sticky;left:0}
+.xls td{color:var(--tx2)}
+.xls td.hd{background:var(--card2);font-weight:800;color:var(--tx);text-align:center}
+.xls td.num{text-align:right;font-variant-numeric:tabular-nums}
+.xls td.mark{color:var(--ac);font-weight:800}
+.xls.acc th{background:var(--card2);color:var(--tx);font-weight:800;text-align:left}
+.xls .nt{font-size:11.5px;color:var(--tx3);margin-top:5px;line-height:1.6}
+@media print{ .xls th.rn{position:static} }
 .paperhd{border:2px solid var(--tx);border-radius:10px;padding:12px 14px;margin-bottom:14px}
 .paperhd .t{font-size:17px;font-weight:900}
 .paperhd .m{font-size:12.5px;color:var(--tx3);margin-top:4px}
@@ -513,12 +624,14 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   .kbhint{display:none}
 
   /* ── 칩만 있는 필터 줄은 한 줄 가로 스크롤 ── */
-  #cardFilter,#sheetFilter,#exFilter{
+  #cardFilter,#cardProg,#sheetFilter,#exFilter{
     flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
     scrollbar-width:none;margin:0 -14px 14px;padding:0 14px 2px;
   }
-  #cardFilter::-webkit-scrollbar,#sheetFilter::-webkit-scrollbar,#exFilter::-webkit-scrollbar{display:none}
-  #cardFilter .chip,#sheetFilter .chip,#exFilter .chip{flex:none}
+  #cardFilter::-webkit-scrollbar,#cardProg::-webkit-scrollbar,
+  #sheetFilter::-webkit-scrollbar,#exFilter::-webkit-scrollbar{display:none}
+  #cardFilter .chip,#cardProg .chip,#sheetFilter .chip,#exFilter .chip{flex:none}
+  #cardProg .exp-lbl{flex:none}
 
   /* ── 표: 너무 좁아 글자가 쪼개지지 않도록 최소 폭 + 스크롤 힌트 ── */
   .tw{position:relative;background:
@@ -537,6 +650,23 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 
   #toasts{top:calc(58px + env(safe-area-inset-top));width:92%}
   .toast{white-space:normal;text-align:center}
+
+  /* ── 환경설정 버튼 5개가 로고와 같은 줄에 들어가도록 축소 ── */
+  .prefs{gap:4px}
+  .prefs .themebtn{padding:8px 7px;min-width:38px;min-height:38px;font-size:15px}
+  /* 데스크톱 폭 절약값이 여기까지 새지 않게 터치 타깃 38px 을 다시 명시한다 */
+  .prefs .themebtn.fsbtn{font-size:12.5px;min-width:38px;min-height:38px;padding:8px 6px}
+
+  /* ── 온보딩 배너: 세로로 쌓고 버튼은 아래 오른쪽 ── */
+  .onboard{flex-wrap:wrap;margin:12px 0 -2px;font-size:13px}
+  .onboard .ob-x{margin-left:auto}
+
+  /* ── 내보내기 줄: 검색창 아래 한 줄 가로 스크롤 ── */
+  .expbar{flex:1 1 100%;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    scrollbar-width:none;min-width:0}
+  .expbar::-webkit-scrollbar{display:none}
+  .expbar .exp-btn{flex:none;min-height:40px}
+  #sheetSearch{flex:1 1 100%;max-width:none}
 }
 
 @media(max-width:380px){
@@ -568,9 +698,13 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
       <button data-v="info">ℹ️ 시험정보 <kbd>8</kbd></button>
       <button data-v="shortcut" id="navShortcut" hidden>⌨️ 단축키 <kbd>9</kbd></button>
     </nav></div>
-    <button class="themebtn" id="sound" title="효과음 켜기/끄기 (S)">🔊</button>
-    <button class="themebtn" id="theme" title="테마 전환 (T)">🌙</button>
-    <button class="themebtn" id="help" title="단축키 도움말 (?)">⌨</button>
+    <span class="prefs">
+      <button class="themebtn fsbtn" id="fontDn" title="글자 작게 (-)">A-</button>
+      <button class="themebtn fsbtn" id="fontUp" title="글자 크게 (+)">A+</button>
+      <button class="themebtn" id="sound" title="효과음 켜기/끄기 (S)">🔊</button>
+      <button class="themebtn" id="theme" title="테마 전환 (T)">🌙</button>
+      <button class="themebtn" id="help" title="단축키 도움말 (?)">⌨</button>
+    </span>
   </div>
 </header>
 
@@ -578,6 +712,16 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 <div id="fx"></div>
 <div id="glow"></div>
 <div id="toasts"></div>
+
+<!-- 온보딩 배너 — 첫 방문 1회 -->
+<div id="onboard" class="onboard" role="note" hidden>
+  <span class="ob-ic">🎓</span>
+  <div class="ob-txt"><b>처음이신가요?</b> 학습 사이클 →
+    <b>🃏 암기카드</b>로 개념 익히기 → <b>📖 개념정리·📋 핵심시트</b>로 정리 →
+    <b>🧩 퀴즈</b>로 자가확인 → <b>📕 오답노트</b>로 보강.
+    <kbd>?</kbd> 로 전체 단축키, <kbd>A+</kbd>/<kbd>A-</kbd> 로 글자 크기를 조절합니다.</div>
+  <button type="button" class="ob-x" id="obClose">알겠어요 ✕</button>
+</div>
 
 <!-- 단축키 도움말 -->
 <div id="kbHelp">
@@ -588,6 +732,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     <div class="kbrow"><span class="keys"><kbd>1</kbd>~<kbd>9</kbd></span><span class="desc">메뉴 순서대로 화면 전환 (홈 / 암기카드 / 핵심시트 / 개념정리 / 퀴즈 / 오답노트 …)<br><span style="color:var(--tx3);font-size:12.5px">단, 암기카드의 <kbd>1</kbd><kbd>2</kbd> 와 퀴즈 풀이 중 <kbd>1</kbd>~<kbd>4</kbd> 는 그 화면의 동작이 우선합니다. 자료가 없어 감춰진 메뉴의 번호는 동작하지 않습니다</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>T</kbd></span><span class="desc">다크 / 라이트 테마 전환</span></div>
     <div class="kbrow"><span class="keys"><kbd>S</kbd></span><span class="desc">효과음 켜기 / 끄기</span></div>
+    <div class="kbrow"><span class="keys"><kbd>-</kbd> <kbd>+</kbd></span><span class="desc">글자 작게 / 크게 (4단계 · 저장됨)</span></div>
     <div class="kbrow"><span class="keys"><kbd>/</kbd></span><span class="desc">어디서든 핵심시트 검색창으로 이동</span></div>
     <div class="kbrow"><span class="keys"><kbd>?</kbd> <kbd>Esc</kbd></span><span class="desc">단축키 도움말 열기 / 닫기</span></div>
     <div class="kbsec">🃏 암기카드</div>
@@ -596,6 +741,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     <div class="kbrow"><span class="keys"><kbd>1</kbd> / <kbd>2</kbd></span><span class="desc">모름 / 알아요 (자동으로 다음 카드)</span></div>
     <div class="kbrow"><span class="keys"><kbd>F</kbd></span><span class="desc">카드 섞기</span></div>
     <div class="kbrow"><span class="keys"><kbd>U</kbd></span><span class="desc">"모르는 것만" 토글</span></div>
+    <div class="kbrow"><span class="keys"><kbd>B</kbd></span><span class="desc">★ 북마크 토글 — 진도 줄의 <b>★ 북마크</b> 칩으로 모아 보기</span></div>
     <div class="kbsec">🧩 퀴즈 — 설정</div>
     <div class="kbrow"><span class="keys"><kbd>Enter</kbd></span><span class="desc">퀴즈 시작</span></div>
     <div class="kbrow"><span class="keys"><kbd>W</kbd></span><span class="desc">오답만 다시 풀기</span></div>
@@ -609,6 +755,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     <div class="kbsec">📋 핵심시트</div>
     <div class="kbrow"><span class="keys"><kbd>/</kbd></span><span class="desc">검색창으로 이동</span></div>
     <div class="kbrow"><span class="keys"><kbd>Esc</kbd></span><span class="desc">검색어 지우기</span></div>
+    <div class="kbrow"><span class="keys">검색 문법</span><span class="desc">공백=모두 포함 · <kbd>OR</kbd>/<kbd>|</kbd>=하나라도 · <kbd>-단어</kbd>=제외 · <kbd>( )</kbd>=그룹 · <kbd>"여러 단어"</kbd>=구문</span></div>
     <div style="margin-top:18px;text-align:right"><button class="btn" id="kbClose">닫기</button></div>
   </div>
 </div>
@@ -638,6 +785,13 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     </div>
   </div>
 
+  <!-- 교재 목차 (sections 가 있는 종목에서만 표시) -->
+  <div class="box" id="tocBox" style="margin-top:14px" hidden>
+    <h3 style="font-size:15px;font-weight:800;margin-bottom:4px" id="tocTitle">📚 교재 목차</h3>
+    <div style="font-size:12.5px;color:var(--tx3);margin-bottom:10px">SECTION 을 누르면 그 단원 문제로 바로 출제됩니다. 숫자는 카드·시트·함정·문제를 합한 학습 항목 수입니다.</div>
+    <div id="tocList"></div>
+  </div>
+
   <div class="grid g2" style="margin-top:14px">
     <div class="box">
       <h3 style="font-size:15px;font-weight:800;margin-bottom:10px">학습 우선순위 (출제 빈도)</h3>
@@ -656,9 +810,12 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   <p class="vd kbhint"><kbd>Space</kbd> 뒤집기 · <kbd>1</kbd> 모름 / <kbd>2</kbd> 알아요 · <kbd>←</kbd><kbd>→</kbd> 이동 · <kbd>F</kbd> 섞기 · <kbd>U</kbd> 모르는 것만 · <kbd>?</kbd> 전체 단축키</p>
 
   <div class="bar" id="cardFilter"></div>
+  <div class="bar" id="cardSec" hidden></div>
+  <div class="bar" id="cardProg"></div>
   <div class="bar">
     <button class="btn gh" id="shuffle">🔀 섞기</button>
     <button class="btn gh" id="onlyUnknown">❓ 모르는 것만</button>
+    <button class="btn gh star" id="starCard" title="이 카드 북마크 (B)">☆ 북마크</button>
     <button class="btn gh" id="resetCards">↺ 진도 초기화</button>
     <div class="sp"></div>
     <span style="font-size:13px;color:var(--tx3)" id="cardStat"></span>
@@ -695,8 +852,22 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   <h2 class="vt">📋 핵심 정리 시트 · 함정 노트</h2>
   <p class="vd">비교표·기간표는 그대로 출제됩니다. 함정 노트는 오답 유도 패턴 모음입니다.</p>
   <div class="bar" id="sheetFilter"></div>
+  <div class="bar" id="sheetSec" hidden></div>
   <div class="bar">
-    <input class="search" id="sheetSearch" placeholder="🔍 시트·함정 내용 검색 (예: 72시간, 위탁, SHA)" />
+    <input class="search" id="sheetSearch" placeholder="🔍 시트·함정 검색 — 공백=AND · OR · -제외 · &quot;구문&quot;"
+      title='검색 문법 — 공백=AND(모두 포함) · OR 또는 | =하나라도 · -단어(!·NOT)=제외 · ( )=그룹 · "여러 단어"=구문&#10;예) 위탁 동의 · 위탁 OR 제공 · (위탁 OR 제공) -국외 · "고유식별정보"' />
+    <div class="sp"></div>
+    <span class="expbar">
+      <span class="exp-lbl">내보내기</span>
+      <button type="button" class="exp-btn" id="shExpTxt" title="현재 필터·검색 결과를 TXT 로 저장 — 메모장·한글(HWP)에서 열림">TXT</button>
+      <button type="button" class="exp-btn" id="shExpDoc" title="현재 필터·검색 결과를 Word(.doc) 로 저장 — MS Word·한글(HWP)에서 열림">Word</button>
+      <button type="button" class="exp-btn" id="shExpCsv" title="현재 필터·검색 결과를 CSV 로 저장">CSV</button>
+      <button type="button" class="exp-btn" id="shExpXls" title="현재 필터·검색 결과를 Excel(xlsx) 로 저장">Excel</button>
+    </span>
+  </div>
+  <div class="bar qhint" style="margin-top:-8px">
+    검색 문법 · <code>공백</code>=모두 포함 · <code>OR</code>·<code>|</code>=하나라도 ·
+    <code>-단어</code>=제외 · <code>( )</code>=그룹 · <code>"여러 단어"</code>=구문
   </div>
   <div class="grid" id="sheetList"></div>
   <div class="box" style="margin-top:16px">
@@ -793,6 +964,13 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   <div class="bar">
     <button class="btn" id="reviewWrong">▶ 오답만 다시 풀기</button>
     <button class="btn gh" id="clearWrong">🗑 오답노트 비우기</button>
+    <span class="expbar">
+      <span class="exp-lbl">내보내기</span>
+      <button type="button" class="exp-btn" id="ntExpTxt" title="오답노트를 TXT 로 저장">TXT</button>
+      <button type="button" class="exp-btn" id="ntExpDoc" title="오답노트를 Word(.doc) 로 저장">Word</button>
+      <button type="button" class="exp-btn" id="ntExpCsv" title="오답노트를 CSV 로 저장">CSV</button>
+      <button type="button" class="exp-btn" id="ntExpXls" title="오답노트를 Excel(xlsx) 로 저장">Excel</button>
+    </span>
     <div class="sp"></div>
     <span style="font-size:13px;color:var(--tx3)" id="noteStat"></span>
   </div>
@@ -803,6 +981,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   <h2 class="vt">📄 예시문제</h2>
   <p class="vd">실전 형식의 예시 문제입니다. 먼저 스스로 풀어 본 뒤 풀이를 펼치세요.</p>
   <div class="bar" id="exFilter"></div>
+  <div class="bar" id="exSecBar" hidden></div>
   <div class="bar">
     <button class="btn" id="makePaper">🖨 모의고사 시험지 만들기</button>
     <button class="btn gh" id="toggleAllSol">풀이 모두 펼치기</button>
@@ -815,6 +994,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 <section class="view" id="v-paper">
   <h2 class="vt">🖨 모의고사 시험지</h2>
   <p class="vd" id="paperDesc"></p>
+  <div class="bar noprint" id="paperSet" hidden></div>
   <div class="bar noprint">
     <button class="btn" id="printPaper">🖨 인쇄</button>
     <button class="btn gh" id="reroll">🔀 다시 뽑기</button>
@@ -833,7 +1013,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 <section class="view" id="v-shortcut">
   <h2 class="vt">⌨️ 단축키</h2>
   <p class="vd">시험장에서 시간을 버는 단축키입니다. 손에 익은 것부터 확실히 쓰세요.</p>
-  <div class="bar"><input class="inp" id="scSearch" placeholder="단축키·기능 검색 (예: 절대참조, F4, 디자인)"></div>
+  <div class="bar"><input class="inp" id="scSearch" placeholder="단축키·기능 검색 — 공백=AND · OR · -제외 · &quot;구문&quot;" title='검색 문법 — 공백=AND · OR 또는 | =하나라도 · -단어=제외 · ( )=그룹 · "여러 단어"=구문'></div>
   <div id="scBody"></div>
 </section>
 
@@ -846,7 +1026,12 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 /* ═══════════ 저장소 ═══════════ */
 /* 자격증마다 저장소를 분리 (같은 도메인에 여러 학습사이트가 올라가므로) */
 const KEY=(CPPG.meta.storeKey||'exam')+'-study-v1';
-const S=Object.assign({theme:'dark',sound:true,best:0,cards:{},wrong:{},quizzes:[],check:{}},JSON.parse(localStorage.getItem(KEY)||'{}'));
+/* theme 기본값 = <head> 인라인 스크립트가 이미 정한 값(저장값 → 없으면 시스템 설정).
+   mark = ★ 북마크(카드) · view = 이어보기(마지막으로 보던 화면). */
+const S=Object.assign(
+  {theme:document.documentElement.dataset.theme||'dark',sound:true,best:0,
+   cards:{},mark:{},wrong:{},quizzes:[],check:{},view:''},
+  JSON.parse(localStorage.getItem(KEY)||'{}'));
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
 
 const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
@@ -855,6 +1040,24 @@ const UNIT=CPPG.meta.unit||'과목';
 /* subjects[].out 의 단위 — 필기 종목은 문항 수, 실기·배점제 종목은 점수 */
 const OUTU=CPPG.meta.outUnit||'문제';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ── 교재 목차 체계 ────────────────────────────────────────
+   parts = PART, subjects = CHAPTER, sections = SECTION.
+   각 항목(카드·시트·함정·문제)의 sec 가 SECTION id 를 가리킨다.
+   sections 가 없는 종목에서는 HASSEC=false 가 되어 단원 칩·목차가 통째로
+   감춰지고 기존(구분 단위) 화면이 그대로 동작한다 — 엔진은 공용이다. */
+CPPG.parts=CPPG.parts||[]; CPPG.sections=CPPG.sections||[];
+const SEC={}; CPPG.sections.forEach(x=>SEC[x.id]=x);
+const HASSEC=CPPG.sections.length>0;
+const secNo=id=>SEC[id]?String(SEC[id].no).padStart(2,'0'):'';
+const secName=id=>SEC[id]?esc(SEC[id].name):'기타';
+const secShort=id=>SEC[id]?`${secNo(id)}. ${esc(SEC[id].name)}`:'기타';
+const secFull=id=>SEC[id]?`SECTION ${secNo(id)} ${esc(SEC[id].name)}`:'기타';
+/* 구분(CHAPTER)에 속한 SECTION — 교재 순서 그대로 */
+const secsOf=sub=>CPPG.sections.filter(x=>sub==='all'||x.s===sub);
+const partOf=sub=>CPPG.parts.find(p=>p.id===(SUB[sub]||{}).part)||null;
+const chNo=id=>SUB[id]?String(SUB[id].ch||SUB[id].no).padStart(2,'0'):'';
+const chName=id=>SUB[id]?esc(String(SUB[id].name).split('—').pop().trim()):'';
 
 /* ── 구분 라벨 정책 ──────────────────────────────────────────
    자격증은 "1과목·2영역" 이 공식 호칭이라 번호가 곧 이름이지만,
@@ -1016,13 +1219,191 @@ const FX=(()=>{
   };
 })();
 
-/* ═══════════ 테마 ═══════════ */
+/* ═══════════ 환경설정 — 테마 · 글자 크기 ═══════════ */
+/* 테마·글자크기는 <head> 인라인 스크립트가 먼저 읽는 별도 키에도 함께 써 둔다(FOUC 방지).
+   사이트 구분은 경로 — data.js 보다 먼저 실행되므로 storeKey 를 알 수 없기 때문. */
+const UIK=(typeof window!=='undefined'&&window.__UIK)||('gs-ui:'+location.pathname);
+const UIP=Object.assign({theme:'',fs:'m',ob:0},(typeof window!=='undefined'&&window.__UIP)||{});
+const saveUI=()=>{try{localStorage.setItem(UIK,JSON.stringify(UIP))}catch(e){}};
+
 function applyTheme(){
   document.documentElement.dataset.theme=S.theme;
   $('theme').textContent=S.theme==='dark'?'🌙':'☀️';
+  $('theme').title=(S.theme==='dark'?'라이트 테마로':'다크 테마로')+' (T)';
+  const mt=$('metaTheme'); if(mt)mt.setAttribute('content',S.theme==='dark'?'#0f1420':'#f4f6fb');
+  UIP.theme=S.theme; saveUI();
 }
 $('theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';save();applyTheme()};
 applyTheme();
+
+/* 글자 크기 4단계 — px 고정 폰트가 많아 body zoom 으로 전체를 함께 키운다 */
+const FS=['s','m','l','xl'], FSNAME={s:'작게',m:'보통',l:'크게',xl:'아주 크게'};
+function applyFS(){
+  const v=FS.indexOf(UIP.fs)<0?'m':UIP.fs;
+  UIP.fs=v;
+  if(v==='m')delete document.documentElement.dataset.fs;
+  else document.documentElement.dataset.fs=v;
+  $('fontDn').disabled=v===FS[0];
+  $('fontUp').disabled=v===FS[FS.length-1];
+  saveUI();
+}
+function stepFS(d){
+  const i=Math.max(0,Math.min(FS.length-1,FS.indexOf(UIP.fs)+d));
+  if(FS[i]===UIP.fs)return;
+  UIP.fs=FS[i]; applyFS();
+  FX.toast('글자 크기 — '+FSNAME[UIP.fs],'good',900);
+}
+$('fontDn').onclick=()=>stepFS(-1);
+$('fontUp').onclick=()=>stepFS(1);
+applyFS();
+
+/* 온보딩 배너 — 첫 방문 1회 */
+(function(){
+  const el=$('onboard'); if(!el)return;
+  if(!UIP.ob)el.hidden=false;
+  $('obClose').onclick=()=>{el.hidden=true;UIP.ob=1;saveUI()};
+})();
+
+/* ═══════════ 🔍 검색 문법 (공백=AND · OR/| · -제외 · ( ) · "구문") ═══════════ */
+/* 통합사이트(01_정보관리기술사)와 같은 파서를 쓴다 — 두 엔진의 검색 체감이 같아야 하므로.
+   문법 오류는 던지지 않고 남는 토큰을 무시한다(타이핑 중인 미완성 질의도 계속 동작). */
+function lexQuery(q){
+  const toks=[], re=/"([^"]*)"|([()|&])|([^\s()|&"]+)/g; let m;
+  while((m=re.exec(String(q||'')))){
+    if(m[1]!=null)toks.push({t:'phrase',v:m[1]});
+    else if(m[2]!=null)toks.push({t:m[2]==='('?'lp':m[2]===')'?'rp':m[2]==='|'?'or':'and'});
+    else{
+      const v=m[3], up=v.toUpperCase();
+      if(up==='OR')toks.push({t:'or'});
+      else if(up==='AND')toks.push({t:'and'});
+      else if(up==='NOT')toks.push({t:'not'});
+      else if((v.charAt(0)==='-'||v.charAt(0)==='!')&&v.length>1)toks.push({t:'not'},{t:'phrase',v:v.slice(1)});
+      else toks.push({t:'phrase',v:v});
+    }
+  }
+  return toks;
+}
+function parseQuery(q){
+  const toks=lexQuery(q); let i=0;
+  const peek=()=>toks[i];
+  function parseOr(){
+    let l=parseAnd();
+    while(peek()&&peek().t==='or'){i++;const r=parseAnd();l=r?(l?{op:'or',l,r}:r):l}
+    return l;
+  }
+  function parseAnd(){
+    let l=parseUnary();
+    for(;;){
+      const t=peek();
+      if(!t||t.t==='or'||t.t==='rp')break;
+      if(t.t==='and'){i++;continue}
+      const r=parseUnary(); if(!r)break;
+      l=l?{op:'and',l,r}:r;
+    }
+    return l;
+  }
+  function parseUnary(){
+    const t=peek(); if(!t)return null;
+    if(t.t==='not'){i++;const x=parseUnary();return x?{op:'not',x}:null}
+    if(t.t==='lp'){i++;const g=parseOr();if(peek()&&peek().t==='rp')i++;return g}
+    if(t.t==='phrase'){i++;const v=t.v.toLowerCase();return v?{op:'term',v}:null}
+    i++; return null;
+  }
+  let ast=parseOr();
+  while(i<toks.length){const more=parseOr(); if(!more){i++;continue} ast=ast?{op:'and',l:ast,r:more}:more}
+  return ast;
+}
+function evalQuery(ast,s){
+  if(!ast)return true;
+  switch(ast.op){
+    case 'term':return s.indexOf(ast.v)>=0;
+    case 'not':return !evalQuery(ast.x,s);
+    case 'and':return evalQuery(ast.l,s)&&evalQuery(ast.r,s);
+    case 'or':return evalQuery(ast.l,s)||evalQuery(ast.r,s);
+  }
+  return true;
+}
+/* 질의당 1회만 파싱(입력 한 글자마다 항목 수만큼 호출되므로) */
+let _qk=null,_qa=null;
+function matcher(q){
+  if(q!==_qk){_qk=q;_qa=parseQuery(q)}
+  const ast=_qa;
+  return txt=>!q||evalQuery(ast,String(txt).toLowerCase());
+}
+
+/* ═══════════ 📤 내보내기 — TXT · Word · CSV · Excel ═══════════ */
+const EX=(()=>{
+  const p2=n=>(n<10?'0':'')+n;
+  const stamp=()=>{const d=new Date();return ''+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())};
+  const stampH=()=>{const d=new Date();return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+' '+p2(d.getHours())+':'+p2(d.getMinutes())};
+  function dl(blob,name){
+    const u=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=u;a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(u)},120);
+  }
+  /* 표시폭(한글·전각 2, 그 외 1) — TXT 표 정렬용 */
+  function w(s){s=String(s==null?'':s);let n=0;
+    for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);
+      n+=(c>=0x1100&&(c<=0x115F||(c>=0x2E80&&c<=0xA4CF)||(c>=0xAC00&&c<=0xD7A3)||(c>=0xF900&&c<=0xFAFF)||(c>=0xFE30&&c<=0xFE4F)||(c>=0xFF00&&c<=0xFF60)||(c>=0xFFE0&&c<=0xFFE6)))?2:1}
+    return n}
+  const pad=(s,n)=>{s=String(s==null?'':s);const d=n-w(s);return s+(d>0?new Array(d+1).join(' '):'')};
+  /* 고정폭 텍스트 표 */
+  function txtTable(head,rows,ind){
+    const all=(head&&head.length?[head]:[]).concat(rows); if(!all.length)return '';
+    let nc=0; all.forEach(r=>nc=Math.max(nc,r.length));
+    const wid=new Array(nc).fill(0);
+    all.forEach(r=>{for(let i=0;i<nc;i++)wid[i]=Math.max(wid[i],w(r[i]))});
+    const line=r=>{const cs=[];for(let i=0;i<nc;i++)cs.push(pad(r[i],wid[i]));return ind+cs.join('  |  ')};
+    const out=[];
+    if(head&&head.length){out.push(line(head));out.push(ind+wid.map(x=>new Array(x+1).join('─')).join('──┼──'))}
+    rows.forEach(r=>out.push(line(r)));
+    return out.join('\n');
+  }
+  const de=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  function docTable(head,rows){
+    let s='<table>';
+    if(head&&head.length)s+='<tr>'+head.map(x=>'<th>'+de(x)+'</th>').join('')+'</tr>';
+    rows.forEach(r=>{s+='<tr>'+r.map(x=>'<td>'+de(x)+'</td>').join('')+'</tr>'});
+    return s+'</table>';
+  }
+  const DOCCSS='<style>body{font-family:"맑은 고딕","Malgun Gothic",sans-serif;font-size:10.5pt;line-height:1.5}'+
+    'h1{font-size:16pt;margin:0 0 4pt}h2{font-size:13pt;border-bottom:1.5pt solid #333;margin:16pt 0 6pt}'+
+    'h3{font-size:11.5pt;color:#333;margin:10pt 0 4pt}.meta{color:#666;font-size:9pt}'+
+    '.lbl{color:#1d4ed8;font-weight:bold;margin:4pt 0 1pt}.note{color:#666}'+
+    'table{border-collapse:collapse;margin:3pt 0 6pt}td,th{border:.75pt solid #999;padding:2pt 6pt;font-size:9.5pt;vertical-align:top}'+
+    'th{background:#eee}ul{margin:2pt 0 4pt 18pt}</style>';
+  function saveTxt(lines,fname){dl(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/plain;charset=utf-8;'}),fname)}
+  function saveDoc(title,body,fname){
+    const h='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" '+
+      'xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>'+de(title)+'</title>'+DOCCSS+
+      '</head><body>'+body+'</body></html>';
+    dl(new Blob(['\ufeff'+h],{type:'application/msword;charset=utf-8;'}),fname);
+  }
+  function saveCsv(cols,rows,fname){
+    const q=v=>{v=String(v==null?'':v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+    const L=[cols.join(',')].concat(rows.map(r=>cols.map(c=>q(r[c])).join(',')));
+    dl(new Blob(['\ufeff'+L.join('\r\n')],{type:'text/csv;charset=utf-8;'}),fname);
+  }
+  /* Excel — SheetJS 를 최초 클릭 시에만 CDN 에서 지연 로드(평소엔 완전 오프라인 단일 파일 유지) */
+  function saveXlsx(cols,rows,sheet,fname,btn){
+    const go=()=>{
+      if(btn)btn.disabled=false;
+      const ws=XLSX.utils.json_to_sheet(rows,{header:cols});
+      ws['!cols']=cols.map(c=>({wch:c==='내용'||c==='해설'||c==='문제'?54:c==='제목'||c==='항목'?26:14}));
+      const wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb,ws,sheet);
+      XLSX.writeFile(wb,fname);
+    };
+    if(window.XLSX)return go();
+    if(btn)btn.disabled=true;
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload=go;
+    s.onerror=()=>{if(btn)btn.disabled=false;FX.toast('Excel 모듈(SheetJS) 로드 실패 — 네트워크 확인 후 재시도','bad',2200)};
+    document.head.appendChild(s);
+  }
+  return {stamp,stampH,dl,w,pad,txtTable,de,docTable,saveTxt,saveDoc,saveCsv,saveXlsx};
+})();
 
 /* ═══════════ 효과음 · 단축키 도움말 ═══════════ */
 function applySound(){
@@ -1056,6 +1437,8 @@ function go(v){
   if(v==='example')renderExample();
   if(v==='info')renderInfo();
   if(v==='shortcut')renderShortcut();
+  /* 이어보기 — 다음 방문 때 마지막으로 보던 화면으로 복귀(시험지 화면은 제외) */
+  if(v!=='paper'){S.view=v;save()}
 }
 $('nav').onclick=e=>{const b=e.target.closest('button[data-v]'); if(b)go(b.dataset.v)};
 
@@ -1135,36 +1518,127 @@ function renderHome(){
   $('selfcheck').innerHTML=g;
   $('ckGuide').textContent=`${ckOK}개 이상 ✓ → 합격선 도달 / ${ckMID}~${ckOK-1} → 보강 / ${ckMID-1} 이하 → 8주 코스`;
 
+  renderTOC();
+
   $('tiers').innerHTML=Object.entries(CPPG.tiers).map(([k,v])=>
     `<div class="gtitle">${esc(k)}</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
   $('roadmap').innerHTML=Object.entries(CPPG.roadmap).map(([k,v])=>
     `<div class="gtitle">${esc(k)} 코스</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
 }
+/* ═══════════ 📚 교재 목차 (PART · CHAPTER · SECTION) ═══════════
+   화면의 모든 단원 메뉴가 이 하나의 체계를 쓴다 — 카드·시트·퀴즈 필터가 같은 순서·같은 이름.
+   SECTION 별 항목 수는 카드+시트+함정+문제+예시를 모두 센다. */
+const SECITEMS=[].concat(CPPG.cards||[],CPPG.sheets||[],CPPG.traps||[],CPPG.examples||[],ALLQ);
+const secCount=id=>SECITEMS.filter(x=>x.sec===id).length;
+function renderTOC(){
+  const box=$('tocBox'); if(!box)return;
+  box.hidden=!HASSEC; if(!HASSEC)return;
+  $('tocTitle').textContent=`📚 교재 목차 — ${CPPG.meta.book||'기본서'}`;
+  $('tocList').innerHTML=CPPG.parts.map(p=>{
+    const chs=CPPG.subjects.filter(s=>s.part===p.id);
+    return `<div class="tpart">PART ${String(p.no).padStart(2,'0')} ${esc(p.name)}<span>${esc(p.book||'')} · ${esc(p.desc||'')}</span></div>`+
+      chs.map(s=>{
+        const secs=secsOf(s.id);
+        return `<div class="tch"><span class="dot" style="background:${s.color}"></span>
+            CHAPTER ${chNo(s.id)} ${chName(s.id)}
+            <span class="ct">약 ${s.out}${OUTU} · 항목 ${secs.reduce((a,x)=>a+secCount(x.id),0)}</span></div>
+          <div class="tsecs">${secs.map(x=>
+            `<button class="tsec" data-toc="${x.id}" title="${secFull(x.id)} (p.${esc(x.page||'')})">
+               <b>${secNo(x.id)}</b>${esc(x.name)}<span class="n">${secCount(x.id)}</span>
+               ${x.page?`<span class="pg">p.${esc(x.page)}</span>`:''}</button>`).join('')}</div>`;
+      }).join('');
+  }).join('');
+}
+/* 목차 → 퀴즈: 해당 SECTION 으로 필터를 세팅하고 출제 화면으로 */
+$('tocList').onclick=e=>{
+  const b=e.target.closest('[data-toc]'); if(!b)return;
+  const id=b.dataset.toc;
+  Q.sub=SEC[id].s; Q.topic=id;
+  go('quiz'); renderQuizSetup();
+};
+
 $('selfcheck').addEventListener('change',e=>{
   const i=e.target.dataset.ck; if(i===undefined)return;
   S.check['k'+i]=e.target.checked; save(); renderHome();
 });
 
 /* ═══════════ 암기카드 ═══════════ */
-let cSub='all', deck=[], di=0, unknownOnly=false;
+/* cProg — 진도 필터: all(전체) · unknown(모르는 것만=알아요 아님) · rest(미학습) · no(모름) · ok(알아요) · mark(★북마크) */
+let cSub='all', cSec='all', deck=[], di=0, unknownOnly=false, cProg='all';
+const cardMarked=i=>!!S.mark['c'+i];
+function progOk(i){
+  const v=S.cards['c'+i];
+  switch(cProg){
+    case 'unknown':return v!=='ok';
+    case 'rest'   :return !v;
+    case 'no'     :return v==='no';
+    case 'ok'     :return v==='ok';
+    case 'mark'   :return cardMarked(i);
+    default       :return true;
+  }
+}
+const cardInScope=i=>(cSub==='all'||CPPG.cards[i].s===cSub)&&(cSec==='all'||CPPG.cards[i].sec===cSec);
 function buildDeck(keepPos){
-  deck=CPPG.cards.map((c,i)=>i)
-    .filter(i=>cSub==='all'||CPPG.cards[i].s===cSub)
-    .filter(i=>!unknownOnly||S.cards['c'+i]!=='ok');
+  deck=CPPG.cards.map((c,i)=>i).filter(cardInScope).filter(progOk);
   if(!keepPos||di>=deck.length)di=0;
+  renderCardProg();
   renderCard();
 }
+function renderCardProg(){
+  const all=CPPG.cards.map((c,i)=>i).filter(cardInScope);
+  const n=k=>all.filter(i=>{const v=S.cards['c'+i];
+    return k==='rest'?!v:k==='no'?v==='no':k==='ok'?v==='ok':k==='mark'?cardMarked(i):v!=='ok'}).length;
+  const chip=(k,lbl)=>`<button class="chip ${cProg===k?'on':''}" data-p="${k}">${lbl}${k==='all'?`<span class="n">${all.length}</span>`:`<span class="n">${n(k)}</span>`}</button>`;
+  $('cardProg').innerHTML='<span class="exp-lbl" style="margin-right:2px">진도</span>'+
+    chip('all','전체')+chip('unknown','❓ 모르는 것만')+chip('rest','미학습')+
+    chip('no','❔ 모름')+chip('ok','✅ 알아요')+chip('mark','★ 북마크');
+}
+$('cardProg').onclick=e=>{
+  const b=e.target.closest('[data-p]'); if(!b)return;
+  cProg=b.dataset.p;
+  unknownOnly=cProg==='unknown';
+  $('onlyUnknown').classList.toggle('on',unknownOnly);
+  $('onlyUnknown').textContent=unknownOnly?'📚 전체 보기':'❓ 모르는 것만';
+  buildDeck();
+};
 function renderCardFilter(){
   const cnt=id=>CPPG.cards.filter(c=>id==='all'||c.s===id).length;
   $('cardFilter').innerHTML=`<button class="chip ${cSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
     CPPG.subjects.map(s=>`<button class="chip ${cSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}<span class="n">${cnt(s.id)}</span></button>`).join('');
+  /* 두 번째 줄 — 선택한 CHAPTER 의 SECTION 칩 (교재 목차 순서) */
+  const row=$('cardSec'), list=HASSEC&&cSub!=='all'?secsOf(cSub):[];
+  row.hidden=!list.length;
+  if(!list.length){cSec='all';return}
+  if(cSec!=='all'&&!list.some(x=>x.id===cSec))cSec='all';
+  const scnt=id=>CPPG.cards.filter(c=>c.sec===id).length;
+  row.innerHTML=`<button class="chip ${cSec==='all'?'on':''}" data-sec="all">단원 전체</button>`+
+    list.map(x=>`<button class="chip ${cSec===x.id?'on':''}" data-sec="${x.id}">${secShort(x.id)}<span class="n">${scnt(x.id)}</span></button>`).join('');
 }
-$('cardFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cSub=b.dataset.s;renderCardFilter();buildDeck()};
+$('cardFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cSub=b.dataset.s;cSec='all';renderCardFilter();buildDeck()};
+$('cardSec').onclick=e=>{const b=e.target.closest('[data-sec]');if(!b)return;cSec=b.dataset.sec;renderCardFilter();buildDeck()};
+
+function renderStar(){
+  const on=deck.length&&cardMarked(deck[di]);
+  const b=$('starCard');
+  b.classList.toggle('on',!!on);
+  b.textContent=on?'★ 북마크':'☆ 북마크';
+  b.disabled=!deck.length;
+}
+function toggleStar(){
+  if(!deck.length)return;
+  const k='c'+deck[di];
+  if(S.mark[k])delete S.mark[k]; else S.mark[k]=1;
+  save(); renderStar(); renderCardProg();
+  FX.toast(S.mark[k]?'★ 북마크에 담았습니다':'북마크 해제','good',900);
+  if(cProg==='mark'&&!S.mark[k])buildDeck(true);
+}
+$('starCard').onclick=toggleStar;
 
 function renderCard(){
   const fc=$('fc'); fc.classList.remove('flip');
   const cs=cardStats();
-  $('cardStat').textContent=`알아요 ${cs.ok} · 모름 ${cs.no} · 미학습 ${cs.rest}`;
+  $('cardStat').textContent=`알아요 ${cs.ok} · 모름 ${cs.no} · 미학습 ${cs.rest} · ★ ${Object.keys(S.mark).length}`;
+  renderStar();
   if(!deck.length){
     $('fcQ').textContent='표시할 카드가 없습니다 🎉';
     $('fcTag').textContent=''; $('fcKey').textContent=''; $('fcA').textContent=''; $('fcTip').textContent='';
@@ -1172,7 +1646,9 @@ function renderCard(){
   }
   const c=CPPG.cards[deck[di]];
   const st=S.cards['c'+deck[di]];
-  const tag=`${subShort(c.s)} · ${c.g}${st==='ok'?' · ✅ 알아요':st==='no'?' · ❓ 모름':''}`;
+  /* 태그는 교재 위치(CHAPTER · SECTION)를 그대로 보여 준다 — 세부 주제(g)는 뒤에 덧붙인다 */
+  const where=HASSEC&&c.sec?`${subShort(c.s)} · ${secFull(c.sec)}`:`${subShort(c.s)} · ${c.g}`;
+  const tag=`${where}${st==='ok'?' · ✅ 알아요':st==='no'?' · ❓ 모름':''}`;
   $('fcTag').textContent=tag; $('fcTag2').textContent=tag;
   $('fcQ').textContent=c.front;
   $('fcKey').textContent=c.key||'';
@@ -1200,15 +1676,18 @@ function mark(v){
       else if(st.ok%10===0)FX.milestone(`📚 ${st.ok}장 암기 완료!`);
     }
   }
-  if(unknownOnly&&v==='ok'){deck.splice(di,1); if(di>=deck.length)di=0; renderCard(); return}
+  renderCardProg();
+  if(cProg!=='all'&&cProg!=='mark'&&!progOk(deck[di])){deck.splice(di,1); if(di>=deck.length)di=0; renderCard(); return}
   di=(di+1)%deck.length; renderCard();
 }
 $('markNo').onclick=()=>mark('no');
 $('markOk').onclick=()=>mark('ok');
 $('shuffle').onclick=()=>{for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[deck[i],deck[j]]=[deck[j],deck[i]]}di=0;renderCard()};
-$('onlyUnknown').onclick=e=>{unknownOnly=!unknownOnly;e.target.classList.toggle('on');
-  e.target.textContent=unknownOnly?'📚 전체 보기':'❓ 모르는 것만'; buildDeck()};
-$('resetCards').onclick=()=>{if(confirm('암기카드 진도를 모두 초기화할까요?')){S.cards={};save();buildDeck();renderHome()}};
+$('onlyUnknown').onclick=e=>{unknownOnly=!unknownOnly;
+  e.target.classList.toggle('on',unknownOnly);
+  e.target.textContent=unknownOnly?'📚 전체 보기':'❓ 모르는 것만';
+  cProg=unknownOnly?'unknown':'all'; buildDeck()};
+$('resetCards').onclick=()=>{if(confirm('암기카드 진도를 모두 초기화할까요? (★ 북마크는 유지됩니다)')){S.cards={};save();buildDeck();renderHome()}};
 
 /* ═══════════ ⌨ 키보드 조작 (전 화면) ═══════════ */
 const VIEWS=['home','cards','sheet','concept','quiz','note','example','info','shortcut'];
@@ -1239,6 +1718,8 @@ document.addEventListener('keydown',e=>{
   // ── 전역 ──
   if(k==='t'||k==='T'){e.preventDefault();$('theme').click();return}
   if(k==='s'||k==='S'){e.preventDefault();toggleSound();return}
+  if(k==='-'||k==='_'){e.preventDefault();stepFS(-1);return}
+  if(k==='+'||k==='='){e.preventDefault();stepFS(1);return}
   if(k==='/'){e.preventDefault();go('sheet');setTimeout(()=>$('sheetSearch').focus(),60);return}
 
   // ── 뷰 전환(숫자) — 현재 화면이 그 숫자를 쓰지 않을 때만 ──
@@ -1259,6 +1740,7 @@ document.addEventListener('keydown',e=>{
     else if(k==='2'){e.preventDefault();mark('ok')}
     else if(k==='f'||k==='F'){e.preventDefault();$('shuffle').click()}
     else if(k==='u'||k==='U'){e.preventDefault();$('onlyUnknown').click()}
+    else if(k==='b'||k==='B'){e.preventDefault();toggleStar()}
     return;
   }
 
@@ -1304,21 +1786,41 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ═══════════ 핵심시트 ═══════════ */
-let shSub='all', shQ='';
+let shSub='all', shSec='all', shQ='';
 function renderSheetFilter(){
   $('sheetFilter').innerHTML=`<button class="chip ${shSub==='all'?'on':''}" data-s="all">전체</button>`+
     CPPG.subjects.map(s=>`<button class="chip ${shSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}</button>`).join('');
+  const row=$('sheetSec'), list=HASSEC&&shSub!=='all'?secsOf(shSub):[];
+  row.hidden=!list.length;
+  if(!list.length){shSec='all';return}
+  if(shSec!=='all'&&!list.some(x=>x.id===shSec))shSec='all';
+  const cnt=id=>CPPG.sheets.filter(x=>x.sec===id).length+CPPG.traps.filter(x=>x.sec===id).length;
+  row.innerHTML=`<button class="chip ${shSec==='all'?'on':''}" data-sec="all">단원 전체</button>`+
+    list.map(x=>`<button class="chip ${shSec===x.id?'on':''}" data-sec="${x.id}">${secShort(x.id)}<span class="n">${cnt(x.id)}</span></button>`).join('');
 }
-$('sheetFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;shSub=b.dataset.s;renderSheetFilter();renderSheet()};
+$('sheetFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;shSub=b.dataset.s;shSec='all';renderSheetFilter();renderSheet()};
+$('sheetSec').onclick=e=>{const b=e.target.closest('[data-sec]');if(!b)return;shSec=b.dataset.sec;renderSheetFilter();renderSheet()};
 $('sheetSearch').oninput=e=>{shQ=e.target.value.trim().toLowerCase();renderSheet()};
 
+/* 현재 화면에 보이는 시트·함정 — 내보내기는 이 결과(필터·검색 반영분) 기준 */
+let shSheets=[], shTraps=[];
+function shReset(){
+  shSub='all'; shSec='all'; shQ=''; $('sheetSearch').value='';
+  renderSheetFilter(); renderSheet();
+}
+
 function renderSheet(){
-  const hit=txt=>!shQ||txt.toLowerCase().includes(shQ);
-  const list=CPPG.sheets.filter(s=>(shSub==='all'||s.s===shSub));
+  const hit=matcher(shQ);
+  /* sec 가 빈 항목은 그 CHAPTER 전체를 다루는 자료 — 어떤 SECTION 을 골라도 함께 보인다 */
+  const inSec=x=>shSec==='all'||x.sec===shSec||!x.sec;
+  const list=CPPG.sheets.filter(s=>(shSub==='all'||s.s===shSub)&&inSec(s));
+  shSheets=list.filter(s=>hit(s.title+' '+(s.type==='table'?s.head.join(' ')+s.rows.flat().join(' '):s.items.join(' '))));
+  shTraps=CPPG.traps.filter(t=>(shSub==='all'||t.s===shSub)&&inSec(t)&&hit(t.t));
   $('sheetList').innerHTML=list.map(s=>{
     const flat=s.title+' '+(s.type==='table'?s.head.join(' ')+s.rows.flat().join(' '):s.items.join(' '));
     if(!hit(flat))return '';
-    const badge=`<span class="sbadge" style="background:${subColor(s.s)}">${subShort(s.s)}</span>`;
+    const badge=`<span class="sbadge" style="background:${subColor(s.s)}">${subShort(s.s)}</span>`+
+      (HASSEC?`<span style="font-size:11px;color:var(--tx3);font-weight:600;margin-right:6px">${s.sec?secFull(s.sec):'CHAPTER '+chNo(s.s)+' 공통'}</span>`:'');
     let body;
     if(s.type==='table'){
       body=`<div class="tw"><table><thead><tr>${s.head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>
@@ -1327,13 +1829,77 @@ function renderSheet(){
       body=`<ul class="sl">${s.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
     }
     return `<div class="box sheet"><h3>${badge}${esc(s.title)}</h3>${body}</div>`;
-  }).join('')||`<div class="empty"><div class="ic">🔍</div>검색 결과가 없습니다</div>`;
+  }).join('')||`<div class="empty"><div class="ic">🔍</div>검색·필터에 맞는 시트가 없습니다
+    <div><button type="button" class="es-reset" id="shReset">필터 초기화</button></div></div>`;
+  const rb=$('shReset'); if(rb)rb.onclick=shReset;
 
-  $('trapList').innerHTML=CPPG.traps
-    .filter(t=>(shSub==='all'||t.s===shSub)&&hit(t.t))
+  $('trapList').innerHTML=shTraps
     .map(t=>`<div class="trap"><span class="w">⚠</span><span><b style="color:${subColor(t.s)}">${subShort(t.s)}</b> · ${esc(t.t)}</span></div>`)
     .join('')||`<div style="color:var(--tx3);font-size:13px;padding:10px 0">해당 함정 항목이 없습니다</div>`;
 }
+
+/* ── 핵심시트·함정노트 내보내기 ── */
+const BRAND=()=>String(CPPG.meta.name||CPPG.meta.brand||'학습사이트');
+function shMeta(){
+  return `추출 ${EX.stampH()}  ·  시트 ${shSheets.length} · 함정 ${shTraps.length}\n`+
+         `필터  ${UNIT}=${shSub==='all'?'전체':subName(shSub)} / 검색=${shQ||'(없음)'}`;
+}
+function shEmpty(){
+  if(shSheets.length||shTraps.length)return false;
+  FX.toast('내보낼 항목이 없습니다 — 필터·검색 결과가 0건입니다','bad',2000);
+  return true;
+}
+function shRows(){
+  const rows=[];
+  shSheets.forEach(s=>{
+    if(s.type==='table'){
+      s.rows.forEach(r=>rows.push({구분:subShort(s.s),종류:'시트(표)',제목:s.title,항목:String(r[0]==null?'':r[0]),
+        내용:r.slice(1).map((c,i)=>`${s.head[i+1]||''}=${c}`).join(' · ')}));
+    }else{
+      s.items.forEach(it=>rows.push({구분:subShort(s.s),종류:'시트(목록)',제목:s.title,항목:'',내용:it}));
+    }
+  });
+  shTraps.forEach(t=>rows.push({구분:subShort(t.s),종류:'함정',제목:'함정노트',항목:'',내용:t.t}));
+  return rows;
+}
+const SHCOLS=['구분','종류','제목','항목','내용'];
+function shExpTxt(){
+  if(shEmpty())return;
+  const bar=new Array(66).join('='), sub=new Array(66).join('─');
+  const L=[BRAND()+' — 핵심시트 · 함정노트'].concat(shMeta().split('\n')).concat([bar]);
+  let cur=null;
+  shSheets.forEach(s=>{
+    if(s.s!==cur){cur=s.s;L.push('','■ '+subName(s.s),sub)}
+    L.push('','  ● '+s.title+(s.type==='table'?'   〔표〕':'   〔목록〕'));
+    if(s.type==='table')L.push(EX.txtTable(s.head,s.rows,'      '));
+    else s.items.forEach(it=>L.push('      · '+it));
+  });
+  if(shTraps.length){
+    L.push('','',    '■ ⚠ 함정노트',sub);
+    shTraps.forEach(t=>L.push('  · ['+subShort(t.s)+'] '+t.t));
+  }
+  EX.saveTxt(L,'핵심시트_'+EX.stamp()+'.txt');
+}
+function shExpDoc(){
+  if(shEmpty())return;
+  const h=['<h1>'+EX.de(BRAND())+' — 핵심시트 · 함정노트</h1>',
+           '<p class="meta">'+EX.de(shMeta()).replace(/\n/g,' · ')+'</p>'];
+  let cur=null;
+  shSheets.forEach(s=>{
+    if(s.s!==cur){cur=s.s;h.push('<h2>'+EX.de(subName(s.s))+'</h2>')}
+    h.push('<h3>'+EX.de(s.title)+'</h3>');
+    if(s.type==='table')h.push(EX.docTable(s.head,s.rows));
+    else h.push('<ul>'+s.items.map(x=>'<li>'+EX.de(x)+'</li>').join('')+'</ul>');
+  });
+  if(shTraps.length){
+    h.push('<h2>⚠ 함정노트</h2><ul>'+shTraps.map(t=>'<li><b>['+EX.de(subShort(t.s))+']</b> '+EX.de(t.t)+'</li>').join('')+'</ul>');
+  }
+  EX.saveDoc('핵심시트',h.join('\n'),'핵심시트_'+EX.stamp()+'.doc');
+}
+$('shExpTxt').onclick=shExpTxt;
+$('shExpDoc').onclick=shExpDoc;
+$('shExpCsv').onclick=()=>{if(!shEmpty())EX.saveCsv(SHCOLS,shRows(),'핵심시트_'+EX.stamp()+'.csv')};
+$('shExpXls').onclick=e=>{if(!shEmpty())EX.saveXlsx(SHCOLS,shRows(),'핵심시트','핵심시트_'+EX.stamp()+'.xlsx',e.target)};
 
 /* ═══════════ 📖 개념 정리 ═══════════
    카드·시트가 "요약·암기"라면 이 화면은 ★과목별 개념 전문(全文)★ 이다.
@@ -1412,9 +1978,15 @@ $('conceptList').onclick=e=>{
 
 /* ═══════════ 퀴즈 ═══════════ */
 const Q={sub:'all',topic:'all',types:TYPES.map(t=>t.k),levels:[1,2,3],count:20,mode:'practice'};
-/* 문항의 t(세부 유형)가 하나라도 있으면 과목 아래 단계 필터를 제공한다 */
-const HASTOPIC=ALLQ.some(q=>q.t);
-const topicsOf=sub=>[...new Set(ALLQ.filter(q=>(sub==='all'||q.s===sub)&&q.t).map(q=>q.t))];
+/* 과목 아래 단계 필터 — 교재 SECTION 이 있으면 그것을, 없으면 문항의 t(세부 유형)를 쓴다.
+   두 경우 모두 Q.topic 에 "칩의 값"이 들어간다(SECTION id 또는 t 문자열). */
+const HASTOPIC=HASSEC||ALLQ.some(q=>q.t);
+const topicsOf=sub=>HASSEC
+  ? secsOf(sub).filter(x=>ALLQ.some(q=>q.sec===x.id)).map(x=>x.id)
+  : [...new Set(ALLQ.filter(q=>(sub==='all'||q.s===sub)&&q.t).map(q=>q.t))];
+/* 칩 라벨 — SECTION 이면 "01. 셀 서식", 아니면 t 그대로 */
+const topicLabel=v=>HASSEC?secShort(v):esc(v);
+const topicMatch=(q,v)=>HASSEC?q.sec===v:q.t===v;
 let quiz=null, timerId=null;
 /** 콤보: 연속 정답 수. best 는 역대 최고(저장됨) */
 let combo=0, comboMax=0;
@@ -1430,7 +2002,7 @@ function renderTopicChips(match){
   const cnt=t=>ALLQ.filter(q=>match(q,{sub:Q.sub,types:Q.types,levels:Q.levels,topic:t})).length;
   $('quizTopic').innerHTML=
     `<button class="chip ${Q.topic==='all'?'on':''}" data-q="topic" data-v="all">전체<span class="n">${cnt('all')}</span></button>`+
-    list.map(t=>`<button class="chip ${Q.topic===t?'on':''}" data-q="topic" data-v="${esc(t)}">${esc(t)}<span class="n">${cnt(t)}</span></button>`).join('');
+    list.map(t=>`<button class="chip ${Q.topic===t?'on':''}" data-q="topic" data-v="${esc(t)}">${topicLabel(t)}<span class="n">${cnt(t)}</span></button>`).join('');
 }
 
 function renderQuizSetup(){
@@ -1439,7 +2011,7 @@ function renderQuizSetup(){
   // 각 칩의 개수는 "그 칩을 제외한 나머지 조건"을 적용해 센다 → 선택을 바꿨을 때의 결과가 보인다
   const match=(q,{sub,types,levels,topic})=>
     (sub==='all'||q.s===sub)&&types.includes(q.type)&&levels.includes(q.d)&&
-    (!topic||topic==='all'||q.t===topic);
+    (!topic||topic==='all'||topicMatch(q,topic));
 
   const subCnt=id=>ALLQ.filter(q=>match(q,{sub:id,types:Q.types,levels:Q.levels})).length;
   $('quizSubj').innerHTML=`<button class="chip ${Q.sub==='all'?'on':''}" data-q="sub" data-v="all">전체<span class="n">${subCnt('all')}</span></button>`+
@@ -1515,7 +2087,7 @@ $('bankTable').onclick=e=>{
 };
 function pickPool(){
   return ALLQ.filter(q=>Q.types.includes(q.type)&&Q.levels.includes(q.d)&&
-    (Q.sub==='all'||q.s===Q.sub)&&(Q.topic==='all'||q.t===Q.topic));
+    (Q.sub==='all'||q.s===Q.sub)&&(Q.topic==='all'||topicMatch(q,Q.topic)));
 }
 document.querySelectorAll('#quizSubj,#quizTopic,#quizType,#quizLevel,#quizCount,#quizMode').forEach(el=>{
   el.onclick=e=>{
@@ -1601,7 +2173,7 @@ function renderQ(){
   renderQ._m=mark4;
   updCombo();
 
-  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} · ${typeName(q.type)}
+  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)}${HASSEC&&q.sec?' · '+secFull(q.sec):''} · ${typeName(q.type)}
            <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span></div>
          <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}">${esc(q.q)}</div>`;
 
@@ -1831,11 +2403,15 @@ function finishQuiz(){
   },420);
   updCombo();
 }
-function wrongCard(q,cnt){
-  const ansTxt = q.type==='mcq' ? `${'①②③④'[q.a]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)')
+function ansText(q){
+  return q.type==='mcq' ? `${'①②③④'[q.a]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)')
     : q.type==='order' ? q.steps.map((t,i)=>`${i+1}. ${t}`).join('  →  ') : q.a;
+}
+function wrongCard(q,cnt){
+  const ansTxt = ansText(q);
   return `<div class="wrong-item">
     <div class="meta"><span class="sbadge" style="background:${subColor(q.s)}">${subShort(q.s)}</span>
+      ${HASSEC&&q.sec?`<span style="font-size:11.5px;color:var(--tx3);font-weight:600">${secFull(q.sec)}</span>`:''}
       <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>
       ${cnt?`<span class="cnt">✗ ${cnt}회 오답</span>`:''}</div>
     <div class="q">${esc(q.q)}</div>
@@ -1851,12 +2427,44 @@ if(HASEX)$('navExample').hidden=false;
 if(HASSC)$('navShortcut').hidden=false;
 if(HASNOTE)$('navConcept').hidden=false;
 
-let exSub='all', exOpen={}, exAllOpen=false;
+let exSub='all', exSec='all', exOpen={}, exAllOpen=false;
 function renderExFilter(){
   const cnt=id=>EXS.filter(e=>id==='all'||e.s===id).length;
   $('exFilter').innerHTML=`<button class="chip ${exSub==='all'?'on':''}" data-s="all">전체<span class="n">${cnt('all')}</span></button>`+
     CPPG.subjects.filter(s=>cnt(s.id)).map(s=>
       `<button class="chip ${exSub===s.id?'on':''}" data-s="${s.id}">${subShort(s.id)}<span class="n">${cnt(s.id)}</span></button>`).join('');
+  /* 두 번째 줄 — 퀴즈·암기카드와 같은 SECTION 칩. 예시문제가 있는 단원만 보여 준다 */
+  const row=$('exSecBar');
+  const list=HASSEC&&exSub!=='all'?secsOf(exSub).filter(x=>EXS.some(e=>e.sec===x.id)):[];
+  row.hidden=!list.length;
+  if(!list.length){exSec='all';return}
+  if(exSec!=='all'&&!list.some(x=>x.id===exSec))exSec='all';
+  const scnt=id=>EXS.filter(e=>e.sec===id).length;
+  row.innerHTML=`<button class="chip ${exSec==='all'?'on':''}" data-sec="all">단원 전체<span class="n">${EXS.filter(e=>e.s===exSub).length}</span></button>`+
+    list.map(x=>`<button class="chip ${exSec===x.id?'on':''}" data-sec="${x.id}">${secShort(x.id)}<span class="n">${scnt(x.id)}</span></button>`).join('');
+}
+$('exSecBar').onclick=e=>{const b=e.target.closest('[data-sec]');if(!b)return;exSec=b.dataset.sec;renderExample()};
+/* 예시문제에 딸린 자료 렌더 — 문제에서 [B3] 처럼 셀을 가리키면 실제 표를 함께 보여 준다.
+   data = [{ kind:'sheet', title, cols:['A','B'..], row1:첫 행 번호, rows:[[...]], note }]
+          [{ kind:'table', title, head:[...], rows:[[...]], note }]   ← 액세스 테이블·쿼리·구조
+   rows[0] 은 sheet 에서 머리글 행으로 표시된다. */
+function exData(list){
+  if(!list||!list.length)return '';
+  const isNum=v=>v!==''&&v!=null&&/^-?[\d,]+(\.\d+)?%?$/.test(String(v).trim());
+  return list.map(d=>{
+    const cap=d.title?`<div class="cap">${esc(d.title)}</div>`:'';
+    const note=d.note?`<div class="nt">${esc(d.note)}</div>`:'';
+    if(d.kind==='sheet'){
+      const cols=d.cols||[], r1=d.row1||1;
+      const hd=`<tr><th class="rn"></th>${cols.map(c=>`<th class="cl">${esc(c)}</th>`).join('')}</tr>`;
+      const bd=(d.rows||[]).map((r,ri)=>`<tr><th class="rn">${r1+ri}</th>`+
+        r.map(v=>`<td class="${ri===0?'hd':isNum(v)?'num':''}">${esc(v)}</td>`).join('')+'</tr>').join('');
+      return `<div class="xls">${cap}<div class="tw"><table>${hd}${bd}</table></div>${note}</div>`;
+    }
+    const hd=d.head?`<tr>${d.head.map(h=>`<th>${esc(h)}</th>`).join('')}</tr>`:'';
+    const bd=(d.rows||[]).map(r=>`<tr>${r.map(v=>`<td class="${isNum(v)?'num':''}">${esc(v)}</td>`).join('')}</tr>`).join('');
+    return `<div class="xls acc">${cap}<div class="tw"><table>${hd}${bd}</table></div>${note}</div>`;
+  }).join('');
 }
 function exCard(e,i,opts){
   const o=opts||{};
@@ -1868,21 +2476,25 @@ function exCard(e,i,opts){
       ${e.answer?`<div class="ansbox">정답 · 핵심 입력\n${esc(e.answer)}</div>`:''}
       ${(e.traps||[]).length?`<div class="trp">${e.traps.map(x=>`⚠ ${esc(x)}`).join('<br>')}</div>`:''}
     </div>`;
-  return `<div class="exq"><h4>${badge}${lv}${esc(e.title)}</h4>
+  const sec=HASSEC&&e.sec?`<span style="font-size:11px;color:var(--tx3);font-weight:600;margin-right:6px">${secFull(e.sec)}</span>`:'';
+  return `<div class="exq"><h4>${badge}${sec}${lv}${esc(e.title)}</h4>
     <div class="pb">${esc(e.problem)}</div>
+    ${exData(e.data)}
     ${o.hideToggle?'':`<button class="btn gh noprint" data-sol="${i}" style="margin-top:10px">${open?'풀이 접기':'풀이 보기'}</button>`}
     ${sol}</div>`;
 }
 function renderExample(){
   if(!HASEX)return;
   renderExFilter();
-  const list=EXS.map((e,i)=>({e,i})).filter(x=>exSub==='all'||x.e.s===exSub);
-  $('exStat').textContent=`${list.length}문제`;
+  const list=EXS.map((e,i)=>({e,i}))
+    .filter(x=>exSub==='all'||x.e.s===exSub)
+    .filter(x=>exSec==='all'||x.e.sec===exSec);
+  $('exStat').textContent=(exSec!=='all'?`${secFull(exSec)} · `:'')+`${list.length}문제`;
   $('toggleAllSol').textContent=exAllOpen?'풀이 모두 접기':'풀이 모두 펼치기';
   $('exList').innerHTML=list.map(x=>exCard(x.e,x.i)).join('')||
-    `<div class="empty"><div class="ic">📄</div>해당 ${UNIT}의 예시문제가 없습니다</div>`;
+    `<div class="empty"><div class="ic">📄</div>해당 ${exSec!=='all'?'단원':UNIT}의 예시문제가 없습니다</div>`;
 }
-$('exFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;exSub=b.dataset.s;renderExample()};
+$('exFilter').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;exSub=b.dataset.s;exSec='all';renderExample()};
 $('exList').onclick=e=>{
   const b=e.target.closest('[data-sol]'); if(!b)return;
   const i=b.dataset.sol; exOpen['e'+i]=!exOpen['e'+i]; renderExample();
@@ -1893,27 +2505,50 @@ $('toggleAllSol').onclick=()=>{
   renderExample();
 };
 
-/* 모의고사 시험지 — 구성 비율(paperSpec)이 없으면 작업마다 1문제씩 */
-let paper=[], keyOpen=false;
+/* 모의고사 시험지 — meta.paperSets 에 시험지 "유형"을 여러 개 둘 수 있다.
+   없으면 paperSpec 한 벌만, 그것도 없으면 작업마다 1문제씩. */
+const PSETS=(CPPG.meta.paperSets&&CPPG.meta.paperSets.length)?CPPG.meta.paperSets
+  :[{id:'full',name:'모의고사',time:CPPG.meta.time||'',desc:'',
+     spec:CPPG.meta.paperSpec||CPPG.subjects.map(s=>({s:s.id,n:1}))}];
+let paper=[], keyOpen=false, pSet=PSETS[0].id;
+const curSet=()=>PSETS.find(x=>x.id===pSet)||PSETS[0];
 function pickPaper(){
-  const spec=CPPG.meta.paperSpec||CPPG.subjects.map(s=>({s:s.id,n:1}));
   const out=[];
-  spec.forEach(sp=>{
+  curSet().spec.forEach(sp=>{
     const pool=EXS.map((e,i)=>({e,i})).filter(x=>x.e.s===sp.s);
     for(let k=pool.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[pool[k],pool[j]]=[pool[j],pool[k]]}
     out.push(...pool.slice(0,sp.n));
   });
   paper=out;
 }
+/* 시험지 유형 칩 — 각 칩에 그 유형으로 뽑히는 문항 수를 함께 보여 준다 */
+function renderPaperSet(){
+  const row=$('paperSet'); if(!row)return;
+  row.hidden=PSETS.length<2;
+  if(row.hidden)return;
+  const size=st=>st.spec.reduce((a,sp)=>a+Math.min(sp.n,EXS.filter(e=>e.s===sp.s).length),0);
+  row.innerHTML=PSETS.map(st=>
+    `<button class="chip ${pSet===st.id?'on':''}" data-ps="${st.id}" title="${esc(st.desc||'')}">
+       ${esc(st.name)}<span class="n">${size(st)}문항</span></button>`).join('');
+}
+$('paperSet').onclick=e=>{
+  const b=e.target.closest('[data-ps]'); if(!b)return;
+  pSet=b.dataset.ps; pickPaper(); keyOpen=false; renderPaper();
+};
 function renderPaper(){
   const m=CPPG.meta;
   const now=new Date();
   const stamp=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  $('paperDesc').textContent=`예시문제를 ${UNIT} 구성에 맞춰 뽑아 시험지 형태로 묶었습니다. 인쇄해 시간을 재고 풀어 보세요.`;
+  const st=curSet();
+  renderPaperSet();
+  $('paperDesc').textContent=`${st.name} — ${st.desc||`예시문제를 ${UNIT} 구성에 맞춰 뽑았습니다.`} 인쇄해 시간을 재고 풀어 보세요.`;
   $('toggleKey').textContent=keyOpen?'정답·해설 숨기기':'정답·해설 보기';
-  const head=`<div class="paperhd"><div class="t">${esc(m.name)} — 모의고사 시험지</div>
-    <div class="m">${esc(m.type||'')} · 제한 시간 ${esc(m.time||'-')} · 합격 ${esc(m.pass||'-')}</div>
-    <div class="m">문항 ${paper.length}개 · 생성일 ${stamp} · 수험번호 ______________ 성명 ______________</div></div>`;
+  /* 시험지 구성표 — 어느 작업에서 몇 문항이 나왔는지 한 줄로 보여 준다 */
+  const mix=CPPG.subjects.filter(s=>paper.some(x=>x.e.s===s.id))
+    .map(s=>`${subShort(s.id)} ${paper.filter(x=>x.e.s===s.id).length}`).join(' · ');
+  const head=`<div class="paperhd"><div class="t">${esc(m.name)} — ${esc(st.name)} 모의고사</div>
+    <div class="m">${esc(m.type||'')} · 제한 시간 ${esc(st.time||m.time||'-')} · 합격 ${esc(m.pass||'-')}</div>
+    <div class="m">문항 ${paper.length}개 (${esc(mix)}) · 생성일 ${stamp} · 수험번호 ______________ 성명 ______________</div></div>`;
   const body=paper.map((x,n)=>{
     const c=exCard(x.e,x.i,{forceOpen:keyOpen,hideToggle:true});
     return c.replace('<h4>',`<h4><span style="font-weight:900">문제 ${n+1}.</span> `);
@@ -1973,7 +2608,7 @@ function renderInfo(){
 let scQ='';
 function renderShortcut(){
   if(!HASSC)return;
-  const hit=t=>!scQ||t.toLowerCase().includes(scQ);
+  const hit=matcher(scQ);
   const g=(CPPG.meta.shortcuts||[]).map(sec=>{
     const rows=sec.rows.filter(r=>hit(r.join(' ')));
     if(!rows.length)return '';
@@ -1998,12 +2633,75 @@ function renderNote(){
 }
 $('clearWrong').onclick=()=>{if(confirm('오답노트를 모두 비울까요?')){S.wrong={};save();renderNote();renderHome()}};
 
+/* ── 오답노트 내보내기 ── */
+const NTCOLS=['유형','과목','난이도','문제','보기','정답','해설','틀린횟수'];
+function ntItems(){
+  return Object.keys(S.wrong).sort((a,b)=>S.wrong[b]-S.wrong[a])
+    .map(id=>QBYID[id]).filter(Boolean);
+}
+function ntEmpty(list){
+  if(list.length)return false;
+  FX.toast('오답노트가 비어 있습니다 — 먼저 퀴즈를 풀어보세요','bad',2000);
+  return true;
+}
+function ntRows(){
+  return ntItems().map(q=>({
+    유형:typeName(q.type), 과목:subShort(q.s), 난이도:lvName(q.d),
+    문제:q.q, 보기:q.type==='mcq'?q.c.map((c,i)=>`${'①②③④'[i]} ${c}`).join(' / '):'',
+    정답:String(ansText(q)), 해설:q.e||'', 틀린횟수:S.wrong[q.id]
+  }));
+}
+function ntExpTxt(){
+  const list=ntItems(); if(ntEmpty(list))return;
+  const bar=new Array(66).join('=');
+  const L=[BRAND()+' — 오답노트',`추출 ${EX.stampH()}  ·  ${list.length}문제 누적`,bar];
+  list.forEach((q,i)=>{
+    L.push('',`${i+1}. [${subShort(q.s)}·${typeName(q.type)}·${lvName(q.d)}] ✗ ${S.wrong[q.id]}회`);
+    L.push('   '+q.q);
+    if(q.type==='mcq')q.c.forEach((c,j)=>L.push(`      ${'①②③④'[j]} ${c}`));
+    L.push('   ▶ 정답: '+ansText(q));
+    if(q.e)L.push('   ▶ 해설: '+q.e);
+  });
+  EX.saveTxt(L,'오답노트_'+EX.stamp()+'.txt');
+}
+function ntExpDoc(){
+  const list=ntItems(); if(ntEmpty(list))return;
+  const h=['<h1>'+EX.de(BRAND())+' — 오답노트</h1>',
+           '<p class="meta">추출 '+EX.de(EX.stampH())+' · '+list.length+'문제 누적</p>'];
+  list.forEach((q,i)=>{
+    h.push('<h3>'+(i+1)+'. ['+EX.de(subShort(q.s))+'·'+EX.de(typeName(q.type))+'·'+EX.de(lvName(q.d))+'] ✗ '+S.wrong[q.id]+'회</h3>');
+    h.push('<p>'+EX.de(q.q)+'</p>');
+    if(q.type==='mcq')h.push('<ul>'+q.c.map((c,j)=>'<li>'+'①②③④'[j]+' '+EX.de(c)+'</li>').join('')+'</ul>');
+    h.push('<p class="lbl">정답: '+EX.de(ansText(q))+'</p>');
+    if(q.e)h.push('<p class="note">'+EX.de(q.e)+'</p>');
+  });
+  EX.saveDoc('오답노트',h.join('\n'),'오답노트_'+EX.stamp()+'.doc');
+}
+$('ntExpTxt').onclick=ntExpTxt;
+$('ntExpDoc').onclick=ntExpDoc;
+$('ntExpCsv').onclick=()=>{const l=ntItems();if(!ntEmpty(l))EX.saveCsv(NTCOLS,ntRows(),'오답노트_'+EX.stamp()+'.csv')};
+$('ntExpXls').onclick=e=>{const l=ntItems();if(!ntEmpty(l))EX.saveXlsx(NTCOLS,ntRows(),'오답노트','오답노트_'+EX.stamp()+'.xlsx',e.target)};
+
 /* ═══════════ 초기화 ═══════════ */
 applyBrand();
 renderHome();
 renderCardFilter(); buildDeck();
 renderSheetFilter(); renderSheet();
 renderQuizSetup();
+
+/* 이어보기 — 마지막으로 보던 화면으로 복귀(감춰진 뷰·시험지 화면은 제외) */
+(function(){
+  const v=S.view;
+  if(!v||v==='home'||v==='paper'||VIEWS.indexOf(v)<0)return;
+  if((v==='example'&&!HASEX)||(v==='shortcut'&&!HASSC)||(v==='concept'&&!HASNOTE))return;
+  go(v);
+})();
+
+/* ═══════════ PWA — 홈 화면 설치 · 오프라인 학습 ═══════════ */
+/* file:// 로 직접 열었을 때는 등록하지 않는다(서비스 워커 불가) */
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+  window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{})});
+}
 </script>
 </body>
 </html>
