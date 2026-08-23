@@ -938,7 +938,18 @@
     });
   }
 
-  // ---- 환경설정(테마·글자크기) — localStorage 저장, <head> 인라인 스크립트가 초기 적용 ----
+  // ---- 토스트 알림 — 환경설정 변경 등 짧은 피드백(학습사이트 공용 엔진과 동일 UX) ----
+  GS.toast = function(msg, kind, hold){
+    var box = document.getElementById('toasts'); if(!box) return;
+    var t = document.createElement('div');
+    t.className = 'toast ' + (kind || 'good');
+    t.style.setProperty('--hold', (hold || 1500) + 'ms');
+    t.textContent = msg;
+    box.appendChild(t);
+    setTimeout(function(){ t.remove(); }, (hold || 1500) + 700);
+  };
+
+  // ---- 환경설정(테마·글자크기·효과음) — localStorage 저장, <head> 인라인 스크립트가 초기 적용 ----
   var root = document.documentElement;
   var themeBtn = document.getElementById('themeToggle');
   function renderTheme(){
@@ -958,15 +969,51 @@
       root.setAttribute('data-theme', next);
       try{ localStorage.setItem('gs_theme', next); }catch(e){}
       renderTheme();
+      GS.toast(next==='dark' ? '🌙 다크 모드' : '☀️ 라이트 모드', 'good', 900);
     });
   }
-  var FS = ['', 'lg', 'xl'];
+
+  // ---- 퀴즈 효과음 on/off — quiz.js 의 qbeep 이 GS.sound() 를 확인한다 ----
+  var soundOn = true;
+  try{ soundOn = localStorage.getItem('gs_sound') !== '0'; }catch(e){}
+  GS.sound = function(){ return soundOn; };
+  var soundBtn = document.getElementById('soundToggle');
+  function renderSound(){
+    if(!soundBtn) return;
+    soundBtn.setAttribute('aria-pressed', soundOn);
+    soundBtn.title = (soundOn ? '퀴즈 효과음 끄기' : '퀴즈 효과음 켜기') + ' (S)';
+    soundBtn.innerHTML = '<i data-lucide="' + (soundOn ? 'volume-2' : 'volume-x') + '"></i>';
+    if(window.lucide) lucide.createIcons();
+  }
+  function toggleSound(){
+    soundOn = !soundOn;
+    try{ localStorage.setItem('gs_sound', soundOn ? '1' : '0'); }catch(e){}
+    renderSound();
+    GS.toast(soundOn ? '🔊 효과음 켬' : '🔇 효과음 끔', 'good', 1000);
+  }
+  renderSound();
+  if(soundBtn) soundBtn.addEventListener('click', toggleSound);
+
+  // ---- ⌨ 단축키 도움말 오버레이 ----
+  var kbHelpEl = document.getElementById('kbHelp');
+  function helpOpen(){ return !!(kbHelpEl && kbHelpEl.classList.contains('on')); }
+  function toggleHelp(on){ if(kbHelpEl) kbHelpEl.classList.toggle('on', on); }
+  var helpBtn = document.getElementById('helpToggle');
+  if(helpBtn) helpBtn.addEventListener('click', function(){ toggleHelp(!helpOpen()); });
+  var kbCloseBtn = document.getElementById('kbClose');
+  if(kbCloseBtn) kbCloseBtn.addEventListener('click', function(){ toggleHelp(false); });
+  if(kbHelpEl) kbHelpEl.addEventListener('click', function(e){ if(e.target===kbHelpEl) toggleHelp(false); });
+  var FS = ['sm', '', 'lg', 'xl'];
+  var FSNAME = { sm:'작게', '':'보통', lg:'크게', xl:'아주 크게' };
   function setFs(dir){
     var cur = root.getAttribute('data-fs') || '';
+    if(FS.indexOf(cur) < 0) cur = '';
     var i = Math.max(0, Math.min(FS.length-1, FS.indexOf(cur) + dir));
     var v = FS[i];
+    if(v === cur) return;
     if(v) root.setAttribute('data-fs', v); else root.removeAttribute('data-fs');
     try{ localStorage.setItem('gs_fs', v); }catch(e){}
+    GS.toast('글자 크기 — ' + FSNAME[v], 'good', 900);
   }
   var fUp = document.getElementById('fontUp'); if(fUp) fUp.addEventListener('click', function(){ setFs(1); });
   var fDn = document.getElementById('fontDn'); if(fDn) fDn.addEventListener('click', function(){ setFs(-1); });
@@ -1060,6 +1107,51 @@
   }
   contentEl.addEventListener('click', onMarkClick);
   if(modalEl) modalEl.addEventListener('click', onMarkClick);
+
+  // ---- ⌨ 전 화면 키보드 조작 (학습사이트 공용 엔진과 같은 키 배치) ----
+  //   숫자 1~6 = 뷰 전환 · T 테마 · S 효과음 · - / + 글자 크기 · M 암기모드 · F 필터 접기
+  //   / 검색 이동 · ? 도움말 · Esc 검색 지우기. 입력 중에는 Esc 외 모든 키를 입력에 넘긴다.
+  var KEYVIEWS = ['cards', 'graph', 'sheet', 'practice', 'quiz', 'gloss'];
+  document.addEventListener('keydown', function(e){
+    if(e.ctrlKey || e.metaKey || e.altKey) return;      // 브라우저 단축키 침범 금지
+    var k = e.key;
+
+    // 도움말이 열려 있으면 닫기만 처리
+    if(helpOpen()){
+      if(k==='Escape' || k==='?'){ e.preventDefault(); toggleHelp(false); }
+      return;
+    }
+    if(modalOpen()) return;                             // 확대 카드는 자체 핸들러가 처리
+
+    var t = e.target || {};
+    var tag = (t.tagName || '').toLowerCase();
+    var typing = tag==='input' || tag==='textarea' || tag==='select' || t.isContentEditable;
+    if(typing){
+      if(k==='Escape'){
+        if(t===searchEl && searchEl.value){ searchEl.value=''; state.q=''; applyActiveFilter(); }
+        t.blur();
+      }
+      return;                                           // 나머지 키는 입력에 그대로 전달
+    }
+
+    if(k==='?'){ e.preventDefault(); toggleHelp(true); return; }
+    if(k==='/'){ e.preventDefault(); if(searchEl && !searchEl.disabled) searchEl.focus(); return; }
+    if(k==='t' || k==='T'){ e.preventDefault(); if(themeBtn) themeBtn.click(); return; }
+    if(k==='s' || k==='S'){ e.preventDefault(); toggleSound(); return; }
+    if(k==='-' || k==='_'){ e.preventDefault(); setFs(-1); return; }
+    if(k==='+' || k==='='){ e.preventDefault(); setFs(1); return; }
+    if(k==='m' || k==='M'){ e.preventDefault(); if(maskBtn) maskBtn.click(); return; }
+    if(k==='f' || k==='F'){
+      var ft = document.getElementById('filterToggle');
+      if(ft){ e.preventDefault(); ft.click(); }
+      return;
+    }
+    if(/^[1-6]$/.test(k)){
+      var v = KEYVIEWS[+k-1];
+      if(document.querySelector('#viewsw button[data-v="'+v+'"]')){ e.preventDefault(); setView(v); }
+      return;
+    }
+  });
 
   // ---- init ----
   buildContent();

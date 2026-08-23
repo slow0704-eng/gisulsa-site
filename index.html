@@ -19,7 +19,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <!-- 구성도 격자 폰트(번들 서브셋 52KB) 조기 로드 — swap 이라 FCP 는 막지 않고, 도식 렌더 시점엔 격자 확정 -->
 <link rel="preload" href="assets/D2Coding-diag.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="stylesheet" href="assets/styles.css?v=df1ba2c5" />
+<link rel="stylesheet" href="assets/styles.css?v=3224f37b" />
 <script>
   /* 테마·글자크기 조기 적용(FOUC 방지) — localStorage 우선, 없으면 시스템 설정 */
   (function(){ try{
@@ -50,6 +50,8 @@
       <button id="fontUp" class="pref-btn" type="button" title="글자 크게">A+</button>
       <button id="cardMask" class="pref-btn" type="button" title="카드 정의 가리기(암기모드) — 정의 클릭 시 확인" aria-pressed="false"><i data-lucide="eye-off"></i></button>
       <button id="themeToggle" class="pref-btn" type="button" title="다크/라이트 전환" aria-pressed="false"><i data-lucide="moon"></i></button>
+      <button id="soundToggle" class="pref-btn" type="button" title="퀴즈 효과음 켜기/끄기 (S)" aria-pressed="true"><i data-lucide="volume-2"></i></button>
+      <button id="helpToggle" class="pref-btn" type="button" title="단축키 도움말 (?)"><i data-lucide="keyboard"></i></button>
     </span>
     <span class="count" id="count" aria-live="polite"></span>
   </div>
@@ -68,6 +70,42 @@
 </div>
 
 <div id="content"></div>
+
+<!-- 토스트 알림(환경설정 변경 등 짧은 피드백) -->
+<div id="toasts" aria-live="polite"></div>
+
+<!-- ⌨ 단축키 도움말 오버레이 (? 로 열고 닫음) -->
+<div id="kbHelp" role="dialog" aria-modal="true" aria-label="키보드 단축키">
+  <div class="kbbox">
+    <h3>⌨ 키보드 단축키</h3>
+    <div class="sub">마우스 없이 전부 조작할 수 있습니다. <kbd>?</kbd> 또는 <kbd>Esc</kbd> 로 이 창을 닫습니다.</div>
+
+    <div class="kbsec">화면 전환</div>
+    <div class="kbrow"><span class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd><kbd>5</kbd><kbd>6</kbd></span><span class="desc">카드 / 관계도 / 정의 시트 / 연습 / 퀴즈 / 용어</span></div>
+    <div class="kbrow"><span class="keys"><kbd>/</kbd></span><span class="desc">검색창으로 이동</span></div>
+    <div class="kbrow"><span class="keys"><kbd>Esc</kbd></span><span class="desc">검색어 지우기 · 확대 카드 닫기</span></div>
+
+    <div class="kbsec">보기 설정</div>
+    <div class="kbrow"><span class="keys"><kbd>T</kbd></span><span class="desc">다크 / 라이트 테마 전환</span></div>
+    <div class="kbrow"><span class="keys"><kbd>S</kbd></span><span class="desc">퀴즈 효과음 켜기 / 끄기</span></div>
+    <div class="kbrow"><span class="keys"><kbd>-</kbd> <kbd>+</kbd></span><span class="desc">글자 작게 / 크게 (4단계 · 저장됨)</span></div>
+    <div class="kbrow"><span class="keys"><kbd>M</kbd></span><span class="desc">카드 정의 가리기(암기모드) 토글</span></div>
+    <div class="kbrow"><span class="keys"><kbd>F</kbd></span><span class="desc">과목·단원 필터 접기 / 펼치기</span></div>
+
+    <div class="kbsec">검색 문법</div>
+    <div class="kbrow"><span class="keys">공백</span><span class="desc">모두 포함(AND) — 예) <kbd>클라우드 보안</kbd></span></div>
+    <div class="kbrow"><span class="keys"><kbd>OR</kbd> <kbd>|</kbd></span><span class="desc">하나라도 포함 — 예) <kbd>AR OR MA</kbd></span></div>
+    <div class="kbrow"><span class="keys"><kbd>-단어</kbd></span><span class="desc">제외 (<kbd>!</kbd>·<kbd>NOT</kbd> 도 동일)</span></div>
+    <div class="kbrow"><span class="keys"><kbd>( )</kbd> <kbd>"　"</kbd></span><span class="desc">그룹 · 구문 — 예) <kbd>(AR OR MA) -2교시</kbd></span></div>
+
+    <div class="kbsec">카드</div>
+    <div class="kbrow"><span class="keys"><kbd>Enter</kbd></span><span class="desc">포커스한 카드 확대 보기</span></div>
+    <div class="kbrow"><span class="keys"><kbd>Tab</kbd></span><span class="desc">확대 카드 안에서 포커스 순환</span></div>
+
+    <button type="button" class="kbclose" id="kbClose">닫기</button>
+    <div style="clear:both"></div>
+  </div>
+</div>
 
 <div id="emptyState" class="empty-state hidden">
   <p class="es-icon"><i data-lucide="search-x"></i></p>
@@ -161,7 +199,7 @@
      app.js 가 해당 뷰/버튼 사용 시점에 온디맨드 로드(초기 파싱·메모리 절감, P4) -->
 <script defer src="assets/render.js?v=c4a71591"></script>
 <script defer src="data/bundle.js"></script>
-<script defer src="assets/app.js?v=187def22"></script>
+<script defer src="assets/app.js?v=7e6b5140"></script>
 <script>
   /* PWA 서비스 워커 등록(오프라인 지원) — file:// 직접 열람 시엔 건너뜀 */
   if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){

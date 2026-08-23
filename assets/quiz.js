@@ -12,6 +12,8 @@
   function pickMsg(a){ return a[Math.floor(Math.random()*a.length)]; }
   // 정답=상승 3음 차임 / 오답=하강 버즈. 사용자 클릭 직후라 자동재생 허용.
   function qbeep(ok){
+    /* 헤더의 🔊 토글(GS.sound)이 꺼져 있으면 소리를 내지 않는다 */
+    if(window.GS && GS.sound && !GS.sound()) return;
     try{
       var C=window.__qac||(window.__qac=new (window.AudioContext||window.webkitAudioContext)());
       if(C.state==='suspended') C.resume();
