@@ -1,0 +1,30 @@
+{
+  "name": "CSTS SW 테스트 전문가 (일반등급)",
+  "short_name": "CSTS",
+  "description": "테스트 개요 · 설계기법 · 프로세스 — 암기카드 · 핵심시트 · 개념정리 · 퀴즈 · 오답노트 학습",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0f1420",
+  "theme_color": "#0ea5e9",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": [
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
