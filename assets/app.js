@@ -504,6 +504,7 @@
 
   // ---- 뷰 전환: 카드 / 관계도 / 정의 시트 / 퀴즈 ----
   function setView(v){
+    if(typeof asStop==='function'){ asStop(); setTimeout(asSync, 90); }   // 뷰가 바뀌면 자동 스크롤은 멈추고 막대를 다시 판단한다
     state.view = v;
     saveResume();
     contentEl.classList.toggle('hidden', v!=='cards');
@@ -1018,6 +1019,94 @@
   var fUp = document.getElementById('fontUp'); if(fUp) fUp.addEventListener('click', function(){ setFs(1); });
   var fDn = document.getElementById('fontDn'); if(fDn) fDn.addEventListener('click', function(){ setFs(-1); });
 
+  // ---- ⤓ 자동 스크롤 ----------------------------------------------------
+  // 정의 시트·용어처럼 한 화면에 다 담기지 않는 자료를 ★손 떼고★ 읽기 위한 도구.
+  // 설계 근거 —
+  //   ① 프레임마다 조금씩 내리고 ★소수점은 누적★. 8px/초에서는 프레임당 이동량이
+  //      1px 미만이라 버림만 하면 아예 움직이지 않는다.
+  //   ② 사용자가 직접 굴리면(휠·터치) ★맞서지 않고 멈춘다★.
+  //   ③ 바닥에 닿거나 뷰를 바꾸면 스스로 멈춘다.
+  // 학습·퀴즈 공용 엔진(CPPG_2026/학습사이트/index.html)과 조작·단축키를 맞춘다.
+  var AS_SPD = [8, 16, 28, 45, 70];                                  // px/초
+  var AS_NAME = ['아주 느리게', '느리게', '보통', '빠르게', '아주 빠르게'];
+  var AS = { on:false, raf:0, last:0, acc:0, self:false, i:2 };
+  try{ var _as = parseInt(localStorage.getItem('gs_as'), 10); if(_as >= 0 && _as < AS_SPD.length) AS.i = _as; }catch(e){}
+  var asBar = document.getElementById('ascroll');
+  function asRAF(cb){ return (window.requestAnimationFrame || function(f){ return setTimeout(function(){ f(Date.now()); }, 16); })(cb); }
+  function asCancel(id){ (window.cancelAnimationFrame || clearTimeout)(id); }
+  function asMax(){ return Math.max(0, (root.scrollHeight || 0) - window.innerHeight); }
+  // 막대는 ★스크롤할 거리가 충분한 화면★ 에만 띄운다 — 짧은 화면에 떠 있으면 고장으로 읽힌다
+  function asSync(){
+    if(!asBar || !AS) return;
+    var long = asMax() > Math.max(320, window.innerHeight * 0.6);
+    if(!long) asStop();
+    asBar.hidden = !long;
+  }
+  function asPaint(){
+    if(!asBar) return;
+    document.getElementById('asIcon').textContent = AS.on ? '⏸' : '⤓';
+    document.getElementById('asLabel').textContent = AS.on ? '일시정지' : '자동 스크롤';
+    document.getElementById('asToggle').classList.toggle('on', AS.on);
+    document.getElementById('asToggle').setAttribute('aria-pressed', AS.on ? 'true' : 'false');
+    document.getElementById('asSpeed').textContent = AS_NAME[AS.i];
+    document.getElementById('asDn').disabled = AS.i === 0;
+    document.getElementById('asUp').disabled = AS.i === AS_SPD.length - 1;
+  }
+  function asTick(ts){
+    if(!AS.on) return;
+    var now = typeof ts === 'number' ? ts : Date.now();
+    if(!AS.last) AS.last = now;
+    var dt = Math.min(100, now - AS.last);          // 탭 복귀 시 한 번에 튀지 않게 상한
+    AS.last = now;
+    AS.acc += AS_SPD[AS.i] * dt / 1000;
+    var step = Math.floor(AS.acc);
+    if(step > 0){
+      AS.acc -= step;
+      AS.self = true; window.scrollBy(0, step); AS.self = false;
+      if((window.scrollY || 0) >= asMax() - 1){
+        asStop(); GS.toast('끝까지 내려왔습니다', 'good', 1300); return;
+      }
+    }
+    AS.raf = asRAF(asTick);
+  }
+  function asStart(){
+    if(AS.on) return;
+    if(asMax() <= 1){ GS.toast('이 화면은 스크롤할 내용이 없습니다', 'bad', 1500); return; }
+    AS.on = true; AS.last = 0; AS.acc = 0; asPaint();
+    AS.raf = asRAF(asTick);
+    GS.toast('자동 스크롤 시작 — ' + AS_NAME[AS.i], 'good', 1100);
+  }
+  function asStop(){
+    if(!AS || !AS.on) return;
+    AS.on = false; if(AS.raf) asCancel(AS.raf); AS.raf = 0; asPaint();
+  }
+  function asStep(d){
+    var i = Math.max(0, Math.min(AS_SPD.length - 1, AS.i + d));
+    if(i === AS.i) return;
+    AS.i = i; try{ localStorage.setItem('gs_as', String(i)); }catch(e){}
+    asPaint(); GS.toast('자동 스크롤 — ' + AS_NAME[i], 'good', 900);
+  }
+  function asToggleKey(){
+    if(!asBar || asBar.hidden){ GS.toast('이 화면은 자동 스크롤할 만큼 길지 않습니다', 'bad', 1500); return; }
+    if(AS.on) asStop(); else asStart();
+  }
+  if(asBar){
+    document.getElementById('asToggle').addEventListener('click', function(){ if(AS.on) asStop(); else asStart(); });
+    document.getElementById('asDn').addEventListener('click', function(){ asStep(-1); });
+    document.getElementById('asUp').addEventListener('click', function(){ asStep(1); });
+    ['wheel', 'touchmove'].forEach(function(ev){
+      window.addEventListener(ev, function(){
+        if(AS.on && !AS.self){ asStop(); GS.toast('직접 스크롤 — 자동 스크롤을 멈췄습니다', 'good', 1400); }
+      }, { passive:true });
+    });
+    window.addEventListener('resize', asSync);
+    // 필터·검색으로 본문 길이가 바뀌어도 막대 표시가 따라오게 한다
+    if(typeof ResizeObserver !== 'undefined'){
+      try{ new ResizeObserver(asSync).observe(contentEl); }catch(e){}
+    }
+    asPaint(); asSync();
+  }
+
   // ---- 카드 암기모드(정의 가리기) — 카드 뷰에서 정의를 흐리게, 정의 클릭 시 개별 공개 ----
   var maskBtn = document.getElementById('cardMask');
   function renderCardMask(){
@@ -1140,6 +1229,9 @@
     if(k==='s' || k==='S'){ e.preventDefault(); toggleSound(); return; }
     if(k==='-' || k==='_'){ e.preventDefault(); setFs(-1); return; }
     if(k==='+' || k==='='){ e.preventDefault(); setFs(1); return; }
+    if(k==='a' || k==='A'){ e.preventDefault(); asToggleKey(); return; }
+    if(k==='['){ e.preventDefault(); asStep(-1); return; }
+    if(k===']'){ e.preventDefault(); asStep(1); return; }
     if(k==='m' || k==='M'){ e.preventDefault(); if(maskBtn) maskBtn.click(); return; }
     if(k==='f' || k==='F'){
       var ft = document.getElementById('filterToggle');

@@ -19,7 +19,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
 <!-- 구성도 격자 폰트(번들 서브셋 52KB) 조기 로드 — swap 이라 FCP 는 막지 않고, 도식 렌더 시점엔 격자 확정 -->
 <link rel="preload" href="assets/D2Coding-diag.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="stylesheet" href="assets/styles.css?v=3224f37b" />
+<link rel="stylesheet" href="assets/styles.css?v=41fe5054" />
 <script>
   /* 테마·글자크기 조기 적용(FOUC 방지) — localStorage 우선, 없으면 시스템 설정 */
   (function(){ try{
@@ -74,6 +74,18 @@
 <!-- 토스트 알림(환경설정 변경 등 짧은 피드백) -->
 <div id="toasts" aria-live="polite"></div>
 
+<!-- 자동 스크롤 — 정의 시트·용어처럼 긴 화면을 손 떼고 읽기 위한 도구 -->
+<div id="ascroll" class="noprint" role="group" aria-label="자동 스크롤" hidden>
+  <button type="button" id="asToggle" aria-pressed="false" title="자동 스크롤 시작 / 정지 (A)">
+    <span id="asIcon">&#10515;</span><span id="asLabel">자동 스크롤</span>
+  </button>
+  <span id="asRow">
+    <button type="button" class="as-mini" id="asDn" title="느리게 ( [ )" aria-label="느리게">&minus;</button>
+    <b id="asSpeed">보통</b>
+    <button type="button" class="as-mini" id="asUp" title="빠르게 ( ] )" aria-label="빠르게">+</button>
+  </span>
+</div>
+
 <!-- ⌨ 단축키 도움말 오버레이 (? 로 열고 닫음) -->
 <div id="kbHelp" role="dialog" aria-modal="true" aria-label="키보드 단축키">
   <div class="kbbox">
@@ -89,6 +101,8 @@
     <div class="kbrow"><span class="keys"><kbd>T</kbd></span><span class="desc">다크 / 라이트 테마 전환</span></div>
     <div class="kbrow"><span class="keys"><kbd>S</kbd></span><span class="desc">퀴즈 효과음 켜기 / 끄기</span></div>
     <div class="kbrow"><span class="keys"><kbd>-</kbd> <kbd>+</kbd></span><span class="desc">글자 작게 / 크게 (4단계 · 저장됨)</span></div>
+    <div class="kbrow"><span class="keys"><kbd>A</kbd></span><span class="desc">자동 스크롤 시작 / 정지 — <b>긴 화면을 손 떼고</b> 읽을 때</span></div>
+    <div class="kbrow"><span class="keys"><kbd>[</kbd> <kbd>]</kbd></span><span class="desc">자동 스크롤 느리게 / 빠르게 (5단계 · 저장됨)</span></div>
     <div class="kbrow"><span class="keys"><kbd>M</kbd></span><span class="desc">카드 정의 가리기(암기모드) 토글</span></div>
     <div class="kbrow"><span class="keys"><kbd>F</kbd></span><span class="desc">과목·단원 필터 접기 / 펼치기</span></div>
 
@@ -199,7 +213,7 @@
      app.js 가 해당 뷰/버튼 사용 시점에 온디맨드 로드(초기 파싱·메모리 절감, P4) -->
 <script defer src="assets/render.js?v=c4a71591"></script>
 <script defer src="data/bundle.js"></script>
-<script defer src="assets/app.js?v=7e6b5140"></script>
+<script defer src="assets/app.js?v=061b57bc"></script>
 <script>
   /* PWA 서비스 워커 등록(오프라인 지원) — file:// 직접 열람 시엔 건너뜀 */
   if('serviceWorker' in navigator && location.protocol.indexOf('http') === 0){
