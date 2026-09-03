@@ -2093,7 +2093,7 @@ function noteBlock(b){
   return h+`<ul class="sl">${(b.li||[]).map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
 }
 function noteFlat(n){
-  return [n.title,n.t||'',n.ref||''].concat((n.body||[]).map(b=>
+  return [n.title,n.t||'',n.ref||'',n.sec?secName(n.sec):''].concat((n.body||[]).map(b=>
     (b.h||'')+' '+(b.tb?b.tb.head.join(' ')+' '+b.tb.rows.flat().join(' '):(b.li||[]).join(' ')))).join(' ');
 }
 function renderConcept(){
@@ -2117,7 +2117,9 @@ function renderConcept(){
     const badge=`<span class="sbadge" style="background:${subColor(n.s)}">${subShort(n.s)}</span>`;
     const tag=n.t?`<span class="ctag">${esc(n.t)}</span>`:'';
     const ref=n.ref?`<span class="cref">${esc(n.ref)}</span>`:'';
-    const go=n.t?`<div class="cgo"><button class="chip" data-goq="${esc(n.s)}" data-got="${esc(n.t)}">🧩 이 단원 문제 풀기</button></div>`:'';
+    /* 퀴즈 필터가 SECTION 을 쓰는 종목에서는 개념의 sec(교재 SECTION id)로 넘겨야 단원이 맞는다 */
+    const goT=HASSEC?(n.sec||''):(n.t||'');
+    const go=goT?`<div class="cgo"><button class="chip" data-goq="${esc(n.s)}" data-got="${esc(goT)}">🧩 이 단원 문제 풀기</button></div>`:'';
     return `<details class="cn" id="cn-${esc(n.no)}" ${cnFold?'':'open'}>
       <summary>${badge}<span class="cno">${esc(n.no)}</span><span class="ctt">${esc(n.title)}</span>${tag}${ref}</summary>
       <div class="cbody">${(n.body||[]).map(noteBlock).join('')}${go}</div></details>`;
