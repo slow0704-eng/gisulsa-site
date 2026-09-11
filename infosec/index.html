@@ -277,7 +277,30 @@ th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);verti
 th{background:var(--card2);font-weight:700;font-size:12.5px;color:var(--tx2);white-space:nowrap}
 tr:last-child td{border-bottom:none}
 td:first-child{font-weight:600;white-space:nowrap;color:var(--tx2)}
-.tw{overflow-x:auto;border-radius:11px;border:1px solid var(--line);margin-top:12px}
+/* ── 표 가로 스크롤 컨테이너 ──
+   표가 컨테이너보다 넓으면 .tw 안에서 좌우로 민다. 화면폭과 무관하게 공통 적용.
+   · overflow-y:hidden — 세로축까지 스크롤 컨테이너가 되면 터치 제스처가 세로로
+     잠겨 가로 밀기를 삼키는 기기가 있다. 표는 세로로 넘칠 일이 없으므로 끈다.
+   · touch-action:pan-x pan-y — 가로 팬을 명시. auto 로 두면 브라우저가 첫 각도로
+     축을 잠그면서 사선 스와이프를 세로로 흘려 "안 움직인다"가 된다.
+   · overscroll-behavior-x:contain — 끝에 닿았을 때 브라우저 뒤로가기 스와이프로
+     연쇄되는 것을 막는다(모바일에서 표를 밀다 페이지가 넘어가던 현상).
+   · 스크롤바는 터치 기기에서도 항상 보이게 — 겹침(overlay) 스크롤바는 멈추면
+     사라져서 "밀 수 있다"는 유일한 신호가 없어진다. */
+.tw{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y;overscroll-behavior-x:contain;
+  border-radius:11px;border:1px solid var(--line);margin-top:12px;
+  scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
+.tw::-webkit-scrollbar{height:10px}
+.tw::-webkit-scrollbar-track{background:var(--card2)}
+.tw::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px;
+  border:3px solid var(--card2);background-clip:padding-box}
+.tw::-webkit-scrollbar-thumb:active{background:var(--ac)}
+/* 넘치는 표에만 붙는 안내 — 한 번이라도 밀어 본 뒤에는 더 띄우지 않는다 */
+.twtip{display:flex;align-items:center;gap:5px;margin:12px 0 5px;
+  font-size:11.5px;font-weight:700;color:var(--tx3)}
+.twtip::before{content:"↔";font-size:13px;color:var(--ac)}
+.twtip+.tw{margin-top:0}
 .sheet h3{font-size:16px;font-weight:800;letter-spacing:-.2px;display:flex;align-items:center;gap:9px}
 .sbadge{font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:99px;color:#fff;flex:none}
 ul.sl{margin-top:12px;padding-left:0;list-style:none}
@@ -632,8 +655,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   .qopts::-webkit-scrollbar{display:none}
   .qopts .chip{flex:none}
 
-  /* ── 표: 관성 스크롤 + 셀 여백 축소 ── */
-  .tw{-webkit-overflow-scrolling:touch}
+  /* ── 표: 셀 여백 축소(스크롤 설정은 공통 .tw 규칙에 있다) ── */
   table{font-size:13px}
   th,td{padding:9px 10px}
 
@@ -677,11 +699,12 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
      살아나 표만 손가락으로 좌우로 미는 정상 동작이 된다. */
   .grid>*,.box{min-width:0}
 
-  /* ── 표: 너무 좁아 글자가 쪼개지지 않도록 최소 폭 + 스크롤 힌트 ── */
-  .tw{position:relative;background:
-    linear-gradient(90deg,var(--card) 30%,transparent) left/28px 100% no-repeat,
-    linear-gradient(270deg,var(--card) 30%,transparent) right/28px 100% no-repeat;
-    background-attachment:local,local}
+  /* ── 표: 너무 좁아 글자가 쪼개지지 않도록 최소 폭 ──
+     예전 스크롤 힌트(양 끝 var(--card) 그라데이션)는 표 ★뒤★에 깔리는 배경이라
+     같은 색 카드 위에서는 보이지 않았다 — 무의미해 제거하고, 대신 항상 보이는
+     스크롤바(.tw::-webkit-scrollbar)와 .twtip 안내로 대체했다.
+     min-width 는 화면이 아주 좁아도 셀 글자가 세로로 쪼개지지 않을 하한선.
+     360px 미만에서는 600px 이 과해 스크롤 거리만 늘어나므로 한 단계 낮춘다. */
   .tw table{min-width:600px}
   th,td{white-space:normal;word-break:keep-all}
   input.search{min-width:0;width:100%}
@@ -726,6 +749,8 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   .logo{font-size:15px}
   .logo span{display:none}
   nav button{padding:9px 12px;font-size:13px}
+  /* 표시폭이 300px 남짓인 기기에서 600px 표는 밀어야 할 거리가 두 배다 */
+  .tw table{min-width:520px}
 }
 
 /* 터치 기기: hover 대신 누르는 순간 반응을 준다 */
@@ -2870,6 +2895,91 @@ renderQuizSetup();
   if(!v||v==='home'||v==='paper'||VIEWS.indexOf(v)<0)return;
   if((v==='example'&&!HASEX)||(v==='shortcut'&&!HASSC)||(v==='concept'&&!HASNOTE))return;
   go(v);
+})();
+
+/* ═══════════ 표 가로 밀기 ═══════════
+   표(.tw)가 화면보다 넓을 때 손가락으로 좌우로 미는 동작을 보조한다.
+   1) 넘치는 표 위에만 "표를 좌우로 밀어 보세요" 안내를 붙인다. 터치 기기의
+      겹침 스크롤바는 멈추면 사라져 '밀 수 있다'는 신호가 남지 않기 때문이다.
+      한 번이라도 민 뒤에는 학습됐다고 보고 기기 단위로 다시 띄우지 않는다.
+   2) 네이티브 터치 팬이 듣지 않는 브라우저를 위한 안전망. 손가락이 가로로
+      12px 넘게 움직였는데도 scrollLeft 가 그대로면 그때부터 JS 가 민다.
+      정상 브라우저는 터치 슬롭(8~10px)에서 이미 움직이므로 이 경로를 타지 않아
+      관성 스크롤을 빼앗지 않는다. */
+(function(){
+  const OVF=el=>el.scrollWidth-el.clientWidth>4;
+  let learned=!!UIP.twt;
+
+  function twScan(){
+    /* 이미 밀어 본 사용자에겐 안내를 걷고 더는 재지 않는다(레이아웃 측정 비용 0) */
+    if(learned){document.querySelectorAll('.twtip').forEach(t=>t.remove());return}
+    /* 안내는 화면에 보이는 첫 표 하나에만 — 제스처를 알리는 목적이라 한 번이면 족하고,
+       표가 수십 개인 뷰(개념정리)에 전부 붙으면 그 자체가 잡음이 된다 */
+    let first=true;
+    document.querySelectorAll('.tw').forEach(tw=>{
+      const prev=tw.previousElementSibling;
+      const tip=prev&&prev.classList&&prev.classList.contains('twtip')?prev:null;
+      if(first&&OVF(tw)){
+        first=false;
+        if(!tip){
+          const el=document.createElement('div');
+          el.className='twtip'; el.textContent='표를 좌우로 밀어 보세요';
+          tw.parentNode.insertBefore(el,tw);
+        }
+      }else if(tip)tip.remove();
+    });
+  }
+  const twScanSoon=(()=>{let t;return()=>{clearTimeout(t);t=setTimeout(twScan,200)}})();
+
+  /* 한 번 민 순간 안내를 모두 거둔다 — scroll 은 버블링하지 않으므로 캡처로 듣는다 */
+  document.addEventListener('scroll',e=>{
+    const tw=e.target.classList&&e.target.classList.contains('tw')?e.target:null;
+    if(!tw||learned||!tw.scrollLeft)return;
+    learned=true; UIP.twt=1; saveUI(); twScan();
+  },true);
+
+  /* 뷰 전환·필터·검색으로 본문이 갈리면 다시 훑는다.
+     뷰 전환은 section.view 의 class 토글이라 childList 만으로는 잡히지 않는다 —
+     숨어 있던 표는 clientWidth 가 0 이라 넘침 판정이 안 되므로 속성도 함께 본다. */
+  const mainEl=document.querySelector('main');
+  if(mainEl&&typeof MutationObserver!=='undefined')
+    new MutationObserver(twScanSoon).observe(mainEl,
+      {childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+  window.addEventListener('resize',twScanSoon);
+  twScan();
+
+  /* ── 터치 팬 안전망 ──
+     document 에 non-passive touchmove 를 상시로 걸면 페이지 전체 스크롤이 느려진다.
+     touchstart 때 해당 표에만 잠깐 걸었다가 손을 떼면 떼어낸다. */
+  document.addEventListener('touchstart',e=>{
+    if(e.touches.length!==1)return;
+    const el=e.target.closest&&e.target.closest('.tw');
+    if(!el||!OVF(el))return;
+    const x0=e.touches[0].clientX, y0=e.touches[0].clientY, sl0=el.scrollLeft;
+    let drive=false;
+    const move=ev=>{
+      if(ev.touches.length!==1)return;
+      const dx=ev.touches[0].clientX-x0, dy=ev.touches[0].clientY-y0;
+      if(!drive){
+        const ax=Math.abs(dx), ay=Math.abs(dy);
+        if(ax<6&&ay<6)return;                       /* 아직 방향이 안 정해졌다 */
+        /* 네이티브가 이미 움직였거나 세로 제스처면 손을 뗀다 */
+        if(el.scrollLeft!==sl0||ay>ax)return off();
+        if(ax<12)return;
+        drive=true;
+      }
+      el.scrollLeft=sl0-dx;
+      if(ev.cancelable)ev.preventDefault();
+    };
+    function off(){
+      el.removeEventListener('touchmove',move);
+      el.removeEventListener('touchend',off);
+      el.removeEventListener('touchcancel',off);
+    }
+    el.addEventListener('touchmove',move,{passive:false});
+    el.addEventListener('touchend',off,{passive:true});
+    el.addEventListener('touchcancel',off,{passive:true});
+  },{passive:true});
 })();
 
 /* ═══════════ PWA — 홈 화면 설치 · 오프라인 학습 ═══════════ */
