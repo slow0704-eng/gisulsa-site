@@ -834,6 +834,22 @@ button,a{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
   .card .tw,.tablewrap,.card table{-webkit-overflow-scrolling:touch;}
   .card table{word-break:keep-all;}
 
+  /* 정의 시트: 7열 표의 min-content(헤더 nowrap)가 390px 화면에서 440px 이라
+     #sheetBody(overflow:visible)를 뚫고 나간다. html,body 는 overflow-x:hidden
+     이므로 뚫고 나간 68px 은 ★좌우로 밀어도 볼 수 없다★.
+     #sheetBody 를 가로 스크롤러로 만들어 표만 손가락으로 밀게 한다.
+     · touch-action:pan-x pan-y — 가로 팬을 명시. auto 로 두면 브라우저가 첫 각도로
+       축을 잠그면서 사선 스와이프를 세로로 흘려 "안 움직인다"가 된다.
+     · overscroll-behavior-x:contain — 끝에 닿았을 때 뒤로가기 스와이프로 연쇄 금지.
+     · 스크롤바 상시 표시 — 겹침 스크롤바는 멈추면 사라져 '밀 수 있다'는 신호가 없다. */
+  #sheetBody{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;min-width:0;
+    touch-action:pan-x pan-y;overscroll-behavior-x:contain;
+    scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent;}
+  #sheetBody::-webkit-scrollbar{height:10px;}
+  #sheetBody::-webkit-scrollbar-track{background:var(--surface-2);}
+  #sheetBody::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:99px;
+    border:3px solid var(--surface-2);background-clip:padding-box;}
+
   /* 모달: 모바일 주소창 높이 변화 대응 */
   .cmodal-box{max-height:min(88vh,88dvh);}
 }
