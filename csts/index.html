@@ -42,6 +42,13 @@
   --f-num:ui-monospace,"SF Mono","Consolas","D2Coding","Menlo",monospace;
   --f-label:"Segoe UI","Pretendard","Malgun Gothic",sans-serif;
   --f-soft:"Apple SD Gothic Neo","Pretendard","Segoe UI","Malgun Gothic",sans-serif;
+  /*  display : 큰 숫자·점수 — 두껍고 좁아야 '수치'로 읽힌다
+      narrow  : 메타·표 라벨 — 좁게 눌러 담아 정보 밀도를 올린다
+      brush   : ★기념하는 순간 전용★(배지·정복·합격). 붓글씨 계열이라
+                본문에 쓰면 촌스럽지만, 1년에 몇 번 나오면 '기념패'가 된다 */
+  --f-display:"Segoe UI Black","Arial Black","Pretendard","Malgun Gothic",sans-serif;
+  --f-narrow:"Arial Narrow","Segoe UI","Pretendard","Malgun Gothic",sans-serif;
+  --f-brush:"Gungsuh","궁서","Nanum Myeongjo","나눔명조","Apple Myungjo","Batang",Georgia,serif;
   --bg:#0f1420; --bg2:#161d2e; --card:#1b2436; --card2:#212c42;
   --line:#2b3852; --line2:#3a4a6b;
   --tx:#e8edf7; --tx2:#a7b4cc; --tx3:#6f7f9d;
@@ -779,6 +786,74 @@ body[data-heat="hot"] #heat{animation:heatPulse 1.6s ease-in-out infinite}
 #mascot.party .mwrap{animation:mSpin .8s ease}
 @keyframes mSpin{0%{transform:rotate(0) scale(1)}40%{transform:rotate(-14deg) scale(1.12)}
   70%{transform:rotate(12deg) scale(1.06)}100%{transform:rotate(0) scale(1)}}
+/* ── 표정 5종 추가 ────────────────────────────────────────
+   ★새 SVG 를 그리지 않고 기존 부품의 조합만 바꾼다.★ 부품을 늘리면
+   표정마다 숨김 규칙이 늘어 관리가 무너진다(예전에 클래스가 누적됐던 이유). */
+/* 갸웃 — 생각 중. 고개를 기울인 채 ★머문다★(돌아오지 않는 게 핵심) */
+#mascot.think .mwrap{animation:mThink 2.4s ease-in-out infinite}
+@keyframes mThink{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(-4deg) translateY(-2px)}}
+#mascot.think .mnote{display:block;animation:mFloat 2.2s ease infinite}
+/* 졸림 — 아주 느리게 가라앉는다 */
+#mascot.sleepy .mshut{display:block}
+#mascot.sleepy .meyes{display:none}
+#mascot.sleepy .mwrap{animation:mDoze 6.5s ease-in-out infinite}
+@keyframes mDoze{0%,100%{transform:translateY(0) scale(1,1)}
+  50%{transform:translateY(4px) scale(1.02,.96)}}
+/* 부끄러움 — 볼이 진해지고 몸이 작아진다 */
+#mascot.shy .mcheek{opacity:.95}
+#mascot.shy .mshut{display:block}
+#mascot.shy .meyes{display:none}
+#mascot.shy .mwrap{animation:mShy 1.4s ease}
+@keyframes mShy{0%,100%{transform:scale(1)}40%{transform:scale(.94) translateY(3px) rotate(-5deg)}}
+/* 환호 — 날개를 활짝. hype 와 달리 ★한 번만★ 터진다 */
+#mascot.cheer .mshut{display:block}
+#mascot.cheer .meyes{display:none}
+#mascot.cheer .mwrap{animation:mCheer .9s cubic-bezier(.2,1.5,.4,1)}
+@keyframes mCheer{0%{transform:translateY(0) scale(1)}
+  30%{transform:translateY(-20px) scale(1.08,.94)}
+  60%{transform:translateY(0) scale(.95,1.06)}100%{transform:none}}
+#mascot.cheer .mwingL{animation:mFlapL .22s ease-in-out 4}
+#mascot.cheer .mwingR{animation:mFlapR .22s ease-in-out 4}
+/* 으쓱 — 윙크한 채 비스듬히 버틴다 */
+#mascot.smug .mwink{display:block}
+#mascot.smug .meyes{display:none}
+#mascot.smug .meye:first-of-type,#mascot.smug .mglint:first-of-type{display:block}
+#mascot.smug .mwrap{animation:mSmug 1.8s ease-in-out infinite}
+@keyframes mSmug{0%,100%{transform:rotate(5deg)}50%{transform:rotate(8deg) translateY(-2px)}}
+
+/* ── 🚶 자기 구역 안에서 돌아다니기 ──────────────────────
+   ★화면을 가로지르면 방해가 된다.★ 서 있는 자리에서 좌우 ±26px·위 22px
+   안에서만 움직인다 — 눈에는 '살아 있는 것'으로 보이지만 본문 위로는
+   절대 넘어오지 않는 폭이다. 이동은 ★transform 만★ 쓴다(레이아웃을
+   건드리면 옆 요소가 밀린다). */
+#mascot .mbody{transition:transform .9s cubic-bezier(.34,.8,.3,1)}
+#mascot.walking .mbody{transition-duration:1.15s}
+/* 걷는 동안 몸이 좌우로 흔들린다 — 이게 없으면 '미끄러진다' */
+#mascot.walking .mwrap{animation:mWalk .34s ease-in-out infinite}
+@keyframes mWalk{0%,100%{transform:rotate(-3.5deg) translateY(0)}
+  50%{transform:rotate(3.5deg) translateY(-2.5px)}}
+#mascot.faceL .mwrap{scale:-1 1}
+/* 점프 — 제자리에서 한 번 크게 */
+#mascot.jump .mwrap{animation:mJump .72s cubic-bezier(.3,1.5,.4,1)}
+@keyframes mJump{0%{transform:translateY(0) scale(1,1)}
+  18%{transform:translateY(2px) scale(1.1,.88)}
+  48%{transform:translateY(-30px) scale(.93,1.12)}
+  78%{transform:translateY(0) scale(1.08,.92)}100%{transform:none}}
+/* 두리번 — 고개만 좌우로 */
+#mascot.peek .mwrap{animation:mPeek 1.6s ease-in-out}
+@keyframes mPeek{0%,100%{transform:rotate(0)}25%{transform:rotate(-13deg)}
+  60%{transform:rotate(11deg)}}
+/* 총총 — 작게 두 번 뛴다 */
+#mascot.hop2 .mwrap{animation:mHop2 .9s ease-in-out}
+@keyframes mHop2{0%,100%{transform:translateY(0)}
+  20%{transform:translateY(-11px)}40%{transform:translateY(0)}
+  60%{transform:translateY(-8px)}80%{transform:translateY(0)}}
+@media (prefers-reduced-motion: reduce){
+  #mascot .mbody{transition:none!important;transform:none!important}
+  #mascot.walking .mwrap,#mascot.jump .mwrap,#mascot.peek .mwrap,
+  #mascot.hop2 .mwrap{animation:none!important}
+}
+
 /* 🐱 서브 마스코트 — 각지고 차가운 톤으로 메인과 대비 */
 #mascot .sbody{background:none;border:0;padding:0;cursor:pointer;line-height:0;
   filter:drop-shadow(0 5px 12px rgba(0,0,0,.2))}
@@ -1115,6 +1190,133 @@ body::before{background-size:160% 140%;animation:evoDrift 46s ease-in-out infini
   .gbar.almost i,.cbar.almost i,.tickglow{animation:none!important}
 }
 
+
+/* ── ✍ 상황별 폰트 배치 ──────────────────────────────────────
+   ★같은 글자라도 '무엇으로 읽히길 바라는가'가 다르다.★
+     읽는 글(해설·개념)   → 명조. 결이 바뀌면 '읽는 모드'로 전환된다
+     세는 것(점수·타이머) → 고정폭·두껍게. 수치는 흔들리지 않아야 한다
+     훑는 것(메타·표)     → 좁게. 밀도를 올려 한눈에 들어오게
+     기념하는 것(배지)    → 붓글씨. 희소해야 값이 산다
+   ─────────────────────────────────────────────────────────── */
+
+/* 큰 수치 — 점수·개수는 '숫자 덩어리'로 보여야 한다.
+   ★컨테이너에는 걸지 않는다★ — .hero 에 걸었더니 그 안의 설명문까지
+   Segoe UI Black 으로 물들어 본문이 시커메졌다. 텍스트를 직접 담은
+   요소만 지정한다. */
+.hero>h1,.res .sol,.stat b,.cnt,.lvl,.qcount,.bignum,.achwon{
+  font-family:var(--f-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+/* 히어로 안의 설명·메타는 본문 계열로 되돌린다(상속 사고 방지) */
+.hero .sub,.hero .slog{font-family:var(--f-ui);letter-spacing:-.002em}
+.hero .metas{font-family:var(--f-narrow)}
+.timer,.kb,.pg,.prog,.lvlbar b{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+/* 읽는 글 — 명조 */
+.ansbox,.sheet,.trap,.trp,.tpart,.nt,.note,.cd,.fcb,.ob-txt,.cref,.wrong-item p{
+  font-family:var(--f-serif);line-height:1.74;letter-spacing:.004em}
+/* 문제 지문만은 ★또렷한 고딕★ — 명조로 하면 조건문·부정어를 놓친다 */
+.qhead,.exq,.qrow{font-family:var(--f-ui);letter-spacing:-.004em}
+
+/* 제목 계열 */
+.vt,.gtitle,.sname,.tsec,.fcq,.paperhd,.ct,.ctt{font-family:var(--f-head);letter-spacing:-.02em}
+.fcq{letter-spacing:-.028em}
+
+/* 메타·표 라벨 — 좁게 눌러 담는다 */
+.vd,.meta,.metas,.desc,.cap,.qmeta,.tlegend,.lbl,.subrow,.exp-lbl,.qhint,.fchint{
+  font-family:var(--f-narrow);letter-spacing:.012em}
+
+/* 칩·배지·태그 — 자간을 벌려 작아도 읽히게 */
+.chip,.ctag,.fctag,.sbadge,.tw,.keys,.star,.ctag,.fckey{
+  font-family:var(--f-label);letter-spacing:.03em}
+
+/* ★기념하는 순간★ — 붓글씨는 여기서만. 남발하면 그냥 촌스럽다 */
+.found,.nexthook b,.achwon+.cap,.toast.hype{font-family:var(--f-brush);letter-spacing:.01em}
+.found{font-size:1.06em}
+
+/* 말풍선 — 둥근 스택(말투를 시각화) */
+.mtalk,.stalk,.ctalk{font-family:var(--f-soft)}
+/* 서브·조연단은 ★본인 성격에 맞는 결★ 로 */
+.stalk{font-family:var(--f-narrow);letter-spacing:.01em}          /* 시니 — 건조하게 */
+.cw[data-who="bu"] .ctalk{font-family:var(--f-num);font-size:9.8px;letter-spacing:-.02em} /* 부엉 — 데이터처럼 */
+.cw[data-who="mo"] .ctalk{font-family:var(--f-serif);letter-spacing:.01em}                /* 모모 — 느긋하게 */
+@media (max-width:520px){ .cw[data-who="bu"] .ctalk{font-size:9px} }
+
+/* 로고는 버튼이지만 ★버튼처럼 보이면 안 된다★ — 제목의 생김새를 그대로 둔다.
+   ★font 단축 속성은 쓰지 않는다★ — 위에서 잡아 둔 font-weight/size 까지 지운다. */
+.logo{background:none;border:0;padding:0;cursor:pointer;color:inherit;text-align:left;
+  font-family:inherit;transition:opacity .16s ease}
+.logo:hover{opacity:.72}
+.logo:active{transform:scale(.985)}
+.logo:focus-visible{outline:2px solid color-mix(in srgb,var(--ac) 55%,transparent);
+  outline-offset:3px;border-radius:6px}
+
+/* ── ⏱ 문항 초시계 ──────────────────────────────────────────
+   ★작고, 조용해야 한다.★ 시험이 아닌 연습에서 시간이 크게 뜨면
+   그 자체가 압박이 된다 — 그래서 글자는 작고, 색은 평소에 회색이며,
+   ★오래 걸릴수록 서서히★ 색이 붙는다(갑자기 빨개지면 재촉이 된다). */
+.qclock{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;
+  font-size:11.5px;font-weight:700;font-family:var(--f-num);font-variant-numeric:tabular-nums;
+  color:var(--tx3);background:color-mix(in srgb,var(--line) 26%,transparent);
+  border:1px solid transparent;transition:color .6s ease,background .6s ease,border-color .6s ease}
+.qclock i{font-style:normal;font-size:9.5px;opacity:.7;font-family:var(--f-narrow)}
+.qclock[hidden]{display:none}
+.qclock.warm{color:var(--wa);background:color-mix(in srgb,var(--wa) 12%,transparent);
+  border-color:color-mix(in srgb,var(--wa) 28%,transparent)}
+.qclock.slow{color:#f97316;background:color-mix(in srgb,#f97316 13%,transparent);
+  border-color:color-mix(in srgb,#f97316 30%,transparent)}
+/* ★개인 최고 기록 경신 중★ — 이때만 초록. 압박이 아니라 신기록 신호다 */
+.qclock.pb{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent);
+  border-color:color-mix(in srgb,var(--ok) 32%,transparent);animation:nearBreath 1.2s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){ .qclock,.qclock.pb{transition:none;animation:none} }
+
+/* 결과 화면의 시간 요약 — 조용한 한 줄. 점수보다 작아야 한다 */
+.timesum{margin-top:12px;padding:9px 13px;border-radius:10px;font-size:12.5px;
+  font-family:var(--f-narrow);color:var(--tx3);
+  background:color-mix(in srgb,var(--line) 22%,transparent);text-align:center}
+.timesum b{font-family:var(--f-num);color:var(--tx);font-variant-numeric:tabular-nums}
+
+/* ── 📱 모바일 — 줄넘김과 글자 크기 ────────────────────────
+   좁은 화면에서 깨지는 것은 대부분 ①중간에 끊기면 안 되는 말이 끊기고
+   ②한 줄에 우겨 넣어 글자가 작아지고 ③긴 영문·수치가 통째로 삐져나오는
+   세 가지다. 각각 ★어절 단위 줄바꿈·크기 회복·강제 줄바꿈★ 으로 잡는다. */
+@media (max-width:560px){
+  /* ★한국어는 어절 단위로 끊는다★ — 단어 중간에서 잘리면 읽는 속도가 크게 떨어진다 */
+  body{word-break:keep-all;overflow-wrap:break-word}
+  /* 제목은 줄이 늘어도 되니 크기를 지킨다 — 작아지는 쪽이 훨씬 나쁘다 */
+  .vt{font-size:19px;line-height:1.32;letter-spacing:-.022em}
+  .vd{font-size:12.5px;line-height:1.5}
+  .hero>h1{font-size:26px;line-height:1.2}
+  .gtitle,.sname{font-size:14.5px;line-height:1.35}
+  /* 홈 히어로 — 한 줄에 다 넣으려다 깨지던 자리 */
+  #v-home .vt{margin-bottom:4px}
+  #v-home .vd{word-break:keep-all}
+  /* 메타 줄 — 가운뎃점으로 이어 붙인 긴 줄은 ★칩처럼 접어★ 내린다 */
+  .metas,.meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11.5px;line-height:1.5}
+  /* 통계 카드 — 2열로 접는다(4열은 360px 에서 숫자가 뭉갠다) */
+  .resgrid,.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+  .stat b,.cnt,.hero>h1{font-size:23px}
+  /* 대시보드 한 줄 — 넘치면 접히게 */
+  .dash{flex-wrap:wrap;gap:6px 12px;font-size:12px}
+  .dash .d1{white-space:nowrap}
+  /* 긴 영문·표준명·URL 은 어쩔 수 없이 잘라야 한다 */
+  .cref,.exp code,.sheet code,.kbrow .keys{overflow-wrap:anywhere}
+  /* 로고 — 부제는 줄바꿈 허용 */
+  .logo{white-space:normal;line-height:1.25}
+  .logo span{display:inline-block}
+  /* 문제 지문 — 좁을수록 행간을 넓혀야 읽힌다 */
+  .qhead,.exq{font-size:15px;line-height:1.62}
+  .qrow{font-size:14px;line-height:1.55}
+  .ansbox{font-size:13.5px;line-height:1.7}
+  /* 초시계·포인트 칩이 한 줄에 안 들어가면 접는다 */
+  .qbar,.qmeta{flex-wrap:wrap;gap:5px 8px}
+}
+@media (max-width:380px){
+  .vt{font-size:17.5px}
+  .hero>h1,.stat b,.cnt{font-size:21px}
+  .logo{font-size:16px}
+  .logo span{font-size:11px;margin-left:0}
+  .qclock{padding:3px 7px;font-size:11px}
+}
+
 /* 음량 팝오버 */
 .volpop{position:fixed;z-index:60;display:flex;align-items:center;gap:9px;
   padding:9px 13px;border-radius:12px;background:var(--bg2);border:1px solid var(--bd);
@@ -1418,7 +1620,7 @@ body::before{background-size:160% 140%;animation:evoDrift 46s ease-in-out infini
 
 <header>
   <div class="hwrap">
-    <div class="logo"><b id="brand">CPPG</b><span id="brandTag">개인정보관리사 2026</span></div>
+    <button type="button" class="logo" id="logoHome" title="홈으로 (1)" aria-label="홈으로 이동"><b id="brand">CPPG</b><span id="brandTag">개인정보관리사 2026</span></button>
     <div class="navwrap"><nav id="nav">
       <button data-v="home" class="on">🏠 홈 <kbd>1</kbd></button>
       <button data-v="cards">🃏 암기카드 <kbd>2</kbd></button>
@@ -1848,6 +2050,11 @@ body::before{background-size:160% 140%;animation:evoDrift 46s ease-in-out infini
       <span class="qcount" id="qCount"></span>
       <span class="timer" id="qTimer"></span>
       <span class="combo" id="qCombo" style="display:none"></span>
+      <span class="qclock" id="qClock" title="이 문제를 보고 있는 시간" hidden>
+        <svg viewBox="0 0 16 16" width="11" height="11" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".35"/>
+          <path id="qClockArc" d="M8 1.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg><b id="qClockN">0.0</b><i>초</i></span>
       <span class="pchip" id="qPt" title="획득 포인트"><svg class="pcoin" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="7.2" fill="url(#pcg)" stroke="#d99b05"/><circle cx="8" cy="8" r="4.6" fill="none" stroke="#c98a00" stroke-opacity=".5"/><defs><radialGradient id="pcg" cx="34%" cy="30%" r="78%"><stop offset="0" stop-color="#ffe89a"/><stop offset=".62" stop-color="#f5b301"/><stop offset="1" stop-color="#c98a00"/></radialGradient></defs></svg><b id="qPtN">0</b><span class="punit">P</span></span>
       <div class="sp"></div>
       <span class="qcount" id="qScore"></span>
@@ -1960,6 +2167,9 @@ fillDef('visit',{lastSeen:''});
 /* 🎭 사회적 동역학 — mood 는 조연단의 ★세력 균형★(-100 까칠 ↔ +100 따뜻).
    유저 성적이 이 값을 밀고, 값이 "누가 말할지·누구 편을 들지" 를 정한다. */
 fillDef('soc',{mood:0,ens:0,rel:{},seen:{},mem:null});
+/* ⏱ 시간 기록 — ★문항별 최고 기록★ 과 누적 공부 시간.
+   기록이 남아야 "지난번보다 빨랐다" 는 비교가 가능해진다. */
+fillDef('time',{best:{},totalMs:0,sessions:0,fastest:0});
 fillDef('ach',{got:{},redeem:0});      /* got: 배지id→획득일, redeem: 오답 극복 누적 */
 if(!Array.isArray(S.solved))S.solved=[];/* 한 번이라도 맞힌 문항 id — 정복도 계산용 */
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
@@ -2923,6 +3133,27 @@ const FX=(()=>{
     exam:  []
   };
   let amb=null, ambNext=0, ambTimer=null;
+  /* ── ⏱ 템포 요동(루바토) ────────────────────────────────
+     ★기계적으로 일정한 박은 곧 배경이 된다.★ 연주자는 저절로 조금씩
+     밀고 당기는데, 그 미세한 흔들림이 "사람이 치고 있다" 는 느낌을 만든다.
+     ±3.5% 안에서만 움직인다 — 5% 를 넘으면 '음이 늘어졌다' 고 인지되고,
+     2% 미만이면 없는 것과 같다. 목표치로 ★30~60초에 걸쳐 천천히★ 미끄러지고,
+     도착하면 다음 목표를 새로 뽑는다. 순간적으로 바뀌면 바로 들킨다. */
+  let tempo=1, tempoTo=1, tempoAt=0, tempoDur=45;
+  function tempoTick(){
+    const now=Date.now()/1000;
+    if(!tempoAt||now>=tempoAt+tempoDur){
+      tempoAt=now; tempoDur=30+Math.random()*30;
+      /* 계속 한쪽으로 흐르지 않게, 1 에서 멀수록 반대쪽을 뽑는다 */
+      const bias=(1-tempo)*0.6;
+      tempoTo=1+bias+(Math.random()-.5)*0.07;
+      tempoTo=Math.max(.965,Math.min(1.035,tempoTo));
+    }
+    const k=Math.min(1,(now-tempoAt)/tempoDur);
+    const e=k*k*(3-2*k);                    /* smoothstep — 시작·끝이 부드러워야 안 들킨다 */
+    tempo=tempo+(tempoTo-tempo)*e*0.08;
+  }
+  function tempoNow(){ return tempo }
   function ambBuild(kind){
     const A=ac(); if(!A||!bgm||!bgm.ambBus)return null;
     const src=A.createBufferSource(); src.buffer=bgm.wb; src.loop=true;
@@ -3036,7 +3267,8 @@ const FX=(()=>{
     const A=ac(); if(!A||!bgm||!bgm.scene)return;
     const sc=SCENE[bgm.scene]||SCENE.home;
     if(!sc.bpm)return;
-    const sp=60/sc.bpm/4;                       /* 16분음표 길이 */
+    tempoTick();
+    const sp=60/(sc.bpm*tempoNow())/4;           /* 16분음표 길이 × 루바토 */
     if(bgm.next<A.currentTime)bgm.next=A.currentTime+.04;
     let guard=0;
     while(bgm.next<A.currentTime+.12&&guard++<32){
@@ -3124,6 +3356,8 @@ const FX=(()=>{
     },
     /** 지금 깔린 자연음 — 설정·디버그용 */
     ambKind(){ return amb?amb.kind:null },
+    /** 지금 템포 배율 — 루바토가 범위를 벗어나지 않는지 재기 위한 창구 */
+    tempo(){ return tempoNow() },
     /** 수동 전환(다음 질감으로) */
     ambNextNow(){ ambRotate(false) },
     setVol(v){ if(bgm&&S.bgm===true){bgm.vol=v;bgm.out.gain.value=v*bgm.duck} },
@@ -3613,6 +3847,27 @@ const CAST=(()=>{
      on:c=>c.n>=30&&c.n%15===0,
      L:c=>[`${c.n}문제째야. 한 번 쉬어도 돼`,'물 한 잔 하고 와','눈 좀 쉬게 해 줘']},
 
+    /* ── ⏱ 시간에서 파생된 것들 ───────────────────────── */
+    {w:'mo',k:'slowing',cd:18, face:'f-sad',
+     on:c=>c.slowing,
+     L:()=>['속도가 떨어지고 있어. 지친 거야','한 문제가 점점 길어지네. 쉴 때야',
+            '아까보다 오래 걸려. 무리하지 말자']},
+    {w:'bu',k:'pb',    cd:4,  face:'f-joy',
+     on:c=>c.pb,
+     L:c=>[`${(c.prevBest/1000).toFixed(1)}초 → ${(c.ms/1000).toFixed(1)}초. 인출이 빨라졌다`,
+           '같은 문제를 더 빨리 풀었다. 암기가 아니라 이해다',
+           `개인 기록 ${((c.prevBest-c.ms)/1000).toFixed(1)}초 단축`]},
+    {w:'da',k:'hour',  cd:30, face:'f-joy',
+     on:c=>c.sesMs>=1800000&&Math.floor(c.sesMs/1800000)>Math.floor((c.sesMs-c.ms)/1800000),
+     L:c=>[`${Math.round(c.sesMs/60000)}분째 기록 중`,'30분 단위로 적어 둘게','시간도 장부에 남겨']},
+    {w:'bu',k:'pace',  cd:16, face:null,
+     on:c=>c.pace>0&&c.pace<9000&&c.n>=10,
+     L:c=>[`문항당 평균 ${(c.pace/1000).toFixed(1)}초. 시험 페이스다`,
+           '이 속도면 시간은 남는다','속도는 충분해. 정확도만 보면 돼']},
+    {w:'mo',k:'marathon',cd:40,face:'f-sad',
+     on:c=>c.sesMs>=2700000,
+     L:c=>[`${Math.round(c.sesMs/60000)}분 연속이야. 진짜 쉬어`,'45분 넘었어. 한 번 일어나자']},
+
     /* ── ② 특별한 성취 ────────────────────────────────── */
     {w:'bu',k:'redeem',cd:5,  face:'f-joy',
      on:c=>c.ok&&c.redeem,
@@ -3826,18 +4081,27 @@ const MASCOT=(()=>{
   /* 상황별 문구 — 맥락(콤보·연속일·시간)을 넣어 매번 다르게 만든다 */
   const LINE={
     hello:['어서 오세요','오늘도 왔네요','기다렸어요','같이 해봐요','자리 잡았어요',
-           '오늘은 뭘 볼까요','준비됐어요','왔군요','반가워요','시작해 볼까요'],
+           '오늘은 뭘 볼까요','준비됐어요','왔군요','반가워요','시작해 볼까요',
+           '오늘도 한 걸음','딱 좋은 때 오셨어요','자, 가볍게 시작해요',
+           '오래 안 걸려요','한 문제부터 해봐요'],
     right:['좋아요','정확해요','그렇죠','잘했어요','바로 그거예요','깔끔해요','역시',
-           '망설임이 없네요','이건 확실히 아네요','완벽','척척이네요','좋은 감각이에요'],
+           '망설임이 없네요','이건 확실히 아네요','완벽','척척이네요','좋은 감각이에요',
+           '오 맞혔다','그거죠','정답','네 그거예요','아는 거 나왔네요','딱이에요',
+           '흔들림이 없네요','이런 건 이제 쉽죠','감이 좋아요','바로 짚었어요',
+           '고민 없이 갔네요','제대로 봤어요','눈이 밝아졌어요'],
     right2:['오 빨랐어요','손이 기억하나 봐요','이제 익숙하죠','자신감 붙었네요'],
     hard:['어려운 걸 맞혔어요','이건 진짜 어려운 거였어요','심화까지 잡네요','대단한데요',
           '이 정도면 실력이에요'],
     combo:['멈추지 마세요','흐름 탔어요','계속 가요','불붙었어요','지금이 제일 잘 되는 때예요',
-           '리듬 좋아요','이 기세 그대로','손이 풀렸네요'],
+           '리듬 좋아요','이 기세 그대로','손이 풀렸네요','지금 물 오르셨는데요',
+           '이대로만','감 잡으셨네요','속도 붙었어요','오늘 컨디션 좋으신데요'],
     combo2:['이거 기록 나오겠는데요','멈추기 아까운데요','지금 최고조예요'],
     wrong:['괜찮아요, 이제 알았잖아요','지금 틀리는 게 이득이에요','해설 한 번만 볼까요',
            '오답노트에 담아 뒀어요','여기서 배우면 돼요','시험장 아니라 다행이에요',
-           '모르는 걸 찾았네요','이건 원래 헷갈려요','한 번 보고 가면 돼요','수확이에요'],
+           '모르는 걸 찾았네요','이건 원래 헷갈려요','한 번 보고 가면 돼요','수확이에요',
+           '이건 저도 헷갈려요','함정이 잘 숨어 있었네요','아깝다','거의 갔었는데',
+           '여기 표시해 둘게요','이런 건 두 번은 안 틀려요','한 끗 차이였어요',
+           '지금 알아서 다행이에요','메모해 둘 만한 거예요','다음엔 보이실 거예요'],
     wrong2:['이 단원이 좀 어렵죠','잠깐 쉬었다 와도 돼요','숨 한 번 쉬고 가요',
             '너무 몰아치지 말아요','천천히 해도 괜찮아요'],
     redeem:['되찾았어요','복수 성공','이제 진짜 내 거예요','저번엔 틀렸던 건데요',
@@ -3846,7 +4110,18 @@ const MASCOT=(()=>{
     level:['레벨 올랐어요','한 단계 위로','성장했네요'],
     idle:['천천히 해도 돼요','한 문제만 더 볼까요','쉬었다 와도 괜찮아요','여기 있어요',
           '물 한 잔 어때요','잠깐 멈춰도 기록은 안 사라져요','기다리고 있어요',
-          '막히면 넘겨도 괜찮아요'],
+          '막히면 넘겨도 괜찮아요','생각 중이시죠','저도 같이 보고 있어요',
+          '어려우면 힌트 써도 돼요','숨 한 번 쉬고요','조급할 거 없어요',
+          '창밖 한 번 보고 오세요','눈이 피곤하면 잠깐 감아도 돼요'],
+    /* 🗨 혼잣말 — 아무 일 없을 때 낮은 확률로. ★정보가 아니라 기척★ 이다 */
+    chat:['...','흠','창밖에 비 오나','오늘 커피 드셨어요?','이 단원 은근 어렵죠',
+          '저는 여기 계속 있을게요','조용하네요','집중 잘 되시나 봐요',
+          '시험장에서도 이러면 좋겠다','아 맞다, 물 드세요','생각보다 잘 가고 있어요',
+          '딴생각하다 걸렸어요','이 문제 만든 사람은 무슨 생각이었을까요',
+          '저도 하나 배웠어요','같이 하니까 덜 심심하네요'],
+    /* 🎯 이어 붙이는 두 번째 마디 — 첫 마디 뒤에 잠깐 있다 덧붙인다 */
+    add:['...그렇죠?','아, 아무것도 아니에요','계속하세요','제 말이 그거예요',
+         '음, 괜찮아요','신경 쓰지 마세요','다시 집중!'],
     back:['다시 와서 반가워요','돌아왔네요','잘 왔어요','기다리고 있었어요','또 만나네요'],
     goal:['오늘 목표 달성','오늘 할 일 끝','수고했어요','약속 지켰네요','오늘은 성공이에요'],
     end:['오늘도 고생했어요','내일 또 봐요','잘 쉬어요','충분히 했어요','푹 쉬세요'],
@@ -3881,7 +4156,10 @@ const MASCOT=(()=>{
   }
   /* ★표정 클래스는 한 번에 하나만★ — 목록을 한 곳에 모아 두지 않으면
      새 표정을 추가할 때마다 지우는 걸 빠뜨려 클래스가 누적된다(실제로 겪음). */
-  const FACES=['happy','hype','care','idle','party','joy','proud','love','wink','worry','oops','surprise'];
+  const FACES=['happy','hype','care','idle','party','joy','proud','love','wink','worry','oops','surprise',
+               'think','sleepy','shy','cheer','smug'];
+  /* 말 없이 잠깐 지어도 어색하지 않은 표정만 — 놀람·환호는 이유 없이 나오면 이상하다 */
+  const MOODS=['think','idle','smug','shy','happy','wink','sleepy','proud'];
   function face(cls,ms){
     const b=box(); if(!b)return;
     FACES.forEach(f=>b.classList.remove(f));
@@ -3895,7 +4173,85 @@ const MASCOT=(()=>{
     if(cls)face(cls,hold||1800);
     clearTimeout(hideT);
     hideT=setTimeout(()=>{t.hidden=true;face('idle')},hold||2600);   /* 말이 끝나면 대기 표정으로 */
+    moodBump();                       /* 말했으면 무언의 표정 틱은 뒤로 미룬다 */
   }
+  /** ★두 마디 이어 말하기★ — 한 마디만 하고 사라지면 '알림'이지 대화가 아니다.
+      가끔(확률) 뒤에 한 마디를 덧붙이면 그 순간 ★사람처럼★ 들린다. */
+  let addT=null;
+  function sayAdd(msg,cls,hold,p){
+    say(msg,cls,hold);
+    clearTimeout(addT);
+    if(Math.random()>(p==null?.22:p))return;
+    addT=setTimeout(()=>{
+      if(S.mascot===false)return;
+      say(pick('add'),Math.random()<.5?'shy':'wink',1900);
+    },(hold||2600)-500);
+  }
+  /** 표정 시퀀스 — 한 대사 동안 표정이 1~2번 바뀐다.
+      고정 표정은 스티커 같고, 바뀌면 ★반응하는 중★ 으로 읽힌다. */
+  function faceSeq(seq){
+    let t=0;
+    seq.forEach(([cls,ms])=>{ setTimeout(()=>face(cls,ms),t); t+=ms; });
+  }
+  /* ── 😐 무언의 표정 틱 ────────────────────────────────
+     말은 아끼되 ★표정은 자주★ 바꾼다. 말풍선이 자꾸 뜨면 시야를 가리지만
+     표정만 바뀌는 건 방해가 없으면서 "살아 있다" 는 신호로는 충분하다. */
+  /* ── 🚶 돌아다니기 ───────────────────────────────────
+     ★구역 밖으로 나가지 않는다.★ 좌우 ±26px, 위로 22px.
+     이 폭을 넘기면 본문을 가리거나 "화면을 뛰어다니는 방해물" 이 된다.
+     ★조용할 때만 움직인다★ — 말하는 중에 이동하면 말풍선 꼬리가 따로 논다. */
+  const ZONE={x:26,y:22};
+  let mx=0,my=0,walkT=null;
+  const reducedM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function place(){
+    const b=$('mbody'); if(!b)return;
+    b.style.transform='translate('+mx.toFixed(1)+'px,'+my.toFixed(1)+'px)';
+  }
+  function walkTo(x,y,ms){
+    const bx=box(); if(!bx)return;
+    const dx=x-mx;
+    mx=x; my=y;
+    bx.classList.add('walking');
+    bx.classList.toggle('faceL',dx<-1);
+    place();
+    setTimeout(()=>{const b2=box(); if(b2){b2.classList.remove('walking','faceL')}},ms||1150);
+  }
+  function act(kind){
+    const b=box(); if(!b||reducedM())return;
+    const cls = kind==='jump'?'jump' : kind==='hop'?'hop2' : kind==='peek'?'peek' : null;
+    if(!cls)return;
+    b.classList.remove('jump','hop2','peek'); void b.offsetWidth;
+    b.classList.add(cls);
+    setTimeout(()=>{const c=box(); if(c)c.classList.remove(cls)},cls==='jump'?760:cls==='hop2'?940:1650);
+  }
+  function roamTick(){
+    clearTimeout(walkT);
+    walkT=setTimeout(()=>{
+      const t=talk();
+      if(S.mascot!==false&&t&&t.hidden&&!reducedM()&&!document.hidden){
+        const r=Math.random();
+        if(r<.42)walkTo((Math.random()*2-1)*ZONE.x,-Math.random()*ZONE.y*.5);
+        else if(r<.62)act('jump');
+        else if(r<.80)act('peek');
+        else if(Math.abs(mx)>2||Math.abs(my)>2)walkTo(0,0);
+      }
+      roamTick();
+    },9000+Math.random()*14000);
+  }
+  let moodT=null;
+  function moodBump(){
+    clearTimeout(moodT);
+    moodT=setTimeout(moodTick,14000+Math.random()*26000);
+  }
+  function moodTick(){
+    const t=talk();
+    if(S.mascot!==false&&t&&t.hidden){
+      const m=MOODS[(Math.random()*MOODS.length)|0];
+      face(m,1400+Math.random()*1400);
+    }
+    moodBump();
+  }
+  moodBump(); roamTick();
   /* ── 🐱 서브 등장 ─────────────────────────────────────
      항상 떠 있으면 화면이 복잡하다 → ★말할 때만 나타났다 사라진다.★
      확률로만 끼어들게 해서 "가끔 튀어나오는 재미" 를 만든다. */
@@ -3970,12 +4326,13 @@ const MASCOT=(()=>{
     /** 정답 — 콤보·난이도·속도에 따라 표정과 말이 달라진다 */
     right(combo,opt){
       opt=opt||{}; const _uh=!!opt.handled;
-      if(combo>=10){ say(pick('combo2'),'joy',1700); sub('combo2',.3,'s-wide') }
-      else if(combo>=5){ say(pick('combo')+` (${combo}연속)`,'hype',1500); sub('combo',.22,'s-wide') }
+      if(combo>=10){ say(pick('combo2'),'joy',1700); faceSeq([['surprise',350],['cheer',900],['joy',900]]);
+                     act('jump'); sub('combo2',.3,'s-wide') }
+      else if(combo>=5){ say(pick('combo')+` (${combo}연속)`,'hype',1500); act('hop'); sub('combo',.22,'s-wide') }
       else if(opt.hard){ say(pick('hard'),'proud',1800); sub('right',.2,'s-roll') }
       else if(opt.fast){ say(pick('right2'),'wink',1400); sub('right',.12,'s-roll') }
       else if(opt.lucky){ say('오 지금 뭔가 좋았어요!','joy',1800); sub('right',.25,'s-wide') }
-      else { say(pick('right'),'happy',1400); sub('right',.12,'s-roll') }
+      else { sayAdd(pick('right'),'happy',1400,.14); sub('right',.12,'s-roll') }
       CAST.react('right',{combo:combo,handled:_uh});
     },
     /** 오답 — 연속으로 틀리면 ★위로 쪽으로 기운다★ */
@@ -3983,18 +4340,28 @@ const MASCOT=(()=>{
       const _uh=!!handled;
       if(streak>=3){ say(pick('wrong2'),'worry',3000); sub('care',.35,'s-turn') }
       else if(streak===2){ say(pick('wrong'),'oops',2600); sub('wrong',.3,'s-roll') }
-      else { say(pick('wrong'),'care',2600); sub('wrong',.22,'s-roll') }
+      else { say(pick('wrong'),'care',2600); faceSeq([['surprise',420],['care',2200]]);
+             sub('wrong',.22,'s-roll') }
       CAST.react('wrong',{streak:streak,handled:_uh});
     },
     comboBreak(n){ if(n>=5)sub('break',.55,'s-poke'); CAST.react('break',{n:n}) },
-    redeem(){ say(pick('redeem'),'love',1900); sub('praise',.3,'s-turn') },
+    redeem(){ say(pick('redeem'),'love',1900); faceSeq([['surprise',380],['love',1700]]);
+              sub('praise',.3,'s-turn') },
     /* ★큰 성취엔 전원이 한꺼번에 나온다★ — 혼자 맞힌 게 아니게 만드는 장치 */
-    badge(n){ say(n,'party',3000); CAST.ensemble() },
+    badge(n){ say(n,'party',3000); act('jump'); CAST.ensemble() },
     level(l){ say(`Lv.${l} 달성!`,'joy',3000); CAST.ensemble() },
     goal(){ say(pick('goal'),'party',3200); CAST.ensemble() },
     end(pass){ say(pass?'합격선 넘었어요!':pick('end'),pass?'joy':'happy',3200);
                if(pass)CAST.ensemble(); else { sub('idle',.35,'s-roll'); CAST.cameo('care') } },
-    idle(){ say(pick('idle'),'idle',3000); sub('lazy',.4,'s-poke'); CAST.cameo('idle') },
+    idle(){ say(pick('idle'),Math.random()<.4?'think':'idle',3000); act('peek');
+            sub('lazy',.4,'s-poke'); CAST.cameo('idle') },
+    /** 🗨 혼잣말 — 정보가 아니라 기척. ★짧게, 가끔만★ */
+    chat(){ if(S.mascot===false||Math.random()>.5)return;
+            say(pick('chat'),MOODS[(Math.random()*MOODS.length)|0],2400) },
+    /** 표정만 한 번 — 말은 하지 않는다 */
+    mood(cls,ms){ face(cls||MOODS[(Math.random()*MOODS.length)|0],ms||1500) },
+    act,                                   /* 몸짓 — jump · hop · peek */
+    home(){ walkTo(0,0) },
     /** 시대 전환 — 판이 바뀌는 순간엔 둘 다 반응한다 */
     era(msg){ say(msg||'한 단계 올라섰어요!','joy',4200);
               setTimeout(()=>CAST.ensemble(),1500); },
@@ -4135,6 +4502,10 @@ function autoNext(){
   else bindIdle();
   window.bindIdle=bindIdle;
 })();
+
+/* 제목을 누르면 홈 — 웹에서 가장 오래된 약속이라 굳이 안내하지 않아도 찾는다 */
+(function(){ const b=document.getElementById('logoHome');
+  if(b)b.onclick=()=>{ if(view!=='home')go('home'); else window.scrollTo({top:0,behavior:'smooth'}) }; })();
 
 /* ── 🎞 스크롤 진입 리빌 ─────────────────────────────────
    ★한 번만★ 보여 준다. 스크롤할 때마다 다시 움직이면 멀미가 나고,
@@ -5057,6 +5428,7 @@ let combo=0, comboMax=0, wrongRun=0;   /* wrongRun — 연속 오답 수(마스�
    조연단이 "무엇을 보고 있는지" 에 맞춰 각자 다른 값을 쓴다.
    전부 ★이번 세션 한정★ — 저장하지 않는다(무거워지고, 어제 일로 잔소리하게 된다). */
 let ucN=0, ucRight=0, ucFast=0, ucPrevWrong=0, ucLastT=null, ucSameT=0;
+let ucMs=0; const ucPace=[];      /* 이번 세션 누적 시간 · 최근 8문항 소요시간 */
 const ucTWrong={}, ucSeen={};
 const MILESTONES={3:'🔥 3연속! 불붙었다',5:'⚡ 5연속! 완벽해요',8:'💎 8연속! 대단합니다',12:'👑 12연속! 합격각',20:'🚀 20연속! 무결점'};
 
@@ -5185,6 +5557,7 @@ function startQuiz(items,mode){
   if(view!=='quiz')go('quiz');   // 어디서 호출되든 퀴즈 뷰를 보장 (키보드 컨텍스트도 여기에 맞춰짐)
   combo=0; comboMax=0; wrongRun=0; renderQ._m=0; sesPt=0; updPt(); updHeat(); FX.resetBudget();
   ucN=0; ucRight=0; ucFast=0; ucPrevWrong=0; ucLastT=null; ucSameT=0;
+  ucMs=0; ucPace.length=0; S.time.sessions=(S.time.sessions||0)+1;
   Object.keys(ucTWrong).forEach(k=>delete ucTWrong[k]);
   Object.keys(ucSeen).forEach(k=>delete ucSeen[k]);
   /* ★이 시점엔 quiz 가 아직 이전 세션(또는 null)이다.★ 인자로 받은 mode 를 써야 한다 —
@@ -5233,6 +5606,7 @@ function renderQ(){
   FX.clearCoins();
   setTimeout(sosShow,0);
   if(quiz)quiz.qAt=Date.now();          /* 이 문제를 보기 시작한 시각 */
+  clkStart();
   const q=quiz.items[quiz.i], a=quiz.ans[quiz.i];
   // 순서정렬은 제출(done) 전까지 부분 선택만 저장되므로 아직 채점된 것이 아니다
   const answered = a!==null && !(q.type==='order' && !(a&&a.done));
@@ -5357,6 +5731,10 @@ function isRight(q,a){
   return (q.k||[]).every(k=>t.includes(norm(k)));
 }
 function answer(v){
+  /* ★경과 시간은 여기서 붙잡아야 한다.★ 아래 renderQ() 가 quiz.qAt 을
+     새로 찍기 때문에, 그 뒤에 재면 언제나 2ms 가 나온다 —
+     실제로 그랬고, 그래서 '빠른 정답(fast)' 판정이 늘 참이었다. */
+  const _elapsed=Date.now()-((quiz&&quiz.qAt)||Date.now());
   const q=quiz.items[quiz.i];
   const prev=quiz.ans[quiz.i];
   // 순서정렬은 제출(done) 전 클릭이 저장되므로 '미응답'으로 취급한다
@@ -5411,7 +5789,19 @@ function answer(v){
   if(react){
     /* ── 맥락을 한 번에 모아 조연단에게 넘긴다 ──
        각 배역이 이 중 ★자기가 관심 있는 값만★ 본다. */
-    const ms=Date.now()-((quiz&&quiz.qAt)||Date.now());
+    const ms=_elapsed;
+    clkStop();
+    /* ── ⏱ 기록 ────────────────────────────────────────
+       ★맞힌 문항만★ 최고 기록으로 남긴다. 찍어서 빨리 넘긴 것까지
+       기록이 되면 "빠른 기록" 이 ★찍기를 보상★ 하게 된다. */
+    let pb=false, prevBest=0;
+    if(ok&&q.id&&ms>800&&ms<600000){
+      prevBest=S.time.best[q.id]||0;
+      if(!prevBest||ms<prevBest){ S.time.best[q.id]=ms; pb=!!prevBest }
+      if(!S.time.fastest||ms<S.time.fastest)S.time.fastest=ms;
+    }
+    S.time.totalMs=(S.time.totalMs||0)+Math.min(ms,180000);   /* 자리 비운 시간은 상한으로 자른다 */
+    ucMs+=Math.min(ms,180000); ucPace.push(ms); if(ucPace.length>8)ucPace.shift();
     ucN++; if(ok)ucRight++;
     if(ms<2500)ucFast++; else ucFast=0;
     if(q.t){ ucSameT = (q.t===ucLastT?ucSameT+1:1); ucLastT=q.t;
@@ -5425,8 +5815,14 @@ function answer(v){
       tWrong: q.t?(ucTWrong[q.t]||0):0,
       prevWrong: ucPrevWrong, fastRun: ucFast,
       hinted: !!(quiz&&quiz.hinted),
-      goalLeft: Math.max(0,S.goal.target-gDone) };
+      goalLeft: Math.max(0,S.goal.target-gDone),
+      /* ⏱ 시간 파생 — 조연단이 각자 필요한 것만 본다 */
+      pb, prevBest, sesMs:ucMs,
+      pace: ucPace.length>=4 ? ucPace.reduce((a,b)=>a+b,0)/ucPace.length : 0,
+      slowing: ucPace.length>=6 &&
+        (ucPace.slice(-3).reduce((a,b)=>a+b,0)/3) > (ucPace.slice(0,3).reduce((a,b)=>a+b,0)/3)*1.7 };
     ucPrevWrong = ok?0:ucPrevWrong+1;
+    window._pbFlag=cx.pb; window._pbPrev=prevBest; window._pbNow=ms; window._lastMs=ms;
     const handled = CAST.scene(cx);
     celebrate(ok,gain,wasWrong,q,handled);
     setTimeout(autoNext,900);
@@ -5457,12 +5853,20 @@ function celebrate(ok,gain,wasWrong,q,handled){
     /* ★가끔(12%) 특별 연출★ — 같은 정답이라도 다르게 터진다.
        단, 랜덤화하는 건 ★연출뿐★ 이다. XP 를 랜덤으로 주면 운에 기대게 되고
        "얼마나 벌었나" 가 학습 판단을 흐린다. */
+    /* ⏱ ★개인 최고 경신★ — 같은 문제를 전보다 빨리 풀었다는 건
+       암기가 인출로 바뀌었다는 뜻이라, 정답 하나보다 훨씬 의미가 크다 */
+    if(window._pbFlag){
+      const d=window._pbPrev-window._pbNow;
+      FX.toast(`⏱ 개인 최고 ${(window._pbNow/1000).toFixed(1)}초 (${(d/1000).toFixed(1)}초 단축)`,'hype',2000);
+      FX.snd.tease&&FX.snd.tease();
+      window._pbFlag=false;
+    }
     const lucky=Math.random()<0.12;
     /* 예산이 남았을 때만 크게. 떨어지면 ★작게라도 반응은 한다★ —
        아무 일도 안 일어나면 "운이 나빴다" 가 아니라 "고장" 으로 읽힌다. */
     if(lucky){ if(FX.budget()){ FX.confetti(70); FX.snd.badge() }
                else { FX.confetti(20); FX.snd.coin(3) } }
-    if(!wasWrong)MASCOT.right(combo,{hard:q&&q.d===3,fast:(Date.now()-((quiz&&quiz.qAt)||0))<6000,lucky,handled});
+    if(!wasWrong)MASCOT.right(combo,{hard:q&&q.d===3,fast:(window._lastMs||0)<6000&&(window._lastMs||0)>300,lucky,handled});
     else if(wasWrong){FX.snd.redeem();MASCOT.redeem();FX.toast('되찾았습니다 ✊  '+(gain?`+${gain} XP`:''),'good',1300)}
     else FX.toast((combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨')+(gain?`  +${gain} XP`:''),'good',1000);
   }else{
@@ -5492,6 +5896,43 @@ function updHeat(){
   if(combo>=12)b.setAttribute('data-heat','hot'); else b.removeAttribute('data-heat');
   FX.bgm.heat(combo);            /* ★눈이 하는 일을 귀로도★ — 레이어가 같이 열린다 */
 }
+/* ── ⏱ 문항 초시계 ──────────────────────────────────────
+   ★왜 두는가★ 시간은 학습에서 가장 크고 가장 안 보이는 변수다.
+   "오래 걸렸다" 는 감각은 있어도 얼마나인지는 아무도 모른다. 숫자로
+   보이면 ①지금 막혔다는 걸 스스로 알아채고 ②지난 기록과 비교할 수 있고
+   ③"빨라졌다" 는 ★측정 가능한 성장★ 이 하나 더 생긴다.
+   ★단, 연습에서는 재촉이 되면 안 된다★ — 작게, 회색으로, 서서히. */
+let clkRaf=0, clkOn=false;
+function clkFmt(ms){ return (ms/1000).toFixed(1) }
+function clkPaint(){
+  const el=$('qClock'); if(!el||!clkOn||!quiz)return;
+  const q=quiz.items[quiz.i];
+  const ms=Date.now()-(quiz.qAt||Date.now());
+  const n=$('qClockN'); if(n)n.textContent=clkFmt(ms);
+  /* 원형 게이지 — 30초를 한 바퀴로 본다(넘으면 그냥 꽉 찬 채로 둔다) */
+  const arc=$('qClockArc');
+  if(arc){
+    const p=Math.min(1,ms/30000), a=p*Math.PI*2-Math.PI/2;
+    const x=8+6.4*Math.cos(a), y=8+6.4*Math.sin(a);
+    arc.setAttribute('d', p<=0 ? 'M8 1.6' :
+      `M8 1.6 A6.4 6.4 0 ${p>.5?1:0} 1 ${x.toFixed(2)} ${y.toFixed(2)}`);
+  }
+  /* 색 — 개인 최고 갱신 중이면 초록, 오래 걸리면 서서히 따뜻하게 */
+  const best=q&&q.id?S.time.best[q.id]:0;
+  el.classList.toggle('pb', !!best && ms<best);
+  el.classList.toggle('warm', !best||ms>=best ? ms>15000&&ms<=32000 : false);
+  el.classList.toggle('slow', (!best||ms>=best) && ms>32000);
+  clkRaf=requestAnimationFrame(clkPaint);
+}
+function clkStart(){
+  const el=$('qClock'); if(!el)return;
+  if(!quiz||quiz.mode!=='practice'){clkStop();el.hidden=true;return}
+  el.hidden=false; clkOn=true;
+  el.classList.remove('pb','warm','slow');
+  cancelAnimationFrame(clkRaf); clkRaf=requestAnimationFrame(clkPaint);
+}
+function clkStop(){ clkOn=false; cancelAnimationFrame(clkRaf); clkRaf=0 }
+
 /* 🪙 세션 포인트 — 이번 판에서 번 양을 칩에 실시간으로 쌓는다.
    숫자만 올리면 체감이 없다. ★코인이 날아가 꽂히는 양★ 으로 보여 준다. */
 let sesPt=0;
@@ -5779,7 +6220,21 @@ function finishQuiz(){
     });
     let wt=null, wm=0;
     Object.keys(byT).forEach(k=>{ if(byT[k].w>wm){wm=byT[k].w;wt=k} });
-    CAST.remember({n:total,wrong:total-right,best:comboMax,wt:wm>=2?wt:null});
+    CAST.remember({n:total,wrong:total-right,best:comboMax,wt:wm>=2?wt:null,
+                   ms:ucMs, avg:total?Math.round(ucMs/total):0});
+  })();
+  /* ⏱ 이번 판에 쓴 시간 — ★점수 옆이 아니라 아래에★ 둔다.
+     점수와 나란히 두면 "빨리 풀어야 한다" 로 읽힌다. */
+  (function(){
+    const box=$('quizResult'); if(!box||!ucMs)return;
+    const mm=Math.floor(ucMs/60000), ss=Math.round((ucMs%60000)/1000);
+    const avg=total?(ucMs/total/1000).toFixed(1):'0';
+    const tot=Math.round((S.time.totalMs||0)/60000);
+    const el=document.createElement('div');
+    el.className='timesum';
+    el.innerHTML=`⏱ <b>${mm}분 ${ss}초</b> · 문항당 평균 <b>${avg}초</b>`+
+      (tot>=10?` · 누적 학습 <b>${tot>=60?Math.floor(tot/60)+'시간 '+(tot%60)+'분':tot+'분'}</b>`:'');
+    box.appendChild(el);
   })();
   setTimeout(()=>{
     FX.finish(pass,pct); MASCOT.end(pass);
