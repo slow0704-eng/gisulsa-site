@@ -501,6 +501,77 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 @keyframes comboPulse{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
 .combo.near{box-shadow:0 0 0 3px color-mix(in srgb,var(--wa) 26%,transparent)}
 
+/* 🆘 SOS */
+.sosbar{position:relative;display:flex;justify-content:flex-end;margin-top:8px}
+.autotog{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;
+  color:var(--tx3);cursor:pointer;user-select:none}
+.autotog input{accent-color:var(--ac);cursor:pointer}
+.sos{padding:6px 13px;border-radius:999px;font-size:12.5px;font-weight:700;cursor:pointer;
+  background:color-mix(in srgb,var(--wa) 12%,transparent);color:var(--wa);
+  border:1px solid color-mix(in srgb,var(--wa) 34%,transparent)}
+.sos:hover{background:color-mix(in srgb,var(--wa) 20%,transparent)}
+.ch.killed{opacity:.32;text-decoration:line-through;pointer-events:none}
+.ach.secret b{color:var(--tx3)}
+/* 자동 진행 링 — 남은 시간이 테두리로 줄어든다 */
+.autoring{position:absolute;inset:-3px;border-radius:inherit;pointer-events:none;
+  border:2px solid color-mix(in srgb,var(--ac) 65%,transparent);
+  clip-path:inset(0 0 0 0);animation:ringGo var(--sec,6s) linear forwards}
+@keyframes ringGo{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 100% 0 0)}}
+#qNext{position:relative}
+@media (prefers-reduced-motion: reduce){ .autoring{animation:none;opacity:.35} }
+.sosmenu{position:absolute;right:0;bottom:calc(100% + 8px);z-index:40;
+  display:flex;flex-direction:column;gap:4px;padding:7px;border-radius:12px;
+  background:var(--bg2);border:1px solid var(--bd);box-shadow:0 12px 30px rgba(0,0,0,.26);
+  min-width:210px;animation:mPop .2s ease}
+.sosmenu button{text-align:left;padding:8px 11px;border-radius:9px;font-size:12.5px;
+  background:none;border:0;color:var(--tx);cursor:pointer}
+.sosmenu button:hover{background:color-mix(in srgb,var(--ac) 12%,transparent)}
+@media (max-width:520px){ .sosmenu{min-width:min(240px,78vw)} }
+
+/* 🎯 오늘의 도전 */
+.chalbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;
+  padding:10px 14px;border-radius:12px;font-size:12.5px;
+  background:color-mix(in srgb,var(--wa) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--wa) 32%,transparent)}
+.chalbar .ct{font-weight:800;color:var(--wa)}
+.chalbar .cn{font-weight:800}
+.chalbar .cd{color:var(--tx3)}
+.chalbar .cbar{flex:1;min-width:70px;height:7px;border-radius:99px;background:var(--bd);overflow:hidden}
+.chalbar .cbar i{display:block;height:100%;background:linear-gradient(90deg,var(--wa),#f97316);transition:width .5s}
+.chalbar b{font-variant-numeric:tabular-nums}
+.chalbar.done{background:color-mix(in srgb,var(--ok) 12%,transparent);
+  border-color:color-mix(in srgb,var(--ok) 34%,transparent)}
+.chalbar.done .ct{color:var(--ok)}
+/* 오답이 많은 세션 — 점수 대신 수확을 보여 준다 */
+.found{text-align:center;margin:6px 0 4px}
+.found b{display:block;font-size:44px;font-weight:900;line-height:1.1;color:var(--ac)}
+.found span{display:block;font-size:14px;font-weight:700;margin-top:2px}
+.found i{display:block;font-style:normal;font-size:12.5px;color:var(--tx3);margin-top:6px}
+.lb.sub{font-size:12.5px;color:var(--tx3)}
+.sc.mini{font-size:15px;display:inline;font-weight:800}
+
+/* 다음에 할 것 — 미완결 훅 */
+.nexthook{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin:10px 0 2px;font-size:12.5px}
+.nexthook .nh{font-weight:800;color:var(--tx3)}
+.nexthook span:not(.nh){padding:4px 10px;border-radius:999px;color:var(--tx2);
+  background:color-mix(in srgb,var(--ac) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--ac) 26%,transparent)}
+.nexthook b{color:var(--ac)}
+.gbar.bonus i{background:linear-gradient(90deg,#f5b301,#fb7185)}
+
+/* 🔥 스트릭 불꽃 */
+.flame{display:inline-flex;line-height:0;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--f2) 55%,transparent))}
+.flame .fo{fill:var(--f2)}
+.flame .fi{fill:var(--f1)}
+.flame svg{animation:flick 1.6s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1,1) rotate(0)}
+  30%{transform:scale(.96,1.06) rotate(-2deg)}65%{transform:scale(1.04,.97) rotate(2deg)}}
+.fwrap{gap:7px}
+/* 티어가 오른 순간 — 한 번 크게 타오른다 */
+.flame.up svg{animation:flare .9s cubic-bezier(.2,1.3,.4,1)}
+@keyframes flare{0%{transform:scale(1)}30%{transform:scale(1.65)}60%{transform:scale(.94)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){ .flame svg{animation:none} }
+
 /* 🪙 코인 · 포인트 칩 */
 .coin{position:fixed;width:15px;height:15px;border-radius:50%;pointer-events:none;
   background:radial-gradient(circle at 34% 30%, #ffe89a, #f5b301 62%, #c98a00);
@@ -510,7 +581,10 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   font-weight:800;font-size:13px;font-variant-numeric:tabular-nums;
   background:color-mix(in srgb,#f5b301 16%,transparent);
   border:1px solid color-mix(in srgb,#f5b301 42%,transparent);color:#e0a300}
-.pchip i{font-style:normal;font-size:13px}
+.pchip .pcoin{width:13px;height:13px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 34% 30%, #ffe89a, #f5b301 62%, #c98a00);
+  border:1px solid #d99b05;box-shadow:inset 0 -1px 2px rgba(0,0,0,.22)}
+.pchip .punit{font-size:11px;font-weight:700;opacity:.75;margin-left:1px}
 .pchip.bump{animation:ptBump .32s cubic-bezier(.2,1.6,.4,1)}
 @keyframes ptBump{0%{transform:scale(1)}45%{transform:scale(1.28)}100%{transform:scale(1)}}
 
@@ -519,7 +593,8 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
    표정·동작은 #mascot 의 클래스 하나로 전환한다(상태 기계). */
 /* ★자동 스크롤 바(#ascroll, bottom 16px · z 930)와 자리가 겹치지 않게★
    그 위로 올려 둔다. z-index 도 함께 올려야 클릭이 먹는다. */
-#mascot{position:fixed;z-index:940;display:flex;align-items:flex-end;gap:8px;
+#mascot{position:fixed;z-index:940;display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap;
+  justify-content:flex-end;max-width:min(420px,92vw);
   right:max(16px,env(safe-area-inset-right));
   bottom:calc(78px + env(safe-area-inset-bottom))}
 #mascot .mbody{background:none;border:0;padding:0;cursor:pointer;line-height:0;
@@ -537,7 +612,28 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 .meye{fill:#22252b}
 .mglint{fill:#fff}
 .msh{fill:rgba(0,0,0,.18)}
-.mshut{stroke:#22252b;stroke-width:2.2;fill:none;stroke-linecap:round;display:none}
+.mshut,.mwink,.msad{stroke:#22252b;stroke-width:2.2;fill:none;stroke-linecap:round;display:none}
+.mheart{fill:#fb5b78;display:none}
+.msweat{fill:#5bc8f5;opacity:.9;display:none}
+.mnote{fill:var(--ac);display:none}
+.mbang{fill:#f5b301;display:none}
+/* 표정 조합 — 클래스 하나로 눈·액세서리를 갈아 끼운다 */
+#mascot.joy .mshut,#mascot.happy .mshut,#mascot.hype .mshut,#mascot.idle .mshut,
+#mascot.party .mshut,#mascot.proud .mshut{display:block}
+#mascot.joy .meyes,#mascot.happy .meyes,#mascot.hype .meyes,#mascot.idle .meyes,
+#mascot.party .meyes,#mascot.proud .meyes,#mascot.love .meyes,#mascot.wink .meyes,
+#mascot.worry .meyes{display:none}
+#mascot.love .mheart{display:block}
+#mascot.wink .mwink{display:block}
+#mascot.wink .meyes{display:none}
+#mascot.wink .meye:first-of-type,#mascot.wink .mglint:first-of-type{display:block}
+#mascot.worry .msad{display:block}
+#mascot.worry .msweat,#mascot.oops .msweat{display:block;animation:mDrop 1.1s ease infinite}
+#mascot.hype .mnote,#mascot.party .mnote{display:block;animation:mFloat 1s ease infinite}
+#mascot.surprise .mbang{display:block;animation:mBang .5s ease}
+@keyframes mDrop{0%{transform:translateY(0);opacity:.9}70%{transform:translateY(7px);opacity:0}100%{opacity:0}}
+@keyframes mFloat{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(-12px) rotate(14deg);opacity:0}}
+@keyframes mBang{0%{transform:scale(0) rotate(-20deg)}55%{transform:scale(1.25) rotate(6deg)}100%{transform:scale(1)}}
 /* 기본 — 숨쉬기 */
 .mwrap{transform-origin:50px 88px;animation:mBreathe 3.4s ease-in-out infinite}
 @keyframes mBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.03,.97)}}
@@ -569,10 +665,68 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 #mascot.idle .mshut{display:block}
 #mascot.idle .meyes{display:none}
 #mascot.idle .mwrap{animation:mBreathe 5s ease-in-out infinite}
+/* 상태 — 자랑스러움(가슴 펴기) */
+#mascot.proud .mwrap{animation:mProud 1.1s ease}
+@keyframes mProud{0%{transform:scale(1,1)}35%{transform:scale(1.1,1.06) translateY(-4px)}
+  70%{transform:scale(1.04,1.02)}100%{transform:scale(1)}}
+/* 상태 — 놀람(화들짝) */
+#mascot.surprise .mwrap{animation:mJolt .45s ease}
+@keyframes mJolt{0%{transform:translateY(0) scale(1)}25%{transform:translateY(-12px) scale(.94,1.1)}
+  55%{transform:translateY(0) scale(1.08,.92)}100%{transform:translateY(0) scale(1)}}
+/* 상태 — 걱정(작게 떨림) */
+#mascot.worry .mwrap{animation:mShiver .9s ease-in-out infinite}
+@keyframes mShiver{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.6px)}75%{transform:translateX(1.6px)}}
+/* 상태 — 감동(두근) */
+#mascot.love .mwrap{animation:mThump .7s ease-in-out infinite}
+@keyframes mThump{0%,100%{transform:scale(1)}30%{transform:scale(1.09)}60%{transform:scale(1.02)}}
+/* 상태 — 윙크 */
+#mascot.wink .mwrap{animation:mLean .6s ease}
+@keyframes mLean{0%,100%{transform:rotate(0)}40%{transform:rotate(7deg) translateY(-3px)}}
+/* 상태 — 크게 기뻐 날뜀 */
+#mascot.joy .mwrap{animation:mJoy .7s ease}
+@keyframes mJoy{0%{transform:translateY(0)}20%{transform:translateY(-18px) scale(1.05,.95)}
+  45%{transform:translateY(0) scale(.94,1.06)}65%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+/* 상태 — 머쓱(오답 연속) */
+#mascot.oops .mwrap{animation:mOops 1s ease}
+@keyframes mOops{0%,100%{transform:rotate(0)}20%{transform:rotate(-6deg) translateY(2px)}
+  60%{transform:rotate(4deg) translateY(2px)}}
 /* 상태 — 축하(배지·레벨업) */
 #mascot.party .mwrap{animation:mSpin .8s ease}
 @keyframes mSpin{0%{transform:rotate(0) scale(1)}40%{transform:rotate(-14deg) scale(1.12)}
   70%{transform:rotate(12deg) scale(1.06)}100%{transform:rotate(0) scale(1)}}
+/* 🐱 서브 마스코트 — 각지고 차가운 톤으로 메인과 대비 */
+#mascot .sbody{background:none;border:0;padding:0;cursor:pointer;line-height:0;
+  filter:drop-shadow(0 5px 12px rgba(0,0,0,.2))}
+.sfill{fill:#8b7bd8}
+.ssh{fill:rgba(0,0,0,.16)}
+.seyes,.sroll,.swide,.smouth,.swhisk{stroke:#2a2536;stroke-width:2.2;fill:none;stroke-linecap:round}
+.swide{fill:#2a2536;stroke:none}
+.sroll,.swide{display:none}
+.swhisk{opacity:.45;stroke-width:1.6}
+.swrap{transform-origin:50px 88px;animation:sBreathe 4.2s ease-in-out infinite}
+@keyframes sBreathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.02,.985)}}
+/* 흘김 — 시니컬의 기본기 */
+#mascot.s-roll .sroll{display:block}
+#mascot.s-roll .seyes{display:none}
+#mascot.s-roll .swrap{animation:sRoll .9s ease}
+@keyframes sRoll{0%,100%{transform:rotate(0)}30%{transform:rotate(-7deg)}65%{transform:rotate(3deg)}}
+/* 놀람 — 가끔은 얘도 놀란다 */
+#mascot.s-wide .swide{display:block}
+#mascot.s-wide .seyes{display:none}
+#mascot.s-wide .swrap{animation:sJolt .4s ease}
+@keyframes sJolt{0%{transform:translateY(0)}30%{transform:translateY(-9px) scale(.95,1.08)}100%{transform:translateY(0)}}
+/* 툭 치기 — 메인 쪽으로 몸을 기울인다(티격태격) */
+#mascot.s-poke .swrap{animation:sPoke .55s ease}
+@keyframes sPoke{0%,100%{transform:translateX(0)}45%{transform:translateX(9px) rotate(6deg)}}
+/* 홱 돌아서기 */
+#mascot.s-turn .swrap{animation:sTurn .7s ease}
+@keyframes sTurn{0%,100%{transform:scaleX(1)}40%{transform:scaleX(-1) rotate(-4deg)}}
+.stalk{max-width:180px;padding:8px 11px;border-radius:14px 14px 14px 4px;
+  background:color-mix(in srgb,#8b7bd8 14%,var(--bg2));
+  border:1px solid color-mix(in srgb,#8b7bd8 38%,transparent);
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+  font-size:12px;line-height:1.45;color:var(--tx);animation:mPop .28s cubic-bezier(.2,1.4,.4,1)}
+
 /* 말풍선 */
 .mtalk{max-width:190px;padding:9px 12px;border-radius:14px 14px 4px 14px;
   background:var(--bg2);border:1px solid var(--bd);box-shadow:0 8px 22px rgba(0,0,0,.2);
@@ -583,7 +737,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   .mtalk{max-width:150px;font-size:12px}
 }
 @media (prefers-reduced-motion: reduce){
-  .mwrap,.meyes,.mwingL,.mwingR{animation:none!important}
+  .mwrap,.meyes,.mwingL,.mwingR,.msweat,.mnote,.mbang{animation:none!important}
   .mtalk{animation:none}
 }
 
@@ -921,7 +1075,33 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
      기성 캐릭터(Octocat 등)는 상표·저작권 제약이 있어 쓰지 않는다.
      외부 파일·라이브러리 0. 표정과 동작은 클래스 교체로만 바꾼다. -->
 <div id="mascot" class="noprint" hidden>
+  <div class="stalk" id="stalk" hidden></div>
   <div class="mtalk" id="mtalk" hidden></div>
+  <!-- 🐱 서브 마스코트 "시니" — 까칠한 쪽. 메인과 색·형태·태도를 전부 반대로 잡았다.
+       둥근 파랑새 ↔ 각진 보라 고양이 / 응원 ↔ 팩폭 -->
+  <button class="sbody" id="sbody" title="까칠한 친구" aria-label="서브 캐릭터" hidden>
+    <svg viewBox="0 0 100 100" width="58" height="58" aria-hidden="true">
+      <ellipse class="ssh" cx="50" cy="92" rx="22" ry="4.5"/>
+      <g class="swrap">
+        <!-- 귀 -->
+        <path class="sfill" d="M26 42l-4-18 18 9z"/><path class="sfill" d="M74 42l4-18-18 9z"/>
+        <!-- 머리 -->
+        <rect class="sfill" x="24" y="36" width="52" height="46" rx="16"/>
+        <!-- 눈(기본 — 반쯤 감은 시니컬) -->
+        <g class="seyes">
+          <path d="M34 56h11"/><path d="M55 56h11"/>
+        </g>
+        <!-- 눈(흘김) -->
+        <g class="sroll"><path d="M34 54q5.5 5 11 0"/><path d="M55 54q5.5 5 11 0"/></g>
+        <!-- 눈(놀람) -->
+        <g class="swide"><circle cx="39.5" cy="56" r="4"/><circle cx="60.5" cy="56" r="4"/></g>
+        <!-- 입 — 삐딱하게 -->
+        <path class="smouth" d="M43 68q7 4 14-1"/>
+        <!-- 수염 -->
+        <g class="swhisk"><path d="M22 60h-9"/><path d="M78 60h9"/></g>
+      </g>
+    </svg>
+  </button>
   <button class="mbody" id="mbody" title="응원 친구 (M 키로 숨기기)" aria-label="응원 캐릭터">
     <svg viewBox="0 0 100 100" width="74" height="74" aria-hidden="true">
       <ellipse class="msh" cx="50" cy="92" rx="26" ry="5"/>
@@ -946,6 +1126,23 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
         <g class="mshut">
           <path d="M35 52q5-5 10 0" /><path d="M55 52q5-5 10 0"/>
         </g>
+        <!-- 윙크 — 오른쪽만 감는다 -->
+        <g class="mwink"><path d="M55 52q5-5 10 0"/></g>
+        <!-- 하트 눈(감동·최고 기록) -->
+        <g class="mheart">
+          <path d="M40 48c-3-3-7 0-5 3l5 5 5-5c2-3-2-6-5-3z"/>
+          <path d="M60 48c-3-3-7 0-5 3l5 5 5-5c2-3-2-6-5-3z"/>
+        </g>
+        <!-- 처진 눈(걱정) -->
+        <g class="msad">
+          <path d="M35 50q5 4 10 1"/><path d="M55 51q5-3 10 1"/>
+        </g>
+        <!-- 땀방울(당황) -->
+        <path class="msweat" d="M74 40c0 0-4 6-4 8.5a4 4 0 0 0 8 0C78 46 74 40 74 40z"/>
+        <!-- 음표(신남) -->
+        <g class="mnote"><circle cx="80" cy="34" r="3"/><rect x="82" y="22" width="1.8" height="13"/></g>
+        <!-- 느낌표(놀람) -->
+        <g class="mbang"><rect x="79" y="22" width="3" height="10" rx="1.4"/><circle cx="80.5" cy="36" r="1.9"/></g>
         <!-- 부리 -->
         <path class="mbeak" d="M50 60l-5 4 5 4 5-4z"/>
         <!-- 볼 -->
@@ -1031,6 +1228,7 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 
   <div id="comeback"></div>
   <div class="dash" id="dash" hidden></div>
+  <div class="chalbar" id="chalBar" hidden></div>
   <div class="grid g3" style="margin-bottom:14px" id="stats"></div>
 
   <div class="grid g2">
@@ -1211,13 +1409,27 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
       <span class="qcount" id="qCount"></span>
       <span class="timer" id="qTimer"></span>
       <span class="combo" id="qCombo" style="display:none"></span>
-      <span class="pchip" id="qPt" title="획득 포인트"><i>🪙</i><b id="qPtN">0</b></span>
+      <span class="pchip" id="qPt" title="획득 포인트"><i class="pcoin" aria-hidden="true"></i><b id="qPtN">0</b><span class="punit">P</span></span>
       <div class="sp"></div>
       <span class="qcount" id="qScore"></span>
       <button class="btn gh" id="quitQuiz">그만두기 <kbd>Esc</kbd></button>
     </div>
     <div class="qbar" id="qBarWrap"><i id="qBar"></i></div>
     <div class="qcard" id="qCard"></div>
+    <!-- 🆘 막혔을 때의 출구 — 도망칠 곳이 유튜브뿐이면 유튜브로 간다.
+         사이트 안에 ★불이익 없는 출구★ 를 둔다. -->
+    <label class="autotog" id="autoTog" hidden>
+      <input type="checkbox" id="autoChk"> <span>자동으로 다음 문제</span>
+    </label>
+    <div class="sosbar" id="sosBar" hidden>
+      <button class="sos" id="sosBtn" title="막혔을 때 (H)">🆘 막혔어요</button>
+      <div class="sosmenu" id="sosMenu" hidden>
+        <button data-sos="hint">💡 힌트 — 선지 2개 지우기</button>
+        <button data-sos="later">⏭ 나중에 다시 — 오답 아님</button>
+        <button data-sos="concept">📖 이 단원 개념 보기</button>
+        <button data-sos="rest">☕ 잠깐 쉬기</button>
+      </div>
+    </div>
     <div style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end" id="qNav"></div>
   </div>
 
@@ -1329,6 +1541,7 @@ const STREAK_MARK={3:'🔥 3일 연속',7:'🔥 일주일 연속',14:'💪 2주 
 /** 의미 있는 학습(연습 모드 채점·카드 판정)이 일어난 날 하루 한 번 호출 */
 function touchStreak(){
   const today=localDay(); if(S.streak.lastDate===today)return;
+  const before=S.streak.cur;                      /* 불꽃 단계 상승 판정용 */
   const gap=S.streak.lastDate?dayDiff(S.streak.lastDate,today):0;
   if(!S.streak.lastDate)S.streak.cur=1;
   else if(gap===1)S.streak.cur+=1;
@@ -1341,7 +1554,15 @@ function touchStreak(){
   const wk=weekKey();
   if(S.streak.freezeWeek!==wk){S.streak.freeze=Math.min(1,S.streak.freeze+1);S.streak.freezeWeek=wk}
   save(); updDash();
-  if(STREAK_MARK[S.streak.cur])FX.milestone(STREAK_MARK[S.streak.cur]+'!');
+  /* 불꽃 단계가 올라갔으면 ★한 번 크게 타오르게★ 하고 시대 전환 징글을 울린다 */
+  if(flameTier(before).d!==flameTier(S.streak.cur).d){
+    const el=document.querySelector('#dash .flame');
+    if(el){el.classList.add('up');setTimeout(()=>el.classList.remove('up'),1000)}
+    FX.snd.era(); FX.confetti(80);
+    FX.toast(`🔥 연속 학습 ${flameTier(S.streak.cur).n} 단계 — ${S.streak.cur}일`,'hype',3200);
+    MASCOT.era&&MASCOT.era();
+  }
+  else if(STREAK_MARK[S.streak.cur])FX.milestone(STREAK_MARK[S.streak.cur]+'!');
 }
 /** 오늘 목표 진행 — 연습 모드에서 처음 채점한 문항 1개당 1 */
 function touchGoal(n){
@@ -1350,7 +1571,10 @@ function touchGoal(n){
   S.goal.done+=(n||1);
   if(!S.goal.hit&&S.goal.done>=S.goal.target){
     S.goal.hit=true;
-    FX.milestone(`🎯 오늘 목표 ${S.goal.target}문제 달성!`); MASCOT.goal();
+    /* ★오늘치를 끝낸 순간★ 은 하루의 분기점이다 — 시대 전환급으로 울린다 */
+    FX.snd.era(); FX.confetti(120);
+    FX.toast(`🎯 오늘 목표 ${S.goal.target}문제 달성!`,'hype',3400);
+    MASCOT.era(`오늘 목표 ${S.goal.target}문제 끝냈어요!`);
   }
   save(); updDash();
 }
@@ -1395,6 +1619,13 @@ const ACH=[
   {id:'lv10',     n:'Lv.10 도달',     d:'누적 경험치로 레벨 10 달성',          ok:()=>xpLv(S.xp.total)>=10},
   {id:'pass',     n:'합격선 돌파',    d:'모의고사에서 합격 판정을 받았다',     ok:()=>S.quizzes.some(x=>x.mode==='exam'&&x.pass)},
   {id:'cards',    n:'카드 한 바퀴',   d:'암기카드를 모두 분류했다',            ok:()=>CPPG.cards.length>0&&CPPG.cards.filter((c,i)=>S.cards['c'+i]).length>=CPPG.cards.length,have:()=>CPPG.cards.length>0},
+  /* 🔒 숨은 배지 — 조건을 공개하지 않는다. "이런 것도 있었어?" 의 발견감.
+     전체가 숨겨지면 좌절하므로 ★소수만★ 둔다. */
+  {id:'owl',      n:'올빼미',        d:'???', hide:true, ok:()=>S.ach.got.owl||(new Date().getHours()>=0&&new Date().getHours()<5&&S.goal.done>=5)},
+  {id:'century',  n:'하루 100문제',  d:'???', hide:true, ok:()=>S.goal.done>=100},
+  {id:'perfect',  n:'무결점',        d:'???', hide:true, ok:()=>S.quizzes.some(x=>x.pct===100&&x.total>=10)},
+  {id:'dawn',     n:'새벽형',        d:'???', hide:true, ok:()=>{const h=new Date().getHours();return h>=5&&h<7&&S.goal.done>=5}},
+  {id:'comeback', n:'돌아온 자',     d:'???', hide:true, ok:()=>S.streak.cur>=3&&S.streak.max>=7},
   {id:'check',    n:'자가진단 완주',  d:'자가진단 항목을 모두 체크했다',       ok:()=>CPPG.selfcheck&&CPPG.selfcheck.length>0&&CPPG.selfcheck.filter((c,i)=>S.check['k'+i]).length>=CPPG.selfcheck.length,have:()=>!!(CPPG.selfcheck&&CPPG.selfcheck.length)},
 ];
 /* 과목 마스터 — 종목마다 과목 수가 달라 목록에서 자동 생성한다.
@@ -1818,6 +2049,29 @@ const FX=(()=>{
       stinger([5,7,9,10,12,14],{at:.38,spread:.06,dur:.8,gain:.12,oct:true});
       sparkle({at:.55,n:7,gain:.06});
     },
+    /** 🏛 시대 전환 — ★단원 정복·일일 목표 달성★ 처럼 판이 바뀌는 순간.
+        다른 효과음이 1초 내외인 것과 달리 ★4초에 걸쳐 쌓았다가 터뜨린다.★
+        구조: 저역 드론(불안한 정적) → 라이저(고조) → 브라스 화음(선포) → 벨(여운) */
+    era(){
+      if(!S.sound)return;
+      /* ① 낮은 드론 — 무언가 시작된다는 신호 */
+      voice(65.41,{dur:2.2,type:'triangle',gain:.07,lp:420,atk:.5});
+      voice(98,   {at:.1,dur:2.1,type:'sine',gain:.05,lp:500,atk:.6});
+      /* ② 라이저 — 1.6초 동안 대역이 위로 쓸려 올라간다 */
+      riser({at:.25,dur:1.6,from:260,to:8000,gain:.06});
+      /* ③ 타악 임팩트 — 선포의 순간 */
+      impact({at:1.85,f0:320,f1:44,dur:.45,gain:.34,click:3000});
+      noise({at:1.85,f:5200,q:.6,gain:.09,dur:.8,decay:1.2,wet:true});
+      /* ④ 브라스 화음 — 펜타토닉 3음을 옥타브로 쌓아 두껍게 */
+      [5,7,9].forEach((i,k)=>{
+        voice(step(i),   {at:1.88+k*.012,dur:2.4,type:'sawtooth',gain:.075,lp:2400,atk:.05});
+        voice(step(i)/2, {at:1.88+k*.012,dur:2.4,type:'triangle',gain:.06,lp:1200,atk:.06});
+        voice(step(i+5), {at:1.95+k*.012,dur:2.0,type:'triangle',gain:.05,atk:.04});
+      });
+      /* ⑤ 고역 벨 — 여운. 늦게 들어와 길게 남는다 */
+      [12,14,13].forEach((i,k)=>voice(step(i),{at:2.25+k*.16,dur:1.8,type:'sine',gain:.065}));
+      sparkle({at:2.5,n:9,gain:.05});
+    },
     /** 세션 종료 */
     finish(pass){
       if(!S.sound)return;
@@ -1841,10 +2095,36 @@ const FX=(()=>{
                        voice(step(8),{at:.045,dur:.15,type:'sine',gain:.048,wet:false})} },
     on(){  if(S.sound)voice(step(8),{dur:.14,type:'triangle',gain:.06}) },
     off(){ if(S.sound)voice(step(4),{dur:.16,type:'sine',gain:.05,lp:1400}) },
-    flip(){ if(S.sound){noise({f:1800,q:1.6,gain:.03,dur:.05});voice(step(7),{at:.02,dur:.16,type:'sine',gain:.05})} },
+    /** 🃏 카드 넘김 — ★스윽(종이 질감) + 톡(착지)★ 2단. 한 겹이면 밋밋하다 */
+    flip(){ if(!S.sound)return;
+      noise({f:1500,q:.9,gain:.055,dur:.11,decay:1.6,wet:false});        /* 스치는 결 */
+      noise({at:.07,f:3200,q:2.6,gain:.05,dur:.05,decay:4,wet:false});   /* 착지 */
+      voice(step(7),{at:.07,dur:.18,type:'triangle',gain:.06});
+      voice(step(9),{at:.1,dur:.2,type:'sine',gain:.035}); },
+    /** ☑ 체크 — ★묵직한 딸깍★. 저역 클릭 + 밝은 확인음 */
+    check(){ if(!S.sound)return;
+      impact({f0:420,f1:150,dur:.07,gain:.11,click:2600});
+      voice(step(8),{at:.02,dur:.16,type:'triangle',gain:.085});
+      voice(step(11),{at:.05,dur:.2,type:'sine',gain:.05});
+      noise({at:.01,f:5600,q:2.5,gain:.03,dur:.04,decay:5,wet:false}); },
+    /** ☐ 해제 — 같은 질감에 ★음만 내려간다★ (되돌렸다는 느낌) */
+    uncheck(){ if(!S.sound)return;
+      impact({f0:300,f1:120,dur:.06,gain:.07,click:1500});
+      voice(step(5),{at:.02,dur:.15,type:'sine',gain:.055,lp:1800}); },
+    /** 🃏 암기카드 분류 — 알아요는 위로, 모름은 아래로 */
+    know(ok){ if(!S.sound)return;
+      impact({f0:360,f1:130,dur:.07,gain:.09});
+      if(ok){ voice(step(8),{at:.02,dur:.2,type:'triangle',gain:.085});
+              voice(step(11),{at:.07,dur:.24,type:'sine',gain:.055}); }
+      else  { voice(step(6),{at:.02,dur:.2,type:'sine',gain:.07,lp:1600});
+              voice(step(4),{at:.08,dur:.26,type:'sine',gain:.05,lp:1200}); } },
     /** 콤보 1개 전 — 다음 음을 기대하게 만드는 ★예고음★ */
     tease(){ if(S.sound)voice(step(11),{dur:.12,type:'sine',gain:.035,wet:false}) },
     /** 코인 한 개가 칩에 꽂힐 때 — 짧고 높게. 여러 개가 연달아 울리며 리듬이 생긴다 */
+    /** 서브 마스코트 등장 — 낮고 짧게. 메인과 음색을 구분한다 */
+    sub(){ if(!S.sound)return;
+      voice(step(3),{dur:.12,type:'square',gain:.035,lp:1200,wet:false});
+      voice(step(5),{at:.05,dur:.14,type:'sine',gain:.03,wet:false}); },
     coin(k){ if(!S.sound)return;
       voice(step(10+(k%4)),{dur:.1,type:'triangle',gain:.055,wet:false});
       noise({f:6800,q:3,gain:.022,dur:.03,decay:5,wet:false}); },
@@ -2166,17 +2446,51 @@ const MASCOT=(()=>{
   let hideT=null, faceT=null, last=[];
   /* 상황별 문구 — 맥락(콤보·연속일·시간)을 넣어 매번 다르게 만든다 */
   const LINE={
-    hello:['어서 오세요','오늘도 왔네요','기다렸어요','같이 해봐요'],
-    right:['좋아요','정확해요','그렇죠','잘했어요','바로 그거예요'],
-    combo:['멈추지 마세요','흐름 탔어요','계속 가요','불붙었어요'],
+    hello:['어서 오세요','오늘도 왔네요','기다렸어요','같이 해봐요','자리 잡았어요',
+           '오늘은 뭘 볼까요','준비됐어요','왔군요','반가워요','시작해 볼까요'],
+    right:['좋아요','정확해요','그렇죠','잘했어요','바로 그거예요','깔끔해요','역시',
+           '망설임이 없네요','이건 확실히 아네요','완벽','척척이네요','좋은 감각이에요'],
+    right2:['오 빨랐어요','손이 기억하나 봐요','이제 익숙하죠','자신감 붙었네요'],
+    hard:['어려운 걸 맞혔어요','이건 진짜 어려운 거였어요','심화까지 잡네요','대단한데요',
+          '이 정도면 실력이에요'],
+    combo:['멈추지 마세요','흐름 탔어요','계속 가요','불붙었어요','지금이 제일 잘 되는 때예요',
+           '리듬 좋아요','이 기세 그대로','손이 풀렸네요'],
+    combo2:['이거 기록 나오겠는데요','멈추기 아까운데요','지금 최고조예요'],
     wrong:['괜찮아요, 이제 알았잖아요','지금 틀리는 게 이득이에요','해설 한 번만 볼까요',
-           '오답노트에 담아 뒀어요','여기서 배우면 돼요'],
-    redeem:['되찾았어요','복수 성공','이제 진짜 내 거예요'],
-    badge:['배지 획득','해냈어요','축하해요'],
-    idle:['천천히 해도 돼요','한 문제만 더 볼까요','쉬었다 와도 괜찮아요','여기 있어요'],
-    back:['다시 와서 반가워요','돌아왔네요','잘 왔어요'],
-    goal:['오늘 목표 달성','오늘 할 일 끝','수고했어요'],
-    end:['오늘도 고생했어요','내일 또 봐요','잘 쉬어요']
+           '오답노트에 담아 뒀어요','여기서 배우면 돼요','시험장 아니라 다행이에요',
+           '모르는 걸 찾았네요','이건 원래 헷갈려요','한 번 보고 가면 돼요','수확이에요'],
+    wrong2:['이 단원이 좀 어렵죠','잠깐 쉬었다 와도 돼요','숨 한 번 쉬고 가요',
+            '너무 몰아치지 말아요','천천히 해도 괜찮아요'],
+    redeem:['되찾았어요','복수 성공','이제 진짜 내 거예요','저번엔 틀렸던 건데요',
+            '이게 제일 값진 정답이에요','완전히 잡았네요','이제 안 틀리겠어요'],
+    badge:['배지 획득','해냈어요','축하해요','하나 더 채웠어요','기록에 남겼어요'],
+    level:['레벨 올랐어요','한 단계 위로','성장했네요'],
+    idle:['천천히 해도 돼요','한 문제만 더 볼까요','쉬었다 와도 괜찮아요','여기 있어요',
+          '물 한 잔 어때요','잠깐 멈춰도 기록은 안 사라져요','기다리고 있어요',
+          '막히면 넘겨도 괜찮아요'],
+    back:['다시 와서 반가워요','돌아왔네요','잘 왔어요','기다리고 있었어요','또 만나네요'],
+    goal:['오늘 목표 달성','오늘 할 일 끝','수고했어요','약속 지켰네요','오늘은 성공이에요'],
+    end:['오늘도 고생했어요','내일 또 봐요','잘 쉬어요','충분히 했어요','푹 쉬세요'],
+    streak:['며칠째 이어지고 있어요','꾸준한 게 제일 어려운 건데요','습관이 되고 있어요'],
+    night:['늦은 시간까지 하네요','무리하지 말아요','오늘은 이만해도 돼요'],
+    morning:['아침부터 부지런하네요','좋은 출발이에요']
+  };
+  /* 🐱 서브 — 까칠하지만 결국 편이다(츤데레). 메인의 다정함을 받아치는 역할 */
+  const SUB={
+    idle:['또 왔네','오늘은 며칠 갈까','흠','...','뭘 봐','공부나 해'],
+    right:['운이 좋았네','뭐, 그 정도는','당연한 거 아냐?','이걸로 우쭐하진 말고',
+           '한 문제 맞혔다고 뭐','쉬운 거였어'],
+    wrong:['거봐','아까 개념에서 봤잖아','그럴 줄 알았어','해설이나 읽어',
+           '이건 좀 아깝다','집중 안 하지'],
+    combo:['오, 좀 하네','이번엔 진짜네','인정','...제법인데'],
+    combo2:['여기서 틀리면 웃긴다','기대는 안 하지만'],
+    break:['봐, 방심했지','거기서 끊기네','아까워라'],
+    badge:['그건 인정','뭐 나쁘진 않네','겨우 하나 땄네'],
+    praise:['...잘했어','오늘은 좀 봐준다','됐어, 계속해'],
+    lazy:['안 할 거면 끄든가','거기서 뭐해','시간 간다'],
+    fight:['쟤 말 너무 달다','칭찬만 하면 늘겠냐','응원은 됐고 문제나 풀어',
+           '그런 식으로 무르게 굴지 마'],
+    care:['...무리는 하지 말고','쉬엄쉬엄 해. 뭐 걱정해서 그런 건 아니고','물이나 마셔']
   };
   /* 최근 3개를 피해 같은 말이 연달아 나오지 않게 */
   function pick(k){
@@ -2186,21 +2500,54 @@ const MASCOT=(()=>{
     last.push(t); if(last.length>3)last.shift();
     return t;
   }
+  /* ★표정 클래스는 한 번에 하나만★ — 목록을 한 곳에 모아 두지 않으면
+     새 표정을 추가할 때마다 지우는 걸 빠뜨려 클래스가 누적된다(실제로 겪음). */
+  const FACES=['happy','hype','care','idle','party','joy','proud','love','wink','worry','oops','surprise'];
   function face(cls,ms){
     const b=box(); if(!b)return;
-    b.classList.remove('happy','hype','care','idle','party');
+    FACES.forEach(f=>b.classList.remove(f));
     if(cls)b.classList.add(cls);
     clearTimeout(faceT);
-    if(ms)faceT=setTimeout(()=>b.classList.remove(cls),ms);
+    if(ms)faceT=setTimeout(()=>{FACES.forEach(f=>b.classList.remove(f))},ms);
   }
   function say(msg,cls,hold){
     const b=box(), t=talk(); if(!b||!t||S.mascot===false)return;
     t.textContent=msg; t.hidden=false;
     if(cls)face(cls,hold||1800);
     clearTimeout(hideT);
-    hideT=setTimeout(()=>{t.hidden=true;face('idle')},hold||2600);
+    hideT=setTimeout(()=>{t.hidden=true;face('idle')},hold||2600);   /* 말이 끝나면 대기 표정으로 */
+  }
+  /* ── 🐱 서브 등장 ─────────────────────────────────────
+     항상 떠 있으면 화면이 복잡하다 → ★말할 때만 나타났다 사라진다.★
+     확률로만 끼어들게 해서 "가끔 튀어나오는 재미" 를 만든다. */
+  let sHideT=null, sFaceT=null, sLast=[];
+  function spick(k){
+    const p=SUB[k]||SUB.idle;
+    let t,n=0;
+    do{ t=p[(Math.random()*p.length)|0]; n++ }while(sLast.includes(t)&&n<8);
+    sLast.push(t); if(sLast.length>4)sLast.shift();
+    return t;
+  }
+  function sface(cls,ms){
+    const b=box(); if(!b)return;
+    b.classList.remove('s-roll','s-wide','s-poke','s-turn');
+    if(cls)b.classList.add(cls);
+    clearTimeout(sFaceT);
+    if(cls)sFaceT=setTimeout(()=>b.classList.remove(cls),ms||1200);
+  }
+  /** 서브가 한마디 — 확률(p)을 넘지 못하면 조용히 넘어간다 */
+  function sub(key,p,cls,hold){
+    if(S.mascot===false||S.sub===false)return;
+    if(Math.random()>(p==null?0.2:p))return;
+    const b=$('sbody'), t=$('stalk'); if(!b||!t)return;
+    b.hidden=false; t.textContent=spick(key); t.hidden=false;
+    sface(cls||'s-roll',hold||1400);
+    if(S.sound)FX.snd.sub&&FX.snd.sub();
+    clearTimeout(sHideT);
+    sHideT=setTimeout(()=>{ t.hidden=true; b.hidden=true; sface(null) },hold||2400);
   }
   return {
+    sub,
     show(){ const b=box(); if(b)b.hidden=(S.mascot===false) },
     /* 화면에 처음 나타날 때 — 맥락에 맞는 인사 */
     greet(){
@@ -2216,17 +2563,39 @@ const MASCOT=(()=>{
       setTimeout(()=>{const b=box();if(b)b.classList.remove('enter')},900);
       setTimeout(()=>say(m,'happy',5000),750);
     },
-    right(combo){
-      if(combo>=5)say(pick('combo')+` (${combo}연속)`,'hype',1500);
-      else say(pick('right'),'happy',1400);
+    /** 정답 — 콤보·난이도·속도에 따라 표정과 말이 달라진다 */
+    right(combo,opt){
+      opt=opt||{};
+      if(combo>=10){ say(pick('combo2'),'joy',1700); sub('combo2',.3,'s-wide') }
+      else if(combo>=5){ say(pick('combo')+` (${combo}연속)`,'hype',1500); sub('combo',.22,'s-wide') }
+      else if(opt.hard){ say(pick('hard'),'proud',1800); sub('right',.2,'s-roll') }
+      else if(opt.fast){ say(pick('right2'),'wink',1400); sub('right',.12,'s-roll') }
+      else if(opt.lucky){ say('오 지금 뭔가 좋았어요!','joy',1800); sub('right',.25,'s-wide') }
+      else { say(pick('right'),'happy',1400); sub('right',.12,'s-roll') }
     },
-    wrong(){ say(pick('wrong'),'care',2600) },
-    redeem(){ say(pick('redeem'),'hype',1800) },
-    badge(n){ say(`🏅 ${n}`,'party',3000) },
-    level(l){ say(`Lv.${l} 달성!`,'party',3000) },
-    goal(){ say(pick('goal'),'party',3200) },
-    end(pass){ say(pass?'합격선 넘었어요!':pick('end'),pass?'party':'happy',3200) },
-    idle(){ say(pick('idle'),'idle',3000) },
+    /** 오답 — 연속으로 틀리면 ★위로 쪽으로 기운다★ */
+    wrong(streak){
+      if(streak>=3){ say(pick('wrong2'),'worry',3000); sub('care',.35,'s-turn') }
+      else if(streak===2){ say(pick('wrong'),'oops',2600); sub('wrong',.3,'s-roll') }
+      else { say(pick('wrong'),'care',2600); sub('wrong',.22,'s-roll') }
+    },
+    comboBreak(n){ if(n>=5)sub('break',.55,'s-poke') },
+    redeem(){ say(pick('redeem'),'love',1900); sub('praise',.3,'s-turn') },
+    badge(n){ say(n,'party',3000); sub('badge',.3,'s-wide') },
+    level(l){ say(`Lv.${l} 달성!`,'joy',3000); sub('praise',.35,'s-wide') },
+    goal(){ say(pick('goal'),'party',3200); sub('praise',.4,'s-turn') },
+    end(pass){ say(pass?'합격선 넘었어요!':pick('end'),pass?'joy':'happy',3200);
+               sub(pass?'praise':'idle',.35,'s-roll') },
+    idle(){ say(pick('idle'),'idle',3000); sub('lazy',.4,'s-poke') },
+    /** 시대 전환 — 판이 바뀌는 순간엔 둘 다 반응한다 */
+    era(msg){ say(msg||'한 단계 올라섰어요!','joy',4200);
+              setTimeout(()=>sub('praise',.8,'s-wide',2600),1600); },
+    /** 둘이 티격태격 — 낮은 확률로 서브가 메인에게 시비를 건다 */
+    banter(){
+      if(S.mascot===false||Math.random()>0.12)return;
+      sub('fight',1,'s-poke',2600);
+      setTimeout(()=>say('...나는 응원하는 역할이라고요','worry',2400),1500);
+    },
     toggle(){
       S.mascot=(S.mascot===false); save();
       const b=box(); if(b)b.hidden=(S.mascot===false);
@@ -2242,6 +2611,53 @@ function idlePing(){
   _idleT=setTimeout(()=>{ if(view==='quiz'&&quiz)MASCOT.idle() },95000);
 }
 ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,idlePing,true));
+
+/* ── ⏭ 자동 다음 문제 ───────────────────────────────────
+   채점 후 잠시 뒤 스스로 넘어간다. ★멈추려면 능동적으로 눌러야 한다★ —
+   관성이 이탈이 아니라 지속 쪽으로 작동하게 만드는 장치다.
+   해설을 읽는 중(스크롤·조작)이면 즉시 멈춘다. 기본값은 꺼짐. */
+let autoT=null, autoRing=null;
+function autoCancel(why){
+  if(autoT){clearTimeout(autoT);autoT=null}
+  if(autoRing){autoRing.remove();autoRing=null}
+}
+function autoNext(){
+  if(S.autoNext!==true||!quiz||quiz.mode!=='practice')return;
+  autoCancel();
+  const host=$('qNext'); if(!host||host.disabled)return;
+  const sec=Math.max(2,Math.min(S.autoSec||6,20));
+  const r=document.createElement('span');
+  r.className='autoring'; r.style.setProperty('--sec',sec+'s');
+  r.title='자동으로 다음 문제 — 누르면 취소';
+  host.appendChild(r); autoRing=r;
+  autoT=setTimeout(()=>{ autoCancel(); if($('qNext')&&!$('qNext').disabled)$('qNext').click() },sec*1000);
+}
+['wheel','touchmove','keydown','pointerdown'].forEach(ev=>
+  document.addEventListener(ev,()=>{ if(autoT)autoCancel() },{passive:true,capture:true}));
+
+/* 자동 진행 토글 — ★기본은 꺼짐.★ 급한 느낌을 싫어하는 사람이 있다 */
+(function(){
+  const c=$('autoChk'), w=$('autoTog'); if(!c||!w)return;
+  c.checked=S.autoNext===true;
+  c.onchange=()=>{ S.autoNext=c.checked; save(); autoCancel();
+    FX.toast(c.checked?`⏭ ${S.autoSec||6}초 뒤 자동으로 넘어갑니다`:'자동 진행을 껐어요','good',1800); };
+})();
+
+/* SOS 이벤트 */
+(function(){
+  const b=$('sosBtn'), m=$('sosMenu');
+  if(!b||!m)return;
+  b.onclick=e=>{e.stopPropagation();m.hidden=!m.hidden;FX.snd.tap();
+    /* 화면 아래쪽에서 열면 메뉴가 뷰포트를 벗어난다 — 보이는 곳까지 끌어온다 */
+    if(!m.hidden)setTimeout(()=>{
+      const r=m.getBoundingClientRect();
+      if(r.top<0||r.bottom>window.innerHeight)m.scrollIntoView({block:'nearest',behavior:'smooth'});
+    },30);};
+  m.onclick=e=>{const k=e.target.closest('[data-sos]');if(k)sosDo(k.dataset.sos)};
+  document.addEventListener('pointerdown',e=>{
+    if(!m.hidden&&!m.contains(e.target)&&e.target!==b)m.hidden=true;
+  },true);
+})();
 
 /* ═══════════ 🔊 UI 사운드 전역 배선 ═══════════
    개별 버튼마다 호출을 심으면 유지보수가 안 된다 — ★문서 레벨에서 한 번★ 잡는다.
@@ -2343,20 +2759,47 @@ function applyBrand(){
   $('lblBank').textContent=`${UNIT} × 유형별 보유 문항 수 — 셀을 누르면 그 조합으로 바로 출제됩니다.`;
 }
 
+/* 🔥 연속 학습일 불꽃 — ★일수가 쌓일수록 커지고 색이 뜨거워진다.★
+   숫자만 올리면 그래프에 불과하다. ★눈에 보이는 불이 커져야 끄기 아깝다.★
+   단계: 주황 → 진주황 → 빨강 → 보라 → 푸른불꽃(가장 뜨겁다) */
+const FLAME=[
+  {d:0,  c1:'#fbbf24',c2:'#f59e0b',w:15,n:'불씨'},
+  {d:3,  c1:'#fb923c',c2:'#f97316',w:18,n:'불꽃'},
+  {d:7,  c1:'#fb7185',c2:'#ef4444',w:21,n:'큰불'},
+  {d:14, c1:'#c084fc',c2:'#a855f7',w:24,n:'맹렬'},
+  {d:30, c1:'#7dd3fc',c2:'#3b82f6',w:27,n:'푸른불꽃'},
+  {d:100,c1:'#a7f3d0',c2:'#10b981',w:30,n:'전설'}
+];
+const flameTier=d=>FLAME.reduce((a,f)=>d>=f.d?f:a,FLAME[0]);
+function flameSvg(days){
+  const f=flameTier(days), h=Math.round(f.w*1.34);
+  return `<span class="flame" style="--f1:${f.c1};--f2:${f.c2}" title="${f.n}">`+
+    `<svg viewBox="0 0 24 32" width="${f.w}" height="${h}" aria-hidden="true">`+
+    `<path class="fo" d="M12 1c2 8 8 10 8 18a8 8 0 0 1-16 0C4 12 9 9 12 1z"/>`+
+    `<path class="fi" d="M12 13c1.2 4 4 5 4 8.6a4 4 0 0 1-8 0c0-3 2.8-4 4-8.6z"/>`+
+    `</svg></span>`;
+}
 /** 상단 한 줄 — 연속 학습일 · 오늘 목표 · 레벨. 아무 기록도 없으면 감춘다(첫 방문은 깔끔하게) */
 function updDash(){
   const el=$('dash'); if(!el)return;
   const today=localDay();
   const done=S.goal.date===today?S.goal.done:0;
-  const pct=Math.min(100,Math.round(done/Math.max(1,S.goal.target)*100));
+  /* ★100%에서 끝나지 않는다★ — 목표를 채우면 다음 구간이 즉시 생긴다(끝없는 진행) */
+  const tgt=S.goal.target, over=Math.max(0,done-tgt);
+  const stretch=Math.ceil(tgt/3);                     /* 보너스 구간 크기 */
+  const inStretch=done>=tgt;
+  const gCur=inStretch?over%stretch:done;
+  const gCap=inStretch?stretch:tgt;
+  const pct=Math.min(100,Math.round(gCur/Math.max(1,gCap)*100));
   if(!S.streak.cur&&!done&&!S.xp.total){el.hidden=true;return}
   el.hidden=false;
   const lv=xpLv(S.xp.total), cur=S.xp.total-lvFloor(lv), need=lvNext(lv)-lvFloor(lv);
   el.innerHTML=
-    `<span class="d1">🔥 <b>${S.streak.cur}일</b> 연속${S.streak.max>S.streak.cur?` <i>· 최고 ${S.streak.max}일</i>`:''}`+
+    `<span class="d1 fwrap">${flameSvg(S.streak.cur)}<b>${S.streak.cur}일</b> 연속${S.streak.max>S.streak.cur?` <i>· 최고 ${S.streak.max}일</i>`:''}`+
       `${S.streak.freeze>0?' <i>· ❄️ 유예 1</i>':''}</span>`+
-    `<span class="d1">🎯 오늘 <b>${done}/${S.goal.target}</b>`+
-      `<span class="gbar"><i style="width:${pct}%"></i></span>${S.goal.hit?' <i>달성!</i>':''}</span>`+
+    `<span class="d1">🎯 오늘 <b>${done}/${tgt}</b>`+
+      `<span class="gbar${inStretch?' bonus':''}"><i style="width:${pct}%"></i></span>`+
+      `${inStretch?` <i>보너스 ${gCur}/${stretch}</i>`:` <i>${tgt-done}문제 남음</i>`}</span>`+
     `<span class="d1">⚡ <b>Lv.${lv}</b> <i>· ${cur}/${need} XP</i></span>`;
 }
 /** 며칠 쉬고 돌아온 사람에게 — 책망 대신 가장 가벼운 재시작 경로를 준다 */
@@ -2383,14 +2826,15 @@ function renderAch(){
   $('achCnt').textContent=`${got} / ${list.length}`;
   box.innerHTML=list.map(a=>{
     const on=!!S.ach.got[a.id];
-    return `<div class="ach ${on?'on':''}"><span class="i">${on?'🏅':'🔒'}</span>`+
-      `<span><b>${esc(a.n)}</b><i>${esc(a.d)}</i></span>`+
+    const hidden=a.hide&&!on;
+    return `<div class="ach ${on?'on':''} ${hidden?'secret':''}"><span class="i">${on?'🏅':(a.hide?'❓':'🔒')}</span>`+
+      `<span><b>${hidden?'숨은 배지':esc(a.n)}</b><i>${hidden?'조건은 비밀 — 하다 보면 나옵니다':esc(a.d)}</i></span>`+
       `${on?`<span class="dt">${esc(S.ach.got[a.id])}</span>`:''}</div>`;
   }).join('');
 }
 function renderHome(){
   const m=CPPG.meta;
-  updDash(); renderComeback(); renderAch();
+  updDash(); renderComeback(); renderAch(); chalToday(); updChal();
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -2484,7 +2928,9 @@ $('tocList').onclick=e=>{
 
 $('selfcheck').addEventListener('change',e=>{
   const i=e.target.dataset.ck; if(i===undefined)return;
-  S.check['k'+i]=e.target.checked; save(); renderHome();
+  S.check['k'+i]=e.target.checked; save();
+  (e.target.checked?FX.snd.check:FX.snd.uncheck)();
+  renderHome();
 });
 
 /* ═══════════ 암기카드 ═══════════ */
@@ -2590,7 +3036,7 @@ $('next').onclick=()=>{if(deck.length){di=(di+1)%deck.length;renderCard()}};
 function mark(v){
   if(!deck.length)return;
   const wasNew=S.cards['c'+deck[di]]!=='ok';
-  S.cards['c'+deck[di]]=v; save();
+  S.cards['c'+deck[di]]=v; save(); FX.snd.know(v==='ok'||v===1||v===true);
   if(v==='ok'){
     const el=$('fc');
     el.classList.remove('yay'); void el.offsetWidth; el.classList.add('yay');
@@ -2920,7 +3366,7 @@ const topicLabel=v=>HASSEC?secShort(v):esc(v);
 const topicMatch=(q,v)=>HASSEC?q.sec===v:q.t===v;
 let quiz=null, timerId=null;
 /** 콤보: 연속 정답 수. best 는 역대 최고(저장됨) */
-let combo=0, comboMax=0;
+let combo=0, comboMax=0, wrongRun=0;   /* wrongRun — 연속 오답 수(마스코트 반응 강도용) */
 const MILESTONES={3:'🔥 3연속! 불붙었다',5:'⚡ 5연속! 완벽해요',8:'💎 8연속! 대단합니다',12:'👑 12연속! 합격각',20:'🚀 20연속! 무결점'};
 
 /* 세부 유형 칩 — 선택한 과목에 속한 유형만, 개수와 함께 보여준다 */
@@ -3046,7 +3492,8 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 function startQuiz(items,mode){
   if(!items.length){alert('출제할 문제가 없습니다.');return}
   if(view!=='quiz')go('quiz');   // 어디서 호출되든 퀴즈 뷰를 보장 (키보드 컨텍스트도 여기에 맞춰짐)
-  combo=0; comboMax=0; renderQ._m=0; sesPt=0; updPt();
+  combo=0; comboMax=0; wrongRun=0; renderQ._m=0; sesPt=0; updPt();
+  setTimeout(()=>MASCOT.banter(),2500);
   items.forEach(q=>{ if(q.type==='order'&&!q._shuf){
     const t=[...q.steps];
     for(let k=t.length-1;k>0;k--){const r=Math.floor(Math.random()*(k+1));[t[k],t[r]]=[t[r],t[k]]}
@@ -3087,6 +3534,8 @@ $('quitQuiz').onclick=()=>{
 
 function renderQ(){
   FX.clearCoins();
+  setTimeout(sosShow,0);
+  if(quiz)quiz.qAt=Date.now();          /* 이 문제를 보기 시작한 시각 */
   const q=quiz.items[quiz.i], a=quiz.ans[quiz.i];
   // 순서정렬은 제출(done) 전까지 부분 선택만 저장되므로 아직 채점된 것이 아니다
   const answered = a!==null && !(q.type==='order' && !(a&&a.done));
@@ -3226,8 +3675,10 @@ function answer(v){
   // 모의고사에서 정답 여부를 티내면 시험 시뮬레이션이 깨진다.
   const react=quiz.mode==='practice'&&first;
   if(react){
-    if(ok){ combo++; comboMax=Math.max(comboMax,combo); if(combo>S.best)S.best=combo; }
-    else { if(combo>=3)setTimeout(()=>FX.snd.comboBreak(),260); combo=0; }
+    if(ok){ combo++; comboMax=Math.max(comboMax,combo); if(combo>S.best)S.best=combo; wrongRun=0; }
+    else { const had=combo; wrongRun++;
+      if(had>=3){ setTimeout(()=>FX.snd.comboBreak(),260); setTimeout(()=>MASCOT.comboBreak(had),900) }
+      combo=0; }
   }
   /* 정복도·경험치·연속학습 — 처음 채점한 문항에만 반영한다(다시 풀기로 중복 적립 금지) */
   let gain=0, newAch=[];
@@ -3239,13 +3690,28 @@ function answer(v){
       if(ok)quiz.redeemed=(quiz.redeemed||0)+(wasWrong?1:0);
       touchStreak(); touchGoal(1);
     }
+    /* 🏛 단원 정복 — 이 문항이 속한 단원을 80% 넘긴 ★첫 순간★ 에만 울린다 */
+    if(ok&&q.t){
+      const key='u_'+q.s+'_'+q.t;
+      if(!S.ach.got[key]){
+        const tot=ALLQ.filter(x=>x.s===q.s&&x.t===q.t).length;
+        const got=ALLQ.filter(x=>x.s===q.s&&x.t===q.t&&SOLVED.has(x.id)).length;
+        if(tot>=8&&got/tot>=0.8){
+          S.ach.got[key]=localDay();
+          setTimeout(()=>{ FX.snd.era(); FX.confetti(140);
+            FX.toast(`🏛 단원 정복 — ${q.t}`,'hype',3600);
+            MASCOT.era(`${q.t} 단원을 정복했어요!`); },700);
+        }
+      }
+    }
+    chalStep(ok,wasWrong,q);
     newAch=checkAch();
     /* 모의고사 중에는 배지 토스트를 띄우지 않고 결과 화면에서 몰아 보여준다 */
     if(newAch.length&&quiz.mode!=='practice'){quiz.pendAch=(quiz.pendAch||[]).concat(newAch);newAch=[]}
   }
   save();
   renderQ();   // 모의고사 모드는 선택만 표시하고 '다음'으로 이동 (답 변경 가능)
-  if(react)celebrate(ok,gain,wasWrong);
+  if(react){celebrate(ok,gain,wasWrong,q); setTimeout(autoNext,900)}
   newAch.forEach((a,i)=>setTimeout(()=>{FX.snd.badge();MASCOT.badge(a.n);FX.milestone(`🏅 ${a.n} 획득!`)},600+i*900));
 }
 
@@ -3254,7 +3720,7 @@ function answer(v){
 const WRONG_MSGS=['오답노트에 담았습니다 — 해설을 확인하세요','여기서 한 번 틀리는 게 시험장에서 안 틀리는 길입니다',
   '헷갈리는 지점을 찾았습니다 — 해설의 오답 이유를 보세요','오답노트에서 다시 만나면 그때 되찾으면 됩니다'];
 /** 정답/오답 순간의 보상 연출 */
-function celebrate(ok,gain,wasWrong){
+function celebrate(ok,gain,wasWrong,q){
   const card=$('qCard');
   card.classList.remove('flash-ok','flash-no'); void card.offsetWidth;
   if(ok){
@@ -3264,12 +3730,17 @@ function celebrate(ok,gain,wasWrong){
     const m=MILESTONES[combo];
     /* 알림이 겹치면 산만해진다 — 콤보 마일스톤 > 오답 되찾기 > 일반 정답 순으로 하나만 */
     if(m)FX.milestone(m);
-    if(!wasWrong)MASCOT.right(combo);
+    /* ★가끔(12%) 특별 연출★ — 같은 정답이라도 다르게 터진다.
+       단, 랜덤화하는 건 ★연출뿐★ 이다. XP 를 랜덤으로 주면 운에 기대게 되고
+       "얼마나 벌었나" 가 학습 판단을 흐린다. */
+    const lucky=Math.random()<0.12;
+    if(lucky){ FX.confetti(70); FX.snd.badge(); }
+    if(!wasWrong)MASCOT.right(combo,{hard:q&&q.d===3,fast:(Date.now()-((quiz&&quiz.qAt)||0))<6000,lucky});
     else if(wasWrong){FX.snd.redeem();MASCOT.redeem();FX.toast('되찾았습니다 ✊  '+(gain?`+${gain} XP`:''),'good',1300)}
     else FX.toast((combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨')+(gain?`  +${gain} XP`:''),'good',1000);
   }else{
     card.classList.add('flash-no');
-    FX.wrong(); MASCOT.wrong();
+    FX.wrong(); MASCOT.wrong(wrongRun);
     FX.toast(WRONG_MSGS[(Math.random()*WRONG_MSGS.length)|0],'bad',1400);
   }
   setTimeout(()=>card.classList.remove('flash-ok','flash-no'),800);
@@ -3297,6 +3768,122 @@ function flyCoins(gain,srcEl){
     chip.classList.remove('bump'); void chip.offsetWidth; chip.classList.add('bump');
     FX.snd.coin(k);
   });
+}
+/* ── 🎯 오늘의 도전 ────────────────────────────────────────
+   ★매일 있으면 의무가 되고, 가끔 있으면 이벤트가 된다.★
+   그래서 접속 시 ★낮은 확률로만★ 뜬다. 실패해도 불이익은 없다. */
+const CHAL=[
+  {id:'hard5',  n:'심화 5연속',   d:'심화 문제를 연속 5개 맞히기', goal:5,
+   have:()=>ALLQ.some(q=>q.d===3)},
+  {id:'clean10',n:'무실점 10',    d:'10문제 연속 정답',            goal:10},
+  {id:'redeem3',n:'복수전',       d:'틀렸던 문제 3개 되찾기',      goal:3},
+  {id:'solve25',n:'25문제',       d:'오늘 25문제 풀기',            goal:25},
+];
+function chalToday(){
+  const t=localDay();
+  if(S.chal&&S.chal.date===t)return S.chal.id?S.chal:null;
+  /* 하루 한 번만 주사위를 굴린다 — 35% 확률로 등장 */
+  const pool=CHAL.filter(c=>!c.have||c.have());
+  const hit=Math.random()<0.35&&pool.length;
+  S.chal=hit?{date:t,id:pool[(Math.random()*pool.length)|0].id,prog:0,done:false}:{date:t,id:null};
+  save();
+  return S.chal.id?S.chal:null;
+}
+const chalDef=id=>CHAL.find(c=>c.id===id);
+/** 도전 진행 — 정답·오답 직후 호출 */
+function chalStep(ok,wasWrong,q){
+  const c=S.chal; if(!c||!c.id||c.done)return;
+  const def=chalDef(c.id); if(!def)return;
+  let p=c.prog;
+  if(c.id==='hard5')      p = (ok&&q.d===3)?p+1:(q.d===3?0:p);
+  else if(c.id==='clean10')p = ok?p+1:0;
+  else if(c.id==='redeem3')p = (ok&&wasWrong)?p+1:p;
+  else if(c.id==='solve25')p = p+1;
+  if(p===c.prog)return;
+  c.prog=p; 
+  if(p>=def.goal){
+    c.done=true; save();
+    S.xp.total+=40;
+    setTimeout(()=>{ FX.snd.era(); FX.confetti(150);
+      FX.toast(`🎯 오늘의 도전 완료 — ${def.n}  +40 XP`,'hype',3600);
+      MASCOT.era(`${def.n} 성공!`); updDash(); },600);
+  } else save();
+  updChal();
+}
+function updChal(){
+  const el=$('chalBar'); if(!el)return;
+  const c=S.chal;
+  if(!c||!c.id){el.hidden=true;return}
+  const def=chalDef(c.id); if(!def){el.hidden=true;return}
+  el.hidden=false;
+  const pct=Math.min(100,Math.round(c.prog/def.goal*100));
+  el.className='chalbar'+(c.done?' done':'');
+  el.innerHTML=`<span class="ct">🎯 오늘의 도전</span>`+
+    `<span class="cn">${esc(def.n)}</span>`+
+    `<span class="cd">${esc(def.d)}</span>`+
+    `<span class="cbar"><i style="width:${pct}%"></i></span>`+
+    `<b>${c.done?'완료!':c.prog+' / '+def.goal}</b>`;
+}
+
+/* ── 🆘 SOS — 막힌 순간의 출구 ─────────────────────────────
+   원칙: ★어느 선택지도 불이익이 없다.★ 오답 처리도, 기록 차감도 없다.
+   막혔을 때 갈 곳이 유튜브뿐이면 유튜브로 간다. 여기 갈 곳을 만든다. */
+function sosShow(){
+  const bar=$('sosBar'); if(!bar)return;
+  const on=quiz&&quiz.mode==='practice'&&quiz.ans[quiz.i]===null;
+  bar.hidden=!on;
+  const w=$('autoTog'); if(w)w.hidden=!(quiz&&quiz.mode==='practice');
+  if(!on)$('sosMenu').hidden=true;
+}
+function sosDo(k){
+  $('sosMenu').hidden=true;
+  if(!quiz)return;
+  const q=quiz.items[quiz.i];
+  if(k==='hint'){
+    if(q.type!=='mcq'){FX.toast('이 유형은 힌트를 줄 수 없어요','bad',1600);return}
+    const wrongIdx=q.c.map((c,i)=>i).filter(i=>i!==q.a);
+    const kill=wrongIdx.sort(()=>Math.random()-.5).slice(0,2);
+    kill.forEach(i=>{
+      const b=$('qCard').querySelector(`button[data-i="${i}"]`);
+      if(b){b.classList.add('killed');b.disabled=true}
+    });
+    quiz.hinted=(quiz.hinted||0)+1;
+    FX.snd.on(); FX.toast('선지 2개를 지웠어요 — 불이익 없어요','good',1800);
+    MASCOT.say&&MASCOT.say();
+  }else if(k==='later'){
+    /* 오답 처리 없이 뒤로 미룬다 */
+    const it=quiz.items.splice(quiz.i,1)[0], an=quiz.ans.splice(quiz.i,1)[0];
+    quiz.items.push(it); quiz.ans.push(an);
+    if(quiz.i>=quiz.items.length)quiz.i=0;
+    FX.snd.nav(); FX.toast('나중에 다시 나와요 — 오답 아니에요','good',1800);
+    renderQ();
+  }else if(k==='concept'){
+    if(typeof HASNOTE!=='undefined'&&HASNOTE&&q.t){
+      cnSub=q.s; cnTopic=q.t; go('concept'); renderConcept();
+      FX.toast('이 단원 개념으로 왔어요','good',1700);
+    }else{ go('sheet'); FX.toast('핵심시트로 왔어요','good',1600) }
+  }else if(k==='rest'){
+    FX.toast('☕ 3분 쉬었다 와요 — 기록은 그대로예요','good',2600);
+    MASCOT.rest&&MASCOT.rest();
+    restTimer(180);
+  }
+}
+/* 휴식 — 탭 제목으로 남은 시간을 알린다(알림 권한 없이 복귀를 건다) */
+let restT=null, restTitle='';
+function restTimer(sec){
+  clearInterval(restT);
+  restTitle=restTitle||document.title;
+  let left=sec;
+  restT=setInterval(()=>{
+    left--;
+    const m=String(Math.floor(left/60)), s2=String(left%60).padStart(2,'0');
+    document.title=`☕ ${m}:${s2} — 쉬는 중`;
+    if(left<=0){
+      clearInterval(restT); document.title=restTitle;
+      FX.snd.on(); FX.toast('돌아올 시간이에요 🙂','good',2600);
+      MASCOT.back&&MASCOT.back();
+    }
+  },1000);
 }
 /** 다음 마일스톤까지 몇 개 남았는지 — 한 개 앞이면 예고해 목표 구배를 만든다 */
 const nextMile=c=>Object.keys(MILESTONES).map(Number).sort((a,b)=>a-b).find(n=>n>c);
@@ -3347,6 +3934,32 @@ function finishQuiz(){
   if(hard&&hard.r)hi.push(`🎯 심화 ${hard.r}/${hard.t} 격파`);
   if(comboMax>=5)hi.push(`🔥 최고 ${comboMax}연속`);
   if(S.streak.cur>=2)hi.push(`📅 ${S.streak.cur}일 연속 학습`);
+  /* ★오답이 많은 세션★ 은 점수를 크게 띄우지 않는다.
+     "40점" 은 실패로 읽히지만 "모르는 걸 12개 찾았다" 는 수확으로 읽힌다.
+     모의고사는 점수 자체가 목적이므로 적용하지 않는다. */
+  const lowScore = quiz.mode==='practice' && pct<55 && total>=5;
+  /* ★미완결 훅★ — 끝났다는 느낌 대신 "조금 남았다" 를 남긴다.
+     끝나지 않은 일이 기억에 오래 남고, 그게 다시 열게 만든다. */
+  const hooks=[];
+  (function(){
+    /* 가장 가까운 단원 — 몇 문제만 더 하면 정복인지 */
+    let best=null;
+    [...new Set(ALLQ.filter(q=>q.t).map(q=>q.s+' '+q.t))].forEach(k=>{
+      const [sb,t]=k.split(' ');
+      const tot=ALLQ.filter(x=>x.s===sb&&x.t===t).length;
+      if(tot<8)return;
+      const got=ALLQ.filter(x=>x.s===sb&&x.t===t&&SOLVED.has(x.id)).length;
+      const need=Math.ceil(tot*0.8)-got;
+      const p=got/tot;
+      if(need>0&&p>=0.35&&(!best||need<best.need))best={t,need,p:Math.round(p*100)};
+    });
+    if(best)hooks.push(`${best.t} 정복률 ${best.p}% · <b>${best.need}문제</b> 남음`);
+    const wn=Object.keys(S.wrong).length;
+    if(wn)hooks.push(`오답노트에 <b>${wn}개</b> 대기 중`);
+    /* 다음 배지 — 가장 가까운 미획득 */
+    const nx=achList().find(a=>!S.ach.got[a.id]);
+    if(nx)hooks.push(`다음 배지 <b>${esc(nx.n)}</b> — ${esc(nx.d)}`);
+  })();
   /* 아깝게 놓친 순간은 분명히 짚어 준다 — 재도전 동기가 가장 강해지는 지점 */
   const near=[];
   if(!pass&&pct>=PR.pct-5&&pct<PR.pct)near.push(`합격선까지 ${PR.pct-pct}점`);
@@ -3356,10 +3969,15 @@ function finishQuiz(){
   $('quizRun').style.display='none'; $('quizResult').style.display='block';
   $('quizResult').innerHTML=`
     <div class="box res pop">
-      <div class="sc ${pass?'p':'f'}" id="scNum">0점</div>
-      <div class="lb">${right} / ${total} 정답 · ${pass?`✅ 합격선 통과 (${esc(CPPG.meta.pass)})`:'❌ 합격선 미달'}</div>
+      ${lowScore
+        ? `<div class="found"><b>${total-right}개</b><span>모르는 걸 찾았습니다</span>
+             <i>오늘 가장 값진 수확이에요 — 전부 오답노트에 담았습니다</i></div>
+           <div class="lb sub">${right} / ${total} 정답 · <span class="sc mini ${pass?'p':'f'}" id="scNum">0점</span></div>`
+        : `<div class="sc ${pass?'p':'f'}" id="scNum">0점</div>
+           <div class="lb">${right} / ${total} 정답 · ${pass?`✅ 합격선 통과 (${esc(CPPG.meta.pass)})`:'❌ 합격선 미달'}</div>`}
       ${hi.length?`<div class="hilite">${hi.map(h=>`<span>${esc(h)}</span>`).join('')}</div>`:''}
       ${near.length?`<div class="nearmiss">🤏 ${near.map(esc).join(' · ')} — 한 번 더 가볼까요?</div>`:''}
+      ${hooks.length?`<div class="nexthook"><span class="nh">이어서</span>${hooks.slice(0,2).map(h=>`<span>${h}</span>`).join('')}</div>`:''}
       ${newAch.length?`<div class="achwon">🏅 새 배지 ${newAch.map(a=>esc(a.n)).join(' · ')}</div>`:''}
       ${comboMax>=3?`<div style="margin-top:8px"><span class="combo hot">🔥 최고 ${comboMax}연속${S.best>comboMax?`  ·  역대 ${S.best}`:'  ·  신기록!'}</span></div>`:''}
       <div class="resgrid">
