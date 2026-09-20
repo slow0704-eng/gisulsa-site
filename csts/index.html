@@ -27,6 +27,21 @@
 <style>
 /* ═══ 토큰 ═══ */
 :root{
+  /* ── ✍ 역할별 폰트 ───────────────────────────────────────
+     ★전부 시스템 폰트.★ 웹폰트를 불러오면 오프라인(PWA)에서 깨지고
+     첫 렌더가 밀린다. 대신 ★역할마다 다른 스택★ 을 줘서 변화를 만든다.
+       ui    : 일반 UI·문제 지문 — 또렷함이 최우선
+       head  : 제목 — 굵고 자간을 좁혀 덩어리로 보이게
+       serif : 해설·개념 본문 — ★읽는 글★ 은 명조로 결을 바꾼다
+       num   : 숫자·기록 — 고정폭(tabular)이라 자릿수가 흔들리지 않는다
+       label : 칩·배지·과목 라벨 — 자간을 벌려 작아도 읽히게
+       soft  : 말풍선 — 둥근 느낌의 스택으로 말투를 시각화 */
+  --f-ui:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+  --f-head:"Pretendard SemiBold","Segoe UI Semibold","Pretendard","Malgun Gothic",sans-serif;
+  --f-serif:"Nanum Myeongjo","나눔명조","Batang","바탕",Georgia,"Times New Roman",serif;
+  --f-num:ui-monospace,"SF Mono","Consolas","D2Coding","Menlo",monospace;
+  --f-label:"Segoe UI","Pretendard","Malgun Gothic",sans-serif;
+  --f-soft:"Apple SD Gothic Neo","Pretendard","Segoe UI","Malgun Gothic",sans-serif;
   --bg:#0f1420; --bg2:#161d2e; --card:#1b2436; --card2:#212c42;
   --line:#2b3852; --line2:#3a4a6b;
   --tx:#e8edf7; --tx2:#a7b4cc; --tx3:#6f7f9d;
@@ -46,7 +61,7 @@ html[data-theme="light"]{
 *{box-sizing:border-box;margin:0;padding:0}
 body{
   background:var(--bg); color:var(--tx);
-  font-family:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+  font-family:var(--f-ui);
   font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased;
 }
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
@@ -892,6 +907,130 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 @media (prefers-reduced-motion: reduce){
   .mwrap,.meyes,.mwingL,.mwingR,.msweat,.mnote,.mbang{animation:none!important}
   .mtalk{animation:none}
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ✍ 역할별 폰트 적용 + 🎞 마이크로 애니메이션
+   ───────────────────────────────────────────────────────────────
+   ★미니멀을 유지하는 규칙★
+     · 움직임은 ★120~340ms★ 안에 끝낸다. 길면 기다리게 된다
+     · 이동은 ★6px 이하★, 확대는 ★1.03 이하★ — 눈에 띄면 이미 과하다
+     · 색을 바꾸지 말고 ★불투명도·위치★ 만 건드린다(테마 두 벌을 지켜야 한다)
+     · 한 요소에 하나씩. 겹치면 미니멀이 아니라 산만함이다
+     · 전부 prefers-reduced-motion 에서 꺼진다
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── ✍ 폰트 배치 ─────────────────────────────────────────── */
+h1,h2,h3,.vt,.qtitle{font-family:var(--f-head);letter-spacing:-.018em}
+/* ★읽는 글은 명조★ — 해설·개념 본문은 결이 달라야 '읽는 모드'로 전환된다 */
+.exp,.expl,.sheet p,.note-body,.qexp{font-family:var(--f-serif);letter-spacing:.005em;line-height:1.72}
+/* 숫자는 고정폭 — 카운트업할 때 자릿수가 흔들리지 않는다 */
+.sc b,.dash b,.pchip b,.bignum,.stat b,#qPtN,.tcell,
+.kb,.gbar i,.cbar i{font-variant-numeric:tabular-nums}
+.sc b,.dash b,.bignum,#qPtN{font-family:var(--f-num);letter-spacing:-.01em}
+/* 칩·라벨은 자간을 벌려 작아도 읽히게 */
+.chip,.badge,.tag,.pill,.subtag,.kbrow .keys{font-family:var(--f-label);letter-spacing:.02em}
+/* 말풍선은 둥근 스택 — 말투가 눈으로도 읽힌다 */
+.mtalk,.stalk,.ctalk{font-family:var(--f-soft);letter-spacing:-.004em}
+kbd{font-family:var(--f-num)}
+
+/* ── 🎞 진입 — 화면이 '켜지는' 느낌 ─────────────────────── */
+@keyframes upIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* 스태거 — 목록이 한꺼번에 나타나면 '깜빡'이고, 순차면 '펼쳐진다' */
+.stagger>*{animation:upIn .34s cubic-bezier(.2,.9,.3,1) both}
+.stagger>*:nth-child(1){animation-delay:0ms}
+.stagger>*:nth-child(2){animation-delay:40ms}
+.stagger>*:nth-child(3){animation-delay:80ms}
+.stagger>*:nth-child(4){animation-delay:120ms}
+.stagger>*:nth-child(5){animation-delay:160ms}
+.stagger>*:nth-child(6){animation-delay:200ms}
+.stagger>*:nth-child(n+7){animation-delay:240ms}
+/* 스크롤 진입 — 한 번만. 다시 스크롤할 때마다 움직이면 멀미가 난다 */
+.reveal{opacity:0;transform:translateY(10px)}
+.reveal.seen{opacity:1;transform:none;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.9,.3,1)}
+/* 뷰 전환 */
+.view.vshow{animation:upIn .28s cubic-bezier(.2,.9,.3,1)}
+
+/* ── 🖱 호버 — 손이 닿은 것만 반응한다 ──────────────────── */
+/* 내비 밑줄이 좌→우로 자란다 */
+.nav button,.navbtn{position:relative}
+.nav button::after,.navbtn::after{content:'';position:absolute;left:10px;right:10px;bottom:4px;height:2px;
+  border-radius:2px;background:var(--ac);transform:scaleX(0);transform-origin:left;opacity:.75;
+  transition:transform .22s cubic-bezier(.2,.9,.3,1)}
+.nav button:hover::after,.navbtn:hover::after{transform:scaleX(1)}
+.nav button.on::after,.navbtn.on::after{transform:scaleX(1);opacity:0}
+/* 카드 — 아주 미세하게 뜬다 */
+.box,.card,.acard{transition:transform .2s cubic-bezier(.2,.9,.3,1),box-shadow .2s ease}
+.box:hover,.card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(0,0,0,.09)}
+/* 칩 — 배경이 차오른다 */
+.chip,.themebtn{position:relative;overflow:hidden;transition:transform .14s ease}
+.chip::before,.themebtn::before{content:'';position:absolute;inset:0;background:currentColor;opacity:0;
+  transition:opacity .18s ease;pointer-events:none}
+.chip:hover::before,.themebtn:hover::before{opacity:.08}
+/* 아이콘 버튼 — 살짝 기울었다 돌아온다 */
+.themebtn:hover{transform:translateY(-1px) rotate(-3deg)}
+.themebtn:active{transform:scale(.94) rotate(0)}
+/* 링크 밑줄이 그려진다 */
+a:not(.btn){background-image:linear-gradient(var(--ac),var(--ac));background-repeat:no-repeat;
+  background-position:0 100%;background-size:0 1.5px;transition:background-size .24s ease}
+a:not(.btn):hover{background-size:100% 1.5px}
+
+/* ── ⌨ 포커스 — 키보드 사용자를 위한 신호도 부드럽게 ──── */
+@keyframes ringIn{from{box-shadow:0 0 0 6px transparent}to{box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 32%,transparent)}}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{
+  outline:none;animation:ringIn .2s ease forwards;border-radius:8px}
+
+/* ── ☑ 체크박스 — 선이 그어진다 ─────────────────────────── */
+@keyframes drawCk{from{stroke-dashoffset:22}to{stroke-dashoffset:0}}
+.ckmark path{stroke-dasharray:22;animation:drawCk .3s cubic-bezier(.4,0,.2,1) forwards}
+.ckrow{transition:background .18s ease}
+.ckrow:hover{background:color-mix(in srgb,var(--ac) 5%,transparent)}
+
+/* ── 📊 진행바 — 끝점이 숨 쉰다 ──────────────────────────── */
+.gbar,.cbar{position:relative;overflow:visible}
+.gbar i,.cbar i{transition:width .5s cubic-bezier(.2,.9,.3,1)}
+.gbar i::before,.cbar i::before{content:'';position:absolute;right:-3px;top:50%;width:6px;height:6px;
+  margin-top:-3px;border-radius:50%;background:var(--ac);opacity:.9;
+  animation:tipPulse 1.9s ease-in-out infinite}
+@keyframes tipPulse{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.45);opacity:.45}}
+
+/* ── 🔢 숫자가 바뀔 때 ───────────────────────────────────── */
+@keyframes numPop2{0%{transform:translateY(3px);opacity:.4}100%{transform:none;opacity:1}}
+.tick{animation:numPop2 .26s cubic-bezier(.2,1.4,.4,1)}
+
+/* ── 🗺 지형도 칸 — 물결처럼 뜬다 ───────────────────────── */
+.tcell{animation:upIn .3s cubic-bezier(.2,.9,.3,1) both}
+.tcell:nth-child(4n+1){animation-delay:0ms}
+.tcell:nth-child(4n+2){animation-delay:30ms}
+.tcell:nth-child(4n+3){animation-delay:60ms}
+.tcell:nth-child(4n){animation-delay:90ms}
+
+/* ── ⭕ 선지 — 누르면 번호가 먼저 반응한다 ──────────────── */
+.ch .chn,.ch [data-n]{transition:transform .16s cubic-bezier(.2,1.5,.4,1)}
+.ch:hover .chn,.ch:hover [data-n]{transform:scale(1.14)}
+.ch.right .chn,.ch.right [data-n]{animation:numPop2 .3s cubic-bezier(.2,1.5,.4,1)}
+
+/* ── 💬 토스트·말풍선 — 아래에서 밀려 올라온다 ──────────── */
+@keyframes toastIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.toast{animation:toastIn .26s cubic-bezier(.2,1.3,.4,1)}
+
+/* ── ⏳ 빈 상태·로딩 — 은은한 흐름 ──────────────────────── */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skel{background:linear-gradient(90deg,var(--card) 25%,var(--card2) 37%,var(--card) 63%);
+  background-size:200% 100%;animation:shimmer 1.5s linear infinite;border-radius:8px}
+
+/* ── 🎨 선택 영역도 테마를 따른다 ───────────────────────── */
+::selection{background:color-mix(in srgb,var(--ac) 28%,transparent)}
+
+/* ── 🛑 움직임을 줄여 달라고 했으면 전부 멈춘다 ─────────── */
+@media (prefers-reduced-motion: reduce){
+  .stagger>*,.reveal,.reveal.seen,.view.vshow,.tcell,.toast,.tick,
+  .gbar i::before,.cbar i::before,.skel,.ckmark path{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .box:hover,.card:hover,.themebtn:hover{transform:none}
+  a:not(.btn){transition:none}
 }
 
 /* 음량 팝오버 */
@@ -2475,42 +2614,67 @@ const FX=(()=>{
   /* ★조성 이동★ — 같은 합성음도 루트가 바뀌면 매번 새 곡처럼 들린다.
      요일로 색을 잡고(월요일은 낮게·어둡게, 금요일은 높게·밝게),
      세션마다 0~2 도를 더 얹어 ★같은 요일에도 두 번 같지 않게★ 한다. */
-  const DAYKEY=[1,0,1,2,2,3,2];            /* 일 월 화 수 목 금 토 */
-  const SESKEY=(Math.random()*3)|0;
+  /* 반음 단위. 월요일은 아래로, 금요일은 위로 — 요일이 곡의 색을 정한다 */
+  const DAYKEY=[0,-4,-2,1,3,5,2];          /* 일 월 화 수 목 금 토 */
+  const SESKEY=[0,2,-3][(Math.random()*3)|0];
   const keyShift=()=>DAYKEY[new Date().getDay()]+SESKEY;
+  const C3=130.8128;
+  const nf=semi=>C3*Math.pow(2,(semi+keyShift())/12);
+  /* ★재즈 보이싱★ — 펜타토닉 삼화음은 동요처럼 들린다.
+     7th·9th·11th·13th 가 들어가야 로파이 특유의 나른한 색이 나온다.
+     진행은 Imaj9 → vim9 → iim9 → V13 (ii-V 턴어라운드). */
+  const JAZZ=[
+    {r:0, ch:[0,4,7,11,14],  mel:[14,16,19]},   /* Cmaj9  */
+    {r:9, ch:[0,3,7,10,14],  mel:[12,14,17]},   /* Am9    */
+    {r:2, ch:[0,3,7,10,17],  mel:[14,17,19]},   /* Dm9(11)*/
+    {r:7, ch:[0,4,7,10,14],  mel:[14,16,21]}    /* G13    */
+  ];
   const SCENE={
-    /*        룸톤 패드 베이스 아르페 드럼 하이햇 */
-    home:    {lay:[.55, .85, .80, .45, .70, .55], bpm:90,  root:3},
-    quiz:    {lay:[.45, .70, .95, .60, .90, .75], bpm:102, root:5},
-    read:    {lay:[1,   .85, .30, 0,   0,   0  ], bpm:70,  root:0},  /* 읽기 — 리듬 금지 */
-    cards:   {lay:[.55, .80, .75, .45, .65, .55], bpm:86,  root:3},
-    rest:    {lay:[1,   .70, 0,   0,   0,   0  ], bpm:62,  root:0},
-    exam:    {lay:[0,0,0,0,0,0],                  bpm:0,   root:0}   /* 모의고사 — 무음 */
+    /*        바이닐 로즈 베이스 멜로디 드럼 하이햇 */
+    home:    {lay:[.60, .85, .80, .55, .70, .55], bpm:84, rhythm:true},
+    quiz:    {lay:[.55, .75, .95, .60, .90, .75], bpm:88, rhythm:true},
+    cards:   {lay:[.60, .80, .75, .50, .65, .55], bpm:80, rhythm:true},
+    /* ★읽기·휴식은 앰비언트 유지★ — 지문 읽는 동안 박자가 째깍거리면
+       은근한 시간 압박이 된다(bgm/case_analysis.txt [4] 결론). */
+    read:    {lay:[.35, .80, .35, 0,   0,   0  ], bpm:66, rhythm:false},
+    rest:    {lay:[.30, .65, .25, 0,   0,   0  ], bpm:60, rhythm:false},
+    exam:    {lay:[0,0,0,0,0,0],                  bpm:0,  rhythm:false}  /* 모의고사 — 무음 */
   };
   function bgmInit(){
     const A=ac(); if(!A||bgm)return bgm;
     const out=A.createGain(); out.gain.value=0;
-    const lp=A.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=5200;
+    /* ★로파이의 절반은 '고역을 깎는 것'★ — 테이프·라디오를 거친 듯한 질감 */
+    const lp=A.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=3800; lp.Q.value=.5;
     out.connect(lp); lp.connect(master);
-    const g=[0,1,2,3,4,5].map(()=>{const x=A.createGain();x.gain.value=0;x.connect(out);return x});
+    /* ★사이드체인 버스★ — 레이어 볼륨(g)과 펌핑(sc)을 ★다른 노드★ 로 나눈다.
+       한 노드에 둘 다 자동화를 걸면 서로의 예약을 취소해 값이 어긋난다. */
+    const sc=[0,1,2,3,4,5].map(()=>{const x=A.createGain();x.gain.value=1;x.connect(out);return x});
+    const g=[0,1,2,3,4,5].map((_,i)=>{const x=A.createGain();x.gain.value=0;x.connect(sc[i]);return x});
     /* 룸톤 — 핑크에 가까운 저역 노이즈를 길게 루프 */
     const nb=A.createBuffer(1,A.sampleRate*4,A.sampleRate), nd=nb.getChannelData(0);
     let b0=0,b1=0;
     for(let i=0;i<nd.length;i++){const w=Math.random()*2-1;
       b0=.99*b0+w*.05; b1=.95*b1+w*.08; nd[i]=(b0+b1)*.5}
     const ns=A.createBufferSource(); ns.buffer=nb; ns.loop=true;
-    const nf=A.createBiquadFilter(); nf.type='lowpass'; nf.frequency.value=420;
-    ns.connect(nf); nf.connect(g[0]); ns.start();
+    /* 바이닐 표면 잡음 — 완전한 저역이 아니라 살짝 위까지 열어야 '판' 느낌이 난다 */
+    const nfl=A.createBiquadFilter(); nfl.type='lowpass'; nfl.frequency.value=1400;
+    ns.connect(nfl); nfl.connect(g[0]); ns.start();
     /* 드럼용 화이트노이즈 — ★한 번 만들어 재생 위치만 바꿔 쓴다.★
        스텝마다 버퍼를 새로 만들면 GC 가 튀어 박자가 흔들린다. */
     const wb=A.createBuffer(1,A.sampleRate*2,A.sampleRate), wd=wb.getChannelData(0);
     for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
-    bgm={out,g,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb};
+    bgm={out,g,sc,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb};
     return bgm;
   }
-  /* ── 리듬 음색 — 전부 ★절대 시각(t)★ 으로 예약한다 ─────────
-     setInterval 이 부르는 시점에 맞춰 울리면 ±20ms 가 흔들려 그루브가 죽는다. */
-  function bN(t,dur,dest,o){                       /* 노이즈 한 방 */
+  /* ── 🎷 재즈 로파이 음색 ───────────────────────────────
+     전부 ★절대 시각(t)★ 으로 예약한다. setInterval 이 부르는 시점에
+     맞춰 울리면 ±20ms 가 흔들려 그루브가 죽는다.
+
+     ★로파이의 정체는 음표가 아니라 '질감'★ 이다 — 둔탁한 킥, 쓸리는
+     브러시, 금속성이 빨리 죽는 로즈, 지판을 긁는 업라이트, 그리고
+     바닥에 깔린 바이닐 잡음. 같은 코드도 이 질감이 없으면 그냥 동요다. */
+  const hz=()=>(Math.random()-.5)*.024;      /* ★휴머나이즈 ±12ms★ — 정박은 기계다 */
+  function bN(t,dur,dest,o){                 /* 노이즈 한 방 */
     const A=ac(); if(!A||!bgm)return;
     const src=A.createBufferSource(); src.buffer=bgm.wb; src.loop=true;
     src.playbackRate.value=.85+Math.random()*.4;
@@ -2522,81 +2686,132 @@ const FX=(()=>{
     src.connect(f); f.connect(g); g.connect(dest);
     src.start(t,Math.random()*1.5); src.stop(t+dur+.02);
   }
-  /** 킥 — 피치가 떨어지는 사인. 저역이 박을 만든다 */
+  /** 🥁 킥 — ★둔탁하게.★ 로파이 킥은 때리지 않고 '툭' 떨어진다.
+      피치를 낮게 시작해 천천히 떨구고, 로우패스로 어택의 날을 깎는다. */
   function bKick(t,dest,v){
     const A=ac(); if(!A)return;
-    const o=A.createOscillator(), g=A.createGain();
+    const o=A.createOscillator(), g=A.createGain(), lp=A.createBiquadFilter();
     o.type='sine';
-    o.frequency.setValueAtTime(145,t);
-    o.frequency.exponentialRampToValueAtTime(47,t+.085);
+    o.frequency.setValueAtTime(112,t);
+    o.frequency.exponentialRampToValueAtTime(41,t+.11);
+    lp.type='lowpass'; lp.frequency.value=180; lp.Q.value=.7;
     g.gain.setValueAtTime(v,t);
-    g.gain.exponentialRampToValueAtTime(.0001,t+.26);
-    o.connect(g); g.connect(dest); o.start(t); o.stop(t+.28);
+    g.gain.exponentialRampToValueAtTime(.0001,t+.34);
+    o.connect(lp); lp.connect(g); g.connect(dest);
+    o.start(t); o.stop(t+.36);
+    /* 룸 — 킥 뒤에 붙는 짧은 저역 잔향. 방에서 친 것처럼 들린다 */
+    bN(t+.012,.14,dest,{type:'lowpass',f:340,q:.6,gain:v*.22});
   }
-  /** 클랩 — ★한 방이 아니라 세 방★ 이라야 손뼉처럼 들린다 */
-  function bClap(t,dest,v){
-    [0,.011,.025].forEach((d,i)=>bN(t+d,.13,dest,
-      {type:'bandpass',f:1550,q:1.1,gain:v*(i===2?1:.55)}));
+  /** 🧹 브러시 스네어 — 때리는 게 아니라 ★쓸어내는★ 소리.
+      짧은 타격 + 길게 번지는 스월, 두 겹이라야 브러시로 들린다. */
+  function bBrush(t,dest,v){
+    bN(t,.16,dest,{type:'bandpass',f:2050,q:.7,gain:v});
+    bN(t+.004,.34,dest,{type:'highpass',f:3900,q:.6,gain:v*.34});
+    bN(t+.02,.26,dest,{type:'bandpass',f:5200,q:.5,gain:v*.2});
   }
-  /** 하이햇 — 닫힘은 아주 짧게, 열림은 마디 끝에서만 */
+  /** 하이햇 — 로파이는 하이햇도 어둡고 짧다(6kHz대, 덜 쨍하게) */
   function bHat(t,dest,v,open){
-    bN(t,open?.17:.034,dest,{type:'highpass',f:7400,q:.7,gain:v});
+    bN(t,open?.15:.028,dest,{type:'highpass',f:6100,q:.7,gain:v});
   }
-  /** 베이스 — 톱니를 로우패스로 깎아 둥글게. 필터가 닫히며 감쇠한다 */
-  function bBass(t,dur,dest,f,v){
+  /** 🎹 로즈 피아노 — ★2-오퍼레이터 FM.★ 모듈레이터를 캐리어의 약 2배로
+      두고 ★인덱스를 빠르게 떨구면★ 처음엔 금속성 '땡', 이어 둥근 지속음이
+      남는다. 이게 로즈(전기 피아노) 특유의 소리다. */
+  function bRhodes(t,dur,dest,f,v){
+    const A=ac(); if(!A)return;
+    const car=A.createOscillator(), mod=A.createOscillator();
+    const mg=A.createGain(), g=A.createGain(), lp=A.createBiquadFilter();
+    car.type='sine'; car.frequency.value=f;
+    mod.type='sine'; mod.frequency.value=f*2.01;   /* 살짝 어긋나게 — 미세한 울렁임 */
+    mg.gain.setValueAtTime(f*2.4,t);
+    mg.gain.exponentialRampToValueAtTime(f*.10,t+.26);
+    mod.connect(mg); mg.connect(car.frequency);
+    lp.type='lowpass'; lp.frequency.value=2500; lp.Q.value=.6;
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(v,t+.008);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    car.connect(g); g.connect(lp); lp.connect(dest);
+    car.start(t); car.stop(t+dur+.05); mod.start(t); mod.stop(t+dur+.05);
+  }
+  /** 🎻 업라이트 베이스 — 톱니가 아니라 삼각파(둥글다) + ★지판 슬라이드★ +
+      손가락이 줄을 뜯는 짧은 클릭. 이 클릭이 없으면 그냥 신스 베이스다. */
+  function bUpright(t,dur,dest,f,v,slide){
     const A=ac(); if(!A)return;
     const o=A.createOscillator(), lp=A.createBiquadFilter(), g=A.createGain();
-    o.type='sawtooth'; o.frequency.value=f;
-    lp.type='lowpass'; lp.Q.value=.8;
-    lp.frequency.setValueAtTime(340,t);
-    lp.frequency.exponentialRampToValueAtTime(130,t+dur);
+    o.type='triangle';
+    if(slide){ o.frequency.setValueAtTime(f*.945,t);
+               o.frequency.exponentialRampToValueAtTime(f,t+.07) }
+    else o.frequency.setValueAtTime(f,t);
+    lp.type='lowpass'; lp.Q.value=.7;
+    lp.frequency.setValueAtTime(300,t);
+    lp.frequency.exponentialRampToValueAtTime(115,t+dur);
     g.gain.setValueAtTime(.0001,t);
-    g.gain.exponentialRampToValueAtTime(v,t+.018);
+    g.gain.exponentialRampToValueAtTime(v,t+.014);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
-    o.connect(lp); lp.connect(g); g.connect(dest); o.start(t); o.stop(t+dur+.03);
+    o.connect(lp); lp.connect(g); g.connect(dest);
+    o.start(t); o.stop(t+dur+.03);
+    bN(t,.028,dest,{type:'bandpass',f:920,q:1.3,gain:v*.45});   /* 줄 뜯는 소리 */
+  }
+  /** 💿 바이닐 크래클 — 불규칙한 톡톡. ★규칙적이면 잡음이 아니라 리듬★ 이 된다 */
+  function bCrackle(t,dest,sp){
+    const n=1+((Math.random()*3)|0);
+    for(let i=0;i<n;i++)
+      bN(t+Math.random()*sp*4,.011,dest,
+         {type:'bandpass',f:1600+Math.random()*3400,q:1.5,gain:.016+Math.random()*.026});
+  }
+  /** 🔊 사이드체인 — 킥이 떨어질 때 로즈·멜로디가 살짝 주저앉았다 올라온다.
+      로파이의 '숨 쉬는' 느낌은 대부분 여기서 온다. */
+  function bPump(t,dur){
+    if(!bgm||!bgm.sc)return;
+    [1,3].forEach(i=>{
+      const n=bgm.sc[i].gain;
+      n.cancelScheduledValues(t);
+      n.setValueAtTime(1,t);
+      n.linearRampToValueAtTime(.42,t+.014);
+      n.linearRampToValueAtTime(1,t+dur);
+    });
   }
   /** 한 16분음표 스텝을 ★절대 시각 t★ 에 예약한다.
       n = 0~63 (16분음표 64개 = 4마디) · sp = 16분음표 길이(초) */
   function bgmStep(n,t,sc,sp){
     const A=ac(); if(!A||!bgm)return;
     const L=sc.lay, bar=n>>4, b=n&15;
-    /* ★스윙★ — 박의 뒷당김. 이게 없으면 기계처럼 들린다 */
-    if(b%4===2)t+=sp*.16;
-    const deg=[0,3,4,2][bar%4];                 /* 1마디마다 코드 이동 */
-    const base=sc.root+deg+keyShift();          /* 요일·세션 조성 */
-    const P=i=>PENTA[Math.max(0,Math.min(PENTA.length-1,i))];
-    if(b===0&&L[1]>0){                          /* 패드 — 1마디짜리 화음 */
-      [0,2,4].forEach((o,k)=>{
-        const osc=A.createOscillator(), gg=A.createGain();
-        osc.type='triangle'; osc.frequency.value=P(base+o+5); osc.detune.value=(k-1)*6;
-        const dur=sp*16;
-        gg.gain.setValueAtTime(.0001,t);
-        gg.gain.exponentialRampToValueAtTime(.045,t+dur*.3);
-        gg.gain.exponentialRampToValueAtTime(.0001,t+dur);
-        osc.connect(gg); gg.connect(bgm.g[1]); osc.start(t); osc.stop(t+dur+.05);
+    if(b%4===2)t+=sp*.16;                       /* ★스윙★ — 박의 뒷당김 */
+    const J=JAZZ[bar%4], NJ=JAZZ[(bar+1)%4];
+    const rhy=sc.rhythm!==false;                /* 읽기·휴식은 리듬 없음 */
+
+    /* 💿 바이닐 — 리듬이 있는 장면에서만. 앰비언트 화면엔 잡음이 거슬린다 */
+    if(L[0]>0&&rhy&&b===0)bCrackle(t,bgm.g[0],sp);
+
+    /* 🎹 로즈 코드 — 마디 앞에 한 번, 뒤늦은 박(11)에 가볍게 한 번.
+       길게 깔지 않고 ★끊어 치는★ 것이 로파이 컴핑이다. */
+    if(L[1]>0&&(b===0||(b===11&&bar%2===0))){
+      const full=b===0, dur=full?sp*7:sp*4;
+      J.ch.forEach((semi,k)=>{
+        if(!full&&k===0)return;                 /* 뒷박은 위쪽만 — 가볍게 */
+        bRhodes(t+hz()+k*.006,dur,bgm.g[1],nf(J.r+semi+12),(full?.055:.032)/(1+k*.16));
       });
     }
-    if(L[2]>0&&(b===0||b===6||b===10)){         /* 베이스 — 1 · 2and · 3and */
-      bBass(t,sp*(b===0?3.2:2.2),bgm.g[2],P(base)/4,b===0?.14:.10);
+    /* 🎻 업라이트 — 근음 → 5도 → ★다음 코드로 반음 접근★(워킹의 맛) */
+    if(L[2]>0&&rhy&&(b===0||b===6||b===10)){
+      const semi = b===0?J.r : b===6?J.r+7 : NJ.r-1;
+      bUpright(t+hz(),sp*(b===0?3.4:2.2),bgm.g[2],nf(semi)/2,b===0?.115:.085,b===10);
+    }else if(L[2]>0&&!rhy&&b===0){
+      bUpright(t,sp*14,bgm.g[2],nf(J.r)/2,.06,false);   /* 앰비언트: 길게 한 음만 */
     }
-    if(L[3]>0&&b%2===0&&b!==0&&b!==8){          /* 아르페지오 — 8분, 박머리는 비운다 */
-      const seq=[0,2,4,6,4,2], osc=A.createOscillator(), gg=A.createGain();
-      osc.type='sine'; osc.frequency.value=P(base+seq[(n>>1)%6]+7);
-      const dur=sp*1.6;
-      gg.gain.setValueAtTime(.0001,t);
-      gg.gain.exponentialRampToValueAtTime(.030,t+.012);
-      gg.gain.exponentialRampToValueAtTime(.0001,t+dur);
-      osc.connect(gg); gg.connect(bgm.g[3]); osc.start(t); osc.stop(t+dur+.05);
+    /* 🎹 멜로디 조각 — 드물게, 코드 위쪽 음 하나씩. 멜로디는 ★비어 있어야★ 한다 */
+    if(L[3]>0&&rhy&&(b===6||b===14)&&Math.random()<.65){
+      const m=J.mel[(Math.random()*J.mel.length)|0];
+      bRhodes(t+hz(),sp*3,bgm.g[3],nf(J.r+m+12),.034);
     }
-    if(L[4]>0){                                 /* 킥 1 · 3and(+짝수마디 2and) */
-      if(b===0||b===10||(b===6&&bar%2===1))bKick(t,bgm.g[4],.32);
-      if(b===4||b===12)bClap(t,bgm.g[4],.105);  /* 클랩 2 · 4 */
+    if(L[4]>0&&rhy){                            /* 🥁 킥 1·3and(+짝수마디 2and) */
+      if(b===0||b===10||(b===6&&bar%2===1)){ bKick(t+hz(),bgm.g[4],.30); bPump(t,sp*2.4) }
+      if(b===4||b===12)bBrush(t+hz(),bgm.g[4],.085);   /* 🧹 브러시 2·4 */
     }
-    if(L[5]>0&&b%2===0){                        /* 하이햇 — 8분, 박머리를 강하게 */
-      bHat(t,bgm.g[5],b%4===0?.042:.026,b===14&&bar%2===1);
+    if(L[5]>0&&rhy&&b%2===0){                   /* 하이햇 — 8분, 박머리를 강하게 */
+      bHat(t+hz(),bgm.g[5],b%4===0?.036:.022,b===14&&bar%2===1);
     }
-    /* ★콤보가 높으면 16분으로 쪼갠다★ — 레이어를 키우는 게 아니라 ★밀도★ 를 올린다 */
-    if(L[5]>0&&(bgm.boost||0)>=.7&&b%2===1)bHat(t,bgm.g[5],.015,false);
+    /* ★콤보가 높으면 16분으로 쪼갠다★ — 레이어가 아니라 ★밀도★ 를 올린다 */
+    if(L[5]>0&&rhy&&(bgm.boost||0)>=.7&&b%2===1)bHat(t+hz(),bgm.g[5],.013,false);
   }
   /** 레이어 볼륨 적용 — 장면 프리셋 × ★콤보 부스트★.
       ★위쪽 레이어만 연다★ — 룸톤·패드까지 같이 키우면 그냥 시끄러워질 뿐,
@@ -3107,6 +3322,112 @@ const CAST=(()=>{
     return null;
   }
 
+  /* ── 🎬 상황별 유즈케이스 ──────────────────────────────
+     ★배역마다 '보고 있는 것'이 다르다.★ 같은 정답이라도
+       다람은 ★기록이 몇 개 쌓였는지★ 를 보고,
+       부엉은 ★정답률과 패턴★ 을 보고,
+       모모는 ★얼마나 오래 쉬지 않았는지★ 를 본다.
+     그래서 셋이 한 문제를 두고 서로 다른 말을 한다 — 이 어긋남이
+     "여러 명이 각자 보고 있다" 는 감각을 만든다.
+
+     규칙은 위에서부터 평가해 ★처음 걸리는 하나만★ 쓴다. 전부 터지면 소음이다.
+     cd = 쿨다운(문제 수). 같은 규칙이 연달아 나오지 않게 막는다.
+
+     ★순서 = 급한 순서★ — 위로·지적이 숫자 마일스톤보다 먼저다.
+     "25문제 적립!" 이 3연속 오답을 덮으면, 보고 있지 않다는 뜻이 된다. */
+  const UC=[
+    /* ── ① 급한 것 먼저 — 오답·피로는 마일스톤보다 우선한다 ── */
+    {w:'mo',k:'down',  cd:6,  face:'f-sad',
+     on:c=>!c.ok&&c.wrongRun>=3,
+     L:()=>['괜찮아. 여기서 끊고 가자','셋 틀렸다고 뭐가 되는 건 아냐','천천히 숨 쉬고']},
+    {w:'si',k:'again', cd:6,  face:null,
+     on:c=>!c.ok&&c.tWrong>=2&&c.again,
+     L:()=>['아까 그거 또 틀렸어','해설 안 읽었지','같은 데서 두 번']},
+    {w:'si',k:'easy',  cd:8,  face:null,
+     on:c=>!c.ok&&c.easy,
+     L:()=>['이걸 틀려?','기초에서 미끄러지네','방심했지']},
+    {w:'si',k:'hint',  cd:10, face:null,
+     on:c=>c.hinted&&!c.ok,
+     L:()=>['힌트 쓰고도 틀리냐','둘 중 하나였는데']},
+    {w:'bu',k:'patt',  cd:6,  face:'f-mad',
+     on:c=>!c.ok&&c.tWrong>=2,
+     L:c=>[`${c.t} 에서 ${c.tWrong}번째다. 패턴이야`,`${c.t} 정답률이 낮다. 개념부터`]},
+    {w:'bu',k:'acc',   cd:14, face:'f-mad',
+     on:c=>c.n>=8&&c.acc<.55,
+     L:c=>[`정답률 ${Math.round(c.acc*100)}%. 속도를 늦춰라`,'지금은 양보다 정확도다']},
+    {w:'mo',k:'rush',  cd:12, face:'f-sad',
+     on:c=>c.ms<2500&&c.fastRun>=4,
+     L:()=>['너무 빨라. 읽고는 있어?','조금만 천천히','서두르면 놓쳐']},
+    {w:'mo',k:'night', cd:40, face:'f-sad',
+     on:c=>{const h=new Date().getHours(); return (h>=23||h<4)&&c.n>=10},
+     L:()=>['이 시간이야. 내일 해도 돼','잠도 공부야','...무리하지 마']},
+    {w:'mo',k:'long',  cd:25, face:'f-sad',
+     on:c=>c.n>=30&&c.n%15===0,
+     L:c=>[`${c.n}문제째야. 한 번 쉬어도 돼`,'물 한 잔 하고 와','눈 좀 쉬게 해 줘']},
+
+    /* ── ② 특별한 성취 ────────────────────────────────── */
+    {w:'bu',k:'redeem',cd:5,  face:'f-joy',
+     on:c=>c.ok&&c.redeem,
+     L:()=>['틀렸던 걸 맞혔다. 복습이 먹혔어','이게 통계적으로 가장 값진 정답이다']},
+    {w:'bu',k:'hard',  cd:6,  face:null,
+     on:c=>c.ok&&c.hard,
+     L:()=>['심화를 맞혔다. 유의미해','이 난이도에서 맞히면 실력이다','표본의 질이 올라갔다']},
+    {w:'bu',k:'rebound',cd:12,face:null,
+     on:c=>c.ok&&c.prevWrong>=2,
+     L:()=>['흐름이 돌아왔다','오답 뒤 첫 정답 — 여기서 이어가라']},
+    {w:'mo',k:'afterSos',cd:10,face:null,
+     on:c=>c.hinted&&c.ok,
+     L:()=>['힌트 썼어도 맞힌 건 맞힌 거야','도움 받는 것도 방법이야']},
+
+    /* ── 🐿 다람 — 숫자·기록·수집 ─────────────────────── */
+    {w:'da',k:'best',  cd:20, face:'f-joy',
+     on:c=>c.ok&&c.newBest&&c.combo>=5,
+     L:c=>[`최고 기록 경신! ${c.combo}연속`,`장부 새로 씀 — ${c.combo}연속`,'이거 기록이야, 기록']},
+    {w:'da',k:'round', cd:8,  face:'f-joy',
+     on:c=>c.n>0&&c.n%25===0,
+     L:c=>[`${c.n}문제 적립!`,`오늘 ${c.n}개째 기록`,`${c.n}개 — 딱 떨어지네`]},
+    {w:'da',k:'pt',    cd:12, face:'f-joy',
+     on:c=>c.pt>=100&&Math.floor(c.pt/100)>Math.floor((c.pt-c.gain)/100),
+     L:c=>[`${Math.floor(c.pt/100)*100}포인트 돌파`,'포인트 칸 하나 더 찼어']},
+    {w:'da',k:'half',  cd:30, face:'f-look',
+     on:c=>c.goalLeft===1,
+     L:()=>['오늘 목표 한 문제 남았어','다음 거 풀면 오늘 치 끝']},
+    {w:'da',k:'same',  cd:10, face:'f-look',
+     on:c=>c.sameT>=4,
+     L:c=>[`${c.t} 만 ${c.sameT}개째네`,'같은 칸만 계속 채우는 중']},
+
+    /* ── 🦉 부엉 — 정답률·난이도·패턴 ───────────────────── */
+    {w:'bu',k:'fast',  cd:8,  face:null,
+     on:c=>c.ok&&c.ms<4000&&c.combo>=3,
+     L:c=>[`${(c.ms/1000).toFixed(1)}초. 즉답이군`,'반응 속도가 붙었어','망설임이 사라졌다']},
+    {w:'bu',k:'slow',  cd:10, face:null,
+     on:c=>c.ok&&c.ms>22000,
+     L:()=>['오래 걸렸지만 맞혔다. 그게 중요하다','시간을 쓴 만큼 남는다']},
+
+    /* ── 🐢 모모 — 페이스·피로 ──────────────────────────── */
+
+    /* ── 🐱 시니 — 방심·허세 (서브 마스코트 경유) ───────── */
+    {w:'si',k:'brag',  cd:15, face:null,
+     on:c=>c.ok&&c.combo===7,
+     L:()=>['7연속. 여기서 끊기면 웃긴다','자만할 타이밍이야']}
+  ];
+  const ucAt={};                 /* 규칙별 마지막 발동 문제 번호 */
+  /** 상황에 맞는 규칙 하나를 찾아 그 배역을 내보낸다 */
+  function useCase(c){
+    for(const r of UC){
+      if(ucAt[r.k]!==undefined&&c.n-ucAt[r.k]<r.cd)continue;
+      let hit=false; try{ hit=!!r.on(c) }catch(e){}
+      if(!hit)continue;
+      ucAt[r.k]=c.n;
+      const pool=r.L(c), msg=pool[(Math.random()*pool.length)|0];
+      /* 시니는 조연단이 아니라 서브 마스코트 자리에서 말한다 */
+      if(r.w==='si')MASCOT.subSay(msg,'s-roll',2600);
+      else pop(r.w,'idle',{msg,face:r.face,hold:2800});
+      return true;
+    }
+    return false;
+  }
+
   const seen={};
   function line(w,k){
     const pool=(L[w]&&L[w][k])||L[w].idle, mem=seen[w]||(seen[w]=[]);
@@ -3207,10 +3528,21 @@ const CAST=(()=>{
     },
     /** 관계 상태 — 디버그·문서용 */
     rels(){ const o={}; CH.forEach((a,i)=>CH.slice(i+1).forEach(b=>o[pairKey(a,b)]=rel(a,b))); return o },
+    /** 상황 유즈케이스 — answer() 가 모은 맥락을 넘겨 준다.
+        ★규칙이 하나라도 걸리면 일반 반응은 건너뛴다★(둘 다 나오면 겹쳐서 시끄럽다) */
+    scene(c){
+      if(S.mascot===false||S.crowd===false)return false;
+      return useCase(c||{});
+    },
     /** 문제 하나에 대한 반응 — 전원이 매번 나오면 소음이라 ★확률로 솎는다★ */
     react(kind,ctx){
       ctx=ctx||{};
       if(S.mascot===false||S.crowd===false)return;
+      if(ctx.handled){                  /* 유즈케이스가 이미 말했다 — 기분만 움직인다 */
+        if(kind==='right')tilt(ctx.combo>=5?4:2);
+        else if(kind==='wrong')tilt(ctx.streak>=3?-9:-4);
+        return;
+      }
       if(kind==='right'){
         tilt(ctx.combo>=5?4:2);
         if(ctx.combo>=10){ pop('da','combo',{face:'f-joy'}); setTimeout(()=>pop('bu','combo',{}),420) }
@@ -3359,8 +3691,19 @@ const MASCOT=(()=>{
     clearTimeout(sHideT);
     sHideT=setTimeout(()=>{ t.hidden=true; b.hidden=true; sface(null) },hold||2400);
   }
+  /** 서브 자리에 ★지정한 문구★ 를 띄운다 — 유즈케이스가 쓰는 통로.
+      sub() 는 풀에서 무작위로 고르므로, 상황 맞춤 대사엔 쓸 수 없다. */
+  function subSay(msg,cls,hold){
+    if(S.mascot===false||S.sub===false)return;
+    const b=$('sbody'), t=$('stalk'); if(!b||!t)return;
+    b.hidden=false; t.textContent=msg; t.hidden=false;
+    sface(cls||'s-roll',hold||1400);
+    if(S.sound)FX.snd.sub&&FX.snd.sub(false);
+    clearTimeout(sHideT);
+    sHideT=setTimeout(()=>{ t.hidden=true; b.hidden=true; sface(null) },hold||2400);
+  }
   return {
-    sub,
+    sub, subSay,
     show(){ const b=box(); if(b)b.hidden=(S.mascot===false) },
     /* 화면에 처음 나타날 때 — 맥락에 맞는 인사 */
     greet(){
@@ -3378,21 +3721,22 @@ const MASCOT=(()=>{
     },
     /** 정답 — 콤보·난이도·속도에 따라 표정과 말이 달라진다 */
     right(combo,opt){
-      opt=opt||{};
+      opt=opt||{}; const _uh=!!opt.handled;
       if(combo>=10){ say(pick('combo2'),'joy',1700); sub('combo2',.3,'s-wide') }
       else if(combo>=5){ say(pick('combo')+` (${combo}연속)`,'hype',1500); sub('combo',.22,'s-wide') }
       else if(opt.hard){ say(pick('hard'),'proud',1800); sub('right',.2,'s-roll') }
       else if(opt.fast){ say(pick('right2'),'wink',1400); sub('right',.12,'s-roll') }
       else if(opt.lucky){ say('오 지금 뭔가 좋았어요!','joy',1800); sub('right',.25,'s-wide') }
       else { say(pick('right'),'happy',1400); sub('right',.12,'s-roll') }
-      CAST.react('right',{combo:combo});
+      CAST.react('right',{combo:combo,handled:_uh});
     },
     /** 오답 — 연속으로 틀리면 ★위로 쪽으로 기운다★ */
-    wrong(streak){
+    wrong(streak,handled){
+      const _uh=!!handled;
       if(streak>=3){ say(pick('wrong2'),'worry',3000); sub('care',.35,'s-turn') }
       else if(streak===2){ say(pick('wrong'),'oops',2600); sub('wrong',.3,'s-roll') }
       else { say(pick('wrong'),'care',2600); sub('wrong',.22,'s-roll') }
-      CAST.react('wrong',{streak:streak});
+      CAST.react('wrong',{streak:streak,handled:_uh});
     },
     comboBreak(n){ if(n>=5)sub('break',.55,'s-poke'); CAST.react('break',{n:n}) },
     redeem(){ say(pick('redeem'),'love',1900); sub('praise',.3,'s-turn') },
@@ -3452,6 +3796,44 @@ function autoNext(){
 }
 ['wheel','touchmove','keydown','pointerdown'].forEach(ev=>
   document.addEventListener(ev,()=>{ if(autoT)autoCancel() },{passive:true,capture:true}));
+
+/* ── 🎞 스크롤 진입 리빌 ─────────────────────────────────
+   ★한 번만★ 보여 준다. 스크롤할 때마다 다시 움직이면 멀미가 나고,
+   무엇보다 "읽으려는데 자꾸 움직인다" 가 된다. */
+const _revIO = ('IntersectionObserver' in window)
+  ? new IntersectionObserver(es=>es.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('seen'); _revIO.unobserve(e.target) }
+    }),{rootMargin:'0px 0px -8% 0px',threshold:.06})
+  : null;
+function markReveal(root){
+  if(!_revIO)return;
+  (root||document).querySelectorAll('.box:not(.reveal),.acard:not(.reveal)').forEach(el=>{
+    el.classList.add('reveal'); _revIO.observe(el);
+  });
+}
+/** ★안전장치★ — 화면에 이미 들어와 있는 것은 관찰자를 기다리지 않고 바로 보여 준다.
+    숨어 있던 뷰가 켜지는 순간 IntersectionObserver 가 한 박자 늦으면
+    ★내용이 투명한 채로 남는다★ — 애니메이션을 잃는 것보다 훨씬 나쁜 실패다. */
+function showReveal(root){
+  const list=(root||document).querySelectorAll('.reveal:not(.seen)');
+  list.forEach(el=>{
+    if(el.offsetParent===null)return;
+    const r=el.getBoundingClientRect();
+    if(r.top<innerHeight*1.1)el.classList.add('seen');
+  });
+  /* 최후 보루 — 3초 뒤에도 남아 있으면 그냥 다 보여 준다 */
+  clearTimeout(showReveal._t);
+  showReveal._t=setTimeout(()=>{
+    document.querySelectorAll('.reveal:not(.seen)').forEach(el=>{
+      if(el.offsetParent!==null&&el.getBoundingClientRect().top<innerHeight*1.1)el.classList.add('seen');
+    });
+  },3000);
+}
+/** 숫자가 바뀐 요소만 살짝 튄다 — 전부 튀면 어디가 바뀌었는지 안 보인다 */
+function tick(el){
+  if(!el)return;
+  el.classList.remove('tick'); void el.offsetWidth; el.classList.add('tick');
+}
 
 /* ── 🔓 오디오 잠금 해제 ────────────────────────────────
    브라우저는 ★사용자 조작이 있기 전에는 소리를 내주지 않는다.★
@@ -3625,6 +4007,11 @@ function go(v){
   asStop(); setTimeout(asSync,90);   // 화면이 바뀌면 자동 스크롤은 멈추고, 새 본문 길이로 막대를 다시 판단한다
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  /* 화면이 바뀌었다는 걸 몸이 먼저 안다 — 0.28초 짧게 밀려 올라온다.
+     ★.on 을 붙인 뒤에★ 걸어야 한다(숨어 있을 때 애니메이션을 걸면 그냥 흘러가 버린다) */
+  const _vw=$('v-'+v);
+  if(_vw){ _vw.classList.remove('vshow'); void _vw.offsetWidth; _vw.classList.add('vshow'); }
+  markReveal(_vw); showReveal(_vw);
   window.scrollTo({top:0,behavior:'smooth'});
   if(v==='home')renderHome();
   if(v==='concept')renderConcept();
@@ -3720,6 +4107,7 @@ function updTerrain(){
     return `<button class="tcell${cls}" style="--p:${pct}" data-s="${c.s}" data-t="${esc(c.t)}"`+
       ` title="${esc(c.t)} — ${c.got}/${c.tot} (${pct}%)">${esc(c.t.length>7?c.t.slice(0,6)+'…':c.t)}</button>`;
   }).join('');
+  el.classList.add('stagger');
   el.querySelectorAll('.tcell').forEach(b=>b.onclick=()=>{
     const items=ALLQ.filter(q=>String(q.s)===b.dataset.s&&q.t===b.dataset.t);
     if(items.length)startQuiz(shuffle(items.slice()).slice(0,20),'practice');
@@ -3787,6 +4175,7 @@ function renderAch(){
 function renderHome(){
   const m=CPPG.meta;
   updDash(); renderComeback(); renderAch(); chalToday(); updChal(); updEvo(); updTerrain();
+  markReveal(); showReveal();
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -4321,6 +4710,11 @@ const topicMatch=(q,v)=>HASSEC?q.sec===v:q.t===v;
 let quiz=null, timerId=null;
 /** 콤보: 연속 정답 수. best 는 역대 최고(저장됨) */
 let combo=0, comboMax=0, wrongRun=0;   /* wrongRun — 연속 오답 수(마스코트 반응 강도용) */
+/* ── 🎬 유즈케이스용 세션 신호 ─────────────────────────────
+   조연단이 "무엇을 보고 있는지" 에 맞춰 각자 다른 값을 쓴다.
+   전부 ★이번 세션 한정★ — 저장하지 않는다(무거워지고, 어제 일로 잔소리하게 된다). */
+let ucN=0, ucRight=0, ucFast=0, ucPrevWrong=0, ucLastT=null, ucSameT=0;
+const ucTWrong={}, ucSeen={};
 const MILESTONES={3:'🔥 3연속! 불붙었다',5:'⚡ 5연속! 완벽해요',8:'💎 8연속! 대단합니다',12:'👑 12연속! 합격각',20:'🚀 20연속! 무결점'};
 
 /* 세부 유형 칩 — 선택한 과목에 속한 유형만, 개수와 함께 보여준다 */
@@ -4447,6 +4841,9 @@ function startQuiz(items,mode){
   if(!items.length){alert('출제할 문제가 없습니다.');return}
   if(view!=='quiz')go('quiz');   // 어디서 호출되든 퀴즈 뷰를 보장 (키보드 컨텍스트도 여기에 맞춰짐)
   combo=0; comboMax=0; wrongRun=0; renderQ._m=0; sesPt=0; updPt(); updHeat(); FX.resetBudget();
+  ucN=0; ucRight=0; ucFast=0; ucPrevWrong=0; ucLastT=null; ucSameT=0;
+  Object.keys(ucTWrong).forEach(k=>delete ucTWrong[k]);
+  Object.keys(ucSeen).forEach(k=>delete ucSeen[k]);
   /* ★이 시점엔 quiz 가 아직 이전 세션(또는 null)이다.★ 인자로 받은 mode 를 써야 한다 —
      BGM 이 실제로 울리기 시작하면서 드러난 결함이다(첫 세션에서 TypeError). */
   if(FX.bgm.on())FX.bgm.scene(mode==='practice'?'quiz':'exam');
@@ -4668,7 +5065,29 @@ function answer(v){
   }
   save();
   renderQ();   // 모의고사 모드는 선택만 표시하고 '다음'으로 이동 (답 변경 가능)
-  if(react){celebrate(ok,gain,wasWrong,q); setTimeout(autoNext,900)}
+  if(react){
+    /* ── 맥락을 한 번에 모아 조연단에게 넘긴다 ──
+       각 배역이 이 중 ★자기가 관심 있는 값만★ 본다. */
+    const ms=Date.now()-((quiz&&quiz.qAt)||Date.now());
+    ucN++; if(ok)ucRight++;
+    if(ms<2500)ucFast++; else ucFast=0;
+    if(q.t){ ucSameT = (q.t===ucLastT?ucSameT+1:1); ucLastT=q.t;
+             if(!ok)ucTWrong[q.t]=(ucTWrong[q.t]||0)+1; }
+    const again=!!ucSeen[q.id]; ucSeen[q.id]=1;
+    const today=localDay(), gDone=S.goal.date===today?S.goal.done:0;
+    const cx={ ok, q, t:q.t||'', ms, combo, wrongRun,
+      hard:q.d===3, easy:q.d===1, redeem:ok&&wasWrong, again,
+      n:ucN, acc:ucN?ucRight/ucN:1, gain, pt:sesPt,
+      newBest: ok&&combo>0&&combo>=S.best,
+      tWrong: q.t?(ucTWrong[q.t]||0):0,
+      prevWrong: ucPrevWrong, fastRun: ucFast,
+      hinted: !!(quiz&&quiz.hinted),
+      goalLeft: Math.max(0,S.goal.target-gDone) };
+    ucPrevWrong = ok?0:ucPrevWrong+1;
+    const handled = CAST.scene(cx);
+    celebrate(ok,gain,wasWrong,q,handled);
+    setTimeout(autoNext,900);
+  }
   newAch.forEach((a,i)=>setTimeout(()=>{FX.snd.badge();MASCOT.badge(a.n);FX.milestone(`🏅 ${a.n} 획득!`)},600+i*900));
 }
 
@@ -4677,7 +5096,7 @@ function answer(v){
 const WRONG_MSGS=['오답노트에 담았습니다 — 해설을 확인하세요','여기서 한 번 틀리는 게 시험장에서 안 틀리는 길입니다',
   '헷갈리는 지점을 찾았습니다 — 해설의 오답 이유를 보세요','오답노트에서 다시 만나면 그때 되찾으면 됩니다'];
 /** 정답/오답 순간의 보상 연출 */
-function celebrate(ok,gain,wasWrong,q){
+function celebrate(ok,gain,wasWrong,q,handled){
   const card=$('qCard');
   card.classList.remove('flash-ok','flash-no'); void card.offsetWidth;
   if(ok){
@@ -4700,7 +5119,7 @@ function celebrate(ok,gain,wasWrong,q){
        아무 일도 안 일어나면 "운이 나빴다" 가 아니라 "고장" 으로 읽힌다. */
     if(lucky){ if(FX.budget()){ FX.confetti(70); FX.snd.badge() }
                else { FX.confetti(20); FX.snd.coin(3) } }
-    if(!wasWrong)MASCOT.right(combo,{hard:q&&q.d===3,fast:(Date.now()-((quiz&&quiz.qAt)||0))<6000,lucky});
+    if(!wasWrong)MASCOT.right(combo,{hard:q&&q.d===3,fast:(Date.now()-((quiz&&quiz.qAt)||0))<6000,lucky,handled});
     else if(wasWrong){FX.snd.redeem();MASCOT.redeem();FX.toast('되찾았습니다 ✊  '+(gain?`+${gain} XP`:''),'good',1300)}
     else FX.toast((combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨')+(gain?`  +${gain} XP`:''),'good',1000);
   }else{
@@ -4708,7 +5127,7 @@ function celebrate(ok,gain,wasWrong,q){
     /* 흔들림은 ★짧게 한 번★ 만. 길면 질책처럼 느껴진다(0.34s) */
     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
     setTimeout(()=>card.classList.remove('shake'),400);
-    FX.wrong(); MASCOT.wrong(wrongRun);
+    FX.wrong(); MASCOT.wrong(wrongRun,handled);
     FX.toast(WRONG_MSGS[(Math.random()*WRONG_MSGS.length)|0],'bad',1400);
   }
   setTimeout(()=>card.classList.remove('flash-ok','flash-no'),800);
