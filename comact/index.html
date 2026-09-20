@@ -499,6 +499,46 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 }
 .combo.hot{background:linear-gradient(92deg,var(--wa),#f97316);color:#2b1500;border-color:transparent;animation:comboPulse .45s ease}
 @keyframes comboPulse{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+.combo.near{box-shadow:0 0 0 3px color-mix(in srgb,var(--wa) 26%,transparent)}
+
+/* 음량 팝오버 */
+.volpop{position:fixed;z-index:60;display:flex;align-items:center;gap:9px;
+  padding:9px 13px;border-radius:12px;background:var(--bg2);border:1px solid var(--bd);
+  box-shadow:0 10px 30px rgba(0,0,0,.28);font-size:12.5px;color:var(--tx2)}
+.volpop input[type=range]{width:110px;accent-color:var(--ac)}
+.volpop b{min-width:26px;text-align:right;color:var(--tx);font-variant-numeric:tabular-nums}
+
+/* ═══ 🏆 학습 지속 보상 ═══ */
+/* 홈 상단 한 줄 — 연속일·오늘 목표·레벨 */
+.dash{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-bottom:12px;
+  padding:10px 14px;border:1px solid var(--bd);border-radius:12px;background:var(--bg2);
+  font-size:13px;font-variant-numeric:tabular-nums}
+.dash .d1{display:inline-flex;align-items:center;gap:6px;color:var(--tx2)}
+.dash b{color:var(--tx);font-weight:800}
+.dash i{font-style:normal;color:var(--tx3);font-size:12px}
+.dash .gbar{display:inline-block;width:86px;height:7px;border-radius:99px;background:var(--bd);overflow:hidden;margin-left:2px}
+.dash .gbar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac),var(--ok));transition:width .5s ease}
+/* 복귀 안내 — 경고색을 쓰지 않는다(돌아온 사람을 나무라지 않기) */
+.cbk{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px;
+  padding:10px 14px;border-radius:12px;font-size:13.5px;
+  background:color-mix(in srgb,var(--ac) 12%,transparent);
+  border:1px solid color-mix(in srgb,var(--ac) 32%,transparent)}
+/* 결과 화면 — 숫자 위에 얹는 한 줄 서사 */
+.hilite{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:10px 0 2px}
+.hilite span{padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:700;
+  background:color-mix(in srgb,var(--ok) 14%,transparent);
+  border:1px solid color-mix(in srgb,var(--ok) 30%,transparent);color:var(--ok)}
+.nearmiss{margin:8px 0 2px;font-size:13px;font-weight:700;color:var(--wa)}
+.achwon{margin:8px 0 2px;font-size:13px;font-weight:800;color:var(--ac)}
+/* 배지 목록 */
+.ach{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;
+  border:1px solid var(--bd);margin-bottom:6px;opacity:.55}
+.ach.on{opacity:1;background:color-mix(in srgb,var(--ac) 8%,transparent);
+  border-color:color-mix(in srgb,var(--ac) 30%,transparent)}
+.ach .i{font-size:17px;flex:none}
+.ach b{display:block;font-size:13.5px}
+.ach i{display:block;font-style:normal;font-size:12px;color:var(--tx3);margin-top:1px}
+.ach .dt{margin-left:auto;font-size:11.5px;color:var(--tx3);flex:none}
 
 /* 정답/오답 반응 */
 .ch.right{animation:chPop .42s cubic-bezier(.2,1.4,.4,1)}
@@ -863,6 +903,8 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
     <div class="metas" id="heroMeta"></div>
   </div>
 
+  <div id="comeback"></div>
+  <div class="dash" id="dash" hidden></div>
   <div class="grid g3" style="margin-bottom:14px" id="stats"></div>
 
   <div class="grid g2">
@@ -876,6 +918,12 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
       <div id="selfcheck"></div>
     </div>
   </div>
+
+  <!-- 배지 — 채워 가는 재미. 접어 둔 상태가 기본이라 화면을 어지럽히지 않는다 -->
+  <details class="box" id="achBox" style="margin-top:14px">
+    <summary style="cursor:pointer;font-size:15px;font-weight:800">🏅 배지 <span id="achCnt" style="color:var(--tx3);font-weight:600"></span></summary>
+    <div id="achList" style="margin-top:10px"></div>
+  </details>
 
   <!-- 교재 목차 (sections 가 있는 종목에서만 표시) -->
   <div class="box" id="tocBox" style="margin-top:14px" hidden>
@@ -1124,7 +1172,120 @@ const S=Object.assign(
   {theme:document.documentElement.dataset.theme||'dark',sound:true,best:0,
    cards:{},mark:{},wrong:{},quizzes:[],check:{},view:''},
   JSON.parse(localStorage.getItem(KEY)||'{}'));
+/* 하위 필드까지 안전하게 채운다 — Object.assign 은 최상위 키만 덮으므로
+   나중에 필드를 더 추가해도 구 저장값이 깨지지 않게 여기서 한 번 보정한다. */
+const fillDef=(k,def)=>{S[k]=Object.assign({},def,S[k]||{})};
+fillDef('streak',{cur:0,max:0,lastDate:'',freeze:1,freezeWeek:''});
+fillDef('goal',{target:15,date:'',done:0,hit:false});
+fillDef('xp',{total:0});
+fillDef('visit',{lastSeen:''});
+fillDef('ach',{got:{},redeem:0});      /* got: 배지id→획득일, redeem: 오답 극복 누적 */
+if(!Array.isArray(S.solved))S.solved=[];/* 한 번이라도 맞힌 문항 id — 정복도 계산용 */
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
+
+/* ═══════════ 🏆 학습 지속 보상 ═══════════
+   퀴즈를 푸는 행위에 "오늘도 이어간다 / 채워 간다" 는 감각을 붙인다.
+   원칙 — ① 정답에만 보상(찍고 넘기기 억제) ② 모의고사는 시뮬레이션이므로 연출 없음
+        ③ 기록이 끊겨도 책망하지 않는다 ④ 저장은 localStorage 안에서 끝난다 */
+/** 'YYYY-MM-DD' (기기 로컬 기준 — epoch 나눗셈은 DST·자정 근처에서 어긋난다) */
+const localDay=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+/** 두 날짜 문자열의 일수 차 — 로컬 자정 기준으로 재구성해 계산 */
+function dayDiff(a,b){const[ay,am,ad]=a.split('-').map(Number),[by,bm,bd]=b.split('-').map(Number);
+  return Math.round((new Date(by,bm-1,bd)-new Date(ay,am-1,ad))/86400000)}
+/** 주차 키 — 프리즈를 주 1회만 지급하기 위한 판정용 */
+function weekKey(d=new Date()){const t=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  t.setDate(t.getDate()-((t.getDay()+6)%7)+3);
+  const f=new Date(t.getFullYear(),0,4);
+  return `${t.getFullYear()}-W${String(1+Math.round(((t-f)/86400000-3+((f.getDay()+6)%7))/7)).padStart(2,'0')}`}
+
+const STREAK_MARK={3:'🔥 3일 연속',7:'🔥 일주일 연속',14:'💪 2주 연속',30:'🏅 한 달 연속',50:'👑 50일 연속',100:'🚀 100일 연속'};
+/** 의미 있는 학습(연습 모드 채점·카드 판정)이 일어난 날 하루 한 번 호출 */
+function touchStreak(){
+  const today=localDay(); if(S.streak.lastDate===today)return;
+  const gap=S.streak.lastDate?dayDiff(S.streak.lastDate,today):0;
+  if(!S.streak.lastDate)S.streak.cur=1;
+  else if(gap===1)S.streak.cur+=1;
+  else if(gap===2&&S.streak.freeze>0){   /* 하루 빠졌지만 유예권이 있으면 이어 준다 */
+    S.streak.freeze-=1; S.streak.cur+=1;
+    FX.toast('❄️ 하루 쉬었지만 기록은 이어집니다','good',2000);
+  }else S.streak.cur=1;
+  S.streak.max=Math.max(S.streak.max,S.streak.cur);
+  S.streak.lastDate=today;
+  const wk=weekKey();
+  if(S.streak.freezeWeek!==wk){S.streak.freeze=Math.min(1,S.streak.freeze+1);S.streak.freezeWeek=wk}
+  save(); updDash();
+  if(STREAK_MARK[S.streak.cur])FX.milestone(STREAK_MARK[S.streak.cur]+'!');
+}
+/** 오늘 목표 진행 — 연습 모드에서 처음 채점한 문항 1개당 1 */
+function touchGoal(n){
+  const today=localDay();
+  if(S.goal.date!==today){S.goal.date=today;S.goal.done=0;S.goal.hit=false}
+  S.goal.done+=(n||1);
+  if(!S.goal.hit&&S.goal.done>=S.goal.target){
+    S.goal.hit=true;
+    FX.milestone(`🎯 오늘 목표 ${S.goal.target}문제 달성!`);
+  }
+  save(); updDash();
+}
+/** XP — 정답만 적립하고, 틀렸던 문제를 다시 맞히면 더 준다(복습 유도) */
+function addXp(q,ok,wasWrong){
+  if(!ok)return 0;
+  const base=({1:6,2:10,3:16})[q.d]||10;
+  const g=Math.round(base*(wasWrong?1.5:1));
+  const before=xpLv(S.xp.total);
+  S.xp.total+=g;
+  if(xpLv(S.xp.total)>before)setTimeout(()=>{FX.snd.levelup();FX.milestone(`⚡ Lv.${xpLv(S.xp.total)} 달성!`)},520);
+  return g;
+}
+const xpLv=x=>Math.floor(Math.sqrt(Math.max(0,x)/60))+1; /* 레벨 — 뒤로 갈수록 완만 */
+const lvFloor=l=>Math.pow(l-1,2)*60, lvNext=l=>Math.pow(l,2)*60;
+
+/* ── 🏅 배지 ──────────────────────────────────────────
+   조건은 전부 "이미 저장되는 값"(solved·wrong·cards·check·quizzes)에서 계산한다.
+   have() 가 false 인 배지는 그 종목에 재료가 없다는 뜻이라 목록에서 통째로 감춘다. */
+const SOLVED=new Set(S.solved);
+const solvedIn=f=>ALLQ.filter(q=>SOLVED.has(q.id)&&f(q)).length;
+const totalIn=f=>ALLQ.filter(f).length;
+const pctIn=f=>{const t=totalIn(f);return t?solvedIn(f)/t*100:0};
+const ACH=[
+  {id:'first',    n:'첫 정답',        d:'문제를 처음 맞혔다',                 ok:()=>S.solved.length>=1},
+  {id:'s50',      n:'50문제 정복',    d:'서로 다른 문제 50개를 맞혔다',       ok:()=>S.solved.length>=50},
+  {id:'s200',     n:'200문제 정복',   d:'서로 다른 문제 200개를 맞혔다',      ok:()=>S.solved.length>=200},
+  {id:'s500',     n:'500문제 정복',   d:'서로 다른 문제 500개를 맞혔다',      ok:()=>S.solved.length>=500,have:()=>ALLQ.length>=500},
+  {id:'half',     n:'절반 돌파',      d:'전체 문제의 50%를 맞혔다',           ok:()=>pctIn(()=>true)>=50},
+  {id:'allq',     n:'문제은행 완주',  d:'전체 문제를 한 번씩 다 맞혔다',      ok:()=>pctIn(()=>true)>=100},
+  {id:'hard30',   n:'심화 입문',      d:'심화 문제의 30%를 맞혔다',           ok:()=>pctIn(q=>q.d===3)>=30,have:()=>totalIn(q=>q.d===3)>=10},
+  {id:'hard70',   n:'심화 정복',      d:'심화 문제의 70%를 맞혔다',           ok:()=>pctIn(q=>q.d===3)>=70,have:()=>totalIn(q=>q.d===3)>=10},
+  {id:'combo10',  n:'10연속',         d:'한 세션에서 10문제 연속 정답',        ok:()=>S.best>=10},
+  {id:'combo20',  n:'20연속',         d:'한 세션에서 20문제 연속 정답',        ok:()=>S.best>=20},
+  {id:'redeem1',  n:'설욕',           d:'틀렸던 문제를 다시 맞혔다',           ok:()=>S.ach.redeem>=1},
+  {id:'redeem10', n:'오답 사냥꾼',    d:'틀렸던 문제 10개를 되찾았다',         ok:()=>S.ach.redeem>=10},
+  {id:'redeem50', n:'집요함',         d:'틀렸던 문제 50개를 되찾았다',         ok:()=>S.ach.redeem>=50},
+  {id:'clean',    n:'클린 노트',      d:'오답노트를 모두 비웠다',              ok:()=>S.solved.length>=30&&Object.keys(S.wrong).length===0},
+  {id:'st7',      n:'일주일 개근',    d:'7일 연속 학습',                       ok:()=>S.streak.max>=7},
+  {id:'st30',     n:'한 달 개근',     d:'30일 연속 학습',                      ok:()=>S.streak.max>=30},
+  {id:'lv5',      n:'Lv.5 도달',      d:'누적 경험치로 레벨 5 달성',           ok:()=>xpLv(S.xp.total)>=5},
+  {id:'lv10',     n:'Lv.10 도달',     d:'누적 경험치로 레벨 10 달성',          ok:()=>xpLv(S.xp.total)>=10},
+  {id:'pass',     n:'합격선 돌파',    d:'모의고사에서 합격 판정을 받았다',     ok:()=>S.quizzes.some(x=>x.mode==='exam'&&x.pass)},
+  {id:'cards',    n:'카드 한 바퀴',   d:'암기카드를 모두 분류했다',            ok:()=>CPPG.cards.length>0&&CPPG.cards.filter((c,i)=>S.cards['c'+i]).length>=CPPG.cards.length,have:()=>CPPG.cards.length>0},
+  {id:'check',    n:'자가진단 완주',  d:'자가진단 항목을 모두 체크했다',       ok:()=>CPPG.selfcheck&&CPPG.selfcheck.length>0&&CPPG.selfcheck.filter((c,i)=>S.check['k'+i]).length>=CPPG.selfcheck.length,have:()=>!!(CPPG.selfcheck&&CPPG.selfcheck.length)},
+];
+/* 과목 마스터 — 종목마다 과목 수가 달라 목록에서 자동 생성한다.
+   ★ 이 시점에는 subShort·LABEL 이 아직 정의되기 전이라 subjects 의 원본 값만 쓴다. */
+CPPG.subjects.forEach(s=>ACH.push({id:'sub_'+s.id,n:(s.short||s.name)+' 마스터',
+  d:(s.name||'')+' 문제의 80%를 맞혔다',ok:()=>pctIn(q=>q.s===s.id)>=80,have:()=>totalIn(q=>q.s===s.id)>=10}));
+const achList=()=>ACH.filter(a=>!a.have||a.have());
+/** 획득 검사 — 새로 딴 배지만 돌려준다(중복 축하 방지) */
+function checkAch(){
+  const got=[];
+  achList().forEach(a=>{
+    if(S.ach.got[a.id])return;
+    let ok=false; try{ok=a.ok()}catch(e){}
+    if(ok){S.ach.got[a.id]=localDay(); got.push(a)}
+  });
+  if(got.length)save();
+  return got;
+}
 
 const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
 /* 자격증마다 구분 단위가 다르다 — 필기 종목은 '과목', AWS 같은 종목은 '영역' */
@@ -1205,26 +1366,110 @@ const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const FX=(()=>{
   const layer=()=>document.getElementById('fx');
   const PAL=['#5b9dff','#7c5cff','#34d399','#fbbf24','#fb7185','#22d3ee'];
-  let actx=null;
+  /* ── 🔊 사운드 엔진 ────────────────────────────────────────
+     외부 음원 파일 없이 WebAudio 로 전부 합성한다(정적 사이트라 의존성 0).
+     설계 요점
+       · 마스터 체인에 ★컴프레서 + 리버브★ 를 물려 소리에 공간과 여유를 준다.
+         맨 오실레이터 소리는 "삑" 하고 끝나 싸구려로 들린다.
+       · 음은 ★펜타토닉(도레미솔라)★ 에서만 고른다. 어떤 조합도 불협하지 않아
+         연속으로 울려도 귀가 피로해지지 않는다.
+       · 같은 사건이라도 ★미세하게 변주★(디튠·음색)한다. 완전히 같은 소리가
+         반복되면 그 순간부터 소음으로 인지된다.
+       · UI 음은 아주 작게(0.03~0.06), 보상 음은 크게 — ★대비★ 가 보상감을 만든다. */
+  let actx=null, master=null, verb=null, dry=null;
+  /* C 메이저 펜타토닉 3옥타브 — 인덱스가 올라갈수록 음이 높아진다(상승감) */
+  const PENTA=[261.63,293.66,329.63,392.00,440.00,
+               523.25,587.33,659.25,783.99,880.00,
+               1046.50,1174.66,1318.51,1567.98,1760.00];
+  const vol=()=>(S.vol==null?0.7:S.vol);
 
-  /** WebAudio 짧은 톤. 사용자 제스처 이후에만 컨텍스트가 열린다. */
+  /* 잔향 임펄스 — 파일 없이 합성한다.
+     ★pulse16(본인 저장소)의 makeIR 방식을 가져왔다★ —
+     ① 프리딜레이로 직접음과 잔향 사이를 띄우고
+     ② 1-pole 저역통과(damp)로 고역이 먼저 죽게 해
+     그냥 감쇠시킨 노이즈보다 훨씬 자연스러운 공간이 만들어진다. */
+  function makeIR(A,sec,decay,pre,damp){
+    const rate=A.sampleRate, len=Math.floor(rate*sec), pd=Math.floor(rate*pre);
+    const buf=A.createBuffer(2,len+pd,rate);
+    for(let ch=0;ch<2;ch++){
+      const d=buf.getChannelData(ch); let lp=0;
+      for(let i=0;i<len;i++){
+        const t=i/len, w=Math.random()*2-1;
+        lp+=(w-lp)*damp; d[pd+i]=lp*Math.pow(1-t,decay)*(1-t);
+      }
+    }
+    return buf;
+  }
+  function ac(){
+    if(actx)return actx;
+    try{
+      actx=new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});
+      master=actx.createGain(); master.gain.value=vol();
+      /* 20Hz 아래 럼블 컷 — 들리지도 않으면서 헤드룸만 먹는 성분을 버린다 */
+      const rumble=actx.createBiquadFilter();
+      rumble.type='highpass'; rumble.frequency.value=22; rumble.Q.value=0.6;
+      const comp=actx.createDynamicsCompressor();   /* 여러 음이 겹쳐도 찢어지지 않게 */
+      comp.threshold.value=-18; comp.ratio.value=6; comp.attack.value=0.003; comp.release.value=0.2;
+      const lim=actx.createDynamicsCompressor();    /* 마지막 안전장치 */
+      lim.threshold.value=-2; lim.knee.value=1; lim.ratio.value=16;
+      lim.attack.value=0.004; lim.release.value=0.12;
+      verb=actx.createConvolver();
+      verb.buffer=makeIR(actx,1.5,2.4,0.008,0.38);  /* room 계열 — 짧고 밝게 */
+      const wet=actx.createGain(); wet.gain.value=0.2;
+      const revHP=actx.createBiquadFilter();        /* 잔향의 저역은 잘라야 탁해지지 않는다 */
+      revHP.type='highpass'; revHP.frequency.value=320;
+      dry=actx.createGain(); dry.gain.value=1;
+      dry.connect(rumble);
+      verb.connect(revHP); revHP.connect(wet); wet.connect(rumble);
+      rumble.connect(comp); comp.connect(lim); lim.connect(master);
+      master.connect(actx.destination);
+    }catch(e){actx=null}
+    return actx;
+  }
+  /** 음 하나 — ADSR 로 부드럽게 열고 닫는다(클릭 잡음 방지) */
+  function voice(f,o={}){
+    const A=ac(); if(!A)return;
+    const t0=A.currentTime+(o.at||0), dur=o.dur||0.3;
+    const osc=A.createOscillator(), g=A.createGain();
+    osc.type=o.type||'sine';
+    osc.frequency.setValueAtTime(f,t0);
+    if(o.glide)osc.frequency.exponentialRampToValueAtTime(Math.max(20,o.glide),t0+dur);
+    osc.detune.value=(o.detune||0)+(Math.random()*8-4);   /* 미세 변주 */
+    const peak=Math.max(0.0005,(o.gain==null?0.12:o.gain));
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(peak,t0+(o.atk||0.008));
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    let node=osc;
+    /* ★주의★ lowpass·highpass 의 Q 는 ★dB 단위★ 다(bandpass 만 선형).
+       선형 Q 를 의도하면 20*log10(Q) 로 변환해야 한다 — 기본값을 그대로 두면
+       버터워스에 가깝다. (pulse16 audio-review 에서 실측으로 확인된 사항) */
+    if(o.lp){const f2=A.createBiquadFilter();f2.type='lowpass';f2.frequency.value=o.lp;node.connect(f2);node=f2}
+    node.connect(g);
+    g.connect(dry); if(o.wet!==false)g.connect(verb);
+    osc.start(t0); osc.stop(t0+dur+0.03);
+  }
+  /** 짧은 노이즈 — 틱·쉭 같은 질감용 */
+  function noise(o={}){
+    const A=ac(); if(!A)return;
+    const dur=o.dur||0.06, t0=A.currentTime+(o.at||0);
+    const len=Math.floor(A.sampleRate*dur), buf=A.createBuffer(1,len,A.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,o.decay||3);
+    const src=A.createBufferSource(); src.buffer=buf;
+    const bp=A.createBiquadFilter(); bp.type=o.type||'bandpass';
+    bp.frequency.value=o.f||2200; bp.Q.value=o.q||1.2;
+    const g=A.createGain(); g.gain.value=o.gain==null?0.06:o.gain;
+    src.connect(bp); bp.connect(g); g.connect(dry); if(o.wet)g.connect(verb);
+    src.start(t0);
+  }
+  /** 기존 호출부 호환 — freqs 배열을 순차 재생 */
   function tone(freqs,dur,type,gain){
     if(!S.sound)return;
-    try{
-      actx=actx||new (window.AudioContext||window.webkitAudioContext)();
-      if(actx.state==='suspended')actx.resume();
-      freqs.forEach((f,i)=>{
-        const o=actx.createOscillator(),g=actx.createGain();
-        const t0=actx.currentTime+i*0.075;
-        o.type=type||'sine'; o.frequency.setValueAtTime(f,t0);
-        g.gain.setValueAtTime(0,t0);
-        g.gain.linearRampToValueAtTime(gain||0.14,t0+0.012);
-        g.gain.exponentialRampToValueAtTime(0.0001,t0+(dur||0.18));
-        o.connect(g); g.connect(actx.destination);
-        o.start(t0); o.stop(t0+(dur||0.18)+0.02);
-      });
-    }catch(e){/* 오디오 불가 환경은 무시 */}
+    try{freqs.forEach((f,i)=>voice(f,{at:i*0.075,dur:dur||0.18,type:type||'sine',gain:gain||0.14}))}
+    catch(e){}
   }
+  /** 펜타토닉에서 단계별로 고르기 — 콤보가 오를수록 음이 올라간다 */
+  const step=i=>PENTA[Math.max(0,Math.min(PENTA.length-1,i))];
 
   /** 화면 상단에서 쏟아지는 색종이 */
   function confetti(n,originY){
@@ -1287,35 +1532,92 @@ const FX=(()=>{
     g.classList.remove('on'); void g.offsetWidth; g.classList.add('on');
   }
 
+  /* ── 사건별 음향 설계 ──────────────────────────────────────
+     ★기대 → 해소★ 구조를 소리로 만든다.
+     콤보가 쌓일수록 음이 한 칸씩 올라가 "다음 음이 궁금해지는" 상태를 만들고,
+     마일스톤에서 그 긴장을 화음으로 터뜨린다. */
+  const SND={
+    /** 정답 — 콤보 단계만큼 펜타토닉을 타고 올라간다 */
+    right(combo,opt={}){
+      if(!S.sound)return;
+      const c=Math.min(combo||1,9), i=3+c;             /* 상승 인덱스 */
+      const up=1+c*0.045;                              /* 콤보가 쌓이면 조금씩 더 크게 */
+      voice(step(i),{dur:.28,type:'triangle',gain:.11*up,atk:.006});
+      voice(step(i+2),{at:.055,dur:.34,type:'sine',gain:.075*up});
+      if(opt.hard)voice(step(i+4),{at:.11,dur:.4,type:'sine',gain:.06});  /* 심화 문제 추가 음 */
+      noise({f:5200,q:2,gain:.025,dur:.04});          /* 얇은 반짝임 */
+    },
+    /** 오답 — 실패 낙인이 아니라 ★중립적인 노크★. 낮고 짧고 부드럽게 */
+    wrong(){
+      if(!S.sound)return;
+      voice(220,{dur:.18,type:'sine',gain:.07,lp:900});
+      voice(174.61,{at:.07,dur:.26,type:'sine',gain:.055,lp:700});
+    },
+    /** 틀렸던 문제를 되찾음 — 아래에서 위로 회복하는 3음 */
+    redeem(){
+      if(!S.sound)return;
+      [0,.07,.14].forEach((t,k)=>voice(step(4+k*2),{at:t,dur:.32,type:'triangle',gain:.1}));
+      noise({f:3800,q:1.5,gain:.03,dur:.06,wet:true});
+    },
+    /** 콤보 마일스톤 — 화음으로 터뜨린다 */
+    milestone(){
+      if(!S.sound)return;
+      [5,7,9,12].forEach((i,k)=>voice(step(i),{at:k*.045,dur:.5,type:'triangle',gain:.1}));
+      voice(step(10),{at:.18,dur:.7,type:'sine',gain:.07});
+      noise({f:6000,q:.8,gain:.04,dur:.25,decay:1.6,wet:true});
+    },
+    /** 배지 획득 — 맑은 벨 */
+    badge(){
+      if(!S.sound)return;
+      [9,11,13].forEach((i,k)=>voice(step(i),{at:k*.08,dur:.9,type:'sine',gain:.09}));
+      noise({f:7500,q:1,gain:.03,dur:.3,decay:2,wet:true});
+    },
+    /** 레벨업 — 짧은 팡파레 */
+    levelup(){
+      if(!S.sound)return;
+      [5,7,9,10,12].forEach((i,k)=>voice(step(i),{at:k*.07,dur:.55,type:'triangle',gain:.1}));
+    },
+    /** 세션 종료 */
+    finish(pass){
+      if(!S.sound)return;
+      if(pass)[5,7,9,12,14].forEach((i,k)=>voice(step(i),{at:k*.075,dur:.8,type:'triangle',gain:.11}));
+      else{voice(196,{dur:.5,type:'sine',gain:.08,lp:800});voice(164.81,{at:.12,dur:.7,type:'sine',gain:.07,lp:700})}
+    },
+    /* ── UI 음 — 존재를 의식하지 못할 만큼 작게. 대비가 보상감을 만든다 ── */
+    tap(){ if(S.sound)noise({f:2500,q:2.2,gain:.075,dur:.05,decay:3.2,wet:false}) },
+    nav(){ if(S.sound){voice(step(6),{dur:.13,type:'sine',gain:.06,wet:false});
+                       voice(step(8),{at:.045,dur:.15,type:'sine',gain:.048,wet:false})} },
+    on(){  if(S.sound)voice(step(8),{dur:.14,type:'triangle',gain:.06}) },
+    off(){ if(S.sound)voice(step(4),{dur:.16,type:'sine',gain:.05,lp:1400}) },
+    flip(){ if(S.sound){noise({f:1800,q:1.6,gain:.03,dur:.05});voice(step(7),{at:.02,dur:.16,type:'sine',gain:.05})} },
+    /** 콤보 1개 전 — 다음 음을 기대하게 만드는 ★예고음★ */
+    tease(){ if(S.sound)voice(step(11),{dur:.12,type:'sine',gain:.035,wet:false}) },
+    setVol(v){ if(master)master.gain.value=v },
+    ctx(){ return actx }
+  };
+
   return {
-    right(el,combo){
+    right(el,combo,opt){
       glow('color-mix(in srgb, var(--ok) 45%, transparent)');
       burst(el,14);
-      // 콤보가 높을수록 음이 올라간다 → 상승감
-      const base=[523.25,659.25,783.99];      // C5 E5 G5
-      const step=Math.min(combo||1,8);
-      tone(base.map(f=>f*Math.pow(1.0595,(step-1)*2)),0.2,'triangle',0.13);
+      SND.right(combo,opt||{});
       if(combo>=3)confetti(Math.min(14+combo*4,60));
     },
     wrong(){
       glow('color-mix(in srgb, var(--no) 40%, transparent)');
-      tone([196,155],0.22,'sine',0.09);       // 낮은 2음
+      SND.wrong();
     },
     milestone(msg){
       toast(msg,'hype',2200);
       confetti(70);
-      tone([523.25,659.25,783.99,1046.5],0.26,'triangle',0.15);
+      SND.milestone();
     },
     finish(pass,pct){
-      if(pass){
-        confetti(pct>=90?170:110);
-        tone([523.25,659.25,783.99,1046.5,1318.5],0.3,'triangle',0.16);
-      }else{
-        tone([392,311],0.3,'sine',0.1);
-      }
+      if(pass)confetti(pct>=90?170:110);
+      SND.finish(pass);
     },
-    card(el){ burst(el,10); tone([659.25,880],0.14,'triangle',0.1); },
-    toast, confetti, tone
+    card(el){ burst(el,10); SND.flip(); },
+    toast, confetti, tone, snd:SND
   };
 })();
 
@@ -1599,17 +1901,55 @@ const EX=(()=>{
   return {stamp,stampH,dl,w,pad,txtTable,de,docTable,saveTxt,saveDoc,saveCsv,saveXlsx};
 })();
 
+/* ═══════════ 🔊 UI 사운드 전역 배선 ═══════════
+   개별 버튼마다 호출을 심으면 유지보수가 안 된다 — ★문서 레벨에서 한 번★ 잡는다.
+   칩(필터 토글)은 켜짐/꺼짐 음을 달리해 상태 변화가 귀로도 들리게 한다. */
+document.addEventListener('pointerdown',e=>{
+  if(!S.sound)return;
+  const t=e.target.closest('button,.chip,summary,a.tocitem,label');
+  if(!t)return;
+  if(t.matches('nav button'))return;            /* 화면 전환은 go() 가 따로 낸다 */
+  if(t.classList.contains('chip')){
+    /* 눌린 뒤의 상태를 알 수 없으므로 현재 상태의 ★반대★ 를 낸다 */
+    (t.classList.contains('on')?FX.snd.off:FX.snd.on)();
+  }else FX.snd.tap();
+},true);
+
 /* ═══════════ 효과음 · 단축키 도움말 ═══════════ */
 function applySound(){
   $('sound').textContent=S.sound?'🔊':'🔇';
-  $('sound').title=(S.sound?'효과음 끄기':'효과음 켜기')+' (S)';
+  $('sound').title=(S.sound?'효과음 끄기':'효과음 켜기')+' (S) · 길게 누르면 음량';
+  FX.snd.setVol(S.sound?(S.vol==null?0.7:S.vol):0);
 }
 function toggleSound(){
   S.sound=!S.sound; save(); applySound();
-  if(S.sound)FX.tone([659.25,880],0.12,'triangle',0.1);
+  if(S.sound)FX.snd.on();
   FX.toast(S.sound?'🔊 효과음 켬':'🔇 효과음 끔','good',1100);
 }
-$('sound').onclick=toggleSound;
+/* 음량 — 사람마다 적정 음량이 다르다. 작게 쓰고 싶은 사람에게 끄기 말고 ★줄이기★ 를 준다 */
+function volPop(){
+  const old=$('volPop'); if(old){old.remove();return}
+  const b=$('sound').getBoundingClientRect();
+  const d=document.createElement('div');
+  d.id='volPop'; d.className='volpop';
+  d.style.top=(b.bottom+8)+'px'; d.style.right=Math.max(8,window.innerWidth-b.right)+'px';
+  d.innerHTML=`<span>음량</span><input type="range" min="0" max="100" value="${Math.round((S.vol==null?0.7:S.vol)*100)}" id="volR"><b id="volN">${Math.round((S.vol==null?0.7:S.vol)*100)}</b>`;
+  document.body.appendChild(d);
+  const r=$('volR');
+  r.oninput=()=>{S.vol=r.value/100;$('volN').textContent=r.value;FX.snd.setVol(S.vol)};
+  r.onchange=()=>{save();FX.snd.on()};          /* 놓는 순간 새 음량으로 한 번 들려 준다 */
+  setTimeout(()=>document.addEventListener('pointerdown',function h(e){
+    if(!d.contains(e.target)&&e.target!==$('sound')){d.remove();document.removeEventListener('pointerdown',h,true)}
+  },true),0);
+}
+let _volT=null, _volFired=false;
+/* 길게 누르면 음량, 짧게 누르면 켜기/끄기.
+   롱프레스가 발동한 뒤에는 뒤따라오는 click 을 삼켜야 토글까지 같이 되지 않는다. */
+$('sound').onclick=()=>{ if(_volFired){_volFired=false;return} toggleSound() };
+$('sound').addEventListener('pointerdown',()=>{_volFired=false;_volT=setTimeout(()=>{_volT=null;_volFired=true;volPop()},450)});
+['pointerup','pointerleave','pointercancel'].forEach(ev=>
+  $('sound').addEventListener(ev,()=>{if(_volT){clearTimeout(_volT);_volT=null}}));
+$('sound').addEventListener('contextmenu',e=>{e.preventDefault();_volFired=true;volPop()});
 applySound();
 
 const helpOpen=()=>$('kbHelp').classList.contains('on');
@@ -1621,6 +1961,7 @@ $('kbHelp').onclick=e=>{ if(e.target===$('kbHelp'))toggleHelp(false) };
 /* ═══════════ 뷰 전환 ═══════════ */
 let view='home';
 function go(v){
+  if(view!==v)FX.snd.nav();          // 화면 전환음 — 아주 작게, 이동했다는 감각만
   view=v;
   asStop(); setTimeout(asSync,90);   // 화면이 바뀌면 자동 스크롤은 멈추고, 새 본문 길이로 막대를 다시 판단한다
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
@@ -1659,8 +2000,54 @@ function applyBrand(){
   $('lblBank').textContent=`${UNIT} × 유형별 보유 문항 수 — 셀을 누르면 그 조합으로 바로 출제됩니다.`;
 }
 
+/** 상단 한 줄 — 연속 학습일 · 오늘 목표 · 레벨. 아무 기록도 없으면 감춘다(첫 방문은 깔끔하게) */
+function updDash(){
+  const el=$('dash'); if(!el)return;
+  const today=localDay();
+  const done=S.goal.date===today?S.goal.done:0;
+  const pct=Math.min(100,Math.round(done/Math.max(1,S.goal.target)*100));
+  if(!S.streak.cur&&!done&&!S.xp.total){el.hidden=true;return}
+  el.hidden=false;
+  const lv=xpLv(S.xp.total), cur=S.xp.total-lvFloor(lv), need=lvNext(lv)-lvFloor(lv);
+  el.innerHTML=
+    `<span class="d1">🔥 <b>${S.streak.cur}일</b> 연속${S.streak.max>S.streak.cur?` <i>· 최고 ${S.streak.max}일</i>`:''}`+
+      `${S.streak.freeze>0?' <i>· ❄️ 유예 1</i>':''}</span>`+
+    `<span class="d1">🎯 오늘 <b>${done}/${S.goal.target}</b>`+
+      `<span class="gbar"><i style="width:${pct}%"></i></span>${S.goal.hit?' <i>달성!</i>':''}</span>`+
+    `<span class="d1">⚡ <b>Lv.${lv}</b> <i>· ${cur}/${need} XP</i></span>`;
+}
+/** 며칠 쉬고 돌아온 사람에게 — 책망 대신 가장 가벼운 재시작 경로를 준다 */
+function renderComeback(){
+  const box=$('comeback'); if(!box)return;
+  const today=localDay(), last=S.visit.lastSeen;
+  box.innerHTML='';
+  if(last&&last!==today){
+    const gap=dayDiff(last,today);
+    let msg='';
+    if(gap>=2&&gap<=3)msg=`${gap}일 만이네요. 오늘은 5문제만 가볍게 풀어 볼까요?`;
+    else if(gap>=4&&gap<=13)msg=`${gap}일 만입니다. 오답노트부터 정리하면 금방 감이 돌아옵니다.`;
+    else if(gap>=14)msg=`오랜만입니다. 연속 기록은 다시 시작하지만 풀어 둔 문제와 오답노트는 그대로 있습니다.`;
+    if(msg)box.innerHTML=`<div class="cbk"><span>👋 ${esc(msg)}</span><button class="chip" id="cbkX">닫기</button></div>`;
+  }
+  S.visit.lastSeen=today; save();
+  const x=$('cbkX'); if(x)x.onclick=()=>box.innerHTML='';
+}
+/** 배지 목록 — 못 딴 것도 조건과 함께 보여 줘야 "채우고 싶다" 가 생긴다 */
+function renderAch(){
+  const box=$('achList'); if(!box)return;
+  const list=achList();
+  const got=list.filter(a=>S.ach.got[a.id]).length;
+  $('achCnt').textContent=`${got} / ${list.length}`;
+  box.innerHTML=list.map(a=>{
+    const on=!!S.ach.got[a.id];
+    return `<div class="ach ${on?'on':''}"><span class="i">${on?'🏅':'🔒'}</span>`+
+      `<span><b>${esc(a.n)}</b><i>${esc(a.d)}</i></span>`+
+      `${on?`<span class="dt">${esc(S.ach.got[a.id])}</span>`:''}</div>`;
+  }).join('');
+}
 function renderHome(){
   const m=CPPG.meta;
+  updDash(); renderComeback(); renderAch();
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -2486,8 +2873,9 @@ function answer(v){
   quiz.ans[quiz.i]=v;
   if(q.type==='fill'&&v.gaveup)v.self=false;
   const ok=isRight(q,v);
+  const wasWrong=!!S.wrong[q.id];              // 틀렸던 문제인가 — 되찾았을 때 더 보상한다
   if(!ok){S.wrong[q.id]=(S.wrong[q.id]||0)+1}
-  else if(S.wrong[q.id]){ delete S.wrong[q.id] }
+  else if(S.wrong[q.id]){ delete S.wrong[q.id]; S.ach.redeem++; }
 
   // 콤보·연출은 즉시 채점(연습) 모드에서만.
   // 모의고사에서 정답 여부를 티내면 시험 시뮬레이션이 깨진다.
@@ -2496,36 +2884,64 @@ function answer(v){
     if(ok){ combo++; comboMax=Math.max(comboMax,combo); if(combo>S.best)S.best=combo; }
     else combo=0;
   }
+  /* 정복도·경험치·연속학습 — 처음 채점한 문항에만 반영한다(다시 풀기로 중복 적립 금지) */
+  let gain=0, newAch=[];
+  if(first){
+    if(ok&&!SOLVED.has(q.id)){SOLVED.add(q.id);S.solved.push(q.id)}
+    if(quiz.mode==='practice'){
+      gain=addXp(q,ok,wasWrong);
+      quiz.gain=(quiz.gain||0)+gain;
+      if(ok)quiz.redeemed=(quiz.redeemed||0)+(wasWrong?1:0);
+      touchStreak(); touchGoal(1);
+    }
+    newAch=checkAch();
+    /* 모의고사 중에는 배지 토스트를 띄우지 않고 결과 화면에서 몰아 보여준다 */
+    if(newAch.length&&quiz.mode!=='practice'){quiz.pendAch=(quiz.pendAch||[]).concat(newAch);newAch=[]}
+  }
   save();
   renderQ();   // 모의고사 모드는 선택만 표시하고 '다음'으로 이동 (답 변경 가능)
-  if(react)celebrate(ok);
+  if(react)celebrate(ok,gain,wasWrong);
+  newAch.forEach((a,i)=>setTimeout(()=>{FX.snd.badge();FX.milestone(`🏅 ${a.n} 획득!`)},600+i*900));
 }
 
+/* 오답 문구는 돌려 쓴다 — 같은 문장이 반복되면 "실패 도장"처럼 느껴진다.
+   틀린 것을 책망하지 않고 '다음 행동'을 가리키는 쪽으로 쓴다. */
+const WRONG_MSGS=['오답노트에 담았습니다 — 해설을 확인하세요','여기서 한 번 틀리는 게 시험장에서 안 틀리는 길입니다',
+  '헷갈리는 지점을 찾았습니다 — 해설의 오답 이유를 보세요','오답노트에서 다시 만나면 그때 되찾으면 됩니다'];
 /** 정답/오답 순간의 보상 연출 */
-function celebrate(ok){
+function celebrate(ok,gain,wasWrong){
   const card=$('qCard');
   card.classList.remove('flash-ok','flash-no'); void card.offsetWidth;
   if(ok){
     card.classList.add('flash-ok');
     FX.right(card.querySelector('.ch.right')||card, combo);
     const m=MILESTONES[combo];
+    /* 알림이 겹치면 산만해진다 — 콤보 마일스톤 > 오답 되찾기 > 일반 정답 순으로 하나만 */
     if(m)FX.milestone(m);
-    else FX.toast(combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨','good',1000);
+    else if(wasWrong){FX.snd.redeem();FX.toast('되찾았습니다 ✊  '+(gain?`+${gain} XP`:''),'good',1300)}
+    else FX.toast((combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨')+(gain?`  +${gain} XP`:''),'good',1000);
   }else{
     card.classList.add('flash-no');
     FX.wrong();
-    FX.toast('아쉬워요 — 해설을 확인하세요','bad',1300);
+    FX.toast(WRONG_MSGS[(Math.random()*WRONG_MSGS.length)|0],'bad',1400);
   }
   setTimeout(()=>card.classList.remove('flash-ok','flash-no'),800);
   updCombo();
 }
+/** 다음 마일스톤까지 몇 개 남았는지 — 한 개 앞이면 예고해 목표 구배를 만든다 */
+const nextMile=c=>Object.keys(MILESTONES).map(Number).sort((a,b)=>a-b).find(n=>n>c);
 function updCombo(){
   const el=$('qCombo'); if(!el)return;
   if(quiz&&quiz.mode==='practice'&&combo>0){
     el.style.display='';
-    el.textContent=`🔥 ${combo}연속`+(S.best>combo?`  ·  최고 ${S.best}`:'');
-    el.classList.remove('hot'); void el.offsetWidth;
+    const nx=nextMile(combo);
+    const near=nx&&nx-combo===1?`  ·  1개 더면 ${nx}연속`:'';
+    el.textContent=`🔥 ${combo}연속`+(S.best>combo?`  ·  최고 ${S.best}`:'')+near;
+    const wasNear=el.dataset.near==='1';
+    el.classList.remove('hot','near'); void el.offsetWidth;
     if(combo>=3)el.classList.add('hot');
+    if(near){el.classList.add('near');if(!wasNear)FX.snd.tease()}
+    el.dataset.near=near?'1':'0';
   }else el.style.display='none';
 }
 function finishQuiz(){
@@ -2540,20 +2956,40 @@ function finishQuiz(){
     per[q.s]=per[q.s]||{t:0,r:0}; per[q.s].t++; if(ok)per[q.s].r++;
     lv[q.d]=lv[q.d]||{t:0,r:0};   lv[q.d].t++;  if(ok)lv[q.d].r++;
   });
-  S.quizzes.push({pct,right,total,mode:quiz.mode}); if(S.quizzes.length>50)S.quizzes.shift();
-  save();
-
   const wrongList=quiz.items.map((q,i)=>({q,a:quiz.ans[i]})).filter(x=>!isRight(x.q,x.a));
   /* 합격 판정 기준도 자격증마다 다르다 (meta.passRule 없으면 평균 60 + 과락 40) */
   const PR=CPPG.meta.passRule||{pct:60,per:40};
   const perOk=Object.entries(per).every(([,v])=>v.r/v.t>=(PR.per||0)/100);
   const pass=pct>=PR.pct&&perOk;
+  S.quizzes.push({pct,right,total,mode:quiz.mode,pass,date:localDay()});
+  if(S.quizzes.length>50)S.quizzes.shift();
+  /* 모의고사는 종료 시점에 하루 학습으로 인정하고, 목표 진행도 한 번에 반영한다 */
+  if(quiz.mode!=='practice'){touchStreak(); touchGoal(total)}
+  const newAch=checkAch().concat(quiz.pendAch||[]);
+  save();
+
+  /* ── 결과를 숫자 대신 한 줄의 이야기로 — "오늘 뭘 해냈는가" ── */
+  const hi=[];
+  const hard=lv[3];
+  if(quiz.mode==='practice'&&quiz.gain)hi.push(`⚡ +${quiz.gain} XP`);
+  if(quiz.redeemed)hi.push(`✊ 틀렸던 문제 ${quiz.redeemed}개 되찾음`);
+  if(hard&&hard.r)hi.push(`🎯 심화 ${hard.r}/${hard.t} 격파`);
+  if(comboMax>=5)hi.push(`🔥 최고 ${comboMax}연속`);
+  if(S.streak.cur>=2)hi.push(`📅 ${S.streak.cur}일 연속 학습`);
+  /* 아깝게 놓친 순간은 분명히 짚어 준다 — 재도전 동기가 가장 강해지는 지점 */
+  const near=[];
+  if(!pass&&pct>=PR.pct-5&&pct<PR.pct)near.push(`합격선까지 ${PR.pct-pct}점`);
+  if(comboMax>0&&S.best-comboMax>0&&S.best-comboMax<=2)near.push(`역대 최고 콤보까지 ${S.best-comboMax}개`);
+  if(!S.goal.hit&&S.goal.target-S.goal.done>0&&S.goal.target-S.goal.done<=5)near.push(`오늘 목표까지 ${S.goal.target-S.goal.done}문제`);
 
   $('quizRun').style.display='none'; $('quizResult').style.display='block';
   $('quizResult').innerHTML=`
     <div class="box res pop">
       <div class="sc ${pass?'p':'f'}" id="scNum">0점</div>
       <div class="lb">${right} / ${total} 정답 · ${pass?`✅ 합격선 통과 (${esc(CPPG.meta.pass)})`:'❌ 합격선 미달'}</div>
+      ${hi.length?`<div class="hilite">${hi.map(h=>`<span>${esc(h)}</span>`).join('')}</div>`:''}
+      ${near.length?`<div class="nearmiss">🤏 ${near.map(esc).join(' · ')} — 한 번 더 가볼까요?</div>`:''}
+      ${newAch.length?`<div class="achwon">🏅 새 배지 ${newAch.map(a=>esc(a.n)).join(' · ')}</div>`:''}
       ${comboMax>=3?`<div style="margin-top:8px"><span class="combo hot">🔥 최고 ${comboMax}연속${S.best>comboMax?`  ·  역대 ${S.best}`:'  ·  신기록!'}</span></div>`:''}
       <div class="resgrid">
         ${CPPG.subjects.filter(s=>per[s.id]).map(s=>{
