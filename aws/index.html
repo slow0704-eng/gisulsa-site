@@ -534,11 +534,12 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 #heat{position:fixed;inset:0;pointer-events:none;z-index:3;opacity:0;
   transition:opacity .5s ease, box-shadow .5s ease}
 #heat.on{opacity:1}
-body[data-heat="1"] #heat{box-shadow:inset 0 0 90px -30px color-mix(in srgb,var(--wa) 45%,transparent)}
-body[data-heat="2"] #heat{box-shadow:inset 0 0 130px -30px color-mix(in srgb,var(--wa) 70%,transparent)}
-body[data-heat="3"] #heat{box-shadow:inset 0 0 180px -20px color-mix(in srgb,#f97316 85%,transparent)}
-body[data-heat="4"] #heat{box-shadow:inset 0 0 220px -10px color-mix(in srgb,#ef4444 90%,transparent);
-  animation:heatPulse 1.6s ease-in-out infinite}
+/* ★연속값★ — 단계로 끊으면 3연속과 4연속이 똑같아 보인다.
+   --heat(0~1) 하나로 번짐·세기·색을 동시에 밀어, ★한 문제마다 조금씩★ 뜨거워진다. */
+#heat{--heat:0;--hc:var(--wa);
+  box-shadow:inset 0 0 calc(46px + var(--heat)*104px) calc(-30px + var(--heat)*6px)
+    color-mix(in srgb,var(--hc) calc(28% + var(--heat)*44%),transparent)}
+body[data-heat="hot"] #heat{animation:heatPulse 1.6s ease-in-out infinite}
 @keyframes heatPulse{0%,100%{opacity:.85}50%{opacity:1}}
 
 /* 문제 카드 — 넘어올 때 살짝 밀려 들어온다 */
@@ -778,6 +779,34 @@ body[data-heat="4"] #heat{box-shadow:inset 0 0 220px -10px color-mix(in srgb,#ef
 /* 홱 돌아서기 */
 #mascot.s-turn .swrap{animation:sTurn .7s ease}
 @keyframes sTurn{0%,100%{transform:scaleX(1)}40%{transform:scaleX(-1) rotate(-4deg)}}
+/* ── 🗺 진도 지형도 ──────────────────────────────────────
+   단원별 정복률을 한 장으로. ★빈 칸이 보이면 채우고 싶어진다★ —
+   미완결 훅(결과 화면의 "4문제 남음")의 시각판이다. */
+#terrain{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:4px;margin-top:10px}
+.tcell{position:relative;aspect-ratio:1;border-radius:7px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--ok) calc(var(--p)*1%),var(--card));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-size:9.5px;font-weight:700;line-height:1.15;text-align:center;padding:2px;
+  color:color-mix(in srgb,var(--tx) calc(55% + var(--p)*0.45%),transparent);
+  transition:transform .16s ease,box-shadow .16s ease}
+.tcell:hover{transform:translateY(-2px);box-shadow:0 5px 14px rgba(0,0,0,.16);z-index:1}
+.tcell.done{border-color:color-mix(in srgb,var(--ok) 55%,transparent)}
+.tcell.empty{background:repeating-linear-gradient(45deg,transparent 0 5px,
+  color-mix(in srgb,var(--line) 55%,transparent) 5px 6px)}
+.tlegend{display:flex;gap:10px;align-items:center;font-size:11px;color:var(--dim);margin-top:7px}
+.tlegend i{width:13px;height:13px;border-radius:4px;border:1px solid var(--line);display:inline-block}
+@media (prefers-reduced-motion: reduce){ .tcell{transition:none} }
+
+/* ── 🌗 배경 진화 ─────────────────────────────────────────
+   누적 학습량에 따라 배경이 ★아주 천천히★ 물든다. 하루로는 알 수 없고
+   2주쯤 지나서야 "어라, 색이 좀 달라졌네" 하고 알아챈다.
+   ★즉각 보상이 아니라 장기 체류에만 주는 보상★ 이라 남발 위험이 없다. */
+body{--evo:0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:var(--evo);
+  transition:opacity 2s ease;
+  background:radial-gradient(120% 80% at 50% 0%,
+    color-mix(in srgb,var(--ac) 10%,transparent) 0%, transparent 62%)}
+
 /* 🎭 조연단 — 등장 자체가 보상이 되도록 ★말할 때만 존재★ */
 /* ★조연단은 자기 줄을 갖는다★ — 메인·서브와 같은 줄에 두면 좁은 화면에서
    말풍선이 서로를 덮는다(실제로 겹쳤다). width:100% 로 줄을 끊어 위로 올린다. */
@@ -1415,6 +1444,15 @@ body[data-heat="4"] #heat{box-shadow:inset 0 0 220px -10px color-mix(in srgb,#ef
     <div class="box">
       <h3 style="font-size:15px;font-weight:800;margin-bottom:6px" id="lblSubList">과목별 출제 비중 · 암기 진도</h3>
       <div id="subList"></div>
+      <!-- 🗺 진도 지형도 — 빈 칸이 보이면 채우고 싶어진다 -->
+      <div id="terrainWrap" hidden>
+        <h3 style="font-size:15px;font-weight:800;margin:16px 0 2px">🗺 진도 지형도</h3>
+        <div style="font-size:12px;color:var(--dim)">단원별 정복률. 칸을 누르면 그 단원만 풉니다.</div>
+        <div id="terrain"></div>
+        <div class="tlegend"><i style="background:var(--card)"></i>미착수
+          <i style="background:color-mix(in srgb,var(--ok) 45%,var(--card))"></i>진행
+          <i style="background:color-mix(in srgb,var(--ok) 95%,var(--card))"></i>정복</div>
+      </div>
     </div>
     <div class="box">
       <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">자가 진단 체크리스트</h3>
@@ -1700,7 +1738,7 @@ fillDef('xp',{total:0});
 fillDef('visit',{lastSeen:''});
 /* 🎭 사회적 동역학 — mood 는 조연단의 ★세력 균형★(-100 까칠 ↔ +100 따뜻).
    유저 성적이 이 값을 밀고, 값이 "누가 말할지·누구 편을 들지" 를 정한다. */
-fillDef('soc',{mood:0,ens:0});
+fillDef('soc',{mood:0,ens:0,rel:{},seen:{},mem:null});
 fillDef('ach',{got:{},redeem:0});      /* got: 배지id→획득일, redeem: 오답 극복 누적 */
 if(!Array.isArray(S.solved))S.solved=[];/* 한 번이라도 맞힌 문항 id — 정복도 계산용 */
 const save=()=>localStorage.setItem(KEY,JSON.stringify(S));
@@ -1945,6 +1983,9 @@ const FX=(()=>{
     if(actx)return actx;
     try{
       actx=new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});
+      /* ★브라우저는 사용자 조작 전 오디오를 정지 상태로 만든다.★ 깨우지 않으면
+         재진입 시 BGM 이 켜져 있어도 영원히 무음이다(실제로 그랬다). */
+      if(actx.state==='suspended')actx.resume().catch(function(){});
       master=actx.createGain(); master.gain.value=vol();
       /* 20Hz 아래 럼블 컷 — 들리지도 않으면서 헤드룸만 먹는 성분을 버린다 */
       const rumble=actx.createBiquadFilter();
@@ -2060,6 +2101,20 @@ const FX=(()=>{
         dur:(o.dur||0.6)*0.7,type:'sine',gain:(o.gain==null?0.1:o.gain)*0.45});
     });
   }
+  /** ★정적★ — 가장 안 쓰는 자원. 큰 연출 직전 0.4초를 완전히 비우면
+      같은 연출이 두 배로 커진다. ★대비가 크기를 만든다.★
+      마스터를 직접 닫으므로 이 구간에 예약된 소리는 전부 묻힌다 —
+      그래서 hush 를 쓰는 연출은 ★그만큼 뒤로 밀어서★ 예약해야 한다. */
+  function hush(sec){
+    const A=ac(); if(!A||!master)return;
+    const t=A.currentTime, v=vol();
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value,t);
+    master.gain.linearRampToValueAtTime(.0001,t+.05);
+    master.gain.setValueAtTime(.0001,t+sec);
+    master.gain.linearRampToValueAtTime(v,t+sec+.06);
+  }
+
   /* ── 👏 군중 ─────────────────────────────────────────────
      녹음 파일 없이 합성한다. 군중 소리의 정체는 결국
      ★수많은 짧은 노이즈(박수) + 대역 제한된 지속 노이즈(함성)★ 다.
@@ -2224,7 +2279,7 @@ const FX=(()=>{
       noise({f:6200,q:2,gain:.045,dur:.05});                                  /* 반짝 */
       if(c>=5)sparkle({at:.06,n:Math.min(c-3,5),gain:.035});                  /* 콤보 5+ 부터 층 추가 */
       if(c>=8)riser({dur:.32,from:900,to:7000,gain:.035});                    /* 8+ 부터 기대감 */
-      if(c>=12&&c%4===0)this.cheer(false);                                   /* 12 이상, 4콤보마다 환호 */
+      if(c>=12&&c%4===0)this.cheer(.28);                                     /* 12 이상, 4콤보마다 — 작게 */
     },
     /** 콤보가 끊김 — 하강. 벌이 아니라 ★리듬이 끊겼다는 신호★ */
     comboBreak(){
@@ -2259,7 +2314,7 @@ const FX=(()=>{
     /** 배지 획득 — 벨 + 코인 반짝임 + ★군중 환호★ */
     badge(){
       if(!S.sound)return;
-      this.cheer(false);
+      this.cheer(.5);
       impact({f0:200,f1:55,dur:.2,gain:.2});
       stinger([9,11,13,14],{spread:.07,dur:1,gain:.11,type:'sine',oct:true});
       sparkle({at:.1,n:8,gain:.055});
@@ -2278,32 +2333,35 @@ const FX=(()=>{
         구조: 저역 드론(불안한 정적) → 라이저(고조) → 브라스 화음(선포) → 벨(여운) */
     era(){
       if(!S.sound)return;
-      BGM.duck(4200);
-      this.gasp();                       /* 시작 전 숨 들이쉬기 — 기대를 만든다 */
-      setTimeout(()=>this.cheer(true),1900);   /* 터지는 순간 환호 */                    /* 시대 징글 4초 — 그동안 배경은 완전히 비켜난다 */
+      BGM.duck(5000);
+      /* ★0.42초의 완전한 정적★ — 징글 전체를 그만큼 뒤로 민다(D).
+         이 침묵이 뒤따르는 임팩트를 두 배로 키운다. */
+      const D=.42; hush(D);
+      setTimeout(()=>this.gasp(),D*1000);          /* 숨 들이쉬기 — 기대를 만든다 */
+      setTimeout(()=>this.cheer(.85),(D+1.9)*1000);/* 터지는 순간 환호 — 거의 만석 */
       /* ① 낮은 드론 — 무언가 시작된다는 신호 */
-      voice(65.41,{dur:2.2,type:'triangle',gain:.07,lp:420,atk:.5});
-      voice(98,   {at:.1,dur:2.1,type:'sine',gain:.05,lp:500,atk:.6});
+      voice(65.41,{at:D,dur:2.2,type:'triangle',gain:.07,lp:420,atk:.5});
+      voice(98,   {at:D+.1,dur:2.1,type:'sine',gain:.05,lp:500,atk:.6});
       /* ② 라이저 — 1.6초 동안 대역이 위로 쓸려 올라간다 */
-      riser({at:.25,dur:1.6,from:260,to:8000,gain:.06});
+      riser({at:D+.25,dur:1.6,from:260,to:8000,gain:.06});
       /* ③ 타악 임팩트 — 선포의 순간 */
-      impact({at:1.85,f0:320,f1:44,dur:.45,gain:.34,click:3000});
-      noise({at:1.85,f:5200,q:.6,gain:.09,dur:.8,decay:1.2,wet:true});
+      impact({at:D+1.85,f0:320,f1:44,dur:.45,gain:.34,click:3000});
+      noise({at:D+1.85,f:5200,q:.6,gain:.09,dur:.8,decay:1.2,wet:true});
       /* ④ 브라스 화음 — 펜타토닉 3음을 옥타브로 쌓아 두껍게 */
       [5,7,9].forEach((i,k)=>{
-        voice(step(i),   {at:1.88+k*.012,dur:2.4,type:'sawtooth',gain:.075,lp:2400,atk:.05});
-        voice(step(i)/2, {at:1.88+k*.012,dur:2.4,type:'triangle',gain:.06,lp:1200,atk:.06});
-        voice(step(i+5), {at:1.95+k*.012,dur:2.0,type:'triangle',gain:.05,atk:.04});
+        voice(step(i),   {at:D+1.88+k*.012,dur:2.4,type:'sawtooth',gain:.075,lp:2400,atk:.05});
+        voice(step(i)/2, {at:D+1.88+k*.012,dur:2.4,type:'triangle',gain:.06,lp:1200,atk:.06});
+        voice(step(i+5), {at:D+1.95+k*.012,dur:2.0,type:'triangle',gain:.05,atk:.04});
       });
       /* ⑤ 고역 벨 — 여운. 늦게 들어와 길게 남는다 */
-      [12,14,13].forEach((i,k)=>voice(step(i),{at:2.25+k*.16,dur:1.8,type:'sine',gain:.065}));
-      sparkle({at:2.5,n:9,gain:.05});
+      [12,14,13].forEach((i,k)=>voice(step(i),{at:D+2.25+k*.16,dur:1.8,type:'sine',gain:.065}));
+      sparkle({at:D+2.5,n:9,gain:.05});
     },
     /** 세션 종료 */
     finish(pass){
       if(!S.sound)return;
       if(pass){
-        this.cheer(true);
+        this.cheer(1);                   /* 합격 — 만석 */
         riser({dur:.5,from:350,to:6000,gain:.055});
         impact({at:.48,f0:260,f1:50,dur:.3,gain:.28});
         stinger([5,7,9,12,14],{at:.48,spread:.075,dur:1.1,gain:.13,oct:true});
@@ -2366,17 +2424,21 @@ const FX=(()=>{
     coin(k){ if(!S.sound)return;
       voice(step(10+(k%4)),{dur:.1,type:'triangle',gain:.055,wet:false});
       noise({f:6800,q:3,gain:.022,dur:.03,decay:5,wet:false}); },
-    /* 👏 환호 — 큰 성취에만. 남발하면 값이 떨어진다 */
-    cheer(big){
+    /** 👏 환호 — mag(0~1) 가 ★군중의 인원수★ 다. 박수 6명 → 80명까지 연속으로
+        변해서, "얼마나 큰 일인지" 가 숫자나 문구 없이 귀로 읽힌다.
+        (예전 불린 인자도 그대로 받는다 — true=1.0 / false=0.35) */
+    cheer(mag){
       if(!S.sound)return;
-      roar({dur:big?1.6:1.1,f:760,gain:big?.085:.06,atk:.14});
-      applause({n:big?40:24,spread:big?1.1:.75,gain:big?.055:.042,at:.05});
+      const m=typeof mag==='number'?Math.max(0,Math.min(1,mag)):(mag?1:.35);
+      roar({dur:.8+m*.95, f:700+m*130, gain:.032+m*.055, atk:.1+m*.07});
+      applause({n:Math.round(6+m*74), spread:.45+m*.8, gain:.028+m*.03, at:.04});
     },
     /** 😮 기대 — 숨을 들이쉬는 웅성거림. ★무언가 올 것 같은 정적★ */
     gasp(){
       if(!S.sound)return;
-      roar({dur:.7,f:520,q:1.6,gain:.035,atk:.35});
-      noise({f:2400,q:.6,gain:.02,dur:.5,decay:.8,wet:true});
+      hush(.16);                         /* 숨 들이쉬기 전의 짧은 적막 */
+      roar({at:.17,dur:.7,f:520,q:1.6,gain:.035,atk:.35});
+      noise({at:.17,f:2400,q:.6,gain:.02,dur:.5,decay:.8,wet:true});
     },
     /** 😒 야유 — ★오답에는 쓰지 않는다.★ 서브 마스코트가 놀릴 때만, 짧고 가볍게 */
     boo(){
@@ -2394,8 +2456,14 @@ const FX=(()=>{
 
      레이어 0 룸톤  — 아주 낮은 노이즈. 무음의 적막을 없앤다
      레이어 1 패드  — 지속 화성. 읽기를 방해하지 않는 최소 구성
-     레이어 2 펄스  — 낮은 옥타브의 느린 맥박. 리듬감의 씨앗
+     레이어 2 베이스 — 리듬을 가진 저음. ★그루브의 뼈대★
      레이어 3 아르페지오 — 움직임. 문제 풀이의 속도감
+     레이어 4 드럼  — 킥·클랩. ★박이 있어야 몸이 반응한다★
+     레이어 5 하이햇 — 8분음표 + 스윙. 리듬의 결을 만든다
+
+     ★리듬 원칙★ — 앰비언트만으로는 "틀어 놨다" 는 감각이 안 온다.
+     로파이 힙합 계열(킥 1·3-and, 클랩 2·4, 스윙 하이햇)을 아주 낮은 레벨로 깐다.
+     ★읽기·휴식 장면은 리듬 레이어를 0 으로★ — 글 읽는 화면에 박이 들어가면 방해가 된다.
 
      ★원칙★
       · 기본값 Off. 음악 선호는 개인차가 크다
@@ -2404,20 +2472,27 @@ const FX=(()=>{
       · 효과음이 터질 때 ★덕킹★ — 자극이 겹치면 과부하가 온다
       · 전환은 항상 긴 페이드(2~4초) */
   let bgm=null;
+  /* ★조성 이동★ — 같은 합성음도 루트가 바뀌면 매번 새 곡처럼 들린다.
+     요일로 색을 잡고(월요일은 낮게·어둡게, 금요일은 높게·밝게),
+     세션마다 0~2 도를 더 얹어 ★같은 요일에도 두 번 같지 않게★ 한다. */
+  const DAYKEY=[1,0,1,2,2,3,2];            /* 일 월 화 수 목 금 토 */
+  const SESKEY=(Math.random()*3)|0;
+  const keyShift=()=>DAYKEY[new Date().getDay()]+SESKEY;
   const SCENE={
-    home:    {lay:[1,1,.55,.35], bpm:88,  root:3},
-    quiz:    {lay:[1,1,.6,.45],  bpm:96,  root:5},
-    read:    {lay:[1,.85,0,0],   bpm:70,  root:0},   /* 읽기 — 패드만. 리듬 금지 */
-    cards:   {lay:[1,.9,.4,.3],  bpm:84,  root:3},
-    rest:    {lay:[1,.7,0,0],    bpm:62,  root:0},
-    exam:    {lay:[0,0,0,0],     bpm:0,   root:0}    /* 모의고사 — 무음 */
+    /*        룸톤 패드 베이스 아르페 드럼 하이햇 */
+    home:    {lay:[.55, .85, .80, .45, .70, .55], bpm:90,  root:3},
+    quiz:    {lay:[.45, .70, .95, .60, .90, .75], bpm:102, root:5},
+    read:    {lay:[1,   .85, .30, 0,   0,   0  ], bpm:70,  root:0},  /* 읽기 — 리듬 금지 */
+    cards:   {lay:[.55, .80, .75, .45, .65, .55], bpm:86,  root:3},
+    rest:    {lay:[1,   .70, 0,   0,   0,   0  ], bpm:62,  root:0},
+    exam:    {lay:[0,0,0,0,0,0],                  bpm:0,   root:0}   /* 모의고사 — 무음 */
   };
   function bgmInit(){
     const A=ac(); if(!A||bgm)return bgm;
     const out=A.createGain(); out.gain.value=0;
     const lp=A.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=5200;
     out.connect(lp); lp.connect(master);
-    const g=[0,1,2,3].map(()=>{const x=A.createGain();x.gain.value=0;x.connect(out);return x});
+    const g=[0,1,2,3,4,5].map(()=>{const x=A.createGain();x.gain.value=0;x.connect(out);return x});
     /* 룸톤 — 핑크에 가까운 저역 노이즈를 길게 루프 */
     const nb=A.createBuffer(1,A.sampleRate*4,A.sampleRate), nd=nb.getChannelData(0);
     let b0=0,b1=0;
@@ -2426,50 +2501,131 @@ const FX=(()=>{
     const ns=A.createBufferSource(); ns.buffer=nb; ns.loop=true;
     const nf=A.createBiquadFilter(); nf.type='lowpass'; nf.frequency.value=420;
     ns.connect(nf); nf.connect(g[0]); ns.start();
-    bgm={out,g,step:0,timer:null,scene:null,duck:1,vol:0};
+    /* 드럼용 화이트노이즈 — ★한 번 만들어 재생 위치만 바꿔 쓴다.★
+       스텝마다 버퍼를 새로 만들면 GC 가 튀어 박자가 흔들린다. */
+    const wb=A.createBuffer(1,A.sampleRate*2,A.sampleRate), wd=wb.getChannelData(0);
+    for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
+    bgm={out,g,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb};
     return bgm;
   }
-  /** 한 스텝 스케줄 — 패드는 코드, 펄스는 근음, 아르페지오는 펜타토닉 상행 */
-  function bgmTick(){
-    const A=ac(); if(!A||!bgm||!bgm.scene)return;
-    const sc=SCENE[bgm.scene]||SCENE.home;
-    if(!sc.bpm)return;
-    const beat=60/sc.bpm, n=bgm.step;
-    const deg=[0,3,4,2][(n>>3)%4];            /* 8스텝마다 코드 이동 */
-    const base=sc.root+deg;
-    if(n%8===0&&sc.lay[1]>0){                  /* 패드 — 느리게 열리는 화음 */
+  /* ── 리듬 음색 — 전부 ★절대 시각(t)★ 으로 예약한다 ─────────
+     setInterval 이 부르는 시점에 맞춰 울리면 ±20ms 가 흔들려 그루브가 죽는다. */
+  function bN(t,dur,dest,o){                       /* 노이즈 한 방 */
+    const A=ac(); if(!A||!bgm)return;
+    const src=A.createBufferSource(); src.buffer=bgm.wb; src.loop=true;
+    src.playbackRate.value=.85+Math.random()*.4;
+    const f=A.createBiquadFilter(); f.type=o.type||'highpass';
+    f.frequency.value=o.f; f.Q.value=o.q||.8;
+    const g=A.createGain();
+    g.gain.setValueAtTime(Math.max(.0001,o.gain),t);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    src.connect(f); f.connect(g); g.connect(dest);
+    src.start(t,Math.random()*1.5); src.stop(t+dur+.02);
+  }
+  /** 킥 — 피치가 떨어지는 사인. 저역이 박을 만든다 */
+  function bKick(t,dest,v){
+    const A=ac(); if(!A)return;
+    const o=A.createOscillator(), g=A.createGain();
+    o.type='sine';
+    o.frequency.setValueAtTime(145,t);
+    o.frequency.exponentialRampToValueAtTime(47,t+.085);
+    g.gain.setValueAtTime(v,t);
+    g.gain.exponentialRampToValueAtTime(.0001,t+.26);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t+.28);
+  }
+  /** 클랩 — ★한 방이 아니라 세 방★ 이라야 손뼉처럼 들린다 */
+  function bClap(t,dest,v){
+    [0,.011,.025].forEach((d,i)=>bN(t+d,.13,dest,
+      {type:'bandpass',f:1550,q:1.1,gain:v*(i===2?1:.55)}));
+  }
+  /** 하이햇 — 닫힘은 아주 짧게, 열림은 마디 끝에서만 */
+  function bHat(t,dest,v,open){
+    bN(t,open?.17:.034,dest,{type:'highpass',f:7400,q:.7,gain:v});
+  }
+  /** 베이스 — 톱니를 로우패스로 깎아 둥글게. 필터가 닫히며 감쇠한다 */
+  function bBass(t,dur,dest,f,v){
+    const A=ac(); if(!A)return;
+    const o=A.createOscillator(), lp=A.createBiquadFilter(), g=A.createGain();
+    o.type='sawtooth'; o.frequency.value=f;
+    lp.type='lowpass'; lp.Q.value=.8;
+    lp.frequency.setValueAtTime(340,t);
+    lp.frequency.exponentialRampToValueAtTime(130,t+dur);
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(v,t+.018);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(lp); lp.connect(g); g.connect(dest); o.start(t); o.stop(t+dur+.03);
+  }
+  /** 한 16분음표 스텝을 ★절대 시각 t★ 에 예약한다.
+      n = 0~63 (16분음표 64개 = 4마디) · sp = 16분음표 길이(초) */
+  function bgmStep(n,t,sc,sp){
+    const A=ac(); if(!A||!bgm)return;
+    const L=sc.lay, bar=n>>4, b=n&15;
+    /* ★스윙★ — 박의 뒷당김. 이게 없으면 기계처럼 들린다 */
+    if(b%4===2)t+=sp*.16;
+    const deg=[0,3,4,2][bar%4];                 /* 1마디마다 코드 이동 */
+    const base=sc.root+deg+keyShift();          /* 요일·세션 조성 */
+    const P=i=>PENTA[Math.max(0,Math.min(PENTA.length-1,i))];
+    if(b===0&&L[1]>0){                          /* 패드 — 1마디짜리 화음 */
       [0,2,4].forEach((o,k)=>{
-        const f=PENTA[Math.max(0,Math.min(PENTA.length-1,base+o+5))];
         const osc=A.createOscillator(), gg=A.createGain();
-        osc.type='triangle'; osc.frequency.value=f; osc.detune.value=(k-1)*6;
-        const t=A.currentTime, dur=beat*8;
-        gg.gain.setValueAtTime(0.0001,t);
-        gg.gain.exponentialRampToValueAtTime(.05,t+dur*.35);
-        gg.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+        osc.type='triangle'; osc.frequency.value=P(base+o+5); osc.detune.value=(k-1)*6;
+        const dur=sp*16;
+        gg.gain.setValueAtTime(.0001,t);
+        gg.gain.exponentialRampToValueAtTime(.045,t+dur*.3);
+        gg.gain.exponentialRampToValueAtTime(.0001,t+dur);
         osc.connect(gg); gg.connect(bgm.g[1]); osc.start(t); osc.stop(t+dur+.05);
       });
     }
-    if(n%4===0&&sc.lay[2]>0){                  /* 펄스 — 낮은 맥박 */
-      const f=PENTA[Math.max(0,base)]/2;
-      const osc=A.createOscillator(), gg=A.createGain();
-      osc.type='sine'; osc.frequency.value=f;
-      const t=A.currentTime, dur=beat*1.6;
-      gg.gain.setValueAtTime(0.0001,t);
-      gg.gain.exponentialRampToValueAtTime(.075,t+.04);
-      gg.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-      osc.connect(gg); gg.connect(bgm.g[2]); osc.start(t); osc.stop(t+dur+.05);
+    if(L[2]>0&&(b===0||b===6||b===10)){         /* 베이스 — 1 · 2and · 3and */
+      bBass(t,sp*(b===0?3.2:2.2),bgm.g[2],P(base)/4,b===0?.14:.10);
     }
-    if(sc.lay[3]>0&&n%2===0){                  /* 아르페지오 — 점점 올라갔다 내려온다 */
-      const seq=[0,2,4,6,4,2], f=PENTA[Math.max(0,Math.min(PENTA.length-1,base+seq[(n>>1)%6]+7))];
-      const osc=A.createOscillator(), gg=A.createGain();
-      osc.type='sine'; osc.frequency.value=f;
-      const t=A.currentTime, dur=beat*.7;
-      gg.gain.setValueAtTime(0.0001,t);
-      gg.gain.exponentialRampToValueAtTime(.035,t+.012);
-      gg.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+    if(L[3]>0&&b%2===0&&b!==0&&b!==8){          /* 아르페지오 — 8분, 박머리는 비운다 */
+      const seq=[0,2,4,6,4,2], osc=A.createOscillator(), gg=A.createGain();
+      osc.type='sine'; osc.frequency.value=P(base+seq[(n>>1)%6]+7);
+      const dur=sp*1.6;
+      gg.gain.setValueAtTime(.0001,t);
+      gg.gain.exponentialRampToValueAtTime(.030,t+.012);
+      gg.gain.exponentialRampToValueAtTime(.0001,t+dur);
       osc.connect(gg); gg.connect(bgm.g[3]); osc.start(t); osc.stop(t+dur+.05);
     }
-    bgm.step=(n+1)%64;
+    if(L[4]>0){                                 /* 킥 1 · 3and(+짝수마디 2and) */
+      if(b===0||b===10||(b===6&&bar%2===1))bKick(t,bgm.g[4],.32);
+      if(b===4||b===12)bClap(t,bgm.g[4],.105);  /* 클랩 2 · 4 */
+    }
+    if(L[5]>0&&b%2===0){                        /* 하이햇 — 8분, 박머리를 강하게 */
+      bHat(t,bgm.g[5],b%4===0?.042:.026,b===14&&bar%2===1);
+    }
+    /* ★콤보가 높으면 16분으로 쪼갠다★ — 레이어를 키우는 게 아니라 ★밀도★ 를 올린다 */
+    if(L[5]>0&&(bgm.boost||0)>=.7&&b%2===1)bHat(t,bgm.g[5],.015,false);
+  }
+  /** 레이어 볼륨 적용 — 장면 프리셋 × ★콤보 부스트★.
+      ★위쪽 레이어만 연다★ — 룸톤·패드까지 같이 키우면 그냥 시끄러워질 뿐,
+      "달아오른다" 는 느낌은 아르페지오·드럼·하이햇에서 온다. */
+  function bgmLayers(fade){
+    const A=ac(); if(!A||!bgm||!bgm.scene)return;
+    const sc=SCENE[bgm.scene]||SCENE.home;
+    const t=A.currentTime, bo=bgm.boost||0;
+    sc.lay.forEach((lv,i)=>{
+      const k = i>=3 ? 1+bo*.95 : i===2 ? 1+bo*.35 : 1;
+      bgm.g[i].gain.cancelScheduledValues(t);
+      bgm.g[i].gain.setValueAtTime(bgm.g[i].gain.value,t);
+      bgm.g[i].gain.linearRampToValueAtTime(lv*(i===0?.5:1)*k,t+fade);
+    });
+  }
+  /** 룩어헤드 스케줄러 — ★0.12초 앞까지 미리 예약★ 한다.
+      setInterval 지터를 오디오 클럭이 흡수해 박자가 흔들리지 않는다. */
+  function bgmPump(){
+    const A=ac(); if(!A||!bgm||!bgm.scene)return;
+    const sc=SCENE[bgm.scene]||SCENE.home;
+    if(!sc.bpm)return;
+    const sp=60/sc.bpm/4;                       /* 16분음표 길이 */
+    if(bgm.next<A.currentTime)bgm.next=A.currentTime+.04;
+    let guard=0;
+    while(bgm.next<A.currentTime+.12&&guard++<32){
+      bgmStep(bgm.step,bgm.next,sc,sp);
+      bgm.next+=sp;
+      bgm.step=(bgm.step+1)%64;
+    }
   }
   const BGM={
     /** 장면 전환 — 레이어 볼륨을 길게 페이드해 갈아 끼운다 */
@@ -2479,23 +2635,32 @@ const FX=(()=>{
       bgmInit();
       const sc=SCENE[name]||SCENE.home;
       bgm.scene=name;
-      const t=A.currentTime, fade=2.4;
-      const v=(S.bgmVol==null?0.5:S.bgmVol);
+      /* ★첫 진입은 빠르게 들리게★ — 2.4초 페이드는 "안 켜졌나?" 로 느껴진다 */
+      const t=A.currentTime, fade=bgm.scene&&bgm.vol>0?2.0:1.0;
+      const v=(S.bgmVol==null?0.6:S.bgmVol);
       /* 심야에는 스스로 조용해진다 */
       const h=new Date().getHours(), night=(h>=23||h<6)?0.6:1;
       bgm.vol=v*night;
       bgm.out.gain.cancelScheduledValues(t);
       bgm.out.gain.setValueAtTime(bgm.out.gain.value,t);
       bgm.out.gain.linearRampToValueAtTime(bgm.vol*bgm.duck,t+fade);
-      sc.lay.forEach((lv,i)=>{
-        bgm.g[i].gain.cancelScheduledValues(t);
-        bgm.g[i].gain.setValueAtTime(bgm.g[i].gain.value,t);
-        bgm.g[i].gain.linearRampToValueAtTime(lv*(i===0?.5:1),t+fade);
-      });
+      bgmLayers(fade);
       if(!bgm.timer&&sc.bpm){
-        const iv=Math.max(60,60/sc.bpm*1000/2);
-        bgm.timer=setInterval(bgmTick,iv);
+        bgm.next=A.currentTime+.08;
+        bgm.timer=setInterval(bgmPump,25);      /* 스케줄러는 고정 주기. 박은 오디오 클럭이 잡는다 */
       }
+    },
+    /** 지금 울리고 있는가 — 잠금 해제 후 다시 걸어야 할지 판단용 */
+    playing(){ return !!(bgm&&bgm.timer&&bgm.scene) },
+    /** ★콤보 → 음악★ — 화면 열기(#heat)가 눈으로 하는 일을 귀로도 한다.
+        콤보가 오르면 아르페지오·드럼·하이햇이 열리고, 끊기면 도로 닫힌다. */
+    heat(c){
+      if(!bgm||S.bgm!==true||!bgm.scene)return;
+      const sc=SCENE[bgm.scene]; if(!sc||!sc.bpm)return;
+      const lv=c>=12?1:c>=8?.72:c>=5?.45:c>=3?.2:0;
+      if(Math.abs(lv-(bgm.boost||0))<.01)return;
+      /* 끊길 땐 천천히 식는다 — 갑자기 꺼지면 벌처럼 느껴진다 */
+      bgm.boost=lv; bgmLayers(lv>0?.45:1.6);
     },
     /** 효과음이 터지는 순간 잠깐 비켜 준다 — ★자극이 겹치면 과부하★ */
     duck(ms){
@@ -2526,6 +2691,7 @@ const FX=(()=>{
     on(){ return S.bgm===true }
   };
 
+  let bigLeft=3;              /* 세션당 남은 '큰 연출' 횟수 */
   return {
     bgm:BGM,
     right(el,combo,opt){
@@ -2538,10 +2704,14 @@ const FX=(()=>{
       glow('color-mix(in srgb, var(--no) 40%, transparent)');
       SND.wrong();
     },
+    /** ★연출 예산★ — 세션당 큰 연출 3회. 넘으면 작은 버전으로 대체한다.
+        "큰 연출은 아껴 쓴다" 는 원칙을 사람 기억이 아니라 ★코드가 지키게★ 한다. */
+    budget(){ if(bigLeft<=0)return false; bigLeft--; return true },
+    resetBudget(){ bigLeft=3 },
     milestone(msg){
       FX.bgm.duck(900);
       toast(msg,'hype',2200);
-      confetti(70);
+      confetti(this.budget()?70:24);
       SND.milestone();
     },
     finish(pass,pct){
@@ -2887,6 +3057,56 @@ const CAST=(()=>{
       idle:['...아직 여기 있어','졸려']
     }
   };
+  /* ── 🤝 관계 행렬 ────────────────────────────────────
+     지금까지는 유저→진영 1방향이었다. ★쌍★ 마다 값을 두면
+     "부엉이 요즘 모모한테 유독 날카롭다" 같은 것이 저절로 생긴다.
+     5인 = 10쌍. 값 하나씩이라 저장 부담은 없다. */
+  const CH=['ki','si','da','bu','mo'];
+  const pairKey=(a,b)=>a<b?a+'-'+b:b+'-'+a;
+  function rel(a,b){ const r=S.soc.rel||(S.soc.rel={}); const k=pairKey(a,b);
+    return r[k]===undefined?0:r[k] }
+  function nudge(a,b,d){
+    const r=S.soc.rel||(S.soc.rel={}), k=pairKey(a,b);
+    r[k]=Math.max(-40,Math.min(40,(r[k]||0)+d));
+  }
+  /* 같이 축하하면 가까워지고, 싸우면 멀어진다 */
+  function bond(list,d){ for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++)nudge(list[i],list[j],d) }
+
+  /* ── 🕐 맥락 ─────────────────────────────────────────
+     같은 배역이 ★시간대·요일★ 을 읽고 말을 바꾼다. 대사를 늘리는 것보다
+     "지금을 알고 있다" 는 신호 하나가 훨씬 세다. */
+  function ctxLine(w){
+    const h=new Date().getHours(), d=new Date().getDay();
+    const P=[];
+    if(h>=5&&h<9)P.push({da:'아침 기록부터 열었네',bu:'아침 정답률이 제일 높아',mo:'천천히 깨우면서 하자'}[w]);
+    if(h>=22||h<5)P.push({da:'이 시간 기록은 처음인데',bu:'심야엔 정답률이 떨어진다',mo:'...자야 하지 않아?'}[w]);
+    if(d===1)P.push({da:'월요일 첫 장부',bu:'주 초반 표본이 한 주를 정한다',mo:'월요일은 원래 무거워'}[w]);
+    if(d===5)P.push({da:'금요일 마감 정리',bu:'주말 전 마지막 표본',mo:'금요일이네. 좀 가볍게'}[w]);
+    if(d===0||d===6)P.push({da:'주말에도 적립이라니',bu:'주말 학습은 편차가 크다',mo:'쉬는 날인데 기특하네'}[w]);
+    return P.length?P[(Math.random()*P.length)|0]:null;
+  }
+
+  /* ── 🧠 기억 ─────────────────────────────────────────
+     ★지난 세션을 언급★ 한다. 새 연출 다섯 개보다 이 한 줄이 세다.
+     단, 책망 금지 — ★사실만 말하고, 비교는 반드시 위로 쪽으로.★ */
+  function memLine(w){
+    const m=S.soc.mem; if(!m||!m.day||m.day===localDay())return null;
+    const gap=dayDiff(m.day,localDay());
+    if(w==='da'){
+      if(m.best>=5)return `지난번엔 ${m.best}연속까지 갔었어`;
+      if(m.n)return `저번에 ${m.n}문제 적었더라`;
+    }
+    if(w==='bu'){
+      if(m.wt)return `지난번 약한 데는 ${m.wt} 였어`;
+      if(m.n)return `직전 표본은 ${m.n}문제다`;
+    }
+    if(w==='mo'){
+      if(gap>=3)return `${gap}일 만이네. 잘 왔어`;
+      if(m.wrong>=3)return '저번에 힘들었잖아. 오늘은 천천히';
+    }
+    return null;
+  }
+
   const seen={};
   function line(w,k){
     const pool=(L[w]&&L[w][k])||L[w].idle, mem=seen[w]||(seen[w]=[]);
@@ -2901,7 +3121,18 @@ const CAST=(()=>{
     const t=d.querySelector('.ctalk'); if(!t)return;
     clearTimeout(T[w]); clearTimeout(hide[w]);
     d.classList.remove('out'); d.classList.add('on');
-    t.textContent=opt.msg||line(w,k); t.hidden=false;
+    /* ★맥락·기억을 가끔 끼워 넣는다★ — 항상 하면 지겹고, 없으면 밋밋하다 */
+    let msg=opt.msg;
+    if(!msg){
+      const mem=Math.random()<.18?memLine(w):null;
+      const cx =!mem&&Math.random()<.22?ctxLine(w):null;
+      msg=mem||cx||line(w,k);
+    }
+    t.textContent=msg;
+    t.hidden=false;
+    /* 누적 등장 기록 — 희소성 감쇠의 근거 */
+    const sc=S.soc.seen||(S.soc.seen={});
+    sc[w]=(sc[w]||0)+1;
     ['f-joy','f-sad','f-mad','f-look'].forEach(c=>d.classList.remove(c));
     if(opt.face)d.classList.add(opt.face);
     T[w]=setTimeout(()=>{
@@ -2915,8 +3146,10 @@ const CAST=(()=>{
   /** 다람이의 진영 선택 — 우세한 쪽에 붙는다. 애매하면 눈치만 본다 */
   function defect(delay){
     setTimeout(()=>{
-      if(warm())pop('da','sideW',{face:'f-joy',hold:2200});
-      else if(sharp())pop('da','sideS',{face:'f-look',hold:2400});
+      if(warm()){ nudge('da','ki',3); nudge('da','si',-2);
+        pop('da','sideW',{face:'f-joy',hold:2200}) }
+      else if(sharp()){ nudge('da','si',3); nudge('da','ki',-2);
+        pop('da','sideS',{face:'f-look',hold:2400}) }
       else pop('da','idle',{face:'f-look',hold:2000});
     },delay||0);
   }
@@ -2928,6 +3161,7 @@ const CAST=(()=>{
       if(S.mascot===false||S.crowd===false)return;
       S.soc.ens=(S.soc.ens||0)+1; save();
       if(S.sound&&FX.snd.cheer)FX.snd.cheer(true);
+      bond(['ki','si','da','bu','mo'],2);   /* ★같이 축하하면 다 같이 가까워진다★ */
       pop('mo','cheer',{face:'f-joy',hold:3400});
       setTimeout(()=>pop('da','cheer',{face:'f-joy',hold:3200}),240);
       setTimeout(()=>pop('bu','cheer',{face:'f-joy',hold:3000}),480);
@@ -2940,12 +3174,14 @@ const CAST=(()=>{
       if(!force&&Math.random()>.32)return;
       if(sharp()){
         /* 유저 부진 → 까칠파가 목소리를 키우고 따뜻파가 막아선다 */
+        nudge('bu','mo',-3); nudge('si','ki',-2); nudge('bu','si',2);
         pop('bu','jabW',{face:'f-mad',hold:2600});
         setTimeout(()=>pop('mo','jabS',{face:'f-sad',hold:2600}),950);
         setTimeout(()=>MASCOT.sub('fight',1,'s-poke',2400),1900);
         defect(2900);
       }else if(warm()){
         /* 유저 호조 → 따뜻파 우세. 시니가 삐딱하다 부엉에게 반박당한다 */
+        nudge('bu','si',-3); nudge('ki','mo',2);
         MASCOT.sub('fight',1,'s-poke',2400);
         setTimeout(()=>pop('bu','jabS',{face:'f-mad',hold:2500}),950);
         setTimeout(()=>pop('mo','cheer',{face:'f-joy',hold:2400}),1900);
@@ -2955,13 +3191,22 @@ const CAST=(()=>{
         setTimeout(()=>pop('mo','jabS',{face:'f-sad',hold:2400}),950);
       }
     },
-    /** 👀 카메오 — 아무 일 없어도 가끔 하나가 슬쩍 나온다(외롭지 않게) */
+    /** 👀 카메오 — 아무 일 없어도 가끔 하나가 슬쩍 나온다(외롭지 않게).
+        ★확률은 고정이 아니라 누적 등장에 반비례해 줄어든다.★
+        34% 고정이면 3주 뒤엔 그냥 배경이 된다 — 희소성은 관리 대상이다.
+        바닥(12%)은 남긴다. 0 이 되면 "사라졌다" 가 되어 오히려 허전하다. */
     cameo(k){
       if(S.mascot===false||S.crowd===false)return;
-      if(Math.random()>.34)return;
-      const who=['da','bu','mo'][(Math.random()*3)|0];
+      const sc=S.soc.seen||{};
+      const tot=(sc.da||0)+(sc.bu||0)+(sc.mo||0);
+      const p=Math.max(.12,.34*Math.pow(.9,tot/25));
+      if(Math.random()>p)return;
+      /* ★덜 나온 배역을 먼저★ — 한 명만 계속 나오면 나머지는 없는 것과 같다 */
+      const who=['da','bu','mo'].sort((a,b)=>(sc[a]||0)-(sc[b]||0))[Math.random()<.6?0:(1+((Math.random()*2)|0))];
       pop(who,k||'idle',{face:who==='da'?'f-look':null,hold:2200});
     },
+    /** 관계 상태 — 디버그·문서용 */
+    rels(){ const o={}; CH.forEach((a,i)=>CH.slice(i+1).forEach(b=>o[pairKey(a,b)]=rel(a,b))); return o },
     /** 문제 하나에 대한 반응 — 전원이 매번 나오면 소음이라 ★확률로 솎는다★ */
     react(kind,ctx){
       ctx=ctx||{};
@@ -2980,6 +3225,12 @@ const CAST=(()=>{
       }
       /* 흐름이 크게 기울면 저절로 싸움이 난다 */
       if((warm()||sharp())&&Math.random()<.09)setTimeout(()=>CAST.clash(true),1200);
+    },
+    /** 세션이 끝날 때 ★다음에 언급할 것★ 을 남긴다.
+        많이 담지 않는다 — 기억은 정확할수록 무섭고, 한두 개일 때 가장 따뜻하다. */
+    remember(o){
+      S.soc.mem=Object.assign({day:localDay()},o||{});
+      save();
     },
     toggle(){
       S.crowd=(S.crowd===false); save();
@@ -3084,9 +3335,23 @@ const MASCOT=(()=>{
     if(cls)sFaceT=setTimeout(()=>b.classList.remove(cls),ms||1200);
   }
   /** 서브가 한마디 — 확률(p)을 넘지 못하면 조용히 넘어간다 */
+  /** ★시니는 시간이 지날수록 누그러진다★ — 관계값(ki↔si)이 쌓이면
+      찌르는 대사는 줄고 인정·걱정 쪽이 늘어난다. 캐릭터가 변한다는 것
+      자체가 사건이라, 새 대사를 백 개 넣는 것보다 오래 붙든다. */
+  function soften(key){
+    const r=(CAST.rels&&CAST.rels()['ki-si'])||0;
+    if(r<10)return key;                       /* 아직 서먹하다 */
+    const p=Math.min(.55,(r-10)/50);
+    if(Math.random()>p)return key;
+    if(key==='wrong'||key==='break')return 'care';
+    if(key==='fight')return 'praise';
+    if(key==='right'||key==='combo')return 'praise';
+    return key;
+  }
   function sub(key,p,cls,hold){
     if(S.mascot===false||S.sub===false)return;
     if(Math.random()>(p==null?0.2:p))return;
+    key=soften(key);
     const b=$('sbody'), t=$('stalk'); if(!b||!t)return;
     b.hidden=false; t.textContent=spick(key); t.hidden=false;
     sface(cls||'s-roll',hold||1400);
@@ -3187,6 +3452,25 @@ function autoNext(){
 }
 ['wheel','touchmove','keydown','pointerdown'].forEach(ev=>
   document.addEventListener(ev,()=>{ if(autoT)autoCancel() },{passive:true,capture:true}));
+
+/* ── 🔓 오디오 잠금 해제 ────────────────────────────────
+   브라우저는 ★사용자 조작이 있기 전에는 소리를 내주지 않는다.★
+   새로고침으로 들어오면 BGM 설정이 켜져 있어도 context 가 정지 상태라 무음이다.
+   첫 조작(클릭·키·터치) 때 깨우고, 필요하면 장면을 다시 건다. */
+(function(){
+  let done=false;
+  function wake(){
+    const A=FX.snd.ctx&&FX.snd.ctx();
+    if(A&&A.state==='suspended')A.resume().catch(()=>{});
+    if(S.bgm===true&&!FX.bgm.playing())FX.bgm.scene(BGM_SCENE[view]||'home');
+    if(A&&A.state==='running'&&done)return;
+    done=true;
+  }
+  ['pointerdown','keydown','touchstart'].forEach(ev=>
+    document.addEventListener(ev,wake,{capture:true,passive:true}));
+  /* 탭을 다시 열었을 때도 정지돼 있을 수 있다 */
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden)wake() });
+})();
 
 /* 🎵 배경음악 토글 — ★기본 꺼짐.★ 음악 선호는 개인차가 가장 큰 영역이다 */
 function applyBgm(){
@@ -3378,13 +3662,22 @@ function applyBrand(){
 /* 🔥 연속 학습일 불꽃 — ★일수가 쌓일수록 커지고 색이 뜨거워진다.★
    숫자만 올리면 그래프에 불과하다. ★눈에 보이는 불이 커져야 끄기 아깝다.★
    단계: 주황 → 진주황 → 빨강 → 보라 → 푸른불꽃(가장 뜨겁다) */
+/* ★해상도★ — 6단계로는 7일과 13일이 똑같이 보여 ★엿새를 버틴 티가 안 난다.★
+   12단계로 쪼개 초반(1·2·3·5일)에 촘촘히 두었다. 습관이 깨지는 구간이 거기라
+   변화가 자주 보여야 한다. 후반은 드물게 — 희소해야 값이 남는다. */
 const FLAME=[
-  {d:0,  c1:'#fbbf24',c2:'#f59e0b',w:15,n:'불씨'},
-  {d:3,  c1:'#fb923c',c2:'#f97316',w:18,n:'불꽃'},
-  {d:7,  c1:'#fb7185',c2:'#ef4444',w:21,n:'큰불'},
-  {d:14, c1:'#c084fc',c2:'#a855f7',w:24,n:'맹렬'},
-  {d:30, c1:'#7dd3fc',c2:'#3b82f6',w:27,n:'푸른불꽃'},
-  {d:100,c1:'#a7f3d0',c2:'#10b981',w:30,n:'전설'}
+  {d:0,  c1:'#fde68a',c2:'#fbbf24',w:14,n:'불씨'},
+  {d:1,  c1:'#fcd34d',c2:'#f59e0b',w:16,n:'첫불'},
+  {d:2,  c1:'#fbbf24',c2:'#ea9a06',w:17,n:'작은불'},
+  {d:3,  c1:'#fb923c',c2:'#f97316',w:19,n:'불꽃'},
+  {d:5,  c1:'#fb8a3c',c2:'#ea580c',w:20,n:'돋는불'},
+  {d:7,  c1:'#fb7185',c2:'#ef4444',w:22,n:'큰불'},
+  {d:10, c1:'#f472b6',c2:'#db2777',w:23,n:'거센불'},
+  {d:14, c1:'#c084fc',c2:'#a855f7',w:25,n:'맹렬'},
+  {d:21, c1:'#a78bfa',c2:'#7c3aed',w:26,n:'보랏불'},
+  {d:30, c1:'#7dd3fc',c2:'#3b82f6',w:28,n:'푸른불꽃'},
+  {d:60, c1:'#67e8f9',c2:'#0891b2',w:29,n:'심연불'},
+  {d:100,c1:'#a7f3d0',c2:'#10b981',w:31,n:'전설'}
 ];
 const flameTier=d=>FLAME.reduce((a,f)=>d>=f.d?f:a,FLAME[0]);
 function flameSvg(days){
@@ -3394,6 +3687,43 @@ function flameSvg(days){
     `<path class="fo" d="M12 1c2 8 8 10 8 18a8 8 0 0 1-16 0C4 12 9 9 12 1z"/>`+
     `<path class="fi" d="M12 13c1.2 4 4 5 4 8.6a4 4 0 0 1-8 0c0-3 2.8-4 4-8.6z"/>`+
     `</svg></span>`;
+}
+/* ── 🌗 배경 진화 ─────────────────────────────────────────
+   ★누적★ 학습량만 본다. 오늘 잘했는지는 반영하지 않는다 —
+   하루 단위로 오르내리면 그건 성적표지 "쌓아 온 흔적" 이 아니다.
+   제곱근을 쓰는 이유: 초반에 빨리 올라야 변화가 있다는 걸 알고,
+   후반에 느려져야 ★오래 해도 계속 남는 여지★ 가 생긴다. */
+function updEvo(){
+  const n=(S.solved&&S.solved.length)||0;
+  const v=Math.min(1,Math.sqrt(n/900));
+  document.body.style.setProperty('--evo',v.toFixed(3));
+}
+/* ── 🗺 진도 지형도 ──────────────────────────────────────
+   단원별 정복률을 한 장에 펼친다. 숫자 목록이 아니라 ★면적★ 으로 보여야
+   "여기가 비었네" 가 한눈에 들어온다. */
+function updTerrain(){
+  const wrap=$('terrainWrap'), el=$('terrain'); if(!wrap||!el)return;
+  const map={};
+  ALLQ.forEach(q=>{
+    if(!q.t)return;
+    const k=q.s+'|'+q.t;
+    (map[k]||(map[k]={s:q.s,t:q.t,tot:0,got:0})).tot++;
+    if(SOLVED.has(q.id))map[k].got++;
+  });
+  const cells=Object.values(map).filter(c=>c.tot>=4);
+  if(!cells.length){wrap.hidden=true;return}
+  wrap.hidden=false;
+  cells.sort((a,b)=>a.s-b.s||a.t.localeCompare(b.t));
+  el.innerHTML=cells.map(c=>{
+    const pct=Math.round(c.got/c.tot*100);
+    const cls=pct>=80?' done':pct===0?' empty':'';
+    return `<button class="tcell${cls}" style="--p:${pct}" data-s="${c.s}" data-t="${esc(c.t)}"`+
+      ` title="${esc(c.t)} — ${c.got}/${c.tot} (${pct}%)">${esc(c.t.length>7?c.t.slice(0,6)+'…':c.t)}</button>`;
+  }).join('');
+  el.querySelectorAll('.tcell').forEach(b=>b.onclick=()=>{
+    const items=ALLQ.filter(q=>String(q.s)===b.dataset.s&&q.t===b.dataset.t);
+    if(items.length)startQuiz(shuffle(items.slice()).slice(0,20),'practice');
+  });
 }
 /** 상단 한 줄 — 연속 학습일 · 오늘 목표 · 레벨. 아무 기록도 없으면 감춘다(첫 방문은 깔끔하게) */
 function updDash(){
@@ -3456,7 +3786,7 @@ function renderAch(){
 }
 function renderHome(){
   const m=CPPG.meta;
-  updDash(); renderComeback(); renderAch(); chalToday(); updChal();
+  updDash(); renderComeback(); renderAch(); chalToday(); updChal(); updEvo(); updTerrain();
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -4116,8 +4446,10 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(M
 function startQuiz(items,mode){
   if(!items.length){alert('출제할 문제가 없습니다.');return}
   if(view!=='quiz')go('quiz');   // 어디서 호출되든 퀴즈 뷰를 보장 (키보드 컨텍스트도 여기에 맞춰짐)
-  combo=0; comboMax=0; wrongRun=0; renderQ._m=0; sesPt=0; updPt(); updHeat();
-  if(FX.bgm.on())FX.bgm.scene(quiz.mode==='practice'?'quiz':'exam');
+  combo=0; comboMax=0; wrongRun=0; renderQ._m=0; sesPt=0; updPt(); updHeat(); FX.resetBudget();
+  /* ★이 시점엔 quiz 가 아직 이전 세션(또는 null)이다.★ 인자로 받은 mode 를 써야 한다 —
+     BGM 이 실제로 울리기 시작하면서 드러난 결함이다(첫 세션에서 TypeError). */
+  if(FX.bgm.on())FX.bgm.scene(mode==='practice'?'quiz':'exam');
   setTimeout(()=>MASCOT.banter(),2500);
   items.forEach(q=>{ if(q.type==='order'&&!q._shuf){
     const t=[...q.steps];
@@ -4364,7 +4696,10 @@ function celebrate(ok,gain,wasWrong,q){
        단, 랜덤화하는 건 ★연출뿐★ 이다. XP 를 랜덤으로 주면 운에 기대게 되고
        "얼마나 벌었나" 가 학습 판단을 흐린다. */
     const lucky=Math.random()<0.12;
-    if(lucky){ FX.confetti(70); FX.snd.badge(); }
+    /* 예산이 남았을 때만 크게. 떨어지면 ★작게라도 반응은 한다★ —
+       아무 일도 안 일어나면 "운이 나빴다" 가 아니라 "고장" 으로 읽힌다. */
+    if(lucky){ if(FX.budget()){ FX.confetti(70); FX.snd.badge() }
+               else { FX.confetti(20); FX.snd.coin(3) } }
     if(!wasWrong)MASCOT.right(combo,{hard:q&&q.d===3,fast:(Date.now()-((quiz&&quiz.qAt)||0))<6000,lucky});
     else if(wasWrong){FX.snd.redeem();MASCOT.redeem();FX.toast('되찾았습니다 ✊  '+(gain?`+${gain} XP`:''),'good',1300)}
     else FX.toast((combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨')+(gain?`  +${gain} XP`:''),'good',1000);
@@ -4383,10 +4718,17 @@ function celebrate(ok,gain,wasWrong,q){
    콤보가 쌓일수록 화면 가장자리가 달아오른다. ★숫자보다 주변시가 먼저 안다★ —
    본문을 건드리지 않고 가장자리만 물들여, 읽기를 방해하지 않으면서 긴장을 만든다. */
 function updHeat(){
-  const lv = combo>=12?4 : combo>=8?3 : combo>=5?2 : combo>=3?1 : 0;
-  const b=document.body;
-  if(lv)b.setAttribute('data-heat',lv); else b.removeAttribute('data-heat');
-  const h=$('heat'); if(h)h.classList.toggle('on',lv>0);
+  const h=$('heat'), b=document.body;
+  /* 3연속부터 달아오르기 시작해 14연속에서 최대 — ★구간이 아니라 기울기★ */
+  const v=Math.max(0,Math.min(1,(combo-2)/12));
+  if(h){
+    h.style.setProperty('--heat',v.toFixed(3));
+    /* 색도 함께 민다 — 주황 → 진주황 → 적색 */
+    h.style.setProperty('--hc', combo>=12?'#ef4444' : combo>=8?'#f97316' : 'var(--wa)');
+    h.classList.toggle('on',v>0);
+  }
+  if(combo>=12)b.setAttribute('data-heat','hot'); else b.removeAttribute('data-heat');
+  FX.bgm.heat(combo);            /* ★눈이 하는 일을 귀로도★ — 레이어가 같이 열린다 */
 }
 /* 🪙 세션 포인트 — 이번 판에서 번 양을 칩에 실시간으로 쌓는다.
    숫자만 올리면 체감이 없다. ★코인이 날아가 꽂히는 양★ 으로 보여 준다. */
@@ -4663,6 +5005,20 @@ function finishQuiz(){
       if(p<1)requestAnimationFrame(step);
     })(t0);
   }
+  /* ── 🧠 이번 세션을 기억에 남긴다 ─────────────────────
+     다음에 들어오면 조연단이 이걸 언급한다. ★가장 약했던 단원★ 하나만
+     고르는 이유: 목록을 읊으면 성적표가 되고, 하나면 관심으로 읽힌다. */
+  (function(){
+    const byT={};
+    quiz.items.forEach((q,i)=>{
+      if(!q.t||quiz.ans[i]==null)return;
+      const o=byT[q.t]||(byT[q.t]={n:0,w:0});
+      o.n++; if(!isRight(q,quiz.ans[i]))o.w++;
+    });
+    let wt=null, wm=0;
+    Object.keys(byT).forEach(k=>{ if(byT[k].w>wm){wm=byT[k].w;wt=k} });
+    CAST.remember({n:total,wrong:total-right,best:comboMax,wt:wm>=2?wt:null});
+  })();
   setTimeout(()=>{
     FX.finish(pass,pct); MASCOT.end(pass);
     if(pass)FX.toast(pct>=90?`🏆 ${pct}점 — 최상위권!`:`🎉 합격선 통과 ${pct}점`,'hype',2400);
