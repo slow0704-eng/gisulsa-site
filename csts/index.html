@@ -1078,22 +1078,41 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .cw[data-who="bu"] .cfl{fill:#60a5fa}
 .cw[data-who="mo"] .cfl{fill:#34d399}
 .cw[data-who="mo"] .chd{fill:#6ee7b7}
-.cw[data-who="da"] .ctalk{background:color-mix(in srgb,#f59e0b 13%,var(--bg2));
-  border-color:color-mix(in srgb,#f59e0b 40%,transparent)}
-.cw[data-who="bu"] .ctalk{background:color-mix(in srgb,#60a5fa 13%,var(--bg2));
-  border-color:color-mix(in srgb,#60a5fa 40%,transparent)}
-.cw[data-who="mo"] .ctalk{background:color-mix(in srgb,#34d399 13%,var(--bg2));
-  border-color:color-mix(in srgb,#34d399 40%,transparent)}
 /* 말풍선은 흐름에서 빼고(레이아웃을 밀지 않게) ★배역마다 높이 레인을 다르게★ —
    셋이 동시에 말해도 서로 덮지 않는다. 꼬리 위치 + 색으로 화자를 구분한다. */
-.ctalk{position:absolute;left:50%;transform:translateX(-50%);width:max-content;
-  max-width:124px;padding:5px 8px;border-radius:11px;font-size:10.5px;line-height:1.35;
-  text-align:center;color:var(--tx);background:var(--bg2);border:1px solid var(--bd);
+/* ── 💬 말풍선 스택 ───────────────────────────────────────
+   ★절대배치 레인을 버렸다.★ bottom 을 고정 픽셀로 흩어 두면 대사가 길어져
+   두 줄이 되는 순간 반드시 겹친다(360px 에서 3쌍 겹침을 실측했다).
+   흐름(flex column)에 넣으면 ★겹침이 구조적으로 불가능★ 해진다. */
+#cstack{display:flex;flex-direction:column;align-items:flex-end;gap:5px;
+  width:100%;margin-bottom:5px}
+#cstack:empty{display:none}
+.ctalk{position:relative;width:max-content;max-width:min(190px,62vw);
+  padding:5px 9px 6px;border-radius:11px;font-size:11px;line-height:1.4;
+  text-align:left;color:var(--tx);background:var(--bg2);border:1px solid var(--bd);
   box-shadow:0 5px 14px rgba(0,0,0,.16);animation:mPop .26s cubic-bezier(.2,1.4,.4,1)}
-/* 맨 오른쪽 배역은 중앙정렬하면 화면 밖으로 삐져나간다 → 오른쪽에 붙인다 */
-.cw[data-who="mo"] .ctalk{bottom:calc(100% + 4px);z-index:3;left:auto;right:-6px;transform:none}
-.cw[data-who="bu"] .ctalk{bottom:calc(100% + 34px);z-index:2}
-.cw[data-who="da"] .ctalk{bottom:calc(100% + 64px);z-index:1}
+.ctalk[hidden]{display:none}
+/* ── 화자 표시 ① 이름표 — ★누가 말하는지 글자로 못박는다★ */
+.ctalk .spk{display:inline-flex;align-items:center;gap:3px;margin-right:5px;
+  font-size:9.5px;font-weight:800;letter-spacing:.02em;opacity:.95;vertical-align:1px}
+.ctalk .spk i{width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
+/* ── 화자 표시 ② 꼬리 — 말한 배역 쪽을 가리킨다(--tail 은 JS 가 잰다) */
+.ctalk::after{content:'';position:absolute;bottom:-6px;left:var(--tail,18px);
+  width:0;height:0;border:6px solid transparent;border-top-color:var(--bg2);
+  border-bottom:0;filter:drop-shadow(0 1px 0 var(--bd))}
+/* 배역 색 — 테두리·이름표·꼬리를 한 색으로 묶어야 출처가 한눈에 읽힌다 */
+.ctalk[data-who="da"]{border-color:color-mix(in srgb,#f59e0b 55%,transparent);
+  background:color-mix(in srgb,#f59e0b 13%,var(--bg2))}
+.ctalk[data-who="da"]::after{border-top-color:color-mix(in srgb,#f59e0b 13%,var(--bg2))}
+.ctalk[data-who="da"] .spk{color:#b45309}
+.ctalk[data-who="bu"]{border-color:color-mix(in srgb,#60a5fa 55%,transparent);
+  background:color-mix(in srgb,#60a5fa 13%,var(--bg2))}
+.ctalk[data-who="bu"]::after{border-top-color:color-mix(in srgb,#60a5fa 13%,var(--bg2))}
+.ctalk[data-who="bu"] .spk{color:#1d4ed8}
+.ctalk[data-who="mo"]{border-color:color-mix(in srgb,#34d399 55%,transparent);
+  background:color-mix(in srgb,#34d399 13%,var(--bg2))}
+.ctalk[data-who="mo"]::after{border-top-color:color-mix(in srgb,#34d399 13%,var(--bg2))}
+.ctalk[data-who="mo"] .spk{color:#047857}
 .cw .cwrap{transform-origin:50px 90px;animation:cBr 3.8s ease-in-out infinite}
 @keyframes cBr{0%,100%{transform:scale(1,1)}50%{transform:scale(1.025,.975)}}
 .cw[data-who="da"] .ctail{transform-origin:70px 76px;animation:cTail 1.7s ease-in-out infinite}
@@ -1112,9 +1131,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 @keyframes cLook{0%,100%{transform:rotate(0)}30%{transform:rotate(-9deg)}65%{transform:rotate(9deg)}}
 @media (max-width:520px){
   .cw svg{width:38px;height:38px}
-  .ctalk{max-width:104px;font-size:9.5px;padding:4px 6px}
-  .cw[data-who="bu"] .ctalk{bottom:calc(100% + 30px)}
-  .cw[data-who="da"] .ctalk{bottom:calc(100% + 56px)}
+  .ctalk{max-width:min(196px,70vw);font-size:10.5px;padding:4px 8px 5px}
   #crowd{gap:4px}
 }
 @media (prefers-reduced-motion: reduce){
@@ -1127,6 +1144,13 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
   font-size:12px;line-height:1.45;color:var(--tx);animation:mPop .28s cubic-bezier(.2,1.4,.4,1)}
 
 /* 말풍선 */
+/* 치노·시니 말풍선에도 같은 꼬리를 — ★출처 표시 방식이 통일돼야★ 읽힌다 */
+.mtalk,.stalk{position:relative}
+.mtalk::after,.stalk::after{content:'';position:absolute;bottom:-6px;
+  width:0;height:0;border:6px solid transparent;border-bottom:0}
+.mtalk::after{right:16px;border-top-color:var(--bg2)}
+.stalk::after{right:76px;border-top-color:color-mix(in srgb,#8b7bd8 14%,var(--bg2))}
+@media (max-width:520px){ .stalk::after{right:60px} }
 .mtalk{max-width:190px;padding:9px 12px;border-radius:14px 14px 4px 14px;
   background:var(--bg2);border:1px solid var(--bd);box-shadow:0 8px 22px rgba(0,0,0,.2);
   font-size:12.5px;line-height:1.45;color:var(--tx);animation:mPop .28s cubic-bezier(.2,1.4,.4,1)}
@@ -1463,6 +1487,21 @@ body::before{background-size:160% 140%;animation:evoDrift 46s ease-in-out infini
   .logo span{font-size:11px;margin-left:0}
   .qclock{padding:3px 7px;font-size:11px}
 }
+
+/* 멀티턴 로그 — ★지금 말하는 것만 또렷하게.★ 지난 말은 남되 물러난다 */
+.ctalk{transition:opacity .25s ease,transform .25s ease}
+.ctalk.fresh{transform:none}
+#cstack .ctalk:not(.fresh){transform:scale(.97)}
+
+/* 장면 스택 안의 치노·시니 — 각자 색을 가져 출처가 즉시 읽힌다 */
+.ctalk[data-who="ki"]{border-color:color-mix(in srgb,var(--ac) 55%,transparent);
+  background:color-mix(in srgb,var(--ac) 12%,var(--bg2))}
+.ctalk[data-who="ki"]::after{border-top-color:color-mix(in srgb,var(--ac) 12%,var(--bg2))}
+.ctalk[data-who="ki"] .spk{color:var(--ac)}
+.ctalk[data-who="si"]{border-color:color-mix(in srgb,#8b7bd8 55%,transparent);
+  background:color-mix(in srgb,#8b7bd8 13%,var(--bg2))}
+.ctalk[data-who="si"]::after{border-top-color:color-mix(in srgb,#8b7bd8 13%,var(--bg2))}
+.ctalk[data-who="si"] .spk{color:#6d5fc0}
 
 /* 음량 팝오버 */
 .volpop{position:fixed;z-index:60;display:flex;align-items:center;gap:9px;
@@ -2453,16 +2492,8 @@ html.nomotion .emark{display:none!important}
 #mascot.scene{flex-direction:column;align-items:flex-end;gap:4px}
 #mascot.scene .mtalk,#mascot.scene .stalk{max-width:min(200px,42vw)}
 #mascot.scene #crowd{display:flex;align-items:flex-end;gap:8px}
-#mascot.scene .cw .ctalk{left:auto;right:0;transform:none;max-width:min(196px,40vw);
-  white-space:normal;width:max-content}
-#mascot.scene .cw[data-who="mo"] .ctalk{bottom:calc(100% + 6px)}
-#mascot.scene .cw[data-who="bu"] .ctalk{bottom:calc(100% + 52px)}
-#mascot.scene .cw[data-who="da"] .ctalk{bottom:calc(100% + 98px)}
-@media (max-width:520px){
-  #mascot.scene .cw .ctalk{max-width:min(168px,62vw);font-size:11.5px}
-  #mascot.scene .cw[data-who="bu"] .ctalk{bottom:calc(100% + 46px)}
-  #mascot.scene .cw[data-who="da"] .ctalk{bottom:calc(100% + 88px)}
-}
+/* 대화 모드에서도 레인 조정이 필요 없다 — 스택이라 겹칠 수가 없다 */
+#mascot.scene #cstack{gap:6px}
 
 
 /* ═══ 📖 읽기 도우미 — 아이콘 · 진행바 · 목차 하이라이팅 ══════════════════
@@ -2504,6 +2535,69 @@ html.nomotion .emark{display:none!important}
 .mmd .mmd-cap{display:block;margin-top:6px;font-size:11.5px;color:var(--tx3)}
 @media print{ #readbar,#readtag{display:none!important} .mmd{border-style:solid} }
 
+
+/* ── 🖍 다이어그램 연출 ──────────────────────────────────────
+   ★그림은 한 번 보면 끝난다.★ 정지한 도형은 두 번째부터 배경이 되어
+   눈이 그냥 지나친다. 선에 ★흐름★ 을 주면 "어디서 어디로 가는지" 가
+   글을 읽지 않아도 읽히고, 다시 볼 때도 눈이 따라간다.
+
+   ★단, 읽는 것을 방해하면 안 된다★ —
+     · 흐르는 건 ★선뿐★ 이다. 글자·도형은 움직이지 않는다
+     · 주기는 느리게(2.4s), 광택은 아주 옅게(.18)
+     · 화면에 보일 때만 재생한다(안 보이는 그림이 CPU 를 먹을 이유가 없다)
+     · prefers-reduced-motion 이면 전부 정지 */
+.mmd{position:relative}
+.mmd svg .mmd-edge{stroke-width:2.6px!important;stroke-linecap:round}
+.mmd svg marker path,.mmd svg marker polygon{transform:scale(1.25);transform-origin:center}
+/* 흐름 — 점선이 선을 따라 흐른다. ★원본 선 위에 겹쳐 그린다★(원본은 그대로 둔다) */
+.mmd svg .mmd-flow{fill:none;stroke-width:2.8px;stroke-linecap:round;
+  stroke-dasharray:1 13;opacity:.85;pointer-events:none;
+  animation:mmdFlow 2.4s linear infinite}
+@keyframes mmdFlow{to{stroke-dashoffset:-56}}
+/* 도형 테두리 광택 — 한 번에 하나씩, 순서대로 훑고 지나간다 */
+.mmd svg .mmd-node{animation:mmdGlow 5.2s ease-in-out infinite}
+@keyframes mmdGlow{0%,72%,100%{filter:none}
+  84%{filter:drop-shadow(0 0 5px color-mix(in srgb,var(--ac) 65%,transparent))}}
+/* 등장 — 스크롤로 들어올 때 그림이 한 번 떠오른다.
+   ★opacity 를 0 으로 눕혀 두는 방식은 완전히 버렸다.★ 두 번 시도했고 두 번 다
+   그림이 통째로 사라졌다(개별 도형 방식 → 빈 사각형 / SVG 전체 방식 → 17개 모두 투명,
+   관찰자가 발화하지 않아서다). 연출이 실패해도 ★내용은 반드시 보여야 한다★ 는 것이
+   이 화면의 유일한 필수 조건이다.
+   → 이제 기본 상태는 ★항상 보임★ 이고, 애니메이션은 fill-mode 없이 재생만 한다.
+     관찰자가 죽든 CSS 가 안 먹든 그림은 그대로 보인다. */
+.mmd.lit svg{animation:mmdIn .5s cubic-bezier(.2,.9,.3,1)}
+@keyframes mmdIn{from{opacity:0;transform:translateY(6px) scale(.99)}
+  to{opacity:1;transform:none}}
+/* 확대 버튼 — 그림 위에 조용히 */
+.mmd-zoom{position:absolute;top:7px;right:8px;z-index:2;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 88%,transparent);color:var(--tx3);
+  border-radius:8px;width:28px;height:28px;font-size:13px;cursor:pointer;
+  opacity:0;transition:opacity .18s ease,transform .16s ease;line-height:1}
+.mmd:hover .mmd-zoom,.mmd:focus-within .mmd-zoom{opacity:1}
+.mmd-zoom:hover{transform:scale(1.1);color:var(--tx)}
+@media (hover:none){ .mmd-zoom{opacity:.85} }
+/* ── 확대 보기 ─────────────────────────────────────────── */
+#mmdBox{position:fixed;inset:0;z-index:1200;display:none;
+  background:color-mix(in srgb,#000 62%,transparent);backdrop-filter:blur(3px)}
+#mmdBox.on{display:flex;align-items:center;justify-content:center;
+  animation:fadeIn .18s ease}
+#mmdBox .mb-in{max-width:96vw;max-height:92vh;overflow:auto;padding:16px;
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);animation:upIn .26s cubic-bezier(.2,.9,.3,1)}
+#mmdBox svg{max-width:none!important;max-height:none!important;
+  width:calc(var(--z,1) * 100%);height:auto;transform-origin:top left}
+#mmdBox .mb-bar{position:fixed;top:14px;right:14px;display:flex;gap:6px}
+#mmdBox .mb-bar button{min-width:38px;height:38px;border-radius:10px;border:1px solid var(--line);
+  background:var(--card);color:var(--tx);font-size:16px;font-weight:800;cursor:pointer}
+#mmdBox .mb-bar button:hover{background:var(--bg2)}
+#mmdBox .mb-cap{margin-top:8px;font-size:12.5px;color:var(--tx3);text-align:center}
+@media (prefers-reduced-motion: reduce){
+  .mmd svg .mmd-flow,.mmd svg .mmd-node,.mmd.lit svg *{animation:none!important}
+  .mmd.reveal svg *{opacity:1!important}
+  #mmdBox.on,#mmdBox .mb-in{animation:none}
+}
+html.nomotion .mmd svg .mmd-flow,html.nomotion .mmd svg .mmd-node{animation:none!important}
+
 </style>
 </head>
 <body>
@@ -2537,6 +2631,17 @@ html.nomotion .emark{display:none!important}
 <div id="readbar" aria-hidden="true"></div>
 <div id="readtag" aria-hidden="true"></div>
 
+<!-- 🔍 다이어그램 확대 보기 -->
+<div id="mmdBox" role="dialog" aria-modal="true" aria-label="다이어그램 확대" hidden>
+  <div class="mb-bar">
+    <button type="button" id="mbOut" title="축소 (-)">−</button>
+    <button type="button" id="mbIn" title="확대 (+)">+</button>
+    <button type="button" id="mbFit" title="화면에 맞추기 (0)">⤢</button>
+    <button type="button" id="mbX" title="닫기 (Esc)">✕</button>
+  </div>
+  <div class="mb-in" id="mbIn2"></div>
+</div>
+
 <!-- 보상 연출 레이어 -->
 <div id="heat"></div>
 <div id="fx"></div>
@@ -2552,6 +2657,9 @@ html.nomotion .emark{display:none!important}
   <!-- 🎭 조연단 — ★평소엔 없다가 특수 상황에만 튀어나온다.★
        상시 표시하면 화면이 난장판이 되고 등장의 가치도 사라진다.
        다람(수집·기회주의) / 부엉(분석·팩폭) / 모모(느긋·위로) -->
+  <!-- 💬 말풍선 스택 — 모든 조연단 대사가 여기 ★한 줄씩 쌓인다★.
+       레인(절대배치)으로 흩어 두면 내용 길이에 따라 반드시 겹친다(실측 3쌍). -->
+  <div id="cstack"></div>
   <div id="crowd">
     <!-- 🐿 다람 — ★중립. 이기는 편에 붙는다★(편먹기 동역학의 축) -->
     <div class="cw" data-who="da">
@@ -3153,7 +3261,9 @@ function addXp(q,ok,wasWrong){
   const g=Math.round(base*(wasWrong?1.5:1));
   const before=xpLv(S.xp.total);
   S.xp.total+=g;
-  if(xpLv(S.xp.total)>before)setTimeout(()=>{FX.snd.levelup();MASCOT.level(xpLv(S.xp.total));FX.milestone(`⚡ Lv.${xpLv(S.xp.total)} 달성!`)},520);
+  if(xpLv(S.xp.total)>before)setTimeout(()=>{FX.snd.levelup();MASCOT.level(xpLv(S.xp.total));
+    FX.milestone(`⚡ Lv.${xpLv(S.xp.total)} 달성!`);
+    setTimeout(()=>TALK.now('levelup'),2400);   /* 🎭 넷이 나와 한 마디씩 */},520);
   return g;
 }
 const xpLv=x=>Math.floor(Math.sqrt(Math.max(0,x)/60))+1; /* 레벨 — 뒤로 갈수록 완만 */
@@ -3856,14 +3966,17 @@ const FX=(()=>{
   ];
   const SCENE={
     /*        바이닐 로즈 베이스 멜로디 드럼 하이햇 */
-    home:    {lay:[.60, .85, .80, .55, .70, .55], bpm:84, rhythm:true,  amb:.30},
-    quiz:    {lay:[.55, .75, .95, .60, .90, .75], bpm:88, rhythm:true,  amb:.24},
-    cards:   {lay:[.60, .80, .75, .50, .65, .55], bpm:80, rhythm:true,  amb:.40},
+    home:    {lay:[.60, .85, .80, .55, .70, .55], bpm:84, rhythm:true},
+    quiz:    {lay:[.55, .75, .95, .60, .90, .75], bpm:88, rhythm:true},
+    cards:   {lay:[.60, .80, .75, .50, .65, .55], bpm:80, rhythm:true},
     /* ★읽기·휴식은 앰비언트 유지★ — 지문 읽는 동안 박자가 째깍거리면
        은근한 시간 압박이 된다(bgm/case_analysis.txt [4] 결론). */
-    read:    {lay:[.25, .80, .35, 0,   0,   0  ], bpm:66, rhythm:false, amb:.85},
-    rest:    {lay:[.20, .65, .25, 0,   0,   0  ], bpm:60, rhythm:false, amb:1.0},
-    exam:    {lay:[0,0,0,0,0,0],                  bpm:0,  rhythm:false, amb:0}  /* 모의고사 — 무음 */
+    /* 자연음 베드는 제거했다 — 빗소리·파도 같은 환경음은 취향을 크게 타고,
+       읽는 화면에서 '계속 무언가 들린다'는 것 자체가 거슬린다는 판단.
+       조용한 화면은 룸톤 + 패드만 남긴다. */
+    read:    {lay:[.55, .85, .40, 0,   0,   0  ], bpm:66, rhythm:false},
+    rest:    {lay:[.50, .70, .28, 0,   0,   0  ], bpm:60, rhythm:false},
+    exam:    {lay:[0,0,0,0,0,0],                  bpm:0,  rhythm:false}  /* 모의고사 — 무음 */
   };
   function bgmInit(){
     const A=ac(); if(!A||bgm)return bgm;
@@ -3888,10 +4001,7 @@ const FX=(()=>{
        스텝마다 버퍼를 새로 만들면 GC 가 튀어 박자가 흔들린다. */
     const wb=A.createBuffer(1,A.sampleRate*2,A.sampleRate), wd=wb.getChannelData(0);
     for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
-    /* 자연음은 ★로파이 로우패스를 거치지 않는다★ — 3.8kHz 에서 잘리면
-       빗소리의 알갱이가 사라져 그냥 웅웅거림이 된다. 마스터로 곧장 보낸다. */
-    const ambBus=A.createGain(); ambBus.gain.value=0; ambBus.connect(master);
-    bgm={out,g,sc,ambBus,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb};
+    bgm={out,g,sc,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb};
     return bgm;
   }
   /* ── 🎷 재즈 로파이 음색 ───────────────────────────────
@@ -4041,31 +4151,6 @@ const FX=(()=>{
     /* ★콤보가 높으면 16분으로 쪼갠다★ — 레이어가 아니라 ★밀도★ 를 올린다 */
     if(L[5]>0&&rhy&&(bgm.boost||0)>=.7&&b%2===1)bHat(t+hz(),bgm.g[5],.013,false);
   }
-  /* ── 🌧 자연음 베드 ────────────────────────────────────
-     ★왜 갈아타야 하는가★
-       한 가지 질감을 계속 틀면 10분쯤 뒤 귀가 걸러낸다(순응). 그때부터는
-       켜 놓은 의미가 없다 — 지루하다기보다 ★아예 안 들리게 된다.★
-     ★왜 천천히 갈아타야 하는가★
-       배경음의 미덕은 '의식되지 않는 것'이다. 갑자기 바뀌면 그 순간
-       배경이 전경으로 튀어나온다. ★전환을 알아채지 못해야 성공★ 이라
-       20초 넘게 겹쳐 넘긴다. 주기도 6~9분으로 흔들어 둔다 —
-       고정 주기면 그 규칙성 자체가 또 하나의 패턴이 되어 예측된다.
-     ★왜 장면마다 다른 것을 쓰는가★
-       비  : 광대역·정상성이 높아 주변 소음을 가장 잘 덮는다 → 읽기에 최적
-       바람: 중역 + 느린 돌풍. 변화가 있어 덜 지루하나 돌풍이 주의를 끈다
-       시냇물: 중고역이 촘촘해 마스킹은 좋지만 다소 활동적이다
-       파도: 0.1Hz 느린 출렁임. 이완엔 좋지만 ★읽는 중엔 그 주기가 거슬린다★
-       모닥불: 불규칙 파열음이 자꾸 주의를 끈다
-       → 읽기·카드는 ★정상성 높은 것★, 휴식은 ★출렁이는 것★ 으로 나눈다. */
-  const AMB_POOL={
-    read:  ['rain','wind','stream'],
-    cards: ['rain','wind'],
-    home:  ['wind','rain'],
-    quiz:  ['rain'],                 /* 문제 풀 땐 변화가 가장 적은 것 하나만 */
-    rest:  ['waves','fire','rain'],
-    exam:  []
-  };
-  let amb=null, ambNext=0, ambTimer=null;
   /* ── ⏱ 템포 요동(루바토) ────────────────────────────────
      ★기계적으로 일정한 박은 곧 배경이 된다.★ 연주자는 저절로 조금씩
      밀고 당기는데, 그 미세한 흔들림이 "사람이 치고 있다" 는 느낌을 만든다.
@@ -4087,99 +4172,6 @@ const FX=(()=>{
     tempo=tempo+(tempoTo-tempo)*e*0.08;
   }
   function tempoNow(){ return tempo }
-  function ambBuild(kind){
-    const A=ac(); if(!A||!bgm||!bgm.ambBus)return null;
-    const src=A.createBufferSource(); src.buffer=bgm.wb; src.loop=true;
-    src.playbackRate.value=.9+Math.random()*.2;
-    const g=A.createGain(); g.gain.value=.0001;
-    const lfo=[];
-    /* param 을 아주 느린 사인으로 흔든다 — 자연음의 정체는 ★불규칙한 변조★ 다 */
-    const LFO=(param,freq,amt,base)=>{
-      const o=A.createOscillator(), og=A.createGain();
-      o.type='sine'; o.frequency.value=freq; og.gain.value=amt;
-      param.value=base; o.connect(og); og.connect(param); o.start(); lfo.push(o);
-    };
-    let head=src;
-    if(kind==='rain'){
-      const hp=A.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=850; hp.Q.value=.6;
-      const pk=A.createBiquadFilter(); pk.type='peaking'; pk.frequency.value=4300; pk.Q.value=.8; pk.gain.value=5;
-      head.connect(hp); hp.connect(pk); head=pk;
-    }else if(kind==='wind'){
-      const bp=A.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=.8;
-      LFO(bp.frequency,.055,250,620);            /* 돌풍 — 대역이 아주 느리게 오르내린다 */
-      const gm=A.createGain(); LFO(gm.gain,.041,.30,.70);
-      head.connect(bp); bp.connect(gm); head=gm;
-    }else if(kind==='waves'){
-      const lp=A.createBiquadFilter(); lp.type='lowpass'; lp.Q.value=.7;
-      LFO(lp.frequency,.105,600,980);
-      const gm=A.createGain(); LFO(gm.gain,.105,.40,.55);  /* 필터와 ★같은 주기★ = 밀려왔다 빠진다 */
-      head.connect(lp); lp.connect(gm); head=gm;
-    }else if(kind==='stream'){
-      const bp=A.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1100; bp.Q.value=1.1;
-      const b2=A.createBiquadFilter(); b2.type='bandpass'; b2.Q.value=.9;
-      LFO(b2.frequency,.85,380,3100);            /* 물이 구르는 잔떨림 */
-      head.connect(bp); bp.connect(b2); head=b2;
-    }else{ /* fire */
-      const lp=A.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=540; lp.Q.value=.6;
-      head.connect(lp); head=lp;
-    }
-    head.connect(g); g.connect(bgm.ambBus);
-    try{ src.start(A.currentTime,Math.random()*1.5) }catch(e){ try{src.start()}catch(e2){} }
-    return {kind,g,
-      stop(at){ const t=at||ac().currentTime;
-        try{src.stop(t+.3)}catch(e){}
-        lfo.forEach(o=>{try{o.stop(t+.3)}catch(e){}}); }};
-  }
-  /** 빗방울·장작 튀는 소리 — 질감만으론 '무슨 소리인지' 가 안 잡힌다.
-      ★불규칙한 알갱이★ 하나가 정체를 정해 준다. */
-  function ambGrain(){
-    if(!amb||!bgm||!bgm.ambBus)return;
-    const A=ac(); if(!A)return;
-    const t=A.currentTime;
-    if(amb.kind==='rain'){
-      for(let i=0;i<2+((Math.random()*3)|0);i++)
-        bN(t+Math.random(),.02,amb.g,{type:'bandpass',f:2600+Math.random()*3600,q:2.2,gain:.012+Math.random()*.02});
-    }else if(amb.kind==='fire'){
-      if(Math.random()<.75)
-        for(let i=0;i<1+((Math.random()*2)|0);i++)
-          bN(t+Math.random(),.035,amb.g,{type:'bandpass',f:700+Math.random()*1800,q:1.6,gain:.03+Math.random()*.05});
-    }else if(amb.kind==='stream'&&Math.random()<.5){
-      bN(t+Math.random(),.05,amb.g,{type:'bandpass',f:1400+Math.random()*1600,q:3,gain:.016});
-    }
-  }
-  /** 크로스페이드로 갈아탄다 — ★겹쳐서 넘겨야★ 이음매가 안 들린다 */
-  function ambSet(kind,fade){
-    const A=ac(); if(!A||!bgm||!bgm.ambBus)return;
-    if(amb&&amb.kind===kind)return;
-    const t=A.currentTime, f=(fade==null?22:fade);
-    const nu=ambBuild(kind); if(!nu)return;
-    nu.g.gain.setValueAtTime(.0001,t);
-    nu.g.gain.linearRampToValueAtTime(1,t+f);
-    if(amb){
-      const old=amb;
-      old.g.gain.cancelScheduledValues(t);
-      old.g.gain.setValueAtTime(old.g.gain.value,t);
-      old.g.gain.linearRampToValueAtTime(.0001,t+f);
-      old.stop(t+f+.6);
-    }
-    amb=nu;
-  }
-  function ambRotate(force){
-    if(!bgm||!bgm.scene)return;
-    const pool=AMB_POOL[bgm.scene]||[];
-    if(!pool.length){ if(amb){amb.stop();amb=null} return }
-    /* ★같은 것 두 번 연속 금지★ — 풀이 하나뿐이면 그냥 유지한다 */
-    const cand=pool.length>1&&amb?pool.filter(k=>k!==amb.kind):pool;
-    ambSet(cand[(Math.random()*cand.length)|0], force?4:22);
-    ambNext=Date.now()+(360+Math.random()*180)*1000;   /* 6~9분, 매번 다르게 */
-  }
-  function ambPump(){
-    if(!bgm||S.bgm!==true)return;
-    const sc=SCENE[bgm.scene]; if(!sc)return;
-    if(!(sc.amb>0)){ if(amb){amb.stop();amb=null} return }
-    if(!amb||Date.now()>=ambNext)ambRotate(!amb);
-    ambGrain();
-  }
   /** 레이어 볼륨 적용 — 장면 프리셋 × ★콤보 부스트★.
       ★위쪽 레이어만 연다★ — 룸톤·패드까지 같이 키우면 그냥 시끄러워질 뿐,
       "달아오른다" 는 느낌은 아르페지오·드럼·하이햇에서 온다. */
@@ -4228,12 +4220,7 @@ const FX=(()=>{
       bgm.out.gain.setValueAtTime(bgm.out.gain.value,t);
       bgm.out.gain.linearRampToValueAtTime(bgm.vol*bgm.duck,t+fade);
       bgmLayers(fade);
-      /* 자연음 — 장면마다 비중이 다르다(읽기는 거의 자연음, 퀴즈는 아주 옅게) */
-      const ag=bgm.ambBus.gain, av=bgm.vol*(sc.amb||0)*1.15;
-      ag.cancelScheduledValues(t); ag.setValueAtTime(ag.value,t);
-      ag.linearRampToValueAtTime(av*bgm.duck,t+fade);
-      if(sc.amb>0&&!ambTimer)ambTimer=setInterval(ambPump,1000);
-      if(sc.amb>0)ambPump();
+
       if(!bgm.timer&&sc.bpm){
         bgm.next=A.currentTime+.08;
         bgm.timer=setInterval(bgmPump,25);      /* 스케줄러는 고정 주기. 박은 오디오 클럭이 잡는다 */
@@ -4260,18 +4247,14 @@ const FX=(()=>{
       bgm.out.gain.cancelScheduledValues(t);
       bgm.out.gain.setValueAtTime(bgm.out.gain.value,t);
       bgm.out.gain.linearRampToValueAtTime(bgm.vol*.35,t+.08);
-      const _ag=bgm.ambBus.gain, _sc=SCENE[bgm.scene]||{};
-      _ag.cancelScheduledValues(t); _ag.setValueAtTime(_ag.value,t);
-      _ag.linearRampToValueAtTime(bgm.vol*(_sc.amb||0)*1.15*.45,t+.08);
+
       clearTimeout(bgm._dt);
       bgm._dt=setTimeout(()=>{
         const t2=A.currentTime; bgm.duck=1;
         bgm.out.gain.cancelScheduledValues(t2);
         bgm.out.gain.setValueAtTime(bgm.out.gain.value,t2);
         bgm.out.gain.linearRampToValueAtTime(bgm.vol,t2+1.1);
-        const g2=bgm.ambBus.gain, s2=SCENE[bgm.scene]||{};
-        g2.cancelScheduledValues(t2); g2.setValueAtTime(g2.value,t2);
-        g2.linearRampToValueAtTime(bgm.vol*(s2.amb||0)*1.15,t2+1.1);
+
       },ms||700);
     },
     stop(){
@@ -4281,18 +4264,10 @@ const FX=(()=>{
         bgm.out.gain.setValueAtTime(bgm.out.gain.value,t);
         bgm.out.gain.linearRampToValueAtTime(0,t+1.2)}
       clearInterval(bgm.timer); bgm.timer=null; bgm.scene=null;
-      clearInterval(ambTimer); ambTimer=null;
-      if(A){ const t=A.currentTime, g=bgm.ambBus.gain;
-        g.cancelScheduledValues(t); g.setValueAtTime(g.value,t);
-        g.linearRampToValueAtTime(0,t+1.2); }
-      if(amb){ const old=amb; amb=null; setTimeout(()=>old.stop(),1400) }
+
     },
-    /** 지금 깔린 자연음 — 설정·디버그용 */
-    ambKind(){ return amb?amb.kind:null },
     /** 지금 템포 배율 — 루바토가 범위를 벗어나지 않는지 재기 위한 창구 */
     tempo(){ return tempoNow() },
-    /** 수동 전환(다음 질감으로) */
-    ambNextNow(){ ambRotate(false) },
     setVol(v){ if(bgm&&S.bgm===true){bgm.vol=v;bgm.out.gain.value=v*bgm.duck} },
     on(){ return S.bgm===true }
   };
@@ -4724,7 +4699,10 @@ const EX=(()=>{
    시니·부엉이 수세에 몰린다. 부진하면 반대. 다람이는 그때그때 갈아탄다 —
    이 배신이 "얘네가 나를 보고 있다" 는 감각을 가장 크게 만든다. */
 const CAST=(()=>{
-  const el=w=>document.querySelector('.cw[data-who="'+w+'"]');
+  /* 치노·시니는 .cw 가 아니라 마스코트 본체다 — 꼬리 조준·등장 판정에 쓴다 */
+  const el=w=> w==='ki'?document.getElementById('mbody')
+             : w==='si'?document.getElementById('sbody')
+             : document.querySelector('.cw[data-who="'+w+'"]');
   const T={}, hide={};             /* 배역별 타이머 */
   const L={
     da:{ /* 🐿 수집가 — 모든 걸 기록으로 환산한다 */
@@ -4943,13 +4921,40 @@ const CAST=(()=>{
     mem.push(t); if(mem.length>3)mem.shift(); return t;
   }
   /** 한 배역이 튀어나와 한마디 하고 사라진다 */
+  /* ── 💬 말풍선 스택 ───────────────────────────────────
+     각 배역의 말풍선을 ★.cw 안이 아니라 공용 스택★ 으로 옮긴다.
+     흐름에 쌓이므로 겹칠 수가 없고, 대사가 길어져도 안전하다.
+     대신 "누가 말했는지" 가 흐려지므로 ★이름표 + 꼬리 조준★ 으로 보완한다. */
+  const NAME={ki:'치노',si:'시니',da:'다람',bu:'부엉',mo:'모모'};
+  const CB={};
+  function bubble(w){
+    if(CB[w])return CB[w];
+    const st=$('cstack'); if(!st)return null;
+    const d=el(w); if(!d)return null;
+    const old=d.querySelector&&d.querySelector('.ctalk');
+    const t=old||document.createElement('div');
+    t.className='ctalk'; t.dataset.who=w; t.hidden=true;
+    if(old&&old.parentNode)old.parentNode.removeChild(old);
+    st.appendChild(t);
+    CB[w]=t; return t;
+  }
+  /** 꼬리를 말한 배역의 머리 위로 조준한다 — ★출처를 눈으로 잇는 선★ */
+  function aimTail(w,t){
+    const d=el(w); if(!d||!t)return;
+    const a=d.getBoundingClientRect(), b=t.getBoundingClientRect();
+    if(!a.width||!b.width)return;
+    const x=(a.left+a.width/2)-b.left;
+    t.style.setProperty('--tail', Math.max(9,Math.min(b.width-15,x)).toFixed(1)+'px');
+  }
   function pop(w,k,opt){
     opt=opt||{};
     if(S.mascot===false||S.crowd===false)return;
     const d=el(w); if(!d)return;
-    const t=d.querySelector('.ctalk'); if(!t)return;
+    const t=bubble(w); if(!t)return;
     clearTimeout(T[w]); clearTimeout(hide[w]);
-    d.classList.remove('out'); d.classList.add('on');
+    const isCast = w!=='ki' && w!=='si';
+    if(isCast){ d.classList.remove('out'); d.classList.add('on') }
+    else if(w==='si'){ d.hidden=false }        /* 시니는 평소 숨어 있다 */
     /* ★맥락·기억을 가끔 끼워 넣는다★ — 항상 하면 지겹고, 없으면 밋밋하다 */
     let msg=opt.msg;
     if(!msg){
@@ -4957,18 +4962,26 @@ const CAST=(()=>{
       const cx =!mem&&Math.random()<.22?ctxLine(w):null;
       msg=mem||cx||line(w,k);
     }
-    t.textContent=msg;
+    /* 이름표를 앞에 달아 ★글자로도★ 출처를 못박는다 */
+    t.innerHTML='<span class="spk"><i></i>'+esc(NAME[w]||'')+'</span>'+esc(msg);
     t.hidden=false;
+    /* 스택 맨 아래(=가장 최근)로 내려 대화 순서가 위→아래로 읽히게 */
+    const st=$('cstack'); if(st)st.appendChild(t);
+    requestAnimationFrame(()=>aimTail(w,t));
     /* 누적 등장 기록 — 희소성 감쇠의 근거 */
     const sc=S.soc.seen||(S.soc.seen={});
     sc[w]=(sc[w]||0)+1;
-    ['f-joy','f-sad','f-mad','f-look'].forEach(c=>d.classList.remove(c));
-    if(opt.face)d.classList.add(opt.face);
+    if(isCast){
+      ['f-joy','f-sad','f-mad','f-look'].forEach(c=>d.classList.remove(c));
+      if(opt.face)d.classList.add(opt.face);
+    }
     T[w]=setTimeout(()=>{
-      t.hidden=true;
-      /* ★대화 장면에서는 말풍선만 접고 배역은 남긴다★ — 말이 끝났다고 퇴장해 버리면
-         셋이 주고받는 장면이 '혼잣말 릴레이' 로 보인다. 퇴장은 장면이 끝날 때 한꺼번에. */
+      /* ★장면 중(stay)에는 말풍선을 지우지 않는다.★ 시간이 지나 하나씩 사라지면
+         넷이 주고받아도 화면엔 늘 한 마디만 남아 '멀티턴' 이 보이지 않는다.
+         오래된 것은 soloBubble 의 LOGMAX 가 밀어내고, 장면이 끝나면 한꺼번에 접는다. */
       if(opt.stay)return;
+      t.hidden=true;
+      if(!isCast)return;
       d.classList.add('out');
       hide[w]=setTimeout(()=>{ d.classList.remove('on','out','f-joy','f-sad','f-mad','f-look') },330);
     },opt.hold||2400);
@@ -5060,7 +5073,7 @@ const CAST=(()=>{
     dismiss(w,delay){
       const d=el(w); if(!d)return;
       setTimeout(()=>{
-        const t=d.querySelector('.ctalk'); if(t)t.hidden=true;
+        const t=CB[w]; if(t)t.hidden=true;
         d.classList.add('out');
         setTimeout(()=>d.classList.remove('on','out','f-joy','f-sad','f-mad','f-look'),330);
       },delay||0);
@@ -5923,6 +5936,819 @@ const TALKS=[
       {w:'si', msg:'그러다 해 뜬다',        face:null,    act:'shake',fx:'none'},
       {w:'mo', msg:'해 뜨면 또 보면 되지',  face:'f-joy', act:'turn', fx:'none'},
       {w:'ki', msg:'저는 모모 편이에요',    face:null,    act:'hop',  fx:'heart'}
+  ]},
+
+  /* ══════════ 🎭 확장 대본 (129장면) ══════════
+     육성 시뮬 시나리오 작가 관점으로 대량 집필. 전수 기계검증 통과 —
+     대사 22자 이내 · 같은 배역 연속 발화 0 · ki·si face=null ·
+     장면당 fx ≤2 · min=실제 등장 배역 수 · id 중복 0 · 금지어 0.
+     study 20장면은 ★대화가 곧 암기 포인트★ 다 —
+     부엉(정확한 구분) → 다람(암기 요약) → 시니(함정) → 치노(정리) 축. */
+  { id:'idle-crumbs', when:'idle', min:4, beats:[
+      {w:'da', msg:'창고에 도토리 열두 개', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'그걸 왜 나한테 보고해', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'자랑할 데가 너뿐이야', face:'f-look', act:'lean', fx:'none'},
+      {w:'mo', msg:'나는 세 개면 충분한데', face:null, act:'nod', fx:'none'},
+      {w:'ki', msg:'다들 나눠 드세요', face:null, act:'hop', fx:'heart'}
+  ]},
+  { id:'idle-window', when:'idle', min:4, beats:[
+      {w:'mo', msg:'창밖에 구름 느리다', face:'f-joy', act:'turn', fx:'none'},
+      {w:'bu', msg:'구름 속도는 변수가 많다', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'그냥 느리다고 하면 돼', face:'f-look', act:'shake', fx:'none'},
+      {w:'si', msg:'둘이 알아서 싸워라', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'싸움 아니고 대화예요', face:null, act:'nod', fx:'note'}
+  ]},
+  { id:'idle-ranking', when:'idle', min:4, beats:[
+      {w:'si', msg:'여기서 누가 제일 낫냐', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'그건 투표 안건이네', face:'f-look', act:'hop', fx:'none'},
+      {w:'bu', msg:'기준 없이는 무의미하다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'기준은 내가 정한다', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'저는 전부 다 좋아요', face:null, act:'hop', fx:'heart'}
+  ]},
+  { id:'idle-dust', when:'idle', min:4, beats:[
+      {w:'ki', msg:'책상에 먼지 쌓였어요', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'먼지도 시간의 기록이지', face:'f-look', act:'nod', fx:'none'},
+      {w:'mo', msg:'치우는 건 내일 하자', face:null, act:'none', fx:'none'},
+      {w:'si', msg:'너 어제도 그랬어', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'어제 나도 나잖아', face:'f-joy', act:'nod', fx:'note'}
+  ]},
+  { id:'idle-hobby', when:'idle', min:4, beats:[
+      {w:'da', msg:'부엉이는 취미가 뭐야', face:'f-look', act:'hop', fx:'none'},
+      {w:'bu', msg:'표 정리와 관측이다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'취미가 그건 좀 슬프다', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'슬픔은 측정 대상이 아니다', face:null, act:'nod', fx:'none'},
+      {w:'mo', msg:'방금 좀 멋있었어', face:'f-joy', act:'nod', fx:'sparkle'}
+  ]},
+  { id:'idle-mute', when:'idle', min:4, beats:[
+      {w:'mo', msg:'아무 말 안 해도 좋다', face:'f-joy', act:'none', fx:'none'},
+      {w:'si', msg:'그럼 왜 말을 걸었냐', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'조용한 거 확인한 거죠', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'무음 구간 삼 분 기록', face:'f-look', act:'hop', fx:'note'}
+  ]},
+  { id:'idle-chair', when:'idle', min:4, beats:[
+      {w:'si', msg:'거기 내 자리인데', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'먼저 앉은 쪽이 우선', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'내 등에 앉으면 되잖아', face:'f-joy', act:'turn', fx:'none'},
+      {w:'si', msg:'됐다, 서 있을란다', face:null, act:'shake', fx:'sweat'},
+      {w:'ki', msg:'자리 하나 더 놓을게요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'wrong-two-ways', when:'afterWrong', min:3, beats:[
+      {w:'bu', msg:'오답 유형 하나 확인', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'확인만 하고 넘어가자', face:null, act:'nod', fx:'none'},
+      {w:'bu', msg:'기록은 남겨야 한다', face:null, act:'none', fx:'none'},
+      {w:'mo', msg:'남기되 붙잡진 말고', face:'f-look', act:'turn', fx:'none'},
+      {w:'ki', msg:'두 분 다 맞는 말이죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'wrong-si-slip', when:'afterWrong', min:3, beats:[
+      {w:'si', msg:'아깝다, 진짜', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'너 방금 아깝대', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'문제가 아까웠다고', face:null, act:'turn', fx:'sweat'},
+      {w:'mo', msg:'그렇게는 안 들렸는데', face:'f-look', act:'nod', fx:'none'}
+  ]},
+  { id:'wrong-excuse-toss', when:'afterWrong', min:4, beats:[
+      {w:'da', msg:'이건 문제가 꼬였어', face:'f-mad', act:'hop', fx:'none'},
+      {w:'bu', msg:'문항은 표준대로다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'그럼 조명이 어두웠지', face:'f-look', act:'turn', fx:'none'},
+      {w:'si', msg:'핑계 장부도 두껍네', face:null, act:'shake', fx:'none'},
+      {w:'ki', msg:'한 번쯤 편들어도 되죠', face:null, act:'nod', fx:'heart'}
+  ]},
+  { id:'wrong-one-beat', when:'afterWrong', min:4, beats:[
+      {w:'mo', msg:'한 박자 쉬었다 가자', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'연속 기록 끊기는데', face:'f-sad', act:'lean', fx:'none'},
+      {w:'mo', msg:'끊겨도 다시 이어져', face:'f-joy', act:'turn', fx:'none'},
+      {w:'bu', msg:'재개 뒤 정답률이 는다', face:null, act:'none', fx:'none'},
+      {w:'si', msg:'거봐, 쉬라잖아', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'wrong-star-mark', when:'afterWrong', min:4, beats:[
+      {w:'da', msg:'오답 칸에 한 줄 추가', face:'f-look', act:'hop', fx:'none'},
+      {w:'si', msg:'그거 지워라', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'지우면 장부가 아니지', face:'f-look', act:'shake', fx:'none'},
+      {w:'ki', msg:'대신 옆에 별 붙여요', face:null, act:'hop', fx:'sparkle'},
+      {w:'bu', msg:'별 표시는 재인출에 쓴다', face:null, act:'nod', fx:'none'}
+  ]},
+  { id:'wrong-denied', when:'afterWrong', min:3, beats:[
+      {w:'ki', msg:'괜찮아요, 여기 있어요', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'말이 너무 물렁하다', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'시니도 아까 걱정했죠', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'안 했다', face:null, act:'shake', fx:'sweat'},
+      {w:'mo', msg:'했어', face:'f-joy', act:'nod', fx:'none'}
+  ]},
+  { id:'wrong-numbers-down', when:'afterWrong', min:4, beats:[
+      {w:'bu', msg:'이 유형 평균 이하다', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'숫자를 좀 내려놔', face:'f-sad', act:'turn', fx:'none'},
+      {w:'bu', msg:'내려놓으면 안 보인다', face:null, act:'none', fx:'none'},
+      {w:'da', msg:'둘 다 맞는 말 같은데', face:'f-look', act:'hop', fx:'none'},
+      {w:'ki', msg:'그럼 반반으로 가요', face:null, act:'nod', fx:'note'}
+  ]},
+  { id:'combo-odds', when:'afterCombo', min:4, beats:[
+      {w:'da', msg:'연승 배당 붙여본다', face:'f-joy', act:'hop', fx:'none'},
+      {w:'bu', msg:'표본이 아직 얇다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'얇을 때 걸어야 재밌지', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'저는 그냥 응원할래요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'combo-turncoat', when:'afterCombo', min:3, beats:[
+      {w:'da', msg:'나 처음부터 이쪽이었어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'아까 반대편에 있었잖아', face:'f-look', act:'turn', fx:'none'},
+      {w:'da', msg:'장부 정정은 자유야', face:'f-look', act:'nod', fx:'sweat'},
+      {w:'si', msg:'기회주의자 납셨네', face:null, act:'shake', fx:'none'}
+  ]},
+  { id:'combo-si-praise', when:'afterCombo', min:3, beats:[
+      {w:'si', msg:'지금 흐름 좋은데', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'방금 칭찬하셨죠', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'사실 진술이다', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'칭찬으로 분류된다', face:'f-joy', act:'nod', fx:'note'}
+  ]},
+  { id:'combo-breath', when:'afterCombo', min:4, beats:[
+      {w:'mo', msg:'빠르다, 숨은 쉬고 가', face:null, act:'turn', fx:'none'},
+      {w:'si', msg:'지금 끊으면 아깝잖아', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'아까운 건 내일도 있어', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'한 문제만 더 하고요', face:null, act:'hop', fx:'none'},
+      {w:'bu', msg:'집중 지속은 유한하다', face:null, act:'none', fx:'note'}
+  ]},
+  { id:'combo-hushed', when:'afterCombo', min:4, beats:[
+      {w:'ki', msg:'지금 다들 조용하죠', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'방해하면 안 되니까', face:'f-look', act:'none', fx:'none'},
+      {w:'si', msg:'숨도 참는 중이다', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'나는 원래 이 속도야', face:'f-joy', act:'nod', fx:'note'}
+  ]},
+  { id:'combo-frame', when:'afterCombo', min:4, beats:[
+      {w:'bu', msg:'최고 연속 기록 근접', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'넘으면 액자 만든다', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'액자는 어디서 나냐', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'내 창고에 다 있지', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'벌써 설레요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'combo-bu-smile', when:'afterCombo', min:4, beats:[
+      {w:'da', msg:'부엉이 표정 풀렸는데', face:'f-look', act:'lean', fx:'none'},
+      {w:'bu', msg:'표정은 변수가 아니다', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'근데 좀 웃었어', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'관측 오류다', face:null, act:'shake', fx:'sweat'},
+      {w:'ki', msg:'저도 다 봤어요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'rev-si-tense', when:'revenge', min:3, beats:[
+      {w:'si', msg:'아, 이건 그때 그거', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'네가 더 긴장했네', face:'f-look', act:'turn', fx:'none'},
+      {w:'si', msg:'긴장 안 했다', face:null, act:'shake', fx:'sweat'},
+      {w:'da', msg:'심박수 올려 적어둘게', face:'f-joy', act:'hop', fx:'none'}
+  ]},
+  { id:'rev-erased', when:'revenge', min:4, beats:[
+      {w:'da', msg:'되찾았다, 한 줄 삭제', face:'f-joy', act:'hop', fx:'none'},
+      {w:'bu', msg:'오답 목록에서 제외', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'그 칸 시원하게 비네', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'지운 자리가 예뻐요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'rev-greeting', when:'revenge', min:4, beats:[
+      {w:'mo', msg:'다시 만나서 반갑네', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'문제한테 인사하냐', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'얘도 기다렸을 거야', face:'f-joy', act:'none', fx:'note'},
+      {w:'ki', msg:'그 말 마음에 들어요', face:null, act:'hop', fx:'none'},
+      {w:'bu', msg:'문항은 대기하지 않는다', face:null, act:'lean', fx:'none'}
+  ]},
+  { id:'rev-ki-proud', when:'revenge', min:4, beats:[
+      {w:'ki', msg:'제가 뭐랬어요', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'뭐라긴 뭐래', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'된다고 했잖아요', face:null, act:'nod', fx:'heart'},
+      {w:'da', msg:'예측 적중 한 건 등재', face:'f-look', act:'hop', fx:'none'},
+      {w:'bu', msg:'표본 한 회다', face:null, act:'lean', fx:'none'}
+  ]},
+  { id:'rev-bu-revise', when:'revenge', min:4, beats:[
+      {w:'bu', msg:'예상 정답률을 고친다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'부엉이가 숫자 고쳤어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'저거 인정한단 뜻이지', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'그냥 갱신이다', face:null, act:'shake', fx:'none'},
+      {w:'mo', msg:'귀엽게 굴기는', face:'f-joy', act:'nod', fx:'note'}
+  ]},
+  { id:'rev-trophy', when:'revenge', min:4, beats:[
+      {w:'da', msg:'설욕 한 건 등재 완료', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'오늘 기분 좋은 줄이네', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'두 줄 더 가도 되겠는데', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'욕심쟁이 다 됐네요', face:null, act:'turn', fx:'note'}
+  ]},
+  { id:'rev-ki-shiver', when:'revenge', min:4, beats:[
+      {w:'ki', msg:'아까 그 문제 나왔네요', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'네가 왜 떠냐', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'제 일처럼 되는걸요', face:null, act:'hop', fx:'none'},
+      {w:'mo', msg:'치노는 원래 그래', face:'f-joy', act:'nod', fx:'heart'},
+      {w:'da', msg:'동요 지수 상승 중', face:'f-look', act:'hop', fx:'none'}
+  ]},
+  { id:'night-yawn', when:'night', min:4, beats:[
+      {w:'da', msg:'시니 방금 하품했어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'창문 바람 때문이다', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'창문 닫혀 있는데', face:'f-look', act:'nod', fx:'sweat'},
+      {w:'ki', msg:'다 같이 졸린 시간이죠', face:null, act:'lean', fx:'none'}
+  ]},
+  { id:'night-blanket', when:'night', min:3, beats:[
+      {w:'mo', msg:'담요 하나 꺼내왔어', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'누구 주려고', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'덮을 사람 덮으면 돼', face:'f-joy', act:'none', fx:'none'},
+      {w:'si', msg:'나는 안 춥다', face:null, act:'shake', fx:'sweat'},
+      {w:'ki', msg:'한쪽 끝 잡고 계신데요', face:null, act:'hop', fx:'heart'}
+  ]},
+  { id:'night-clock', when:'night', min:4, beats:[
+      {w:'bu', msg:'지금 시각은 심야다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'시계는 나도 볼 줄 안다', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'판단은 각자 몫이다', face:null, act:'none', fx:'none'},
+      {w:'mo', msg:'오늘은 여기까지 어때', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'아침이 더 잘 돼요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'night-lastone', when:'night', min:4, beats:[
+      {w:'ki', msg:'마지막 한 문제만요', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'그 말 세 번째다', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'이번엔 진짜예요', face:null, act:'nod', fx:'sweat'},
+      {w:'da', msg:'마지막 발언 세는 중', face:'f-look', act:'hop', fx:'none'},
+      {w:'mo', msg:'나는 먼저 눕는다', face:'f-joy', act:'none', fx:'none'}
+  ]},
+  { id:'night-quiettown', when:'night', min:4, beats:[
+      {w:'mo', msg:'바깥이 다 조용하다', face:'f-joy', act:'none', fx:'none'},
+      {w:'si', msg:'조용하면 집중은 되지', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'야간 집중은 내일을 깎는다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'꼭 저렇게 말해야 되냐', face:null, act:'shake', fx:'sweat'},
+      {w:'ki', msg:'틀린 말은 아니라서요', face:null, act:'turn', fx:'none'}
+  ]},
+  { id:'night-lamp', when:'night', min:4, beats:[
+      {w:'da', msg:'전등 하나만 남겼어', face:'f-look', act:'hop', fx:'none'},
+      {w:'mo', msg:'그 불빛이 딱 좋다', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'어둡진 않고', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'눈 아프면 말해주세요', face:null, act:'turn', fx:'heart'}
+  ]},
+  { id:'night-dream', when:'night', min:4, beats:[
+      {w:'si', msg:'자면 무슨 꿈 꾸냐', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'느리게 걷는 꿈', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'꿈은 기록되지 않는다', face:null, act:'none', fx:'none'},
+      {w:'si', msg:'너는 낮에도 걷잖아', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'오늘 밤엔 꼭 꾸세요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'rest-teapot', when:'rest', min:4, beats:[
+      {w:'mo', msg:'따뜻한 거 한 잔 어때', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'네가 타면 식겠다', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'식은 것도 맛있어', face:'f-joy', act:'none', fx:'none'},
+      {w:'ki', msg:'제가 들고 갈게요', face:null, act:'hop', fx:'heart'},
+      {w:'da', msg:'휴식 한 건 등재', face:'f-look', act:'hop', fx:'none'}
+  ]},
+  { id:'rest-stretch', when:'rest', min:4, beats:[
+      {w:'ki', msg:'어깨 한번 돌려봐요', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'자세는 집중에 영향 준다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'오늘은 둘이 말이 맞네', face:null, act:'nod', fx:'none'},
+      {w:'mo', msg:'나도 같은 편이야', face:'f-joy', act:'nod', fx:'note'}
+  ]},
+  { id:'rest-blank-cell', when:'rest', min:4, beats:[
+      {w:'da', msg:'쉬는 동안 칸이 비어', face:'f-sad', act:'lean', fx:'none'},
+      {w:'mo', msg:'빈 칸도 필요한 거야', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'휴식 뒤 회상량이 는다', face:null, act:'none', fx:'none'},
+      {w:'da', msg:'그럼 이건 투자네', face:'f-joy', act:'hop', fx:'sparkle'},
+      {w:'si', msg:'말 바꾸는 거 빠르다', face:null, act:'turn', fx:'none'}
+  ]},
+  { id:'rest-si-seat', when:'rest', min:3, beats:[
+      {w:'si', msg:'나 먼저 쉰다', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'같이 쉬자는 말이죠', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'아니, 나 혼자', face:null, act:'shake', fx:'sweat'},
+      {w:'mo', msg:'옆자리 비워둘게', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'결국 앉으셨네요', face:null, act:'lean', fx:'heart'}
+  ]},
+  { id:'rest-fresh-air', when:'rest', min:4, beats:[
+      {w:'mo', msg:'창문 좀 열고 오자', face:'f-joy', act:'turn', fx:'none'},
+      {w:'da', msg:'바람 세기도 적을까', face:'f-look', act:'hop', fx:'none'},
+      {w:'bu', msg:'그건 안 적어도 된다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'알았어, 그냥 쐰다', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'바람 좋은 시간이에요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'rest-playlist', when:'rest', min:3, beats:[
+      {w:'ki', msg:'조용한 노래 틀어요', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'가사 있는 건 빼고', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'나는 빗소리가 좋아', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'그건 노래가 아니지', face:null, act:'shake', fx:'none'},
+      {w:'ki', msg:'오늘은 빗소리로 해요', face:null, act:'lean', fx:'note'}
+  ]},
+  { id:'rest-do-nothing', when:'rest', min:3, beats:[
+      {w:'bu', msg:'지금은 안 해도 된다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'네 입에서 그 말이', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'근거 있는 판단이다', face:null, act:'nod', fx:'none'},
+      {w:'mo', msg:'오늘 제일 좋은 말', face:'f-joy', act:'nod', fx:'sparkle'}
+  ]},
+  { id:'back-dusted', when:'comeback', min:4, beats:[
+      {w:'da', msg:'자리 먼지 다 털었어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'방석도 데워뒀고', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'누가 시켰다고', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'시니가 제일 먼저 왔죠', face:null, act:'hop', fx:'heart'}
+  ]},
+  { id:'back-si-door', when:'comeback', min:4, beats:[
+      {w:'si', msg:'왔으면 온 거지 뭐', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'어제부터 문만 봤잖아', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'문은 원래 거기 있다', face:null, act:'shake', fx:'sweat'},
+      {w:'ki', msg:'봤다고 말해도 돼요', face:null, act:'nod', fx:'none'},
+      {w:'mo', msg:'얼굴 밝은 거 보인다', face:'f-joy', act:'turn', fx:'heart'}
+  ]},
+  { id:'back-seatmap', when:'comeback', min:4, beats:[
+      {w:'mo', msg:'자리 그대로 뒀어', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'배치 변경 없음', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'오늘부터 같이 해요', face:null, act:'hop', fx:'none'},
+      {w:'da', msg:'재개 첫 줄 적는다', face:'f-joy', act:'hop', fx:'sparkle'}
+  ]},
+  { id:'back-kettle', when:'comeback', min:4, beats:[
+      {w:'ki', msg:'차 다시 끓일까요', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'식은 지 오래됐겠네', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'새로 끓이면 되지', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'주전자 대기 중', face:'f-joy', act:'hop', fx:'note'}
+  ]},
+  { id:'back-no-lecture', when:'comeback', min:4, beats:[
+      {w:'bu', msg:'공백 구간 자료 없음', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'그 얘기 지금 하지 마', face:null, act:'shake', fx:'none'},
+      {w:'bu', msg:'없음은 나쁨이 아니다', face:null, act:'nod', fx:'none'},
+      {w:'mo', msg:'괜찮은 정리네', face:'f-joy', act:'turn', fx:'note'},
+      {w:'ki', msg:'새 표본부터 가요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'back-acorn-party', when:'comeback', min:4, beats:[
+      {w:'da', msg:'환영 도토리 준비했어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'그거 네가 먹고 싶던 거', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'나눠 먹으면 환영이지', face:'f-look', act:'nod', fx:'sweat'},
+      {w:'ki', msg:'그 논리 마음에 들어요', face:null, act:'hop', fx:'none'},
+      {w:'mo', msg:'나도 한 알', face:'f-joy', act:'nod', fx:'none'}
+  ]},
+  { id:'back-slow-start', when:'comeback', min:4, beats:[
+      {w:'mo', msg:'천천히 시작하자', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'초반은 느린 게 정상이다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'오늘은 둘이 합이 맞네', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'같이 첫 장 넘겨요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'bdg-weigh', when:'badge', min:4, beats:[
+      {w:'da', msg:'이거 몇 돈짜리지', face:'f-joy', act:'hop', fx:'sparkle'},
+      {w:'bu', msg:'획득 비율 상위권이다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'그럼 값 나가는 거네', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'오늘 제일 큰 소식이죠', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'bdg-shelf', when:'badge', min:4, beats:[
+      {w:'mo', msg:'선반에 자리 비워뒀어', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'번호표는 내가 붙일게', face:'f-look', act:'hop', fx:'none'},
+      {w:'si', msg:'둘이 왜 이리 신났냐', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'시니도 웃고 있잖아요', face:null, act:'lean', fx:'heart'}
+  ]},
+  { id:'bdg-mumble', when:'badge', min:3, beats:[
+      {w:'si', msg:'뭐, 이 정도면 됐지', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'방금 칭찬한 거 맞다', face:'f-look', act:'nod', fx:'none'},
+      {w:'si', msg:'아니거든', face:null, act:'shake', fx:'sweat'},
+      {w:'mo', msg:'아니라고 안 했잖아', face:'f-joy', act:'turn', fx:'none'}
+  ]},
+  { id:'bdg-photo', when:'badge', min:4, beats:[
+      {w:'ki', msg:'이건 한 장 남겨야죠', face:null, act:'hop', fx:'sparkle'},
+      {w:'da', msg:'각도는 내가 잡는다', face:'f-joy', act:'turn', fx:'none'},
+      {w:'si', msg:'나는 뒤에 서 있을게', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'뒤에도 다 찍히는데', face:'f-look', act:'nod', fx:'none'}
+  ]},
+  { id:'bdg-next', when:'badge', min:4, beats:[
+      {w:'da', msg:'다음 배지 조건 봤어', face:'f-look', act:'hop', fx:'none'},
+      {w:'mo', msg:'오늘 건 오늘 즐기자', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'둘 다 맞는 말이다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'일단 축하부터 해요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'gl-close', when:'goal', min:4, beats:[
+      {w:'bu', msg:'오늘 몫은 끝났다', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'끝났으면 문 닫아야지', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'마감 도장 쾅 찍는다', face:'f-joy', act:'hop', fx:'sparkle'},
+      {w:'ki', msg:'수고하셨어요, 진짜로', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'gl-check', when:'goal', min:3, beats:[
+      {w:'si', msg:'설마 진짜 다 채웠어', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'숫자는 안 거짓말해', face:'f-joy', act:'hop', fx:'none'},
+      {w:'bu', msg:'목표치 도달, 사실이다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'그럼 뭐, 잘했네', face:null, act:'turn', fx:'note'}
+  ]},
+  { id:'gl-stamp', when:'goal', min:4, beats:[
+      {w:'ki', msg:'오늘 칸 다 찼어요', face:null, act:'hop', fx:'sparkle'},
+      {w:'mo', msg:'이제 접어도 되는 날', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'더 하면 내일 몫인데', face:'f-look', act:'turn', fx:'none'},
+      {w:'si', msg:'내일 건 내일 하라고', face:null, act:'lean', fx:'none'}
+  ]},
+  { id:'gl-stop', when:'goal', min:4, beats:[
+      {w:'mo', msg:'딱 좋을 때 멈췄네', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'멈추는 판단도 실력이다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'부엉이 말 오늘 좋아요', face:null, act:'hop', fx:'heart'},
+      {w:'da', msg:'명언 칸에 적어둔다', face:'f-look', act:'hop', fx:'none'}
+  ]},
+  { id:'gl-line', when:'goal', min:4, beats:[
+      {w:'da', msg:'오늘 줄이 제일 길어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'어제보다 길면 된 거지', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'짧은 날도 줄은 줄이야', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'둘 다 맞는 말이에요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'cd-flip', when:'cards', min:4, beats:[
+      {w:'si', msg:'뒤집기 전에 말해봐', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'틀려도 괜찮은 자리죠', face:null, act:'hop', fx:'none'},
+      {w:'bu', msg:'떠올린 만큼만 남는다', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'막힌 장은 표시해둘게', face:'f-look', act:'hop', fx:'note'}
+  ]},
+  { id:'cd-stuck', when:'cards', min:4, beats:[
+      {w:'da', msg:'이 장에서 또 걸렸네', face:'f-look', act:'turn', fx:'none'},
+      {w:'mo', msg:'걸리는 장이 진짜 장이야', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'세 번 보면 외워진다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'지금이 두 번째예요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'cd-speed', when:'cards', min:4, beats:[
+      {w:'bu', msg:'넘기는 속도가 빨라졌다', face:'f-joy', act:'lean', fx:'none'},
+      {w:'si', msg:'빠른 게 아는 건 아냐', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'그래도 장수는 늘었어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'둘 다 반씩 맞다', face:null, act:'nod', fx:'note'}
+  ]},
+  { id:'cd-quiz', when:'cards', min:4, beats:[
+      {w:'si', msg:'내가 문제 낼까', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'네 문제는 너무 매워', face:'f-sad', act:'turn', fx:'sweat'},
+      {w:'ki', msg:'저는 힌트 담당할게요', face:null, act:'hop', fx:'none'},
+      {w:'da', msg:'그럼 나는 점수 계산', face:'f-joy', act:'hop', fx:'none'}
+  ]},
+  { id:'cd-last', when:'cards', min:4, beats:[
+      {w:'da', msg:'남은 장 몇 안 남았어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'ki', msg:'끝 보이면 힘나죠', face:null, act:'hop', fx:'sparkle'},
+      {w:'bu', msg:'마지막 구간이 잘 남는다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'그러니까 끝까지 가', face:null, act:'turn', fx:'none'}
+  ]},
+  { id:'sh-quiet', when:'sheet', min:4, beats:[
+      {w:'mo', msg:'다들 목소리 낮추자', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'나 원래 조용하거든', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'방금 제일 컸는데', face:'f-look', act:'lean', fx:'none'},
+      {w:'ki', msg:'둘 다 쉿이에요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sh-two', when:'sheet', min:4, beats:[
+      {w:'bu', msg:'표는 다른 칸만 봐도 된다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'같은 칸은 지워도 되겠네', face:'f-look', act:'nod', fx:'none'},
+      {w:'mo', msg:'지우진 말고 접어두자', face:'f-joy', act:'turn', fx:'none'},
+      {w:'ki', msg:'접는 쪽이 안전하죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sh-margin', when:'sheet', min:3, beats:[
+      {w:'da', msg:'여백에 한 줄 적자', face:'f-look', act:'hop', fx:'none'},
+      {w:'si', msg:'네 글씨 알아보겠냐', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'나는 읽을 수 있어', face:'f-joy', act:'nod', fx:'sweat'},
+      {w:'ki', msg:'제가 대신 읽어드려요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'sh-color', when:'sheet', min:4, beats:[
+      {w:'ki', msg:'중요한 줄만 칠해봐요', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'다 칠하면 표시가 아니다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'세 줄이면 충분해', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'나머진 눈으로 쓰다듬자', face:'f-joy', act:'nod', fx:'note'}
+  ]},
+  { id:'sh-close', when:'sheet', min:4, beats:[
+      {w:'mo', msg:'한 장 다 읽었네', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'읽은 장에 점 찍는다', face:'f-look', act:'hop', fx:'none'},
+      {w:'si', msg:'점만 찍지 말고 덮어', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'덮는 것도 공부예요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'sl-flow', when:'slide', min:4, beats:[
+      {w:'mo', msg:'흐르는 속도가 좋다', face:'f-joy', act:'nod', fx:'note'},
+      {w:'da', msg:'지나간 줄 세는 중', face:'f-look', act:'none', fx:'none'},
+      {w:'si', msg:'그걸 왜 세고 있냐', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'다람이는 그래야 편해요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'sl-pause', when:'slide', min:4, beats:[
+      {w:'bu', msg:'여기서 한 번 멈출 만하다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'멈추면 흐름 끊기는데', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'끊겨도 다시 흘러', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'편한 쪽으로 가요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sl-hum', when:'slide', min:4, beats:[
+      {w:'da', msg:'이 장면 노래 나올 듯', face:'f-joy', act:'hop', fx:'note'},
+      {w:'si', msg:'너 혼자 흥얼대지 마', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'나도 조금 따라했는데', face:'f-look', act:'nod', fx:'none'},
+      {w:'ki', msg:'저도요, 셋이네요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'sl-eye', when:'slide', min:4, beats:[
+      {w:'mo', msg:'눈이 먼저 지친다', face:'f-sad', act:'turn', fx:'none'},
+      {w:'bu', msg:'깜빡임이 줄고 있다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'창밖 한 번 봐요', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'봤으면 다시 오고', face:null, act:'nod', fx:'sweat'}
+  ]},
+  { id:'sl-end', when:'slide', min:4, beats:[
+      {w:'da', msg:'마지막 장 들어온다', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'끝까지 봤네, 의외로', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'흘려본 것도 남아', face:'f-joy', act:'nod', fx:'none'},
+      {w:'ki', msg:'다음 장도 같이 봐요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'lv-pop', when:'levelup', min:4, beats:[
+      {w:'da', msg:'숫자가 하나 올랐다', face:'f-joy', act:'hop', fx:'sparkle'},
+      {w:'si', msg:'그 숫자 뭐 하는 건데', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'쌓인 시간의 표시다', face:null, act:'nod', fx:'none'},
+      {w:'ki', msg:'그럼 자랑해도 되죠', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'lv-stat', when:'levelup', min:4, beats:[
+      {w:'bu', msg:'레벨은 결과지 원인 아냐', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'오늘은 그냥 기뻐하자', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'나는 이미 기뻐했어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'너는 늘 먼저더라', face:null, act:'turn', fx:'note'}
+  ]},
+  { id:'lv-si', when:'levelup', min:3, beats:[
+      {w:'si', msg:'축하는 한 번만 한다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'한 번이면 충분해요', face:null, act:'hop', fx:'heart'},
+      {w:'da', msg:'방금 그거 녹음했는데', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'지워', face:null, act:'shake', fx:'sweat'}
+  ]},
+  { id:'lv-ledger', when:'levelup', min:4, beats:[
+      {w:'da', msg:'레벨 칸 갱신 완료', face:'f-joy', act:'hop', fx:'none'},
+      {w:'bu', msg:'다음 구간은 더 길다', face:null, act:'nod', fx:'none'},
+      {w:'mo', msg:'길면 천천히 가면 돼', face:'f-joy', act:'turn', fx:'none'},
+      {w:'ki', msg:'속도는 각자 거니까요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'lv-slow', when:'levelup', min:3, beats:[
+      {w:'mo', msg:'천천히 온 레벨이 세다', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'네가 하니까 설득된다', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'경험에서 나온 말이야', face:'f-look', act:'lean', fx:'none'},
+      {w:'ki', msg:'오늘 명대사 나왔어요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'st-days', when:'streak', min:4, beats:[
+      {w:'da', msg:'연속 칸이 이어졌어', face:'f-joy', act:'hop', fx:'sparkle'},
+      {w:'bu', msg:'간격이 짧을수록 남는다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'끊겨도 세상 안 망해', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'그 말도 든든하네요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'st-chain', when:'streak', min:4, beats:[
+      {w:'mo', msg:'매일 조금씩이 제일 세', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'사슬 한 칸 더 걸었다', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'사슬 무겁지도 않냐', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'가벼운 사슬이에요', face:null, act:'lean', fx:'note'}
+  ]},
+  { id:'st-si', when:'streak', min:3, beats:[
+      {w:'si', msg:'며칠째인지 알고 있냐', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'내가 다 세고 있지', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'그럼 됐고', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'궁금해서 물은 거다', face:'f-look', act:'nod', fx:'sweat'}
+  ]},
+  { id:'st-mo', when:'streak', min:4, beats:[
+      {w:'mo', msg:'하루 빠져도 사슬은 남아', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'실제로 회복이 빠르다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'그 말 안심돼요', face:null, act:'hop', fx:'heart'},
+      {w:'si', msg:'대신 오늘은 왔잖아', face:null, act:'turn', fx:'none'}
+  ]},
+  { id:'st-bu', when:'streak', min:4, beats:[
+      {w:'bu', msg:'연속 구간 정답률이 높다', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'그래서 자랑하는 거냐', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'자랑할 만한데 뭐', face:'f-joy', act:'hop', fx:'none'},
+      {w:'ki', msg:'저도 같이 자랑할래요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'fs-speed', when:'fast', min:4, beats:[
+      {w:'da', msg:'속도 기록 갱신 중', face:'f-joy', act:'hop', fx:'sparkle'},
+      {w:'bu', msg:'빠르면 오답도 빨라진다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'초 치는 소리 하네', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'지금 잘 맞고 있어요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'fs-brake', when:'fast', min:4, beats:[
+      {w:'mo', msg:'한 박자만 늦춰볼래', face:'f-look', act:'nod', fx:'none'},
+      {w:'si', msg:'탈 때 타야지', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'나는 시니 편이다', face:'f-joy', act:'hop', fx:'none'},
+      {w:'ki', msg:'저는 둘 다 응원해요', face:null, act:'lean', fx:'note'}
+  ]},
+  { id:'fs-bet', when:'fast', min:4, beats:[
+      {w:'si', msg:'이 속도 어디까지 가나', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'나는 계속 간다에 건다', face:'f-joy', act:'hop', fx:'none'},
+      {w:'bu', msg:'표본이 아직 짧다', face:null, act:'nod', fx:'none'},
+      {w:'mo', msg:'둘 다 구경이나 하자', face:'f-joy', act:'turn', fx:'note'}
+  ]},
+  { id:'fs-eye', when:'fast', min:4, beats:[
+      {w:'bu', msg:'문제 끝까지 읽고 있다', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'그건 칭찬해줄 만하네', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'둘이 사이 좋아졌다', face:'f-look', act:'hop', fx:'sweat'},
+      {w:'ki', msg:'오늘 분위기 좋아요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'fs-record', when:'fast', min:4, beats:[
+      {w:'da', msg:'분당 몇 문제인지 셌어', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'숫자는 나중에 봐도 돼', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'지금은 흐름이 중요하다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'웬일로 셋이 맞네', face:null, act:'turn', fx:'note'}
+  ]},
+  { id:'sw-hold', when:'slow', min:4, beats:[
+      {w:'mo', msg:'오래 잡고 있어도 돼', face:'f-joy', act:'nod', fx:'none'},
+      {w:'bu', msg:'오래 본 문제가 남는다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'너희 오늘 합 맞네', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'저까지 셋이에요', face:null, act:'hop', fx:'heart'}
+  ]},
+  { id:'sw-wait', when:'slow', min:3, beats:[
+      {w:'da', msg:'이 문제 오래 걸리네', face:'f-look', act:'turn', fx:'none'},
+      {w:'si', msg:'재촉하지 말고 기다려', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'재촉 아니고 기록이야', face:'f-sad', act:'nod', fx:'sweat'},
+      {w:'mo', msg:'그럼 조용히 적자', face:'f-joy', act:'none', fx:'none'}
+  ]},
+  { id:'sw-deep', when:'slow', min:4, beats:[
+      {w:'bu', msg:'고민 흔적은 점수가 된다', face:null, act:'nod', fx:'none'},
+      {w:'ki', msg:'막힌 게 아니라 파는 거죠', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'말은 예쁘게 한다니까', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'예쁜 말도 적어둔다', face:'f-joy', act:'hop', fx:'note'}
+  ]},
+  { id:'sw-skip', when:'slow', min:3, beats:[
+      {w:'si', msg:'넘기고 나중에 와도 돼', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'시니가 제일 다정하네', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'전략이라고 전략', face:null, act:'shake', fx:'sweat'},
+      {w:'ki', msg:'네, 전략이요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'sw-mo', when:'slow', min:3, beats:[
+      {w:'mo', msg:'나는 원래 이 속도야', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'그래서 늘 늦게 오지', face:'f-look', act:'hop', fx:'none'},
+      {w:'mo', msg:'늦게 와도 다 왔잖아', face:'f-joy', act:'turn', fx:'none'},
+      {w:'ki', msg:'도착이 중요하죠', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'hn-use', when:'hint', min:4, beats:[
+      {w:'ki', msg:'힌트는 쓰라고 있어요', face:null, act:'hop', fx:'none'},
+      {w:'bu', msg:'힌트 본 문제도 기억난다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'안 쓰는 게 더 손해지', face:null, act:'turn', fx:'none'},
+      {w:'da', msg:'셋 다 같은 편이네', face:'f-joy', act:'hop', fx:'note'}
+  ]},
+  { id:'hn-tool', when:'hint', min:4, beats:[
+      {w:'da', msg:'힌트도 장비 취급이야', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'장비 쓰는 게 실력이지', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'맨손으로 갈 필요 없어', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'편하게 쓰셔도 돼요', face:null, act:'hop', fx:'heart'}
+  ]},
+  { id:'hn-si', when:'hint', min:3, beats:[
+      {w:'si', msg:'나도 예전에 썼었다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'오, 그 기록 있는데', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'꺼내지 마', face:null, act:'shake', fx:'sweat'},
+      {w:'mo', msg:'덕분에 마음 편해졌어', face:'f-joy', act:'nod', fx:'none'}
+  ]},
+  { id:'hn-half', when:'hint', min:4, beats:[
+      {w:'bu', msg:'힌트는 답을 안 준다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'고른 건 결국 본인이죠', face:null, act:'hop', fx:'sparkle'},
+      {w:'da', msg:'그럼 이것도 정답 기록', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'그건 맞는 말이다', face:null, act:'nod', fx:'none'}
+  ]},
+  { id:'hn-next', when:'hint', min:4, beats:[
+      {w:'mo', msg:'다음엔 안 봐도 될 거야', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'봐도 상관없고', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'반복하면 줄어든다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'천천히 줄이면 돼요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'mg-early', when:'morning', min:4, beats:[
+      {w:'da', msg:'이 시간에 사람 있다', face:'f-look', act:'hop', fx:'none'},
+      {w:'mo', msg:'나는 아직 반쯤 자', face:'f-sad', act:'none', fx:'none'},
+      {w:'si', msg:'너는 늘 반쯤 자지', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'아침부터 오셨네요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'mg-yawn', when:'morning', min:4, beats:[
+      {w:'mo', msg:'하품은 전염되더라', face:'f-sad', act:'turn', fx:'none'},
+      {w:'da', msg:'방금 나도 했어', face:'f-look', act:'nod', fx:'sweat'},
+      {w:'si', msg:'둘 다 조용히 해', face:null, act:'shake', fx:'none'},
+      {w:'ki', msg:'시니도 했잖아요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'mg-light', when:'morning', min:4, beats:[
+      {w:'bu', msg:'아침 집중은 꽤 좋다', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'그럼 한 판만 하자', face:null, act:'lean', fx:'none'},
+      {w:'mo', msg:'한 판이 열 판 되던데', face:'f-look', act:'turn', fx:'none'},
+      {w:'ki', msg:'오늘은 딱 한 판만요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'mg-coffee', when:'morning', min:4, beats:[
+      {w:'da', msg:'아침 기록 칸 열었다', face:'f-joy', act:'hop', fx:'none'},
+      {w:'ki', msg:'따뜻한 거 한 잔 하고요', face:null, act:'lean', fx:'heart'},
+      {w:'si', msg:'컵 들고 와서 해', face:null, act:'turn', fx:'none'},
+      {w:'bu', msg:'수분은 집중에 영향 준다', face:null, act:'nod', fx:'none'}
+  ]},
+  { id:'mg-plan', when:'morning', min:4, beats:[
+      {w:'bu', msg:'아침에 정한 양은 지켜진다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'그럼 오늘 몫 적을게', face:'f-joy', act:'hop', fx:'none'},
+      {w:'mo', msg:'적게 적어야 지켜져', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'거북이 말이 맞다', face:null, act:'turn', fx:'note'}
+  ]},
+  { id:'wk-slow', when:'weekend', min:3, beats:[
+      {w:'mo', msg:'주말은 느려도 되는 날', face:'f-joy', act:'nod', fx:'none'},
+      {w:'si', msg:'너는 평일도 느리잖아', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'그래서 잘 알지', face:'f-joy', act:'lean', fx:'none'},
+      {w:'ki', msg:'오늘은 모모 속도로요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'wk-block', when:'weekend', min:4, beats:[
+      {w:'da', msg:'주말엔 시간이 통으로 나와', face:'f-joy', act:'hop', fx:'none'},
+      {w:'bu', msg:'통으로 쓰면 뒤가 흐려진다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'끊어서 하라는 소리네', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'중간에 쉬면 되죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'wk-si', when:'weekend', min:3, beats:[
+      {w:'si', msg:'주말에도 오다니', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'그거 감탄한 거지', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'그냥 말한 건데', face:null, act:'turn', fx:'sweat'},
+      {w:'mo', msg:'표정이 다 말하더라', face:'f-joy', act:'nod', fx:'none'}
+  ]},
+  { id:'wk-half', when:'weekend', min:4, beats:[
+      {w:'mo', msg:'반만 하고 놀아도 돼', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'반도 기록은 기록이야', face:'f-joy', act:'hop', fx:'none'},
+      {w:'bu', msg:'0과 반은 크게 다르다', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'오늘은 반이면 충분해요', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'wk-out', when:'weekend', min:4, beats:[
+      {w:'ki', msg:'날씨 좋으면 나가요', face:null, act:'hop', fx:'none'},
+      {w:'si', msg:'나가서 카드나 봐', face:null, act:'turn', fx:'none'},
+      {w:'mo', msg:'그것도 나름 산책이지', face:'f-joy', act:'nod', fx:'none'},
+      {w:'da', msg:'야외 기록 칸 만든다', face:'f-joy', act:'hop', fx:'note'}
+  ]},
+  { id:'sd-key', when:'study', min:4, beats:[
+      {w:'da', msg:'대칭키랑 공개키 또 나와', face:'f-look', act:'hop', fx:'none'},
+      {w:'bu', msg:'대칭키는 키가 하나다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'대신 나눠줄 때가 문제', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'빠른 쪽이 대칭키죠', face:null, act:'nod', fx:'sparkle'}
+  ]},
+  { id:'sd-hash', when:'study', min:4, beats:[
+      {w:'si', msg:'해시는 암호화 아니야', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'해시는 되돌릴 수 없다', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'암호화는 복호화 되고', face:'f-look', act:'hop', fx:'none'},
+      {w:'ki', msg:'비밀번호는 해시죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sd-salt', when:'study', min:4, beats:[
+      {w:'da', msg:'같은 값은 해시도 같아', face:'f-look', act:'turn', fx:'none'},
+      {w:'bu', msg:'그래서 솔트를 붙인다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'미리 만든 표를 막는 거', face:null, act:'nod', fx:'none'},
+      {w:'ki', msg:'같은 비번도 달라지죠', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'sd-authz', when:'study', min:4, beats:[
+      {w:'si', msg:'인증이랑 인가 또 섞네', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'인증은 누구냐를 본다', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'인가는 뭘 하냐구나', face:'f-joy', act:'hop', fx:'none'},
+      {w:'ki', msg:'로그인 다음이 인가죠', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'sd-cia', when:'study', min:4, beats:[
+      {w:'da', msg:'보안 삼 요소 뭐였더라', face:'f-look', act:'turn', fx:'none'},
+      {w:'bu', msg:'기밀·무결·가용 셋이다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'서비스 마비는 가용성', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'위변조는 무결성이고요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sd-ids', when:'study', min:4, beats:[
+      {w:'bu', msg:'IDS는 알리고 끝이다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'IPS는 막기까지 하고', face:'f-joy', act:'hop', fx:'none'},
+      {w:'si', msg:'한 글자로 갈린다니까', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'탐지냐 차단이냐죠', face:null, act:'nod', fx:'sparkle'}
+  ]},
+  { id:'sd-pseudo', when:'study', min:4, beats:[
+      {w:'si', msg:'가명이랑 익명 차이는', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'가명은 추가정보로 복원돼', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'그래서 가명은 개인정보', face:'f-look', act:'hop', fx:'none'},
+      {w:'ki', msg:'익명은 되돌릴 수 없죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sd-consign', when:'study', min:4, beats:[
+      {w:'da', msg:'위탁이랑 제공 또 나와', face:'f-look', act:'hop', fx:'none'},
+      {w:'bu', msg:'누구 업무냐가 기준이다', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'내 일 대신하면 위탁', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'상대 목적이면 제공이죠', face:null, act:'nod', fx:'sparkle'}
+  ]},
+  { id:'sd-rtorpo', when:'study', min:4, beats:[
+      {w:'da', msg:'RTO랑 RPO 맨날 헷갈려', face:'f-sad', act:'turn', fx:'sweat'},
+      {w:'bu', msg:'RTO는 시간, RPO는 시점', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'RPO는 날아간 데이터야', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'T가 타임이라 외워요', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'sd-access', when:'study', min:4, beats:[
+      {w:'da', msg:'접근통제 세 개 또 나와', face:'f-look', act:'hop', fx:'none'},
+      {w:'bu', msg:'DAC는 소유자가 정한다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'MAC은 등급 따라가고', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'RBAC은 역할 기준이죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sd-sign', when:'study', min:4, beats:[
+      {w:'si', msg:'서명은 어느 키로 하냐', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'서명은 개인키로 한다', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'검증은 공개키로 하고', face:'f-joy', act:'hop', fx:'none'},
+      {w:'ki', msg:'그래서 부인방지죠', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'sd-mfa', when:'study', min:4, beats:[
+      {w:'da', msg:'SSO랑 MFA 자꾸 섞여', face:'f-look', act:'turn', fx:'none'},
+      {w:'bu', msg:'SSO는 한 번에 여러 곳', face:null, act:'lean', fx:'none'},
+      {w:'si', msg:'MFA는 요소를 더 쌓고', face:null, act:'nod', fx:'none'},
+      {w:'ki', msg:'편의랑 안전 차이죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sd-xss', when:'study', min:4, beats:[
+      {w:'da', msg:'XSS랑 CSRF 또 헷갈려', face:'f-sad', act:'turn', fx:'sweat'},
+      {w:'bu', msg:'XSS는 스크립트를 심는다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'CSRF는 요청을 위조해', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'심느냐 시키느냐죠', face:null, act:'hop', fx:'none'}
+  ]},
+  { id:'sd-sqli', when:'study', min:4, beats:[
+      {w:'bu', msg:'인젝션 대책은 단순하다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'입력값 검사 말이지', face:'f-look', act:'hop', fx:'none'},
+      {w:'si', msg:'결국 바인딩이 답이야', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'쿼리랑 값을 분리해요', face:null, act:'nod', fx:'sparkle'}
+  ]},
+  { id:'sd-waf', when:'study', min:4, beats:[
+      {w:'si', msg:'방화벽 있으면 끝 아냐', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'방화벽은 IP·포트를 본다', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'WAF는 웹 내용까지 보고', face:'f-joy', act:'hop', fx:'none'},
+      {w:'ki', msg:'보는 계층이 달라요', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sd-zt', when:'study', min:4, beats:[
+      {w:'da', msg:'제로트러스트가 뭐였지', face:'f-look', act:'turn', fx:'none'},
+      {w:'bu', msg:'내부망도 안 믿는 거다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'매번 검증한단 소리네', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'믿지 말고 확인이죠', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'sd-sensitive', when:'study', min:4, beats:[
+      {w:'bu', msg:'민감정보는 따로 다룬다', face:null, act:'lean', fx:'none'},
+      {w:'da', msg:'건강이나 사상 같은 거', face:'f-look', act:'hop', fx:'none'},
+      {w:'si', msg:'별도 동의 받아야 하고', face:null, act:'turn', fx:'none'},
+      {w:'ki', msg:'고유식별정보도 별도죠', face:null, act:'nod', fx:'note'}
+  ]},
+  { id:'sd-risk', when:'study', min:4, beats:[
+      {w:'da', msg:'위험평가 순서 헷갈려', face:'f-sad', act:'turn', fx:'none'},
+      {w:'bu', msg:'자산부터 찾아야 한다', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'다음이 위협이랑 취약점', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'그다음 위험을 재죠', face:null, act:'hop', fx:'sparkle'}
+  ]},
+  { id:'sd-least', when:'study', min:4, beats:[
+      {w:'si', msg:'권한은 왜 줄이라 해', face:null, act:'lean', fx:'none'},
+      {w:'bu', msg:'필요한 만큼만이 원칙이다', face:null, act:'nod', fx:'none'},
+      {w:'da', msg:'퇴사자 계정도 바로 정리', face:'f-look', act:'hop', fx:'none'},
+      {w:'ki', msg:'그게 최소권한이죠', face:null, act:'hop', fx:'note'}
+  ]},
+  { id:'sd-log', when:'study', min:4, beats:[
+      {w:'da', msg:'접속기록은 왜 남기지', face:'f-look', act:'turn', fx:'none'},
+      {w:'bu', msg:'사고 뒤 추적이 되니까', face:null, act:'nod', fx:'none'},
+      {w:'si', msg:'위조되면 의미 없지만', face:null, act:'lean', fx:'none'},
+      {w:'ki', msg:'그래서 따로 보관해요', face:null, act:'hop', fx:'note'}
   ]}
 ];
 
@@ -5993,10 +6819,13 @@ const TALK=(()=>{
     return document.querySelector('.cw[data-who="'+w+'"]');
   }
   /** 말풍선 — 배역별 통로가 달라 한 곳으로 모아 둔다 */
+  /** ★장면에서는 다섯 명 모두 같은 스택에 말한다.★
+      치노·시니만 단일 슬롯을 쓰면 앞말이 사라져서, 넷이 주고받아도
+      화면에는 늘 한두 마디만 남는다 — 그러면 '멀티턴' 이 눈에 안 보인다.
+      표정·몸짓은 각자 본체에서 그대로 재생되므로 누가 말하는지는 유지된다. */
   function say(w,msg,face,hold){
-    if(w==='ki')MASCOT.talk(msg,'happy',hold);
-    else if(w==='si')MASCOT.subSay(msg,'s-roll',hold);
-    else CAST.say(w,msg,face||null,hold,true);   /* stay — 장면이 끝날 때까지 자리를 지킨다 */
+    if(w==='ki')MASCOT.face&&MASCOT.mood('happy',hold);
+    CAST.say(w,msg,face||null,hold,true);   /* stay — 장면이 끝날 때까지 자리를 지킨다 */
   }
   /** 몸짓 — anime.js 가 있으면 스프링으로, 없으면 CSS 클래스로 */
   function gesture(w,act){
@@ -6037,17 +6866,24 @@ const TALK=(()=>{
     host.appendChild(b);
     setTimeout(()=>b.remove(),1200);
   }
-  /** ★말풍선은 한 번에 하나★ — 만화가 같은 칸에 풍선을 겹쳐 그리지 않는 이유와 같다.
-      여러 개를 동시에 띄웠더니 겹침이 17건 나왔다(실측). 인물은 무대에 남고,
-      말풍선만 차례로 넘어간다 — 누가 말하는 중인지 오히려 또렷해진다. */
+  /** ★멀티턴 로그★ — 예전엔 한 번에 하나만 띄웠다. 말풍선이 절대배치 레인이라
+      여럿이 뜨면 겹쳤기 때문이다(17건 실측). 이제 말풍선은 ★흐름 스택★ 이라
+      겹칠 수가 없으므로, ★최근 3마디를 남겨 대화가 쌓이는 것을 보게★ 한다 —
+      주고받는 맛은 앞말이 화면에 남아 있어야 생긴다.
+      다만 무한정 쌓으면 화면을 먹으므로 오래된 것부터 지운다. */
+  const LOGMAX=4;   /* 4인 장면을 통째로 볼 수 있게 */
   function soloBubble(now){
-    document.querySelectorAll('.cw .ctalk').forEach(t=>{
-      const w=t.parentElement&&t.parentElement.dataset.who;
-      if(w!==now)t.hidden=true;
-    });
-    const mt=document.getElementById('mtalk'), st=document.getElementById('stalk');
-    if(mt&&now!=='ki')mt.hidden=true;
-    if(st&&now!=='si'){ st.hidden=true; const sb=document.getElementById('sbody'); if(sb&&now!=='si')sb.hidden=true }
+    const st=document.getElementById('cstack');
+    if(st){
+      const live=[...st.children].filter(t=>!t.hidden);
+      while(live.length>LOGMAX){ const o=live.shift(); o.hidden=true; o.classList.remove('fresh') }
+      live.forEach((t,i)=>{ t.classList.toggle('fresh', i===live.length-1);
+        t.style.opacity = i===live.length-1 ? '1' : (0.92-(live.length-1-i)*0.16).toFixed(2); });
+    }
+    /* 치노·시니 말풍선은 자리가 하나뿐이라 그대로 교체된다 */
+    const mt=document.getElementById('mtalk'), sb=document.getElementById('sbody');
+    if(mt&&now!=='ki'&&now!=='si'&&!mt.hidden)mt.style.opacity='.72'; else if(mt)mt.style.opacity='';
+    if(sb&&now!=='si'&&now!=='ki'){/* 시니는 무대에 남는다 */}
   }
   /** 조연단은 ★동시에 둘까지★ — 셋이 겹치면 말풍선 레인이 감당하지 못한다(실측) */
   function limitCrowd(now){
@@ -6241,8 +7077,12 @@ const AMBIENT=(()=>{
       const k=keyFor();
       /* ★가끔은 한 줄이 아니라 장면이 열린다★ — 둘이 주고받는 걸 보는 것이
          혼잣말 열 줄보다 오래 붙든다. TALK 이 거절하면(쿨다운·확률) 평소대로 한 줄. */
-      const scene={cards:'cards',cardsSlow:'cards',sheet:'sheet',concept:'sheet',
-                   note:'sheet',home:'idle',longStay:'rest',night:'night'}[k];
+      let scene={cards:'cards',cardsSlow:'cards',sheet:'sheet',concept:'sheet',
+                 note:'sheet',home:'idle',longStay:'rest',night:'night',
+                 morning:'morning',weekend:'weekend'}[k];
+      /* 📚 개념·시트를 보는 중엔 가끔 ★공부 얘기★ 로 빠진다 —
+         잡담만 하면 캐릭터가 화면과 무관해지고, 늘 공부 얘기면 잔소리가 된다. */
+      if(scene==='sheet'&&Math.random()<.45)scene='study';
       if(!(scene&&Math.random()<.3&&TALK.maybe(scene)))fire(k);
       plan(false);
     },base*decay);
@@ -7460,6 +8300,56 @@ const ICON=(()=>{
   return { for:(txt,kind)=>svg(nameFor(txt,kind)), svg, has:n=>!!P[n] };
 })();
 
+/* ═══════════ 🔍 다이어그램 확대 보기 ═══════════
+   작게 그려 두는 이유는 ★본문의 쉼표★ 로 쓰기 위해서지만, 복잡한 그림은
+   그 크기로는 못 읽는다. 눌러서 크게 보고, 닫으면 읽던 자리로 돌아온다. */
+const MMDZOOM=(()=>{
+  let z=1, cur=null;
+  const box=()=>document.getElementById('mmdBox');
+  const inner=()=>document.getElementById('mbIn2');
+  function apply(){ const i=inner(); if(i)i.style.setProperty('--z',z.toFixed(2)) }
+  function open(el){
+    const b=box(), i=inner(); if(!b||!i||!el)return;
+    const svg=el.querySelector('svg'); if(!svg)return;
+    cur=el; z=1;
+    i.innerHTML='';
+    const c=svg.cloneNode(true);
+    c.removeAttribute('style');
+    i.appendChild(c);
+    const cap=el.dataset.cap;
+    if(cap){ const d=document.createElement('div'); d.className='mb-cap'; d.textContent=cap; i.appendChild(d) }
+    apply();
+    b.hidden=false; b.classList.add('on');
+    if(typeof FX!=='undefined'&&FX.snd&&FX.snd.tap)FX.snd.tap();
+    document.body.style.overflow='hidden';
+  }
+  function close(){
+    const b=box(); if(!b)return;
+    b.classList.remove('on'); b.hidden=true;
+    document.body.style.overflow='';
+    const i=inner(); if(i)i.innerHTML='';
+    cur=null;
+  }
+  function zoom(d){ z=Math.max(.6,Math.min(4,z+d)); apply() }
+  document.addEventListener('DOMContentLoaded',()=>{
+    const b=box(); if(!b)return;
+    b.addEventListener('click',e=>{ if(e.target===b)close() });
+    const g=id=>document.getElementById(id);
+    g('mbX')&&(g('mbX').onclick=close);
+    g('mbIn')&&(g('mbIn').onclick=()=>zoom(.35));
+    g('mbOut')&&(g('mbOut').onclick=()=>zoom(-.35));
+    g('mbFit')&&(g('mbFit').onclick=()=>{ z=1; apply() });
+  });
+  document.addEventListener('keydown',e=>{
+    const b=box(); if(!b||b.hidden)return;
+    if(e.key==='Escape'){e.preventDefault();close()}
+    else if(e.key==='+'||e.key==='='){e.preventDefault();zoom(.35)}
+    else if(e.key==='-'){e.preventDefault();zoom(-.35)}
+    else if(e.key==='0'){e.preventDefault();z=1;apply()}
+  });
+  return {open,close};
+})();
+
 /* ═══════════ 🖍 손그림 다이어그램 (Mermaid) ═══════════
    텍스트로 쓰고 그림으로 읽는다 — 이미지 파일을 만들지 않아 ★유지보수가 없다.★
    look:'handDrawn' 으로 Excalidraw 풍 손그림이 되어 딱딱한 본문 사이에서 쉼표가 된다.
@@ -7500,6 +8390,50 @@ const MMD=(()=>{
     const src=el.dataset.src||'';
     el.innerHTML=`<div class="mmd-fallback">${esc(src)}</div>`;
   }
+  /** ★렌더된 SVG 를 손본다★ — Mermaid 설정으로는 못 하는 것들(선을 따라 흐르는
+      점선, 도형 순차 등장)을 DOM 을 직접 만져 얹는다. 원본 선은 ★지우지 않고★
+      위에 겹쳐 그린다 — 라이브러리가 판을 바꿔도 그림 자체는 살아남는다. */
+  function decorate(el){
+    const svg=el.querySelector('svg'); if(!svg)return;
+    /* 선 — 굵게 + 흐름용 복제본을 위에 얹는다 */
+    const edges=[...svg.querySelectorAll('path.flowchart-link, path.messageLine0, path.messageLine1, .edgePath path, .edgePaths path')];
+    edges.forEach((p,i)=>{
+      p.classList.add('mmd-edge');
+      const f=p.cloneNode(false);
+      f.setAttribute('class','mmd-flow');
+      f.removeAttribute('marker-end'); f.removeAttribute('marker-start');
+      f.style.stroke='var(--ac)';
+      f.style.animationDelay=(i*0.18).toFixed(2)+'s';
+      p.parentNode.insertBefore(f,p.nextSibling);
+    });
+    /* 도형 — 등장 순서를 줄 수 있게 표시하고 지연을 심는다 */
+    const nodes=[...svg.querySelectorAll('.node, .nodes .node, .actor, .cluster, g.label')];
+    nodes.forEach((n,i)=>{
+      n.classList.add('mmd-node');
+      n.style.setProperty('--d',(i*0.07).toFixed(2)+'s');
+    });
+    el.dataset.n=nodes.length;
+    /* 스크롤로 들어올 때 한 번만 켠다 — 매번 다시 켜지면 읽는 데 방해가 된다.
+       ★켜지지 않아도 그림은 보인다★(기본 상태가 '보임'이라 안전하다). */
+    if(nodes.length&&!matchMedia('(prefers-reduced-motion: reduce)').matches
+       &&'IntersectionObserver' in window){
+      const io=new IntersectionObserver(es=>es.forEach(e=>{
+        if(e.isIntersecting){ el.classList.add('lit'); io.disconnect() }
+      }),{threshold:0.01});
+      io.observe(el);
+    }
+    /* 확대 버튼 */
+    if(!el.querySelector('.mmd-zoom')){
+      const b=document.createElement('button');
+      b.type='button'; b.className='mmd-zoom'; b.title='크게 보기';
+      b.setAttribute('aria-label','다이어그램 크게 보기');
+      b.textContent='⤢';
+      b.onclick=e=>{ e.stopPropagation(); MMDZOOM.open(el) };
+      el.appendChild(b);
+    }
+    el.style.cursor='zoom-in';
+    el.onclick=e=>{ if(e.target.closest('.mmd-zoom'))return; MMDZOOM.open(el) };
+  }
   async function draw(el){
     if(!el||el.dataset.done)return;
     try{
@@ -7508,6 +8442,7 @@ const MMD=(()=>{
       el.dataset.done='ok';
       const cap=el.dataset.cap?`<span class="mmd-cap">${esc(el.dataset.cap)}</span>`:'';
       el.innerHTML=svg+cap;
+      decorate(el);
     }catch(e){ fallback(el) }
   }
   function flush(){ queue.splice(0).forEach(draw) }
@@ -8146,6 +9081,11 @@ function answer(v){
         (ucPace.slice(-3).reduce((a,b)=>a+b,0)/3) > (ucPace.slice(0,3).reduce((a,b)=>a+b,0)/3)*1.7 };
     ucPrevWrong = ok?0:ucPrevWrong+1;
     window._pbFlag=cx.pb; window._pbPrev=prevBest; window._pbNow=ms; window._lastMs=ms;
+    /* 🎭 상황 장면 — 유즈케이스(한 명)보다 드물게, 여럿이 주고받는 쪽으로.
+       ★조건이 뚜렷할 때만★ 연다(아무 때나 열면 장면의 값이 떨어진다). */
+    if(cx.pace>0&&cx.pace<7000&&cx.n>=12&&cx.n%12===0)setTimeout(()=>TALK.maybe('fast'),1100);
+    else if(cx.ms>28000)setTimeout(()=>TALK.maybe('slow'),1100);
+    else if(ok&&S.streak.cur>=3&&cx.n===6)setTimeout(()=>TALK.maybe('streak'),1200);
     const handled = CAST.scene(cx);
     celebrate(ok,gain,wasWrong,q,handled);
     /* 📌 오답 계보 — ★"3번째 만남입니다. 지난번엔 2번을 골랐어요"★
@@ -8392,6 +9332,8 @@ function sosDo(k){
     quiz.hinted=(quiz.hinted||0)+1;
     FX.snd.on(); FX.toast('선지 2개를 지웠어요 — 불이익 없어요','good',1800);
     MASCOT.say&&MASCOT.say();
+    /* 🎭 도움 받는 걸 부끄럽게 만들지 않는다 — 다 같이 "써도 된다" 고 말해 준다 */
+    setTimeout(()=>TALK.maybe('hint'),1400);
   }else if(k==='later'){
     /* 오답 처리 없이 뒤로 미룬다 */
     const it=quiz.items.splice(quiz.i,1)[0], an=quiz.ans.splice(quiz.i,1)[0];
