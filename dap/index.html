@@ -2464,6 +2464,46 @@ html.nomotion .emark{display:none!important}
   #mascot.scene .cw[data-who="da"] .ctalk{bottom:calc(100% + 88px)}
 }
 
+
+/* ═══ 📖 읽기 도우미 — 아이콘 · 진행바 · 목차 하이라이팅 ══════════════════
+   긴 글은 ★쉴 곳이 없으면★ 읽히지 않는다. 소제목마다 작은 아이콘을 두어
+   눈이 쉬어 갈 자리를 만들고, 지금 어디쯤인지 늘 보이게 한다. */
+.ic{width:1em;height:1em;flex:none;vertical-align:-.14em;margin-right:.35em;
+  stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cn h4{display:flex;align-items:center}
+.cn h4 .ic{opacity:.85}
+
+/* 읽기 진행바 — 화면 맨 위 1.5px. ★본문을 가리지 않는 두께★ 로만 존재한다 */
+#readbar{position:fixed;left:0;top:0;height:2px;z-index:950;pointer-events:none;
+  background:linear-gradient(90deg,var(--ac),var(--ac2));width:0;
+  box-shadow:0 0 10px -2px var(--ac);transition:width .12s linear;opacity:0}
+#readbar.on{opacity:1}
+/* 남은 분량 — 진행바 끝에 조용히 붙는다 */
+#readtag{position:fixed;right:12px;top:8px;z-index:951;pointer-events:none;
+  font-size:11px;font-weight:800;color:var(--tx3);background:var(--card);
+  border:1px solid var(--line);border-radius:99px;padding:2px 9px;opacity:0;transition:opacity .2s}
+#readtag.on{opacity:.92}
+
+/* 목차 하이라이팅 — 읽는 위치가 목차에서 ★반짝인다★ */
+.toc a.now{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 60%,var(--line));
+  background:color-mix(in srgb,var(--ac) 14%,var(--card2));font-weight:800}
+.toc a.now::before{content:'▸ ';opacity:.8}
+.toc{max-height:168px;overflow:auto;scroll-behavior:smooth;
+  overscroll-behavior:contain;padding-right:2px}
+@media (max-width:520px){ .toc{max-height:132px} }
+
+/* 🖍 손그림 다이어그램(Mermaid) — 글 사이의 ★쉼표★ */
+.mmd{margin:10px 0 4px;padding:12px 10px;border-radius:12px;background:var(--card2);
+  border:1px dashed color-mix(in srgb,var(--ac) 32%,var(--line));overflow-x:auto;
+  text-align:center;min-height:44px}
+/* 그림이 화면을 통째로 차지하면 ★쉼표가 아니라 벽★ 이 된다 — 높이에 상한을 둔다 */
+.mmd svg{max-width:100%;max-height:52vh;height:auto}
+@media (max-width:520px){ .mmd svg{max-height:46vh} }
+.mmd .mmd-fallback{font-family:var(--f-num);font-size:12px;color:var(--tx3);
+  white-space:pre-wrap;text-align:left;line-height:1.6}
+.mmd .mmd-cap{display:block;margin-top:6px;font-size:11.5px;color:var(--tx3)}
+@media print{ #readbar,#readtag{display:none!important} .mmd{border-style:solid} }
+
 </style>
 </head>
 <body>
@@ -2492,6 +2532,10 @@ html.nomotion .emark{display:none!important}
     </span>
   </div>
 </header>
+
+<!-- 📖 읽기 진행바 — 지금 어디쯤인지, 얼마나 남았는지 -->
+<div id="readbar" aria-hidden="true"></div>
+<div id="readtag" aria-hidden="true"></div>
 
 <!-- 보상 연출 레이어 -->
 <div id="heat"></div>
@@ -4311,6 +4355,9 @@ function applyTheme(){
   $('theme').title=`테마 — ${th.n} · 눌러서 고르기 · T 로 순환`;
   const mt=$('metaTheme'); if(mt)mt.setAttribute('content',th.meta);
   UIP.theme=S.theme; saveUI();
+  /* 🖍 손그림도 테마를 따라간다 — applyTheme 은 MMD 선언보다 ★먼저★ 실행되므로
+     typeof 가드로는 막히지 않는다(const 는 TDZ 에서 typeof 도 던진다). try 로 감싼다. */
+  try{ MMD.retheme() }catch(e){}
   const pop=$('themePop'); if(pop)paintThemePop(pop);
 }
 function setTheme(id){ S.theme=id; save(); applyTheme() }
@@ -6601,7 +6648,9 @@ function go(v){
   view=v;
   asStop(); setTimeout(asSync,90);
   if(v!=='cards'&&typeof SLIDE!=='undefined')SLIDE.stop(true);   /* 🎞 암기카드를 떠나면 슬라이드도 멈춘다 */
-  if(typeof AMBIENT!=='undefined')AMBIENT.view();                 /* 🗣 새 화면에 맞는 맥락 대사 준비 */   // 화면이 바뀌면 자동 스크롤은 멈추고, 새 본문 길이로 막대를 다시 판단한다
+  if(typeof AMBIENT!=='undefined')AMBIENT.view();                 /* 🗣 새 화면에 맞는 맥락 대사 준비 */
+  setTimeout(()=>{ try{ READ.sync() }catch(e){} },60);            /* 📖 읽기 진행바·목차 하이라이팅 */
+  setTimeout(()=>{ try{ MMD.scan($('v-'+v)) }catch(e){} },80);    /* 🖍 이 화면의 다이어그램 */   // 화면이 바뀌면 자동 스크롤은 멈추고, 새 본문 길이로 막대를 다시 판단한다
   document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
   /* 화면이 바뀌었다는 걸 몸이 먼저 안다 — 0.28초 짧게 밀려 올라온다.
@@ -7346,6 +7395,207 @@ $('shExpDoc').onclick=shExpDoc;
 $('shExpCsv').onclick=()=>{if(!shEmpty())EX.saveCsv(SHCOLS,shRows(),'핵심시트_'+EX.stamp()+'.csv')};
 $('shExpXls').onclick=e=>{if(!shEmpty())EX.saveXlsx(SHCOLS,shRows(),'핵심시트','핵심시트_'+EX.stamp()+'.xlsx',e.target)};
 
+/* ═══════════ 🎨 아이콘 (Lucide) ═══════════
+   출처: Lucide (https://lucide.dev) — ISC License, Copyright (c) 2022 Lucide Contributors.
+   ★CDN 을 쓰지 않는다★ — 쓰는 아이콘만 골라 path 로 박아 두면 요청 0·오프라인 안전이고,
+   테마를 따라 색이 바뀐다(stroke:currentColor). 24×24 그리드 기준 원본 path 그대로.
+   긴 글에 아이콘을 두는 이유는 장식이 아니라 ★쉴 자리★ 다 — 눈이 한 번 멈출 곳. */
+const ICON=(()=>{
+  const P={
+    book:'M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20',
+    list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+    table:'M12 3v18M3 9h18M3 15h18M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z',
+    alert:'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01',
+    scale:'M12 3v18M3 7h18M7 7l-4 7a4 4 0 0 0 8 0zM17 7l-4 7a4 4 0 0 0 8 0zM7 21h10',
+    flow:'M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 15a9 9 0 0 1 9-9',
+    calc:'M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zM8 6h8M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01',
+    shield:'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
+    key:'M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3',
+    net:'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z',
+    clock:'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 6v6l4 2',
+    check:'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3',
+    x:'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM15 9l-6 6M9 9l6 6',
+    bulb:'M9 18h6M10 22h4M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14',
+    layers:'M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+    swap:'M8 3 4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4',
+    search:'M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM21 21l-4.35-4.35',
+    zap:'M13 2 3 14h9l-1 8 10-12h-9l1-8z',
+    file:'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8',
+    users:'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75',
+    lock:'M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4',
+    db:'M12 2c4.42 0 8 1.34 8 3s-3.58 3-8 3-8-1.34-8-3 3.58-3 8-3zM4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3'
+  };
+  /* 소제목의 낱말로 성격을 읽는다 — 앞에서 걸리는 것이 이긴다(순서가 곧 우선순위) */
+  const RULE=[
+    [/함정|주의|오답|헷갈|실수|위반/, 'alert'],
+    [/비교|차이|vs|대비/i,             'swap'],
+    [/절차|순서|흐름|단계|프로세스|생명주기|라이프사이클/, 'flow'],
+    [/계산|공식|수식|산정|지표/,        'calc'],
+    [/법|조항|규정|기준|고시|지침|§/,   'scale'],
+    [/암호|키|인증서|서명|해시/,        'key'],
+    [/보안|위협|공격|취약|침해|방어/,   'shield'],
+    [/권한|접근|통제|인가|잠금/,        'lock'],
+    [/네트워크|프로토콜|통신|전송|패킷/, 'net'],
+    [/DB|데이터베이스|저장|백업/i,      'db'],
+    [/시간|기간|주기|일정|보관/,        'clock'],
+    [/조직|담당|역할|책임|인력|위원/,   'users'],
+    [/문서|보고서|서식|양식|명세/,      'file'],
+    [/구성|요소|계층|구조|아키/,        'layers'],
+    [/정의|개념|의미|용어/,             'book'],
+    [/사례|예시|적용|활용/,             'bulb'],
+    [/점검|확인|체크|검증|감사/,        'check'],
+    [/탐지|분석|조사|진단/,             'search'],
+    [/성능|속도|효율|최적/,             'zap']
+  ];
+  function nameFor(txt,kind){
+    const t=String(txt||'');
+    for(const [re,ic] of RULE) if(re.test(t))return ic;
+    return kind==='tb'?'table':kind==='mmd'?'flow':'list';   /* 성격을 못 읽으면 형식으로 */
+  }
+  function svg(name){
+    const d=P[name]||P.list;
+    return `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">`+
+      d.split('M').filter(Boolean).map(seg=>`<path d="M${seg.trim()}"/>`).join('')+`</svg>`;
+  }
+  return { for:(txt,kind)=>svg(nameFor(txt,kind)), svg, has:n=>!!P[n] };
+})();
+
+/* ═══════════ 🖍 손그림 다이어그램 (Mermaid) ═══════════
+   텍스트로 쓰고 그림으로 읽는다 — 이미지 파일을 만들지 않아 ★유지보수가 없다.★
+   look:'handDrawn' 으로 Excalidraw 풍 손그림이 되어 딱딱한 본문 사이에서 쉼표가 된다.
+   ★지연 로드★ — 다이어그램이 있는 화면을 열 때만 받고, 실패하면 원문을 그대로 보여 준다
+   (그래도 내용은 읽힌다 — 이것이 이미지 파일보다 나은 점이다). */
+const MMD=(()=>{
+  const SRC='https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
+  let state='idle';                 /* idle | loading | ok | fail */
+  const queue=[];
+  const dark=()=>['dark','dawn','lamp'].indexOf(S.theme)>=0;
+  function conf(){
+    return {
+      startOnLoad:false, securityLevel:'strict',
+      look:'handDrawn', handDrawnSeed:7,          /* 같은 그림은 늘 같은 손맛으로 */
+      theme:dark()?'dark':'default',
+      themeVariables:{ fontFamily:'inherit', fontSize:'13px' },
+      flowchart:{curve:'basis',padding:8},
+      sequence:{actorMargin:38,width:128,height:34,mirrorActors:false,useMaxWidth:true}
+    };
+  }
+  function boot(){
+    if(state==='ok'||state==='loading')return;
+    if(state==='fail')return;
+    state='loading';
+    const sc=document.createElement('script');
+    sc.src=SRC; sc.async=true;
+    sc.onload=()=>{
+      try{ window.mermaid.initialize(conf()); state='ok'; flush(); }
+      catch(e){ state='fail'; fallbackAll(); }
+    };
+    sc.onerror=()=>{ state='fail'; fallbackAll() };
+    document.head.appendChild(sc);
+  }
+  function fallbackAll(){ queue.splice(0).forEach(el=>fallback(el)) }
+  function fallback(el){
+    if(!el||el.dataset.done)return;
+    el.dataset.done='fb';
+    const src=el.dataset.src||'';
+    el.innerHTML=`<div class="mmd-fallback">${esc(src)}</div>`;
+  }
+  async function draw(el){
+    if(!el||el.dataset.done)return;
+    try{
+      const id='mmd'+Math.random().toString(36).slice(2,9);
+      const {svg}=await window.mermaid.render(id,el.dataset.src);
+      el.dataset.done='ok';
+      const cap=el.dataset.cap?`<span class="mmd-cap">${esc(el.dataset.cap)}</span>`:'';
+      el.innerHTML=svg+cap;
+    }catch(e){ fallback(el) }
+  }
+  function flush(){ queue.splice(0).forEach(draw) }
+  return {
+    /** 화면에 새로 그려진 다이어그램을 처리한다(보이는 것부터) */
+    scan(root){
+      const els=[...(root||document).querySelectorAll('.mmd[data-src]')].filter(e=>!e.dataset.done);
+      if(!els.length)return;
+      els.forEach(e=>queue.push(e));
+      if(state==='ok')flush(); else if(state==='fail')fallbackAll(); else boot();
+    },
+    /** 테마가 바뀌면 다시 그린다 — 손그림도 테마를 따라야 한다 */
+    retheme(){
+      if(state!=='ok')return;
+      try{ window.mermaid.initialize(conf()) }catch(e){ return }
+      document.querySelectorAll('.mmd[data-src]').forEach(el=>{ delete el.dataset.done; queue.push(el) });
+      flush();
+    }
+  };
+})();
+
+/* ═══════════ 📖 읽기 진행바 · 목차 하이라이팅 ═══════════
+   방대한 글은 ★끝이 안 보여서★ 지친다. 얼마나 왔고 얼마나 남았는지 보이면
+   같은 분량도 견딜 만해진다. 목차에서 지금 자리가 빛나면 길을 잃지 않는다. */
+const READ=(()=>{
+  const VIEWS={concept:1,sheet:1,note:1,info:1,example:1,shortcut:1};
+  let ticking=false, items=[], curId='';
+  const bar=()=>document.getElementById('readbar');
+  const tag=()=>document.getElementById('readtag');
+  /** 본문 글자 수로 남은 시간을 어림한다 — 한국어 묵독 분당 500자 기준 */
+  function minsLeft(pct){
+    const box=document.getElementById('conceptList')||document.querySelector('.view.on');
+    if(!box)return 0;
+    const n=(box.textContent||'').length*(1-pct);
+    return Math.max(0,Math.round(n/500));
+  }
+  function collect(){
+    items=[...document.querySelectorAll('.view.on details.cn, .view.on .box.sheet, .view.on .nt')]
+      .map(el=>({el,id:el.id||''}));
+  }
+  function spy(){
+    const h=document.documentElement;
+    const max=Math.max(1,h.scrollHeight-h.clientHeight);
+    const pct=Math.min(1,Math.max(0,h.scrollTop/max));
+    const on=!!VIEWS[view]&&h.scrollHeight>h.clientHeight*1.6;
+    const b=bar(), t=tag();
+    if(b){ b.classList.toggle('on',on); b.style.width=(pct*100).toFixed(2)+'%' }
+    if(t){
+      t.classList.toggle('on',on&&pct>0.02&&pct<0.99);
+      if(on){ const m=minsLeft(pct); t.textContent=m>0?`남은 분량 약 ${m}분`:'거의 다 읽었어요' }
+    }
+    /* 목차에서 ★지금 읽는 자리★ 를 표시하고, 목차가 스크롤되면 따라 움직인다 */
+    if(items.length){
+      const mid=h.clientHeight*0.32;
+      let cur=items[0];
+      for(const it of items){
+        const r=it.el.getBoundingClientRect();
+        if(r.top-mid<=0)cur=it; else break;
+      }
+      if(cur&&cur.id!==curId){
+        curId=cur.id;
+        const toc=document.getElementById('conceptToc');
+        if(toc){
+          toc.querySelectorAll('a.now').forEach(a=>a.classList.remove('now'));
+          const a=toc.querySelector('a[href="#'+CSS.escape(curId)+'"]');
+          if(a){
+            a.classList.add('now');
+            const box=toc.querySelector('.toc');
+            if(box){
+              const ar=a.getBoundingClientRect(), br=box.getBoundingClientRect();
+              if(ar.top<br.top||ar.bottom>br.bottom)
+                box.scrollTop+=ar.top-br.top-br.height/2+ar.height/2;
+            }
+          }
+        }
+      }
+    }
+    ticking=false;
+  }
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(spy) } }
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',()=>{collect();onScroll()},{passive:true});
+  return {
+    /** 화면이 바뀌거나 목록을 다시 그린 뒤에 부른다 */
+    sync(){ curId=''; collect(); onScroll(); }
+  };
+})();
+
 /* ═══════════ 📖 개념 정리 ═══════════
    카드·시트가 "요약·암기"라면 이 화면은 ★과목별 개념 전문(全文)★ 이다.
    data.js 에 notes 가 없는 종목에서는 메뉴 자체가 감춰진다(HASNOTE). */
@@ -7375,17 +7625,26 @@ $('conceptSub').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;cn
 $('conceptTopic').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;cnTopic=b.dataset.t;renderConcept()};
 $('conceptSearch').oninput=e=>{cnQ=e.target.value.trim().toLowerCase();renderConcept()};
 $('conceptFold').onclick=()=>{cnFold=!cnFold;renderConcept()};
+/* 개념을 접거나 펼치면 문서 높이가 달라진다 → 진행바·목차를 다시 잰다 */
+document.addEventListener('toggle',e=>{
+  if(e.target&&e.target.classList&&e.target.classList.contains('cn')){
+    try{ if(e.target.open)MMD.scan(e.target); READ.sync(); }catch(_){}
+  }
+},true);
 
-/* 본문 블록: {h:'소제목', li:[...]} 또는 {h, tb:{head,rows}} */
+/* 본문 블록: {h:'소제목', li:[...]} · {h, tb:{head,rows}} · {h, mmd:'다이어그램', cap:'설명'}
+   소제목에는 ★성격에 맞는 아이콘★ 을 붙인다 — 글줄이 이어지기만 하면 눈이 쉴 곳이 없다. */
 function noteBlock(b){
-  const h=b.h?`<h4>${esc(b.h)}</h4>`:'';
+  const kind=b.mmd?'mmd':b.tb?'tb':'li';
+  const h=b.h?`<h4>${ICON.for(b.h,kind)}<span>${esc(b.h)}</span></h4>`:'';
+  if(b.mmd)return h+`<div class="mmd" data-src="${esc(b.mmd)}"${b.cap?` data-cap="${esc(b.cap)}"`:''}></div>`;
   if(b.tb)return h+`<div class="tw"><table><thead><tr>${b.tb.head.map(x=>`<th>${esc(x)}</th>`).join('')}</tr></thead>
     <tbody>${b.tb.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   return h+`<ul class="sl">${(b.li||[]).map(i=>`<li>${esc(i)}</li>`).join('')}</ul>`;
 }
 function noteFlat(n){
   return [n.title,n.t||'',n.ref||'',n.sec?secName(n.sec):''].concat((n.body||[]).map(b=>
-    (b.h||'')+' '+(b.tb?b.tb.head.join(' ')+' '+b.tb.rows.flat().join(' '):(b.li||[]).join(' ')))).join(' ');
+    (b.h||'')+' '+(b.mmd?(b.mmd+' '+(b.cap||'')):b.tb?b.tb.head.join(' ')+' '+b.tb.rows.flat().join(' '):(b.li||[]).join(' ')))).join(' ');
 }
 function renderConcept(){
   if(!HASNOTE)return;
@@ -7415,6 +7674,8 @@ function renderConcept(){
       <summary>${badge}<span class="cno">${esc(n.no)}</span><span class="ctt">${esc(n.title)}</span>${tag}${ref}</summary>
       <div class="cbody">${(n.body||[]).map(noteBlock).join('')}${go}</div></details>`;
   }).join('')||`<div class="empty"><div class="ic">🔍</div>검색 결과가 없습니다</div>`;
+  /* 🖍 새로 그려진 다이어그램을 처리하고, 📖 진행바·목차를 현재 목록에 맞춘다 */
+  try{ MMD.scan($('conceptList')); READ.sync(); }catch(e){}
 }
 /* 개념 → 퀴즈 연결: 해당 과목·단원으로 필터를 세팅한 뒤 퀴즈 화면으로 보낸다 */
 $('conceptList').onclick=e=>{
