@@ -2712,6 +2712,68 @@ html.nomotion .cbody h4.rd.on>:first-child,html.nomotion .cbody h4.rd.on::after{
 #pentaTip b{color:var(--tx2);font-family:var(--f-num)}
 @media (prefers-reduced-motion: reduce){ #penta .pl{transition:none} }
 
+
+/* ── 💗 친밀도 ───────────────────────────────────────────── */
+.dchip .dbond{display:inline-block;width:26px;height:3px;border-radius:2px;
+  background:color-mix(in srgb,var(--line) 70%,transparent);overflow:hidden;margin-left:2px}
+.dchip .dbond i{display:block;height:100%;background:var(--c);border-radius:2px}
+#duoBar .dlv{font-size:10px;font-weight:800;color:var(--c);margin-left:1px}
+/* 해금 알림 — 한 번만 뜨는 것이라 크게 */
+.unlock{display:flex;gap:10px;align-items:flex-start;margin:0 0 12px;padding:12px 14px;
+  border-radius:12px;background:color-mix(in srgb,var(--ac) 8%,var(--card));
+  border:1px solid color-mix(in srgb,var(--ac) 30%,var(--line))}
+.unlock .ul-ic{font-size:20px;line-height:1.1}
+.unlock b{display:block;font-size:13.5px;margin-bottom:2px}
+.unlock span{font-size:12.5px;color:var(--tx3);line-height:1.5}
+.unlock button{margin-left:auto;border:0;background:none;color:var(--tx3);cursor:pointer;
+  font-size:15px;padding:2px 6px;border-radius:8px}
+.unlock button:hover{background:var(--bg2);color:var(--tx)}
+
+
+/* 🔓 해금 도구가 만들어내는 표시들 */
+.qwarn{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:800;
+  color:var(--wa);font-family:var(--f-narrow)}
+.wgrp{margin-top:10px;padding:9px 12px;border-radius:10px;
+  background:color-mix(in srgb,var(--wa) 8%,var(--card));
+  border:1px solid color-mix(in srgb,var(--wa) 26%,var(--line));font-size:12.5px}
+.wgrp b{color:var(--tx)}
+.wgrp .wg1{display:block;margin-top:3px;color:var(--tx3);font-family:var(--f-narrow)}
+.spark{display:flex;align-items:flex-end;gap:2px;height:30px;margin-top:6px}
+.spark i{flex:1;background:color-mix(in srgb,var(--ac) 55%,transparent);border-radius:2px 2px 0 0;
+  min-height:2px}
+.spark i.slow{background:color-mix(in srgb,var(--wa) 70%,transparent)}
+.spark i.bad{background:color-mix(in srgb,var(--no) 65%,transparent)}
+
+
+/* ── ⏳ 로딩바 ───────────────────────────────────────────────
+   ★무엇을 기다리는지 모르는 1초가, 아는 3초보다 길게 느껴진다.★
+   그래서 막대만 두지 않고 ★무엇을 몇 개째 하고 있는지★ 를 같이 쓴다.
+   화면 최상단 고정 — 스크롤 위치와 무관하게 늘 보여야 한다. */
+#load{position:fixed;left:0;right:0;top:0;height:3px;z-index:1300;
+  background:color-mix(in srgb,var(--ac) 14%,transparent);opacity:0;
+  transition:opacity .25s ease;pointer-events:none}
+#load.on{opacity:1}
+#load i{display:block;height:100%;width:0;border-radius:0 2px 2px 0;
+  background:linear-gradient(90deg,var(--ac),var(--ac2,var(--ac)));
+  transition:width .22s cubic-bezier(.2,.9,.3,1)}
+#loadTag{position:fixed;top:9px;right:12px;z-index:1301;
+  padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;
+  font-family:var(--f-narrow);color:var(--tx2);
+  background:color-mix(in srgb,var(--card) 92%,transparent);
+  border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.14);
+  opacity:0;transform:translateY(-6px);transition:opacity .25s ease,transform .25s ease;
+  pointer-events:none;white-space:nowrap}
+#loadTag.on{opacity:1;transform:none}
+#loadTag b{font-family:var(--f-num);font-variant-numeric:tabular-nums;color:var(--tx)}
+/* 아직 안 그려진 다이어그램 자리 — 빈 사각형 대신 ★자리 표시★ */
+.mmd:not([data-done])::before{content:'다이어그램 준비 중';display:block;
+  padding:14px 0;font-size:11.5px;color:var(--tx3);font-family:var(--f-narrow)}
+.mmd[data-done]::before{content:none}
+@media (prefers-reduced-motion: reduce){
+  #load,#load i,#loadTag{transition:none}
+}
+@media print{ #load,#loadTag{display:none!important} }
+
 </style>
 </head>
 <body>
@@ -2744,6 +2806,10 @@ html.nomotion .cbody h4.rd.on>:first-child,html.nomotion .cbody h4.rd.on::after{
 <!-- 📖 읽기 진행바 — 지금 어디쯤인지, 얼마나 남았는지 -->
 <div id="readbar" aria-hidden="true"></div>
 <div id="readtag" aria-hidden="true"></div>
+
+<!-- ⏳ 로딩바 — 무엇을 몇 개째 하고 있는지 -->
+<div id="load" aria-hidden="true"><i></i></div>
+<div id="loadTag" role="status" aria-live="polite" hidden></div>
 
 <!-- 🔍 다이어그램 확대 보기 -->
 <div id="mmdBox" role="dialog" aria-modal="true" aria-label="다이어그램 확대" hidden>
@@ -3316,6 +3382,10 @@ fillDef('time',{best:{},totalMs:0,sessions:0,fastest:0});
    ★내 선택이 화면을 바꾸는★ 축이 하나 더 생긴다.
    runs = 그 배역과 함께 끝낸 세션 수(오래 쓸수록 쌓이는 흔적). */
 fillDef('duo',{who:'',day:'',runs:{},prep:null});
+/* 💗 친밀도 — 0~100. cap 은 ★비학습 경로의 일일 상한★ 카운터다.
+   쓰다듬기 연타로 만렙이 되면 이 레이어는 학습과 분리된 별도 게임이 되고,
+   그 순간 사이트의 목적과 경쟁한다. 그래서 ★45 위로는 학습으로만★ 오른다. */
+fillDef('bond',{v:{},cap:{d:'',n:0},lv:{}});
 fillDef('ach',{got:{},redeem:0});      /* got: 배지id→획득일, redeem: 오답 극복 누적 */
 if(!Array.isArray(S.solved))S.solved=[];/* 한 번이라도 맞힌 문항 id — 정복도 계산용 */
 /* 🔁 간격 반복 — qid → {d:마지막으로 맞힌 날, n:연속 정답 회차}.
@@ -5191,6 +5261,8 @@ const CAST=(()=>{
     ensemble(){
       if(S.mascot===false||S.crowd===false)return;
       S.soc.ens=(S.soc.ens||0)+1; save();
+      /* 💗 같이 축하한 순간은 전원에게 남는다 */
+      if(typeof BOND!=='undefined')['ki','si','da','bu','mo'].forEach(w=>BOND.add(w,1,true));
       if(S.sound&&FX.snd.cheer)FX.snd.cheer(true);
       bond(['ki','si','da','bu','mo'],2);   /* ★같이 축하하면 다 같이 가까워진다★ */
       pop('mo','cheer',{face:'f-joy',hold:3400});
@@ -5614,6 +5686,8 @@ const MASCOT=(()=>{
     S.soc.pet=(S.soc.pet||0)+2; save();
     const long=(S.soc.pet||0)>=40&&Math.random()<.4;
     say(tpick(long?'petLong':'pet'),'love',2600);
+    /* 💗 쓰다듬기 — ★비학습 경로★ 라 하루 6까지, 그리고 44.9 에서 멈춘다 */
+    if(typeof BOND!=='undefined')BOND.add('ki',long?0.5:0.2,false);
     faceSeq([['love',1700],['happy',900]]);
     tapN=0;                                      /* 쓰다듬으면 어지러움이 풀린다 */
     if(Math.random()<.3)setTimeout(()=>subSay(softPool(JEAL,JEAL_SOFT),'s-turn',2200),900);
@@ -7315,6 +7389,11 @@ function autoNext(){
   host.appendChild(r); autoRing=r;
   autoT=setTimeout(()=>{ autoCancel(); if($('qNext')&&!$('qNext').disabled)$('qNext').click() },sec*1000);
 }
+/* 스크롤하면 근처 다이어그램을 다시 집는다 — 관찰자가 놓쳐도 그려진다 */
+(function(){ let t=null;
+  addEventListener('scroll',()=>{ clearTimeout(t);
+    t=setTimeout(()=>{ try{MMD.sweep()}catch(e){} },160) },{passive:true});
+})();
 ['wheel','touchmove','keydown','pointerdown'].forEach(ev=>
   document.addEventListener(ev,()=>{ if(autoT)autoCancel() },{passive:true,capture:true}));
 
@@ -8548,6 +8627,47 @@ const READFX=(()=>{
   };
 })();
 
+
+/* ═══════════ ⏳ 로딩 상태 ═══════════
+   ★기다림 자체보다 '모르고 기다리는 것' 이 괴롭다.★ 진행률과 함께
+   무엇을 하고 있는지 한 줄로 쓴다. 끝나면 조용히 사라진다. */
+const LOAD=(()=>{
+  let n=0, total=0, label='', hideT=null;
+  const bar=()=>document.getElementById('load');
+  const tag=()=>document.getElementById('loadTag');
+  function paint(){
+    const b=bar(), t=tag(); if(!b||!t)return;
+    const pct=total?Math.round(n/total*100):0;
+    b.querySelector('i').style.width=pct+'%';
+    t.innerHTML=`${esc(label)} <b>${n}</b>/<b>${total}</b>`;
+  }
+  return {
+    /** 작업 시작 — 전체 개수를 알 때만 부른다(모르면 막대가 거짓말을 한다) */
+    start(l,tot){
+      if(tot<=0)return;
+      clearTimeout(hideT);
+      label=l; total=tot; n=0;
+      const b=bar(), t=tag(); if(!b||!t)return;
+      t.hidden=false;
+      b.classList.add('on'); t.classList.add('on');
+      paint();
+    },
+    step(k){ n=Math.min(total,n+(k||1)); paint(); if(n>=total)this.done() },
+    /** 더 붙는 작업이 있으면 총량을 늘린다 */
+    more(k){ total+=k||1; paint() },
+    done(){
+      const b=bar(), t=tag(); if(!b||!t)return;
+      n=total; paint();
+      clearTimeout(hideT);
+      hideT=setTimeout(()=>{
+        b.classList.remove('on'); t.classList.remove('on');
+        setTimeout(()=>{ if(!b.classList.contains('on')){t.hidden=true;
+          b.querySelector('i').style.width='0'} },300);
+      },420);
+    }
+  };
+})();
+
 /* ═══════════ 🔍 다이어그램 확대 보기 ═══════════
    작게 그려 두는 이유는 ★본문의 쉼표★ 로 쓰기 위해서지만, 복잡한 그림은
    그 크기로는 못 읽는다. 눌러서 크게 보고, 닫으면 읽던 자리로 돌아온다. */
@@ -8625,10 +8745,10 @@ const MMD=(()=>{
     const sc=document.createElement('script');
     sc.src=SRC; sc.async=true;
     sc.onload=()=>{
-      try{ window.mermaid.initialize(conf()); state='ok'; flush(); }
-      catch(e){ state='fail'; fallbackAll(); }
+      try{ window.mermaid.initialize(conf()); state='ok'; LOAD.done(); flush(); }
+      catch(e){ state='fail'; LOAD.done(); fallbackAll(); }
     };
-    sc.onerror=()=>{ state='fail'; fallbackAll() };
+    sc.onerror=()=>{ state='fail'; LOAD.done(); fallbackAll() };
     document.head.appendChild(sc);
   }
   function fallbackAll(){ queue.splice(0).forEach(el=>fallback(el)) }
@@ -8693,19 +8813,92 @@ const MMD=(()=>{
       decorate(el);
     }catch(e){ fallback(el) }
   }
-  function flush(){ queue.splice(0).forEach(draw) }
+  /* ── ⏳ 지연 렌더 ─────────────────────────────────────
+     ★57개를 한 번에 그리면 화면이 멈춘다.★ 실제로 버벅인다는 지적을 받았다.
+     Mermaid 렌더는 개당 수십 ms 인데, 동기적으로 몰아 돌리면 그 합만큼
+     메인 스레드가 잠긴다.
+     → ①화면 근처(600px)에 들어온 것만 ②한 번에 3개씩 ③사이에 프레임을 양보.
+     이러면 총 시간은 비슷해도 ★스크롤이 끊기지 않는다.★ */
+  let pumping=false;
+  const near=new Set();
+  let lazyIO=null;
+  /** ★관찰자에만 의존하지 않는다.★ 좌표를 직접 재서 근처면 바로 대기열에 넣는다.
+      관찰자가 늦게 뜨거나(숨은 뷰·백그라운드 탭) 아예 발화하지 않는 환경에서
+      ★아무것도 안 그려지는★ 일이 실제로 있었다. 관찰자는 '이후 스크롤' 용이다. */
+  function isNear(el){
+    const r=el.getBoundingClientRect();
+    if(!r.width&&!r.height)return false;           /* 접힌 상세 안 — 나중에 */
+    return r.top<innerHeight+600 && r.bottom>-600;
+  }
+  function watch(el){
+    if(isNear(el))near.add(el);
+    if(!('IntersectionObserver' in window)){ near.add(el); return }
+    if(!lazyIO){
+      lazyIO=new IntersectionObserver(es=>{
+        let got=false;
+        es.forEach(e=>{ if(e.isIntersecting){ near.add(e.target); lazyIO.unobserve(e.target); got=true } });
+        if(got)pump();
+      },{rootMargin:'600px 0px 600px 0px',threshold:0});
+    }
+    lazyIO.observe(el);
+  }
+  async function pump(){
+    if(pumping||state!=='ok')return;
+    pumping=true;
+    const list=queue.filter(e=>near.has(e)&&!e.dataset.done);
+    if(list.length)LOAD.start('다이어그램 그리는 중',list.length);
+    let done=0;
+    for(let i=0;i<list.length;i++){
+      await draw(list[i]);
+      done++; LOAD.step(1);
+      /* 3개마다 한 프레임 양보 — 이게 없으면 스크롤이 멈춘다.
+         ★rAF 가 느려지는 환경(백그라운드 탭)에서 멈추지 않게★ 타임아웃을 함께 건다 */
+      if(i%3===2)await new Promise(r=>{
+        const t=setTimeout(r,32);
+        requestAnimationFrame(()=>{clearTimeout(t);r()});
+      });
+    }
+    for(let i=queue.length-1;i>=0;i--)if(queue[i].dataset.done)queue.splice(i,1);
+    pumping=false;
+    if(done)LOAD.done();
+    /* 그리는 동안 새로 근처에 들어온 것이 있으면 이어서 */
+    if(queue.some(e=>near.has(e)&&!e.dataset.done))pump();
+  }
+  function flush(){
+    queue.forEach(watch);
+    pump();
+    /* ★최후 보루★ — 1.5초 뒤에도 아무것도 안 그려졌으면 관찰자를 믿지 않고
+       앞에서부터 그린다. 연출이 아니라 ★내용★ 이므로 안 나오면 안 된다. */
+    clearTimeout(flush._t);
+    flush._t=setTimeout(()=>{
+      if(queue.some(e=>!e.dataset.done)&&!near.size){
+        queue.slice(0,8).forEach(e=>near.add(e));
+        pump();
+      }
+    },1500);
+  }
   return {
     /** 화면에 새로 그려진 다이어그램을 처리한다(보이는 것부터) */
     scan(root){
       const els=[...(root||document).querySelectorAll('.mmd[data-src]')].filter(e=>!e.dataset.done);
       if(!els.length)return;
       els.forEach(e=>queue.push(e));
-      if(state==='ok')flush(); else if(state==='fail')fallbackAll(); else boot();
+      if(state==='ok')flush();
+      else if(state==='fail')fallbackAll();
+      else { LOAD.start('그림 도구 불러오는 중',1); boot() }
+    },
+    /** 스크롤·화면 변화에 맞춰 근처 것을 다시 집는다(관찰자 보조) */
+    sweep(){
+      if(state!=='ok')return;
+      let got=false;
+      queue.forEach(e=>{ if(!e.dataset.done&&!near.has(e)&&isNear(e)){near.add(e);got=true} });
+      if(got)pump();
     },
     /** 테마가 바뀌면 다시 그린다 — 손그림도 테마를 따라야 한다 */
     retheme(){
       if(state!=='ok')return;
       try{ window.mermaid.initialize(conf()) }catch(e){ return }
+      near.clear();
       document.querySelectorAll('.mmd[data-src]').forEach(el=>{ delete el.dataset.done; queue.push(el) });
       flush();
     }
@@ -9104,9 +9297,13 @@ const DUO=(()=>{
     const cur=today(), runs=S.duo.runs||{};
     bar.innerHTML=`<span class="dlbl">🤝 오늘 누구랑?</span>
       <span class="dwrap">${WHO.map(w=>{
-        const n=runs[w.k]||0;
+        const n=runs[w.k]||0, bl=BOND.lv(w.k), bp=BOND.pct(w.k);
+        const tip=BOND.tool(w.k)?`${w.d}\n🔓 ${BOND.toolText(w.k)}`:w.d;
         return `<button class="dchip${cur===w.k?' on':''}" data-duo="${w.k}" style="--c:${w.c}"
-          title="${esc(w.d)}">${svg(w.k)}${w.n}${n?`<span class="druns">${n}</span>`:''}</button>`;
+          title="${esc(tip)}">${svg(w.k)}${w.n}`+
+          (bl>1?`<span class="dlv">L${bl}</span>`:'')+
+          (bl>1?`<span class="dbond"><i style="width:${bp}%"></i></span>`:'')+
+          (n?`<span class="druns">${n}</span>`:'')+`</button>`;
       }).join('')}</span>
       <span class="dnote">${cur
         ? `오늘은 <b>${info(cur).n}</b> — ${esc(info(cur).d)}`
@@ -9154,6 +9351,94 @@ document.addEventListener('click',e=>{
 });
 
 
+
+
+/* ═══════════ 💗 친밀도 ═══════════
+   ★왜 상한을 두는가★
+     쓰다듬기·탭 같은 비학습 행동으로도 친밀도가 오르게 하되, ★44.9 에서 멈춘다.★
+     그 위(Lv3 이상)는 같이 문제를 푸는 것으로만 열린다. 이 밸브 하나가
+     "더 친해지려면 공부해야 한다" 를 코드로 강제한다 — 없으면 이 레이어는
+     학습과 분리된 별도의 게임이 되고, 그때부터 사이트의 목적과 경쟁한다.
+
+   ★왜 감쇠가 없는가★
+     안 와도 친밀도는 절대 줄지 않는다. 감쇠는 곧 "안 오면 손해" 이고
+     그건 이 제품이 금지한 죄책감 장치다. */
+const BOND=(()=>{
+  const NAME={ki:'치노',si:'시니',da:'다람',bu:'부엉',mo:'모모'};
+  const SOFT=44.9;                 /* 비학습 경로의 천장 */
+  const LV=[0,20,45,70,100];
+  const TOOL={
+    ki:'오답을 1·3일 뒤 복습으로 자동 편성',
+    si:'함정 문항에 ⚠ 표시(정답은 안 알려줌)',
+    da:'비슷한 오답을 묶어 이름을 붙여 줌',
+    bu:'결과 화면에 약점 리포트 2줄',
+    mo:'문항별 소요시간 그래프'
+  };
+  const val=w=>Math.round(((S.bond.v||{})[w]||0)*10)/10;
+  const lv=w=>{ const v=val(w); let n=1; LV.forEach((t,i)=>{ if(v>=t)n=i+1 }); return n };
+  function capLeft(){
+    const c=S.bond.cap||(S.bond.cap={d:'',n:0});
+    if(c.d!==localDay()){ c.d=localDay(); c.n=0 }
+    return Math.max(0,6-c.n);
+  }
+  /** 친밀도 가산. study=true 면 학습 경로(상한 없음) */
+  function add(w,amt,study){
+    if(!w||!amt)return;
+    const v=S.bond.v||(S.bond.v={});
+    let cur=v[w]||0;
+    if(!study){
+      const left=capLeft();
+      if(left<=0)return;                          /* 오늘 비학습 몫 소진 */
+      amt=Math.min(amt,left);
+      S.bond.cap.n+=amt;
+      if(cur>=SOFT)return;                        /* ★벽★ — 여기부터는 학습으로만 */
+      cur=Math.min(SOFT,cur+amt);
+    }else{
+      cur=Math.min(100,cur+amt);
+    }
+    const before=lv(w);
+    v[w]=cur;
+    const after=lv(w);
+    if(after>before)unlocked(w,after);
+    save();
+  }
+  /** 단계가 오르면 ★그 자리에서★ 알린다 — 나중에 발견하면 인과가 끊긴다 */
+  function unlocked(w,n){
+    (S.bond.lv||(S.bond.lv={}))[w]=n;
+    const nm=NAME[w];
+    if(n===3){
+      showUnlock('🔓', `${nm}과 Lv.3`, `이제 파트너가 아니어도 — ${TOOL[w]}`);
+    }else if(n===5){
+      showUnlock('💗', `${nm}과 Lv.5`, '가장 가까운 사이가 됐습니다');
+    }else{
+      FX.toast(`💗 ${nm} 친밀도 Lv.${n}`,'good',2000);
+    }
+    if(typeof CAST!=='undefined'&&CAST.pop&&w!=='ki'&&w!=='si')
+      setTimeout(()=>CAST.say(w,'…고맙다',w==='da'?'f-joy':null,2800),600);
+  }
+  function showUnlock(ic,title,desc){
+    const host=$('duoBar'); if(!host||!host.parentNode)return;
+    const el=document.createElement('div');
+    el.className='unlock';
+    el.innerHTML=`<span class="ul-ic">${ic}</span><span><b>${esc(title)}</b>`+
+      `<span>${esc(desc)}</span></span><button aria-label="닫기">✕</button>`;
+    el.querySelector('button').onclick=()=>el.remove();
+    host.parentNode.insertBefore(el,host);
+    FX.snd.badge&&FX.snd.badge();
+  }
+  return {
+    val, lv, add, capLeft,
+    /** Lv3 이상이면 파트너가 아니어도 그 도구가 켜진다 */
+    tool(w){ return lv(w)>=3 },
+    toolText(w){ return TOOL[w] },
+    /** 눈금 — 다음 단계까지의 비율 */
+    pct(w){
+      const v=val(w), n=lv(w);
+      const lo=LV[n-1], hi=LV[Math.min(n,LV.length-1)];
+      return hi>lo?Math.round((v-lo)/(hi-lo)*100):100;
+    }
+  };
+})();
 
 /* ═══════════ ⬠ 관계도 펜타곤 ═══════════
    관계값 10쌍은 이미 계산·저장되고 있었는데 화면에 없었다. 값이 보이지 않으면
@@ -9381,6 +9666,11 @@ function renderQ(){
   /* 🦉 부엉과 함께면 ★내 과거 기록★ 을 문제 옆에 붙여 준다 —
      "이 문제를 전에 틀렸다" 는 사실이 가장 강한 힌트이자 경고다. */
   let duoInfo='';
+  /* 🐱 시니 Lv3 — ★함정이라는 사실만★ 알려 준다. 어느 선지가 답인지는 말하지 않는다.
+     경고가 정답 공개가 되는 순간 이 도구는 학습이 아니라 치트가 된다. */
+  if((DUO.is('si')||BOND.tool('si'))&&quiz.mode==='practice'&&q.d===3&&!answered){
+    duoInfo+=`<span class="qwarn" title="시니가 표시해 둔 함정 문항">⚠ 함정</span>`;
+  }
   if(DUO.is('bu')&&quiz.mode==='practice'){
     const w=S.wrong[q.id]||0, solved=SOLVED.has(q.id), best=S.time.best[q.id];
     const bits=[];
@@ -9518,6 +9808,12 @@ function answer(v){
        오답노트는 쌓일수록 뒤로 밀려 안 보는데, 그 반대로 만든다. */
     if(DUO.is('ki')){ S.wpin=S.wpin||[];
       S.wpin=[q.id].concat(S.wpin.filter(x=>x!==q.id)).slice(0,30); }
+    /* 🐤 치노 Lv3 — 틀린 것을 ★내일 복습★ 으로 자동 편성한다.
+       오답노트는 "가면 있다" 지만, 일정에 들어가면 "온다". */
+    if(BOND.tool('ki')&&S.rep){
+      const y=new Date(); y.setDate(y.getDate()-REP_GAP[0]+1);
+      S.rep[q.id]={d:`${y.getFullYear()}-${String(y.getMonth()+1).padStart(2,'0')}-${String(y.getDate()).padStart(2,'0')}`,n:0};
+    }
   }
   else if(S.wrong[q.id]){ delete S.wrong[q.id]; S.ach.redeem++; }
   if(first&&quiz.mode==='practice'){
@@ -9616,6 +9912,12 @@ function answer(v){
     if(cx.pace>0&&cx.pace<7000&&cx.n>=12&&cx.n%12===0)setTimeout(()=>TALK.maybe('fast'),1100);
     else if(cx.ms>28000)setTimeout(()=>TALK.maybe('slow'),1100);
     else if(ok&&S.streak.cur>=3&&cx.n===6)setTimeout(()=>TALK.maybe('streak'),1200);
+    /* 💗 함께 푼 문제 — ★학습 경로라 상한이 없다★ */
+    const _duo=DUO.who();
+    if(_duo){
+      if(ok)BOND.add(_duo,cx.redeem?2.0:0.4,true);
+      if(cx.pb)BOND.add(_duo,0.6,true);
+    }
     const handled = CAST.scene(cx);
     celebrate(ok,gain,wasWrong,q,handled);
     /* 📌 오답 계보 — ★"3번째 만남입니다. 지난번엔 2번을 골랐어요"★
@@ -10066,7 +10368,65 @@ function finishQuiz(){
     DUO.finish();                       /* 🤝 함께 끝낸 세션 한 번 */
     PREP.make();                        /* 📒 다음에 볼 것을 정리해 둔다 */
   })();
+  /* 🦉 부엉 Lv3 — 결과에 ★약점 두 줄★. 표가 아니라 문장이라 그냥 읽힌다 */
+  if(BOND.tool('bu')||DUO.is('bu')){
+    const box=$('quizResult');
+    const byT={}; let slow=0, slowN=0;
+    quiz.items.forEach((q,i)=>{
+      if(quiz.ans[i]==null)return;
+      if(q.t){ const o=byT[q.t]||(byT[q.t]={n:0,w:0}); o.n++; if(!isRight(q,quiz.ans[i]))o.w++ }
+    });
+    const worst=Object.entries(byT).filter(([,o])=>o.n>=2)
+      .sort((a,b)=>(b[1].w/b[1].n)-(a[1].w/a[1].n))[0];
+    const lines=[];
+    if(worst&&worst[1].w)lines.push(`가장 많이 깎인 곳은 <b>${esc(worst[0])}</b> — ${worst[1].n}개 중 ${worst[1].w}개 오답`);
+    const avg=total?ucMs/total/1000:0;
+    if(avg)lines.push(avg<12?`문항당 평균 <b>${avg.toFixed(1)}초</b> — 속도는 충분하다. 정확도만 보면 된다`
+                            :`문항당 평균 <b>${avg.toFixed(1)}초</b> — 시험 페이스로는 여유가 있다`);
+    if(box&&lines.length){
+      const el=document.createElement('div');
+      el.className='wgrp';
+      el.innerHTML=`<b>🦉 부엉의 분석</b>`+lines.map(l=>`<span class="wg1">${l}</span>`).join('');
+      box.appendChild(el);
+    }
+  }
+  /* 🐢 모모 Lv3 — ★문항별 소요시간★ 을 막대로. 어디서 막혔는지가 모양으로 보인다 */
+  if(BOND.tool('mo')||DUO.is('mo')){
+    const box=$('quizResult');
+    if(box&&ucPace.length>=3){
+      const mx=Math.max.apply(null,ucPace);
+      const el=document.createElement('div');
+      el.className='wgrp';
+      el.innerHTML=`<b>🐢 문항별 소요시간</b>`+
+        `<div class="spark">`+ucPace.map(ms=>{
+          const h=Math.max(2,Math.round(ms/mx*30));
+          const c=ms>30000?' bad':ms>15000?' slow':'';
+          return `<i class="${c.trim()}" style="height:${h}px" title="${(ms/1000).toFixed(1)}초"></i>`;
+        }).join('')+`</div>`+
+        `<span class="wg1">막대가 높을수록 오래 잡고 있던 문제입니다</span>`;
+      box.appendChild(el);
+    }
+  }
   /* 🐿 다람과 함께면 ★단원별 장부★ 를 붙인다 — 어디서 깎였는지 한 장으로 */
+  /* 🐿 다람 Lv3 — ★약점에 이름을 준다.★ 이름이 붙으면 대상이 되고,
+     대상이 되면 극복할 수 있다. 같은 단원 오답이 2개 이상이면 묶는다. */
+  if(BOND.tool('da')){
+    const box=$('quizResult');
+    const g={};
+    Object.keys(S.wrong||{}).forEach(id=>{
+      const q=ALLQ.find(x=>x.id===id); if(!q||!q.t)return;
+      (g[q.t]=g[q.t]||[]).push(id);
+    });
+    const named=Object.entries(g).filter(([,v])=>v.length>=2)
+      .sort((a,b)=>b[1].length-a[1].length).slice(0,3);
+    if(box&&named.length){
+      const el=document.createElement('div');
+      el.className='wgrp';
+      el.innerHTML=`<b>🐿 이름 붙인 약점</b>`+
+        named.map(([t,v])=>`<span class="wg1">「${esc(t)}」 혼동 — <b>${v.length}건</b></span>`).join('');
+      box.appendChild(el);
+    }
+  }
   if(DUO.is('da')){
     const box=$('quizResult');
     const by={};
