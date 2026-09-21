@@ -2681,6 +2681,36 @@ html.nomotion .cbody h4.rd.on>:first-child,html.nomotion .cbody h4.rd.on::after{
   background:color-mix(in srgb,var(--ok) 7%,var(--card));
   border:1px solid color-mix(in srgb,var(--ok) 26%,var(--line))}
 #prepBar[hidden]{display:none}
+/* ── 📅 주간 계획판 ──────────────────────────────────────────
+   ★✗ 는 없다.★ 지나간 미달성 칸은 '·' 로만 남는다 — 빈 칸은 정보고 ✗ 는 판정이다.
+   움직이는 것도 없다 — 홈 상단에서 꿈틀대면 매번 눈이 간다. */
+#weekBar{margin:0 0 12px;padding:9px 12px 8px;border-radius:12px;
+  background:var(--card);border:1px solid var(--line)}
+#weekBar[hidden]{display:none}
+#weekBar .whead{display:flex;align-items:baseline;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+#weekBar .wlbl{font-size:12.5px;font-weight:800;color:var(--tx3);font-family:var(--f-narrow)}
+#weekBar .wtoday{font-size:11.5px;color:var(--tx3);font-family:var(--f-narrow)}
+#weekBar .wtoday b{color:var(--tx2)}
+#weekBar .wset{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:8px;
+  padding:7px 10px;border-radius:9px;color:var(--tx2);
+  background:color-mix(in srgb,var(--ok) 9%,var(--card))}
+#weekBar .wset.c{background:color-mix(in srgb,var(--tx3) 8%,var(--card))}
+#weekBar .wset span{flex:1}
+#weekBar .wset button{border:0;background:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:2px 4px}
+.wgrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.wcell{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  min-height:46px;padding:3px 0;border-radius:9px;border:1px solid var(--line);
+  background:transparent;color:var(--tx2);cursor:pointer;font:inherit}
+.wcell:disabled{cursor:default}
+.wcell .wd{font-size:10.5px;font-weight:700;color:var(--tx3);font-family:var(--f-narrow)}
+.wcell .wi{font-size:15px;line-height:1.1;min-height:17px}
+.wcell .wm{font-size:11px;font-weight:800;line-height:1;min-height:11px;color:var(--tx3)}
+.wcell.today{border-color:color-mix(in srgb,var(--ac) 60%,transparent);
+  background:color-mix(in srgb,var(--ac) 6%,var(--card))}
+.wcell.done .wm{color:var(--ok)}
+.wcell.pre{opacity:.4}
+#weekBar .wnote{font-size:11.5px;color:var(--tx3);margin-top:6px;font-family:var(--f-narrow)}
+@media (max-width:520px){ #weekBar{padding:8px 9px 7px} .wgrid{gap:3px} .wcell .wi{font-size:13.5px} }
 #prepBar .pmsg{flex:1 1 220px;font-size:13px;line-height:1.5;color:var(--tx2)}
 #prepBar .pmsg b{color:var(--tx);font-family:var(--f-num);font-variant-numeric:tabular-nums}
 #prepBar .pwho{font-weight:800;color:var(--tx)}
@@ -3046,6 +3076,8 @@ html.nomotion .cbody h4.rd.on>:first-child,html.nomotion .cbody h4.rd.on::after{
   <div id="duoBar" hidden></div>
   <!-- 📒 비동기 장부 — ★다음에 올 이유★. 내가 없는 동안 누가 정리해 뒀다 -->
   <div id="prepBar" hidden></div>
+  <!-- 📅 주간 계획판 — ★고치면 되는 초안★. 파트너가 짜 두고, 쉬는 날도 계획에 들어간다 -->
+  <div id="weekBar" hidden></div>
   <!-- ▶ 원버튼 시작 — ★뭘 풀지 정하는 부담★ 을 없앤다. 사이트가 골라 준다. -->
   <div id="resume"></div>
   <div class="dash" id="dash" hidden></div>
@@ -3418,16 +3450,22 @@ function touchStreak(){
   const today=localDay(); if(S.streak.lastDate===today)return;
   const before=S.streak.cur;                      /* 불꽃 단계 상승 판정용 */
   const gap=S.streak.lastDate?dayDiff(S.streak.lastDate,today):0;
+  /* 😴 비어 있던 날 중 ★계획해 둔 휴식★ 은 빠진 날로 치지 않는다 — 쉬는 것도 계획의 일부다 */
+  let miss=gap-1;
+  try{ if(gap>=2)miss=WEEK.gapNonRest(S.streak.lastDate,today) }catch(e){}
   if(!S.streak.lastDate)S.streak.cur=1;
   else if(gap===1)S.streak.cur+=1;
-  else if(gap===2&&S.streak.freeze>0){   /* 하루 빠졌지만 유예권이 있으면 이어 준다 */
+  else if(gap>=2&&miss===0){
+    S.streak.cur+=1;
+    FX.toast('😴 계획한 휴식 — 기록은 그대로 이어집니다','good',2000);
+  }else if(miss===1&&S.streak.freeze>0){   /* 하루 빠졌지만 유예권이 있으면 이어 준다 */
     S.streak.freeze-=1; S.streak.cur+=1;
     FX.toast('❄️ 하루 쉬었지만 기록은 이어집니다','good',2000);
   }else S.streak.cur=1;
   S.streak.max=Math.max(S.streak.max,S.streak.cur);
   S.streak.lastDate=today;
   const wk=weekKey();
-  if(S.streak.freezeWeek!==wk){S.streak.freeze=Math.min(1,S.streak.freeze+1);S.streak.freezeWeek=wk}
+  if(S.streak.freezeWeek!==wk){S.streak.freeze=Math.max(S.streak.freeze,Math.min(1,S.streak.freeze+1));S.streak.freezeWeek=wk}
   save(); updDash();
   /* 불꽃 단계가 올라갔으면 ★한 번 크게 타오르게★ 하고 시대 전환 징글을 울린다 */
   if(flameTier(before).d!==flameTier(S.streak.cur).d){
@@ -3444,6 +3482,7 @@ function touchGoal(n){
   const today=localDay();
   if(S.goal.date!==today){S.goal.date=today;S.goal.done=0;S.goal.hit=false}
   S.goal.done+=(n||1);
+  if(S.goal.done>=10)try{ WEEK.hit('q') }catch(e){}     /* 📅 🧩 칸 — 하루 10문항 */
   if(!S.goal.hit&&S.goal.done>=S.goal.target){
     S.goal.hit=true;
     /* ★오늘치를 끝낸 순간★ 은 하루의 분기점이다 — 시대 전환급으로 울린다 */
@@ -7008,6 +7047,43 @@ const TALKS=[
       {w:'bu', msg:'사고 뒤 추적이 되니까', face:null, act:'nod', fx:'none'},
       {w:'si', msg:'위조되면 의미 없지만', face:null, act:'lean', fx:'none'},
       {w:'ki', msg:'그래서 따로 보관해요', face:null, act:'hop', fx:'note'}
+  ]},
+
+  /* ══════════ 📅 주간 결산 ══════════
+     A 총출동·따뜻 / B 담백 / C ★계획 탓★ — 짠 쪽이 자기 계획을 반성한다(사람 탓 금지) */
+  { id:'weekA-all', when:'weekA', min:5, beats:[
+      {w:'da', msg:'이번 주 장부 다 찼어',     face:'f-joy', act:'hop',  fx:'none'},
+      {w:'bu', msg:'계획 대비 달성률 최고치다', face:null,    act:'nod',  fx:'none'},
+      {w:'si', msg:'…인정할 건 인정한다',       face:null,    act:'turn', fx:'none'},
+      {w:'mo', msg:'쉬는 날도 잘 쉬었고',       face:'f-joy', act:'nod',  fx:'none'},
+      {w:'ki', msg:'유예권 하나 챙겨 드려요',   face:null,    act:'hop',  fx:'heart'}
+  ]},
+  { id:'weekA-fill', when:'weekA', min:4, beats:[
+      {w:'ki', msg:'일주일을 다 채웠어요',     face:null,    act:'hop',  fx:'sparkle'},
+      {w:'da', msg:'칸마다 체크가 있어',       face:'f-joy', act:'hop',  fx:'none'},
+      {w:'bu', msg:'이 정도면 습관이다',       face:null,    act:'nod',  fx:'none'},
+      {w:'si', msg:'다음 주도 이대로 가',      face:null,    act:'lean', fx:'none'}
+  ]},
+  { id:'weekB-half', when:'weekB', min:3, beats:[
+      {w:'bu', msg:'절반은 넘겼다',           face:null,    act:'nod',  fx:'none'},
+      {w:'mo', msg:'그 정도면 충분히 했어',     face:'f-joy', act:'nod',  fx:'none'},
+      {w:'da', msg:'남은 칸은 다음 주에',       face:'f-look',act:'lean', fx:'note'}
+  ]},
+  { id:'weekB-note', when:'weekB', min:3, beats:[
+      {w:'da', msg:'이번 주 결산 적었어',       face:'f-joy', act:'hop',  fx:'none'},
+      {w:'si', msg:'나쁘지 않네',             face:null,    act:'turn', fx:'none'},
+      {w:'ki', msg:'다음 주도 같이 가요',       face:null,    act:'hop',  fx:'note'}
+  ]},
+  { id:'weekC-plan', when:'weekC', min:4, beats:[
+      {w:'mo', msg:'계획이 컸던 것 같아',       face:null,    act:'nod',  fx:'none'},
+      {w:'da', msg:'칸을 좀 줄여 둘게',         face:'f-look',act:'lean', fx:'none'},
+      {w:'bu', msg:'작은 계획이 오래 간다',     face:null,    act:'nod',  fx:'none'},
+      {w:'ki', msg:'다음 주는 가볍게 가요',     face:null,    act:'hop',  fx:'heart'}
+  ]},
+  { id:'weekC-dense', when:'weekC', min:3, beats:[
+      {w:'da', msg:'내가 너무 빽빽하게 짰네',   face:'f-look',act:'lean', fx:'sweat'},
+      {w:'mo', msg:'쉬는 칸을 하나 늘리자',     face:'f-joy', act:'nod',  fx:'none'},
+      {w:'si', msg:'…그 정도면 되겠다',         face:null,    act:'turn', fx:'none'}
   ]}
 ];
 
@@ -7890,7 +7966,7 @@ function updDash(){
   updDash._p=np;
   el.innerHTML=
     `<span class="d1 fwrap">${flameSvg(S.streak.cur)}<b${pSt}>${S.streak.cur}일</b> 연속${S.streak.max>S.streak.cur?` <i>· 최고 ${S.streak.max}일</i>`:''}`+
-      `${S.streak.freeze>0?' <i>· ❄️ 유예 1</i>':''}</span>`+
+      `${S.streak.freeze>0?` <i>· ❄️ 유예 ${S.streak.freeze}</i>`:''}</span>`+
     `<span class="d1">🎯 오늘 <b${pDn}>${done}/${tgt}</b>`+
       `<span class="gbar${inStretch?' bonus':''}"><i style="width:${pct}%"></i></span>`+
       `${inStretch?` <i>보너스 ${gCur}/${stretch}</i>`:` <i>${tgt-done}문제 남음</i>`}</span>`+
@@ -7963,7 +8039,7 @@ function renderAch(){
 function renderHome(){
   const m=CPPG.meta;
   updDash(); renderComeback(); renderResume(); renderAch(); chalToday(); updChal(); updEvo(); updTerrain();
-  markReveal(); showReveal(); DUO.render(); PREP.render(); PENTA.render();
+  markReveal(); showReveal(); DUO.render(); PREP.render(); PENTA.render(); WEEK.render();
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -8167,6 +8243,7 @@ function mark(v){
   if(!deck.length)return;
   const wasNew=S.cards['c'+deck[di]]!=='ok';
   S.cards['c'+deck[di]]=v; save(); FX.snd.know(v==='ok'||v===1||v===true);
+  try{ WEEK.card() }catch(e){}                           /* 📅 🃏 칸 — 하루 20장 */
   if(v==='ok'){
     const el=$('fc');
     el.classList.remove('yay'); void el.offsetWidth; el.classList.add('yay');
@@ -9612,6 +9689,175 @@ const PREP=(()=>{
   };
 })();
 
+/* ═══════════ 📅 주간 계획판 + 결산 ═══════════
+   육성 시뮬의 일정표를 옮겨 왔다. "이번 주는 무엇을" 을 ★내가 정하고★ 결과를 나중에 본다.
+
+   ★규칙★
+     ① 초안은 파트너가 짠다 — 백지 계획표는 아무도 안 채운다. "고치면 되는 초안" 은 채워진다
+     ② 😴 휴식 칸은 접속하지 않아도 달성이다. 스트릭도 끊지 않는다
+     ③ 미달성은 표시하지 않는다(✗ 금지) — 지나간 칸은 '·' 로만 남는다
+     ④ 결산은 새 주 첫 방문에 한 번. 5/7↑ 유예권 +1 · 3~4 담백하게 ·
+        0~2 는 ★보상도 책망도 없이★ 다음 주 초안이 조용히 작아진다 — 사람 탓이 아니라 계획 탓
+   plan = 7글자 태그 코드(q 퀴즈 · n 개념 · c 암기 · r 복수전 · z 휴식 · f 자유)
+   log  = 요일별로 실제 충족한 기준 글자 — 통계는 저장하지 않고 여기서 파생한다 */
+const WEEK=(()=>{
+  const TAG={
+    q:{i:'🧩',n:'퀴즈',  d:'문항 10개 채점'},
+    n:{i:'📘',n:'개념',  d:'개념정리 90초 읽기'},
+    c:{i:'🃏',n:'암기',  d:'암기카드 20장'},
+    r:{i:'⚔', n:'복수전',d:'복수전 1회 끝까지'},
+    z:{i:'😴',n:'휴식',  d:'쉬는 날 — 안 와도 달성'},
+    f:{i:'🌿',n:'자유',  d:'무엇이든 조금'}
+  };
+  const DAYS=['월','화','수','목','금','토','일'];
+  const SUBJ={ki:'치노가',si:'시니가',da:'다람이',bu:'부엉이',mo:'모모가'};
+  const idx=(d=new Date())=>(d.getDay()+6)%7;
+  const hasN=()=>typeof HASNOTE!=='undefined'&&HASNOTE;
+  const hasC=()=>(CPPG.cards||[]).length>0;
+  const cycle=()=>['q'].concat(hasN()?['n']:[],hasC()?['c']:[],['r','z','f']);
+  const blank=()=>['','','','','','',''];
+
+  /** 초안 — 파트너가 ★지난주 데이터를 근거로★ 짠다. "얘가 나를 보고 있다" */
+  function draft(small,prev){
+    if(small)return {p:'qfqzqfz',why:['계획을 가볍게 줄였어요']};
+    const p=['q','q','q','z','q','q','q'], why=[];
+    const cut=new Date(); cut.setDate(cut.getDate()-7);
+    const cs=localDay(cut);
+    const rw=Object.values(S.wlog||{}).filter(o=>o&&o.d&&o.d>=cs).length;
+    if(rw>=2){ p[4]='r'; why.push(`⚔ 금 — 지난주 틀린 ${rw}문제`) }
+    if(hasN()&&!(prev&&prev.log&&prev.log.some(l=>l&&l.includes('n')))){ p[1]='n'; why.push('📘 화 — 개념 한 편') }
+    if(hasC()){
+      const un=CPPG.cards.filter((c,i)=>S.cards['c'+i]!=='ok').length;
+      if(un>=20){ p[5]='c'; why.push(`🃏 토 — 남은 카드 ${un}장`) }
+    }
+    return {p:p.join(''),why};
+  }
+  /** 그 칸이 달성됐는가 — 휴식은 무조건, 자유는 뭐라도, 나머지는 그 기준 */
+  function ok(W,i){
+    const t=W.plan[i], l=(W.log&&W.log[i])||'';
+    if(t==='z')return true;
+    if(t==='f')return l.length>0;
+    return l.includes(t);
+  }
+  /** over=true 면 주가 끝난 것 — 전 칸을 센다. 아니면 오늘까지만 */
+  function score(W,over){
+    const end=over?6:idx();
+    let got=0, tot=0;
+    for(let i=W.from||0;i<=end;i++){ tot++; if(ok(W,i))got++ }
+    const r=tot?got/tot:0;
+    /* 주 중간에 시작해 칸이 너무 적으면 ★유예권 보상은 주지 않는다★(일요일 하루로 A 방지) */
+    const tier=(r>=5/7&&tot>=4)?'A':(r>=3/7?'B':'C');
+    return {got,tot,tier};
+  }
+  /** 이번 주 상태를 보장한다. 주가 바뀌었으면 ★여기서 결산★ 하고 새 초안을 짠다 */
+  function ensure(){
+    const wk=weekKey();
+    const W=S.week;
+    if(W&&W.w===wk&&W.plan)return W;
+    let settle=null, small=false;
+    if(W&&W.w&&W.plan){
+      const r=score(W,true);
+      settle={w:W.w,got:r.got,tot:r.tot,tier:r.tier,by:W.by||'da',shown:0};
+      small=r.tier==='C';
+      if(r.tier==='A'){ S.streak.freeze=Math.min(2,(S.streak.freeze||0)+1); settle.gift=1 }
+    }
+    const prev=W&&W.w&&W.plan?{w:W.w,plan:W.plan,log:W.log,from:W.from||0}:null;
+    let by='da'; try{ by=DUO.who()||'da' }catch(e){}
+    const d=draft(small,prev);
+    S.week={w:wk,plan:d.p,from:idx(),by,why:d.why,log:blank(),day:{d:'',c:0,r:0},prev,settle};
+    save();
+    return S.week;
+  }
+  function today(){
+    const W=ensure();
+    if(!W.day||W.day.d!==localDay())W.day={d:localDay(),c:0,r:0};
+    return W.day;
+  }
+  /** 기준 하나를 충족했다 — 오늘 계획한 칸이 막 채워졌으면 조용히 알린다 */
+  function hit(k){
+    const W=ensure(), i=idx();
+    const was=ok(W,i);
+    if(!W.log[i].includes(k)){ W.log[i]+=k; save() }
+    const exam=typeof quiz!=='undefined'&&quiz&&quiz.mode==='exam';
+    if(!was&&ok(W,i)&&i>=(W.from||0)&&!exam)
+      FX.toast(`📅 오늘 계획 ${TAG[W.plan[i]].i} ${TAG[W.plan[i]].n} 완료`,'good',1800);
+    if(typeof view!=='undefined'&&view==='home')render();
+  }
+  /** 날짜 문자열의 계획이 휴식인가 — 이번 주 또는 지난주 계획에서 찾는다 */
+  function isRest(ds){
+    const [y,m,d]=ds.split('-').map(Number), dt=new Date(y,m-1,d);
+    const wk=weekKey(dt), i=idx(dt), W=S.week;
+    if(!W)return false;
+    const src=W.w===wk?W:(W.prev&&W.prev.w===wk?W.prev:null);
+    return !!(src&&src.plan&&src.plan[i]==='z'&&i>=(src.from||0));
+  }
+  function render(){
+    const bar=$('weekBar'); if(!bar)return;
+    /* 첫 방문엔 보이지 않는다 — 아무것도 안 해 본 사람에게 주간 계획은 부담이다 */
+    if(!(S.xp.total>0||(S.solved&&S.solved.length))){bar.hidden=true;return}
+    const W=ensure(), ti=idx();
+    bar.hidden=false;
+    let top='';
+    const st=W.settle;
+    if(st){
+      const msg = st.tier==='A' ? `📅 지난주 결산 <b>${st.got}/${st.tot}</b> — 일주일을 채웠어요 · ❄️ 유예권 +1`
+                : st.tier==='B' ? `📅 지난주 결산 <b>${st.got}/${st.tot}</b> — 절반은 넘겼어요`
+                /* C — 숫자를 보여 주지 않는다. 계획을 짠 쪽이 자기 계획을 반성한다 */
+                : `📅 ${SUBJ[st.by]||'다람이'} 지난주 계획이 컸던 것 같대요 — 이번 주는 가볍게 짰어요`;
+      top=`<div class="wset${st.tier==='C'?' c':''}"><span>${msg}</span>`+
+          `<button id="weekSetX" aria-label="닫기" title="닫기">✕</button></div>`;
+      /* 결산 장면은 ★한 번만★ — 매번 틀면 결산이 아니라 소음이다 */
+      if(!st.shown){ st.shown=1; save();
+        setTimeout(()=>{ try{ TALK.now('week'+st.tier) }catch(e){} },1500) }
+    }
+    const t=W.plan[ti];
+    bar.innerHTML=top+
+      `<div class="whead"><span class="wlbl">📅 이번 주</span>`+
+      `<span class="wtoday">오늘 ${TAG[t].i} <b>${TAG[t].n}</b> — ${TAG[t].d}</span></div>`+
+      `<div class="wgrid">${DAYS.map((d,i)=>{
+        const tg=W.plan[i], pre=i<(W.from||0), edit=!pre&&i>=ti;
+        const done=!pre&&i<=ti&&ok(W,i);
+        const mk=pre?'':done?'✓':(i<ti?'·':'');
+        const tip=pre?`${d} — 계획 전`:`${d} · ${TAG[tg].n} — ${TAG[tg].d}${edit?' (누르면 바뀝니다)':''}`;
+        return `<button class="wcell${i===ti?' today':''}${pre?' pre':''}${done?' done':''}"`+
+          (edit?` data-wk="${i}"`:' disabled')+` title="${esc(tip)}" aria-label="${esc(tip)}">`+
+          `<span class="wd">${d}</span><span class="wi">${pre?'–':TAG[tg].i}</span>`+
+          `<span class="wm">${mk}</span></button>`;
+      }).join('')}</div>`+
+      `<div class="wnote">${SUBJ[W.by]||'다람이'} 짠 초안`+
+      `${W.why&&W.why.length?' · '+esc(W.why.join(' · ')):''} · 칸을 누르면 바뀝니다</div>`;
+    const x=$('weekSetX');
+    if(x)x.onclick=()=>{ W.settle=null; save(); render() };
+    bar.querySelectorAll('[data-wk]').forEach(b=>b.onclick=()=>{
+      const i=+b.dataset.wk, c=cycle();
+      const n=c[(c.indexOf(W.plan[i])+1)%c.length];
+      W.plan=W.plan.slice(0,i)+n+W.plan.slice(i+1);
+      save(); FX.snd.tap&&FX.snd.tap(); render();
+    });
+  }
+  return {
+    ensure, render, hit, isRest,
+    /** 🃏 카드 판정 1회 */
+    card(){ const d=today(); d.c++; if(d.c>=20)hit('c'); else save() },
+    /** 📘 개념정리 화면에 머문 초 — 저장은 달성 순간에만(5초마다 쓰지 않는다) */
+    read(sec){ const d=today(); d.r+=sec;
+      if(d.r>=90&&!S.week.log[idx()].includes('n'))hit('n') },
+    /** a·b 사이에 비어 있던 날 중 ★계획한 휴식이 아닌★ 날의 수 */
+    gapNonRest(a,b){
+      const n=dayDiff(a,b)-1; let miss=0;
+      const [y,m,d]=a.split('-').map(Number);
+      for(let k=1;k<=Math.min(n,60);k++){
+        const dt=new Date(y,m-1,d+k);
+        if(!isRest(localDay(dt)))miss++;
+      }
+      return n>60?n:miss;
+    },
+    _ok:ok, _score:score, TAG
+  };
+})();
+/* 📘 개념정리에 머문 시간 — 보이는 탭에서만 센다 */
+setInterval(()=>{ if(view==='concept'&&!document.hidden)try{ WEEK.read(5) }catch(e){} },5000);
+
 /* ═══════════ ▶ 원버튼 시작 ═══════════
    지금까지는 ★과목 고르고 유형 고르고 난이도 고르고 시작★ 이었다.
    유튜브는 아이콘 한 번이다. 이 격차가 "그냥 유튜브나 볼까" 를 만든다.
@@ -10366,6 +10612,8 @@ function finishQuiz(){
     CAST.remember({n:total,wrong:total-right,best:comboMax,wt:wm>=2?wt:null,
                    ms:ucMs, avg:total?Math.round(ucMs/total):0});
     DUO.finish();                       /* 🤝 함께 끝낸 세션 한 번 */
+    /* 📅 ⚔ 칸 — 복수전을 ★끝까지★ 풀었을 때만(중간에 그만두면 완주가 아니다) */
+    if(quiz.revenge&&quiz.ans.every(a=>a!=null))WEEK.hit('r');
     PREP.make();                        /* 📒 다음에 볼 것을 정리해 둔다 */
   })();
   /* 🦉 부엉 Lv3 — 결과에 ★약점 두 줄★. 표가 아니라 문장이라 그냥 읽힌다 */
