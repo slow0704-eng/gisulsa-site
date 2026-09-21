@@ -2372,11 +2372,15 @@ html[data-theme="dawn"]{--edge-boost:1.1}
 .pb::after{animation-delay:-3s}
 .lvlbar::after{animation-delay:-5s}
 .dash .gbar::after{animation-delay:-1.5s}
-/* 표 머리글 아래 선 — 표는 학습의 핵심이라 ★머리글 한 줄만★, 아주 옅게 */
-.tw thead th{
+/* 표 머리글 아래 선 — 표는 학습의 핵심이라 ★머리글 한 줄만★, 아주 옅게.
+   ★반드시 ::after 에★ — th 자체에 걸면 opacity 키프레임이 머리글 글자까지
+   0 으로 끌어내려 ★읽는 도중 표 제목이 사라진다★(실제 결함이었다). */
+.tw thead th{position:relative}
+.tw thead th::after{
+  content:'';position:absolute;left:0;right:0;bottom:0;height:2px;pointer-events:none;
   background-image:linear-gradient(90deg,transparent,
     color-mix(in srgb,var(--ac) 34%,transparent),transparent);
-  background-size:46% 2px;background-repeat:no-repeat;background-position:-130% 100%;
+  background-size:46% 100%;background-repeat:no-repeat;
   animation:fxLineSweep 15s cubic-bezier(.4,0,.2,1) infinite;
   --ln-o:.5;
 }
@@ -2384,19 +2388,19 @@ html[data-theme="dawn"]{--edge-boost:1.1}
 /* ── 보이는 것만 움직인다 ────────────────────────────────────────────────
    화면 밖 카드까지 매 프레임 칠하면 스크롤이 끈적해지고 배터리만 먹는다.
    (홈 기준 동시 23개 → 화면에 걸친 3~6개로 줄어든다) */
-.fxoff::after,.fxoff.thsep,.fxoff .gbar::after{animation-play-state:paused!important}
+.fxoff::after,.fxoff.thsep,.fxoff .gbar::after,.fxoff thead th::after{animation-play-state:paused!important}
 body.tabhidden .box::after,body.tabhidden .stat::after,body.tabhidden .resume::after,
 body.tabhidden .dash::after,body.tabhidden .qcard::after,body.tabhidden .fcf::after,
 body.tabhidden .fcb::after,body.tabhidden .subrow::after,body.tabhidden .kbrow::after,
 body.tabhidden .vt::after,body.tabhidden .prog::after,body.tabhidden .pb::after,
-body.tabhidden .lvlbar::after,body.tabhidden .tw thead th{animation-play-state:paused!important}
+body.tabhidden .lvlbar::after,body.tabhidden .tw thead th::after{animation-play-state:paused!important}
 
 /* ── 모바일 — 개수가 많아지는 화면에서 비용을 줄인다 ─────────────────────── */
 @media (max-width:520px){
   .box,.stat{--edge-t:34s;--edge-o:.15}
   .fcf,.fcb{--edge-o:.2}
   .subrow::after,.kbrow::after{animation-duration:18s}
-  .tw thead th{animation-duration:20s}
+  .tw thead th::after{animation-duration:20s}
 }
 
 /* ── 끄는 길 둘 — 시스템 설정과 직접 스위치 ──────────────────────────────── */
@@ -2405,7 +2409,7 @@ body.tabhidden .lvlbar::after,body.tabhidden .tw thead th{animation-play-state:p
   .box::after,.stat::after,.resume::after,.dash::after,.thpop::after,
   .fcf::after,.fcb::after,.qcard:not(.streak)::after,.chalbar:not(.live)::after,
   .subrow::after,.kbrow::after,.thsep,.vt::after,
-  .prog::after,.pb::after,.lvlbar::after,.dash .gbar::after,.tw thead th{animation:none!important}
+  .prog::after,.pb::after,.lvlbar::after,.dash .gbar::after,.tw thead th::after{animation:none!important}
   .subrow::after,.kbrow::after,.prog::after,.pb::after,.lvlbar::after,
   .dash .gbar::after{display:none!important}
   .vt::after{opacity:.75!important}
@@ -2429,14 +2433,14 @@ html.nomotion .lvlbar::after,
 html.nomotion .dash .gbar::after{display:none!important}
 html.nomotion .vt::after{animation:none!important;width:52px!important;opacity:.7!important}
 html.nomotion .thsep,
-html.nomotion .tw thead th{animation:none!important;background-image:none!important}
+html.nomotion .tw thead th::after{display:none}
 
 /* 인쇄 — 종이에는 남기지 않는다 */
 @media print{
   .box::after,.stat::after,.resume::after,.dash::after,.fcf::after,.fcb::after,
   .qcard::after,.chalbar::after,.subrow::after,.kbrow::after,.vt::after,
   .prog::after,.pb::after,.lvlbar::after{display:none!important}
-  .tw thead th{background-image:none!important}
+  .tw thead th::after{display:none}
 }
 
 
