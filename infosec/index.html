@@ -162,6 +162,12 @@ html[data-theme="library"] .combo.hot{
 }
 
 *{box-sizing:border-box;margin:0;padding:0}
+/* ★hidden 속성은 반드시 숨긴다★ — 브라우저 기본값 [hidden]{display:none} 은
+   특정도 0,0,1 이라 .bar{display:flex} 같은 ★클래스 한 줄에 그냥 진다.★
+   그래서 hidden 을 걸어도 그대로 보이던 것들이 있었다 —
+   🆘 힌트 메뉴(선지를 가림) · 대시보드 · 오늘의 도전 · 단원 필터 바(빈 줄로 남음).
+   요소마다 [hidden] 규칙을 덧붙이는 대신 여기서 한 번에 막는다. */
+[hidden]{display:none!important}
 body{
   background:var(--bg); color:var(--tx);
   font-family:var(--f-ui);
@@ -2149,6 +2155,168 @@ html.nomotion #fx{display:none!important}
 @media print{
   .qcard::before,.fc::before,.fc::after,.res::before,.ach.on::before,
   .fxring::after,.qcard.streak::after,.ach.new::after,.chalbar.live::after{display:none!important}
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ✨ 살아 있는 가장자리·선 — "가만히 있어도 뭔가 움직인다"
+   ───────────────────────────────────────────────────────────────────────────
+   ★위계는 속도와 세기로 만든다.★ 전부 같은 속도로 돌면 화면이 웅성거리기만 하고
+   정작 중요한 것(연속 정답·새 배지)이 묻힌다. 그래서 3단계로 나눴다.
+
+     T1 상시   26~30s · 아주 옅게   — 카드·박스·암기카드 앞뒤면 (배경 같은 존재감)
+     T2 주목   13~15s · 옅게        — 이어하기 배너·대시보드·팝오버·문제 카드
+     T3 희소    2.6s  · 또렷하게    — 연속 3+ 문제카드·오늘 딴 배지·진행 중 도전(기존)
+
+   선(구분선·밑줄·진행바 트랙)에는 ★빛이 한 번 훑고 지나가는★ 방식을 쓴다.
+   테두리처럼 계속 돌면 글줄 사이에서 눈이 쫓아가 읽기를 방해한다.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── T1·T2 공통 뼈대 — 테두리만 남기는 마스크 링 ─────────────────────────── */
+.box,.stat,.resume,.dash,.thpop,.fcf,.fcb,.chalbar{position:relative}
+.box::after,.stat::after,.resume::after,.dash::after,.thpop::after,
+.fcf::after,.fcb::after,.qcard:not(.streak)::after,.chalbar:not(.live)::after{
+  content:'';position:absolute;inset:0;border-radius:inherit;
+  padding:1px;pointer-events:none;z-index:1;
+  opacity:var(--edge-o,.26);
+  /* ① 폴백 — @property 미지원 브라우저에서는 ★움직이지 않는 은은한 테두리★ 로 남는다 */
+  background:linear-gradient(135deg,
+    color-mix(in srgb,var(--ac) 55%,transparent),
+    transparent 40%,
+    color-mix(in srgb,var(--ac2) 45%,transparent));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+          mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+          mask-composite:exclude;
+}
+/* ② conic + @property 지원 브라우저에서만 ★빛이 도는★ 테두리로 승격 */
+@supports (background:conic-gradient(from 0deg,red,blue)){
+  .box::after,.stat::after,.resume::after,.dash::after,.thpop::after,
+  .fcf::after,.fcb::after,.qcard:not(.streak)::after,.chalbar:not(.live)::after{
+    background:conic-gradient(from var(--fx-ang),
+      transparent 0 52%,
+      color-mix(in srgb,var(--ac) 70%,transparent) 70%,
+      color-mix(in srgb,var(--ac2) 60%,transparent) 80%,
+      transparent 92% 100%);
+    animation:fxSpin var(--edge-t,28s) linear infinite;
+  }
+}
+
+/* ── T1 — 배경처럼 있는 것들. 느리고 옅다 ────────────────────────────────── */
+.box,.stat{--edge-t:30s;--edge-o:.22}
+.fcf,.fcb{--edge-t:24s;--edge-o:.3}
+/* ★서로 어긋나게 돈다★ — 같은 위상으로 돌면 화면 전체가 한 덩어리로 깜빡인다.
+   지연과 방향을 섞으면 각자 살아 있는 것처럼 보인다. */
+.grid>.box:nth-child(2n),.stat:nth-child(2n){animation-direction:reverse}
+.box:nth-child(3n)::after{animation-delay:-9s}
+.box:nth-child(3n+1)::after{animation-delay:-19s}
+.stat:nth-child(2n)::after{animation-delay:-13s}
+.stat:nth-child(3n)::after{animation-delay:-6s}
+.fcb::after{animation-delay:-11s}
+
+/* ── T2 — 지금 눈이 가야 할 것들. 조금 빠르고 또렷하다 ───────────────────── */
+.resume{--edge-t:14s;--edge-o:.5}
+.dash{--edge-t:15s;--edge-o:.4}
+.thpop{--edge-t:13s;--edge-o:.45}
+.qcard:not(.streak){--edge-t:16s;--edge-o:.34}
+.chalbar:not(.live){--edge-t:15s;--edge-o:.32}
+
+/* ── 선 요소 — 빛이 한 번 훑고 지나간다 ──────────────────────────────────
+   ★계속 도는 대신 지나가게★ 한다. 선은 글줄 옆에 있어서, 멈추지 않는 움직임은
+   읽는 눈을 계속 잡아당긴다. 훑고 지나가면 "살아 있네" 정도로 끝난다. */
+@keyframes fxLineSweep{
+  0%  {background-position:-140% 0}
+  55% {background-position:140% 0}
+  100%{background-position:140% 0}      /* 뒤쪽 45% 는 ★쉬는 구간★ — 쉼이 있어야 덜 피곤하다 */
+}
+/* 구분선·목록선 */
+.subrow,.ckrow,.kbrow,.achrow{position:relative}
+.subrow::after,.kbrow::after{
+  content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;
+  background-image:linear-gradient(90deg,transparent,
+    color-mix(in srgb,var(--ac) 60%,transparent),transparent);
+  background-size:60% 100%;background-repeat:no-repeat;
+  animation:fxLineSweep 11s ease-in-out infinite;
+  opacity:.5;
+}
+.subrow:nth-child(2n)::after{animation-delay:-3.5s}
+.subrow:nth-child(3n)::after{animation-delay:-7s}
+.kbrow:nth-child(2n)::after{animation-delay:-4.5s}
+/* 테마 창 구분선 */
+.thsep{
+  background-image:linear-gradient(90deg,transparent,
+    color-mix(in srgb,var(--ac) 70%,transparent),transparent);
+  background-size:55% 100%;background-repeat:no-repeat;
+  animation:fxLineSweep 8s ease-in-out infinite;
+}
+/* 화면 제목 밑줄 — 없던 선을 하나 만든다(제목 아래가 허전하던 자리) */
+.vt{position:relative;padding-bottom:7px}
+.vt::after{
+  content:'';position:absolute;left:0;bottom:0;height:2px;width:clamp(56px,22%,160px);
+  border-radius:2px;pointer-events:none;
+  background:linear-gradient(90deg,var(--ac),var(--ac2),transparent);
+  background-size:220% 100%;
+  animation:fxLineSweep 9s ease-in-out infinite;
+}
+/* 진행바 ★트랙★ — 채워진 부분이 아니라 빈 홈을 훑는다(진도 자체를 왜곡하지 않게) */
+.prog,.pb,.lvlbar,.dash .gbar{position:relative;overflow:hidden}
+.prog::after,.pb::after,.lvlbar::after,.dash .gbar::after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:2;
+  background-image:linear-gradient(90deg,transparent,
+    color-mix(in srgb,#fff 26%,transparent),transparent);
+  background-size:45% 100%;background-repeat:no-repeat;
+  animation:fxLineSweep 7.5s ease-in-out infinite;
+}
+.pb::after{animation-delay:-2.5s}
+.lvlbar::after{animation-delay:-4s}
+/* 표 머리글 아래 선 — 표는 학습의 핵심이라 ★머리글 한 줄만★ 건드린다 */
+.tw thead th{
+  background-image:linear-gradient(90deg,transparent,
+    color-mix(in srgb,var(--ac) 45%,transparent),transparent);
+  background-size:50% 2px;background-repeat:no-repeat;background-position:-140% 100%;
+  animation:fxLineSweep 10s ease-in-out infinite;
+}
+
+/* ── 모바일 — 개수가 많아지는 화면에서 비용을 줄인다 ─────────────────────── */
+@media (max-width:520px){
+  .box,.stat{--edge-t:40s;--edge-o:.16}
+  .subrow::after,.kbrow::after,.tw thead th{animation-duration:16s}
+  .fcf::after,.fcb::after{--edge-o:.22}
+}
+
+/* ── 끄는 길 둘 — 시스템 설정과 직접 스위치 ──────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  .box::after,.stat::after,.resume::after,.dash::after,.thpop::after,
+  .fcf::after,.fcb::after,.qcard:not(.streak)::after,.chalbar:not(.live)::after,
+  .subrow::after,.kbrow::after,.thsep,.vt::after,
+  .prog::after,.pb::after,.lvlbar::after,.dash .gbar::after,.tw thead th{animation:none!important}
+  .prog::after,.pb::after,.lvlbar::after,.dash .gbar::after{display:none!important}
+}
+html.nomotion .box::after,
+html.nomotion .stat::after,
+html.nomotion .resume::after,
+html.nomotion .dash::after,
+html.nomotion .thpop::after,
+html.nomotion .fcf::after,
+html.nomotion .fcb::after,
+html.nomotion .qcard:not(.streak)::after,
+html.nomotion .chalbar:not(.live)::after,
+html.nomotion .subrow::after,
+html.nomotion .kbrow::after,
+html.nomotion .vt::after{animation:none!important;opacity:.16!important}
+html.nomotion .prog::after,
+html.nomotion .pb::after,
+html.nomotion .lvlbar::after,
+html.nomotion .dash .gbar::after{display:none!important}
+html.nomotion .thsep,
+html.nomotion .tw thead th{animation:none!important;background-image:none!important}
+
+/* 인쇄 — 종이에는 남기지 않는다 */
+@media print{
+  .box::after,.stat::after,.resume::after,.dash::after,.fcf::after,.fcb::after,
+  .qcard::after,.chalbar::after,.subrow::after,.kbrow::after,.vt::after,
+  .prog::after,.pb::after,.lvlbar::after{display:none!important}
+  .tw thead th{background-image:none!important}
 }
 
 </style>
