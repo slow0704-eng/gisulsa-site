@@ -971,6 +971,7 @@ CPPG.notes = [
 ]},
 
 { s:'s1', no:'1-10', t:'악성코드·시스템공격', title:'버퍼 오버플로와 메모리 공격·대응', body:[
+  { h:'스택 버퍼 오버플로 구조', cap:'덮어쓰기 방향과 RET 탈취', mmd:'flowchart TD\n  I["크기 초과 입력"] -->|"낮은 주소에서 높은 주소로 덮어씀"| B["① 지역변수 버퍼"]\n  B --> C["② SFP · 이전 프레임 포인터"]\n  C --> R["③ RET · 복귀 주소"]\n  R --> X["공격자 셸코드로 점프"]' },
   { h:'메모리 취약점 5종', tb:{ head:['유형','원리'], rows:[
     ['★스택 BOF★','지역 변수 크기 초과 입력 → ★복귀 주소(RET) 덮어쓰기★ → 셸코드 실행'],
     ['힙 BOF','동적 할당 영역 초과 → 청크 메타데이터·함수 포인터 변조'],
@@ -1069,6 +1070,7 @@ CPPG.notes = [
     ['★증분(Incremental)★','★직전 백업★ 이후 변경분','★가장 짧다★','★가장 길다★','전체 + ★모든 증분★'],
     ['★차등(Differential)★','★마지막 전체 백업★ 이후 변경분','중간','중간','전체 + ★최신 차등 1개★']
   ]}},
+  { h:'RPO·RTO 타임라인', cap:'손실 시점과 복구 시간의 구분', mmd:'flowchart LR\n  A["마지막 백업 시점"] -->|"RPO · 허용 데이터 손실"| B["장애 발생"]\n  B -->|"RTO · 허용 복구 시간"| C["시스템 복구 완료"]\n  C -->|"WRT · 업무 재개 준비"| D["정상 업무 재개"]\n  B -.->|"MTD = RTO + WRT"| D' },
   { h:'복구 지표', li:[
     '★RPO★ (Recovery Point Objective) — 허용 가능한 ★데이터 손실량★ (얼마나 과거로 돌아가는가)',
     '★RTO★ (Recovery Time Objective) — 허용 가능한 ★복구 시간★',
@@ -1138,6 +1140,7 @@ CPPG.notes = [
     ['용도','HTTP·FTP·SMTP·SSH','★DNS·DHCP·VoIP·스트리밍·SNMP★'],
     ['헤더 크기','20byte 이상','★8byte★']
   ]}},
+  { h:'TCP 연결 수립·종료 흐름', cap:'3-way 수립 · 4-way 종료', mmd:'sequenceDiagram\n  participant C as 클라이언트\n  participant S as 서버\n  Note over C,S: 연결 수립 3-way\n  C->>S: ① SYN\n  S->>C: ② SYN + ACK\n  C->>S: ③ ACK\n  Note over C,S: 연결 종료 4-way\n  C->>S: ① FIN\n  S->>C: ② ACK\n  S->>C: ③ FIN\n  C->>S: ④ ACK' },
   { h:'TCP 플래그와 연결 절차', li:[
     '플래그 6종 — ★SYN · ACK · FIN · RST · PSH · URG★',
     '3-way 연결 — ★SYN → SYN+ACK → ACK★',
@@ -1187,6 +1190,7 @@ CPPG.notes = [
     ['★Protocol 기반★','★서버·장비 자원 고갈★','SYN Flood · Ping of Death · 단편화 공격'],
     ['★Application 기반★','L7 처리 자원 고갈 · ★소량 트래픽★','★HTTP GET/POST Flood · Slowloris · RUDY★']
   ]}},
+  { h:'반사·증폭 공격 구조', cap:'위조 질의가 응답 폭주로', mmd:'flowchart LR\n  A["공격자"] -->|"출발지 IP를 피해자로 위조한 소량 질의"| R["개방 리졸버 · NTP · Memcached"]\n  R -->|"질의보다 큰 응답이 대량 반사"| V["피해자 서버"]\n  V -.->|"대역폭 고갈"| X["서비스 거부"]' },
   { h:'반사·증폭(Reflection·Amplification)', li:[
     '출발지를 피해자로 위조해 ★응답이 피해자에게 쏟아지게★ 만드는 구조',
     '증폭률 — DNS 약 50배 · ★NTP 약 556배★ · ★Memcached 약 51,000배★',
@@ -1240,6 +1244,7 @@ CPPG.notes = [
     ['Web Spoofing','사이트 자체','인증서 검증 · ★EV 인증서★ · HSTS'],
     ['DHCP Spoofing','게이트웨이·DNS 정보','★DHCP Snooping★ (신뢰 포트만 응답 허용)']
   ]}},
+  { h:'ARP 스푸핑 MITM 성립 과정', cap:'양쪽 캐시를 동시에 위조', mmd:'sequenceDiagram\n  participant V as 피해자 PC\n  participant A as 공격자\n  participant G as 게이트웨이\n  A->>V: ① 위조 ARP 응답 · 게이트웨이 IP는 내 MAC\n  A->>G: ② 위조 ARP 응답 · 피해자 IP는 내 MAC\n  V->>A: ③ 외부로 갈 트래픽이 공격자에게\n  A->>G: ④ 그대로 중계 · 스니핑\n  G->>A: ⑤ 응답 트래픽\n  A->>V: ⑥ 중계 · 변조 가능' },
   { h:'ARP 스푸핑 상세 (★최빈출★)', li:[
     'ARP 는 ★인증이 없는★ 프로토콜 — 위조 응답(Gratuitous ARP)을 그대로 캐시에 반영',
     '결과 — ★중간자(MITM)★ 성립 → 스니핑·세션 탈취·트래픽 변조',
@@ -1269,6 +1274,7 @@ CPPG.notes = [
     ['★IKE★ (Internet Key Exchange)','키 교환·SA 협상','★UDP 500★ (NAT-T 는 4500)'],
     ['SA (Security Association)','보안 매개변수 집합','★단방향★ — 양방향 통신에는 2개 필요']
   ]}},
+  { h:'Transport 모드 vs Tunnel 모드', cap:'보호 범위와 IP 헤더 차이', mmd:'flowchart LR\n  A["Transport 모드"] --> A1["원본 IP 헤더 유지"]\n  A1 --> A2["ESP 헤더"]\n  A2 --> A3["페이로드만 암호화"]\n  B["Tunnel 모드"] --> B1["새 IP 헤더 추가"]\n  B1 --> B2["ESP 헤더"]\n  B2 --> B3["원본 패킷 전체 암호화"]' },
   { h:'동작 모드', tb:{ head:['모드','보호 범위','헤더','용도'], rows:[
     ['★Transport★','★페이로드만★','원본 IP 헤더 ★유지★','★종단 간(End-to-End)★ 통신'],
     ['★Tunnel★','★원본 패킷 전체★ 캡슐화','★새 IP 헤더 추가★','★게이트웨이 간 VPN(Site-to-Site)★']
@@ -1286,6 +1292,7 @@ CPPG.notes = [
 ]},
 
 { s:'s2', no:'2-7', t:'보안 프로토콜', title:'SSL/TLS·SSH와 VPN 비교', body:[
+  { h:'TLS 핸드셰이크 순서', cap:'공개키로 합의 후 대칭키 통신', mmd:'sequenceDiagram\n  participant C as 클라이언트\n  participant S as 서버\n  C->>S: ① ClientHello · 암호 스위트 · 랜덤값\n  S->>C: ② ServerHello · 서버 인증서 X.509\n  C->>S: ③ 키 교환 ECDHE · 프리마스터 시크릿 합의\n  C->>S: ④ ChangeCipherSpec · Finished\n  S->>C: ⑤ ChangeCipherSpec · Finished\n  Note over C,S: 이후 세션키 기반 대칭키 암호화 통신' },
   { h:'TLS 핸드셰이크 흐름', li:[
     '① ClientHello — 지원 ★암호 스위트·TLS 버전·랜덤값★ 제시',
     '② ServerHello — 스위트 선택 + ★서버 인증서(X.509)★ 전달',
@@ -1313,6 +1320,7 @@ CPPG.notes = [
 ]},
 
 { s:'s2', no:'2-8', t:'보안 프로토콜', title:'인증 프로토콜 — Kerberos·RADIUS·TACACS+', body:[
+  { h:'Kerberos 티켓 발급 흐름', cap:'TGT 받고 서비스 티켓 받기', mmd:'sequenceDiagram\n  participant U as 사용자\n  participant A as AS · 인증 서버\n  participant T as TGS · 티켓 발급 서버\n  participant S as 서비스 서버\n  U->>A: ① 인증 요청\n  A->>U: ② TGT 발급\n  U->>T: ③ TGT 제시 · 서비스 요청\n  T->>U: ④ 서비스 티켓 발급\n  U->>S: ⑤ 서비스 티켓 제시 후 접속' },
   { h:'Kerberos 구조와 흐름', li:[
     '★KDC = AS(인증 서버) + TGS(티켓 발급 서버)★ · ★TCP/UDP 88★',
     '흐름 — ① AS 에 인증 → ② ★TGT★ 수령 → ③ TGS 에 TGT 제시 → ④ ★서비스 티켓★ 수령 → ⑤ 서버 접속',
@@ -1387,6 +1395,7 @@ CPPG.notes = [
 
 /* ───────── 3과목 애플리케이션 보안 ───────── */
 { s:'s3', no:'3-1', t:'FTP·메일 보안', title:'FTP 동작 모드·공격과 안전한 대안', body:[
+  { h:'FTP Active vs Passive 연결 방향', cap:'데이터 연결을 누가 여는가', mmd:'flowchart LR\n  C1["클라이언트"] -->|"① 제어 연결 · 21번"| S1["서버 · Active"]\n  S1 -->|"② 데이터 연결 · 서버 20번이 역방향 접속"| C1\n  C2["클라이언트"] -->|"① 제어 연결 · 21번"| S2["서버 · Passive"]\n  C2 -->|"② 데이터 연결 · 클라이언트가 임의 포트로 접속"| S2' },
   { h:'FTP 기본', li:[
     '포트 — ★21(제어) · 20(데이터·Active)★ · ★평문 전송★ 이라 계정·패스워드가 그대로 노출',
     'Active 모드 — ★서버(20번)가 클라이언트로 연결★ → 클라이언트 방화벽에 막힘',
@@ -1425,6 +1434,7 @@ CPPG.notes = [
     '★BEC★ — 거래처·임원 사칭 ★송금 유도★ (기술보다 절차 통제가 핵심)',
     '스푸핑(발신자 변조) · 메일 폭탄 · 악성 첨부(매크로·ISO)'
   ]},
+  { h:'수신 측 발신자 인증 판정', cap:'SPF·DKIM 결과를 DMARC가 처리', mmd:'flowchart TD\n  M["수신 메일 도착"] --> S["SPF · 발신 서버 IP 확인"]\n  M --> D["DKIM · 전자서명으로 변조 확인"]\n  S --> R{"DMARC 정렬 판정"}\n  D --> R\n  R -->|"통과"| P["정상 수신함"]\n  R -->|"실패"| Q["정책 적용 · none · quarantine · reject"]' },
   { h:'발신자 인증 3총사 (★최빈출★)', tb:{ head:['기술','검증 대상','수단'], rows:[
     ['★SPF★','★발신 서버 IP★ 가 도메인 허용 목록에 있는가','DNS ★TXT 레코드★'],
     ['★DKIM★','메일 본문·헤더가 ★변조되지 않았는가★','★공개키 전자서명★'],
@@ -1573,6 +1583,7 @@ CPPG.notes = [
     ['★DoH★','전송 구간 암호화 (HTTPS)','★443★'],
     ['DoQ','QUIC 기반 암호화','853/UDP']
   ]}},
+  { h:'DHCP DORA 절차와 스푸핑 지점', cap:'가짜 서버가 먼저 응답하면 MITM', mmd:'sequenceDiagram\n  participant C as 클라이언트\n  participant S as DHCP 서버\n  C->>S: ① Discover · 브로드캐스트\n  S->>C: ② Offer · IP 후보 제시\n  C->>S: ③ Request · 사용 요청\n  S->>C: ④ Ack · 임대 확정\n  Note over C,S: 가짜 서버가 Offer 를 먼저 보내면 DHCP 스푸핑' },
   { h:'DHCP 보안', li:[
     'DHCP — UDP ★67(서버)/68(클라이언트)★ · DORA(Discover·Offer·Request·Ack) 절차',
     '★DHCP 스푸핑★ — 가짜 서버가 게이트웨이·DNS 를 자신으로 지정 → MITM',
@@ -1655,6 +1666,7 @@ CPPG.notes = [
 
 { s:'s3', no:'3-11', t:'침해대응·포렌식', title:'침해사고 대응 절차와 디지털 포렌식', body:[
   { h:'해커의 공격 단계', li:['★정보 수집 → 침투 → 권한 상승 → 백도어 설치 → 흔적 제거★'] },
+  { h:'침해사고 대응 6단계 순환', cap:'봉쇄가 제거보다 먼저', mmd:'flowchart LR\n  P["① 준비"] --> D["② 탐지·분석"]\n  D --> C["③ 봉쇄 · 확산 차단"]\n  C --> E["④ 제거"]\n  E --> R["⑤ 복구"]\n  R --> L["⑥ 교훈"]\n  L -.->|"절차 개선 환류"| P' },
   { h:'침해사고 대응 6단계 (★순서 암기★)', tb:{ head:['단계','핵심 활동'], rows:[
     ['① 준비(Preparation)','체계·연락망·도구 사전 구축'],
     ['② 탐지·분석(Detection & Analysis)','징후 확인·범위 판단'],
@@ -1695,6 +1707,7 @@ CPPG.notes = [
     ['부인 방지','★불가★','★가능(전자서명)★'],
     ['용도','대량 데이터 암호화','키 교환 · 서명 · 인증']
   ]}},
+  { h:'하이브리드 암호 동작', cap:'속도는 대칭 · 분배는 공개키', mmd:'flowchart TD\n  K["① 임시 세션키 생성"] -->|"② 세션키로 데이터 암호화"| E["암호문 · 대량 데이터"]\n  K -->|"③ 수신자 공개키로 세션키 암호화"| W["암호화된 세션키"]\n  E --> T["④ 암호문과 세션키 함께 전송"]\n  W --> T\n  T -->|"수신자 개인키로 세션키 복호"| P["세션키로 평문 복원"]' },
   { h:'하이브리드 암호 시스템', li:[
     '① ★임시 대칭키(세션키) 생성★ → ② ★대칭키로 데이터 암호화(빠름)★ → ③ ★수신자 공개키로 세션키 암호화(안전)★ → ④ 둘 다 전송',
     '적용 — ★TLS · PGP · S/MIME · SSH 모두 하이브리드★',
@@ -1835,6 +1848,7 @@ CPPG.notes = [
 ]},
 
 { s:'s4', no:'4-6', t:'전자서명·PKI', title:'전자서명 원리와 5대 특성', body:[
+  { h:'전자서명 생성·검증', cap:'해시에 서명하고 해시끼리 비교', mmd:'flowchart TD\n  M["원문"] --> H1["해시값 H1"]\n  H1 -->|"송신자 개인키로 서명"| S["서명값 첨부 후 전송"]\n  S -->|"송신자 공개키로 복호"| V1["복원 해시 H1"]\n  S --> V2["수신 원문을 다시 해시 H2"]\n  V1 --> C{"H1 과 H2 비교"}\n  V2 --> C\n  C -->|"일치"| OK["인증 · 무결성 · 부인방지"]\n  C -->|"불일치"| NG["변조 판정"]' },
   { h:'전자서명 절차', li:[
     '★생성★ — 메시지 → ★해시★ → ★송신자 개인키로 암호화(서명)★ → 메시지에 첨부',
     '★검증★ — 서명을 ★송신자 공개키로 복호★ 한 해시값과 ★수신 메시지의 해시★ 를 비교',
@@ -1856,6 +1870,7 @@ CPPG.notes = [
 ]},
 
 { s:'s4', no:'4-7', t:'전자서명·PKI', title:'PKI 구성요소와 인증서 폐기 확인', body:[
+  { h:'인증서 발급과 폐기 확인 경로', cap:'RA는 확인 · CA는 발급', mmd:'flowchart LR\n  U["이용자 · 키쌍 생성"] -->|"① 발급 신청"| RA["RA · 신원 확인"]\n  RA -->|"② 확인 결과 전달"| CA["CA · 발급 및 서명"]\n  CA -->|"③ 인증서 전달"| U\n  CA -->|"④ 인증서·CRL 게시"| RP["저장소"]\n  RL["검증자"] -->|"⑤ 유효성 질의 · CRL 또는 OCSP"| VA["VA · 검증 서비스"]\n  VA --> RP' },
   { h:'PKI 구성요소', tb:{ head:['요소','풀이','역할'], rows:[
     ['★CA★','Certificate Authority','★인증서 발급·서명·폐기★ — 신뢰의 뿌리'],
     ['★RA★','Registration Authority','★신원 확인·등록 대행★ (발급은 하지 않음)'],
@@ -1926,6 +1941,7 @@ CPPG.notes = [
     ['★OIDC★','JSON(JWT)','★OAuth + 인증★','소셜 로그인 · ★ID Token★ 발급'],
     ['Kerberos','티켓(대칭키)','인증','윈도 도메인 내부']
   ]}},
+  { h:'Authorization Code 흐름', cap:'코드 받고 토큰으로 교환', mmd:'sequenceDiagram\n  participant U as 자원 소유자\n  participant C as 클라이언트 앱\n  participant A as 인가 서버\n  participant R as 자원 서버\n  C->>U: ① 인가 서버로 리디렉트\n  U->>A: ② 로그인 · 권한 동의\n  A->>C: ③ Authorization Code 전달\n  C->>A: ④ Code 와 PKCE 검증자로 토큰 요청\n  A->>C: ⑤ Access Token 발급\n  C->>R: ⑥ 토큰 제시 후 API 접근' },
   { h:'OAuth 2.0 주요 흐름', li:[
     '★Authorization Code + PKCE★ — ★현재 권장(웹·모바일)★',
     'Client Credentials — ★서버 간(M2M)★ · Device Code — TV 등 입력 제약 기기',
@@ -2038,6 +2054,7 @@ CPPG.notes = [
     ['★수용(Acceptance)★','비용 대비 실익이 없어 ★그대로 감수★','잔여 위험 승인'],
     ['★회피(Avoidance)★','★활동 자체를 중단★','해당 서비스 철수']
   ]}},
+  { h:'위험관리 절차와 DoA 분기', cap:'DoA 기준으로 처리·수용 갈림', mmd:'flowchart TD\n  A["① 자산 식별 및 가치 평가"] --> B["② 위협·취약점 분석"]\n  B --> C["③ 위험 산정 · ALE = SLE × ARO"]\n  C --> D{"DoA 이하인가"}\n  D -->|"초과"| E["④ 위험 처리 · 감소·전가·회피"]\n  D -->|"이하"| F["수용 · 잔여 위험 승인"]\n  E --> G["⑤ 잔여 위험 재평가"]\n  G --> D' },
   { h:'DoA 와 잔여 위험', li:[
     '★DoA(Degree of Assurance) = 수용 가능 위험 수준★ — 경영진이 승인한 한도',
     '★잔여 위험(Residual Risk)★ = 통제 적용 후 남은 위험 → DoA 이하로 관리',
