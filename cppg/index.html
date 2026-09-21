@@ -2646,6 +2646,40 @@ html.nomotion .mmd svg .mmd-flow,html.nomotion .mmd svg .mmd-node{animation:none
 }
 html.nomotion .rd.on,html.nomotion .rd.on>li,html.nomotion .rd.on tbody tr{animation:none!important}
 
+
+/* ── 🤝 오늘의 파트너 ────────────────────────────────────────
+   ★고르지 않아도 된다.★ 안 고르면 지금까지와 똑같이 동작한다 —
+   새 장치가 기존 흐름을 막으면 그건 기능이 아니라 관문이다. */
+#duoBar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  margin:0 0 12px;padding:9px 12px;border-radius:12px;
+  background:color-mix(in srgb,var(--ac) 6%,var(--card));
+  border:1px solid color-mix(in srgb,var(--ac) 22%,var(--line))}
+#duoBar[hidden]{display:none}
+#duoBar .dlbl{font-size:12.5px;font-weight:800;color:var(--tx3);
+  font-family:var(--f-narrow);letter-spacing:.02em}
+#duoBar .dwrap{display:flex;gap:6px;flex-wrap:wrap}
+.dchip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px 5px 7px;
+  border-radius:999px;border:1px solid var(--line);background:var(--card);
+  cursor:pointer;font-size:12.5px;font-weight:700;color:var(--tx2);
+  transition:transform .14s cubic-bezier(.2,1.5,.4,1),border-color .16s,background .16s}
+.dchip svg{width:20px;height:20px;flex:none}
+.dchip:hover{transform:translateY(-2px)}
+.dchip.on{background:color-mix(in srgb,var(--c) 15%,var(--card));
+  border-color:color-mix(in srgb,var(--c) 55%,transparent);color:var(--tx)}
+.dchip .druns{font-size:10.5px;font-weight:800;opacity:.65;font-family:var(--f-num)}
+#duoBar .dnote{font-size:11.5px;color:var(--tx3);font-family:var(--f-narrow);flex:1 1 100%}
+#duoBar .dnote b{color:var(--tx2)}
+@media (max-width:520px){
+  #duoBar{padding:8px 10px}
+  .dchip{padding:4px 9px 4px 6px;font-size:11.5px}
+  .dchip svg{width:17px;height:17px}
+}
+@media (prefers-reduced-motion: reduce){ .dchip{transition:none} .dchip:hover{transform:none} }
+/* 파트너가 정해진 날엔 문제 화면에 작은 표식 하나 */
+.duotag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;
+  color:var(--tx3);font-family:var(--f-narrow)}
+.duotag svg{width:15px;height:15px}
+
 </style>
 </head>
 <body>
@@ -2910,6 +2944,8 @@ html.nomotion .rd.on,html.nomotion .rd.on>li,html.nomotion .rd.on tbody tr{anima
   </div>
 
   <div id="comeback"></div>
+  <!-- 🤝 오늘의 파트너 — 고르면 그 배역이 ★오늘의 화자★ 가 되고, 문제 화면이 달라진다 -->
+  <div id="duoBar" hidden></div>
   <!-- ▶ 원버튼 시작 — ★뭘 풀지 정하는 부담★ 을 없앤다. 사이트가 골라 준다. -->
   <div id="resume"></div>
   <div class="dash" id="dash" hidden></div>
@@ -3234,6 +3270,12 @@ fillDef('soc',{mood:0,ens:0,rel:{},seen:{},mem:null,pet:0});
 /* ⏱ 시간 기록 — ★문항별 최고 기록★ 과 누적 공부 시간.
    기록이 남아야 "지난번보다 빨랐다" 는 비교가 가능해진다. */
 fillDef('time',{best:{},totalMs:0,sessions:0,fastest:0});
+/* 🤝 오늘의 파트너 — ★두 번째 입력축★.
+   지금까지 캐릭터는 유저의 성적에만 반응했다(S.soc.mood 하나). 그건 내가
+   키우는 게 아니라 채점당하는 것에 가깝다. 하루 한 번 누구와 할지 고르게 하면
+   ★내 선택이 화면을 바꾸는★ 축이 하나 더 생긴다.
+   runs = 그 배역과 함께 끝낸 세션 수(오래 쓸수록 쌓이는 흔적). */
+fillDef('duo',{who:'',day:'',runs:{}});
 fillDef('ach',{got:{},redeem:0});      /* got: 배지id→획득일, redeem: 오답 극복 누적 */
 if(!Array.isArray(S.solved))S.solved=[];/* 한 번이라도 맞힌 문항 id — 정복도 계산용 */
 /* 🔁 간격 반복 — qid → {d:마지막으로 맞힌 날, n:연속 정답 회차}.
@@ -3637,6 +3679,9 @@ const FX=(()=>{
     master.gain.linearRampToValueAtTime(v,t+sec+.06);
   }
 
+  /* 단원 경계 모티프의 시작 자리 — 매번 같은 음이면 4번째부터 '또 그 소리' 가 된다 */
+  let SECT_I=0;
+
   /* ── 👏 군중 ─────────────────────────────────────────────
      녹음 파일 없이 합성한다. 군중 소리의 정체는 결국
      ★수많은 짧은 노이즈(박수) + 대역 제한된 지속 노이즈(함성)★ 다.
@@ -3971,13 +4016,25 @@ const FX=(()=>{
     /** 📖 단원 경계 — ★읽는 중에 울리는 유일한 소리★ 라 극도로 작아야 한다.
         페이지를 넘길 때 나는 소리 정도(종이 스치는 느낌 + 아주 짧은 음 하나).
         이것도 거슬리면 사운드 토글(S)로 통째로 꺼진다. */
+    /** 📖 단원 경계 — ★짧은 모티프★.
+        처음엔 노이즈 2겹 + 한 음으로 만들었더니 노이즈가 앞서서 ★하이햇처럼★
+        들렸다(타악기로 인지되면 '박자'가 생기고, 박자는 읽는 화면에서 압박이 된다).
+        노이즈를 완전히 걷어내고 ★화음 + 3음 모티프★ 로 바꿨다 —
+        타악이 아니라 '페이지를 넘기며 흥얼거리는 한 소절'로 들리게.
+
+        구성: 아래에 5도 화음을 깔고(지속), 그 위로 3음이 차례로 올라간다.
+        전부 sine·triangle 이라 어택이 둥글다 = 때리는 소리가 안 난다. */
     section(){
       if(!S.sound)return;
-      /* 종이 스침 — 넓은 대역 노이즈를 아주 짧게 */
-      noise({f:3200,q:.6,gain:.016,dur:.12,decay:2.4,wet:false});
-      noise({at:.03,f:1400,q:.8,gain:.010,dur:.10,decay:3,wet:false});
-      /* 표식음 — 펜타토닉 한 음, 잔향 없이 */
-      voice(step(9),{at:.02,dur:.16,type:'sine',gain:.022,wet:false});
+      const i=SECT_I;                       /* 단원마다 조금씩 다른 자리에서 시작 */
+      SECT_I=(SECT_I+1)%4;
+      const base=5+i;                       /* 펜타토닉 인덱스 */
+      /* ① 받침 화음 — 근음 + 5도. 길게 깔려 모티프를 받쳐 준다 */
+      voice(step(base),   {dur:.62,type:'triangle',gain:.016,atk:.05,lp:1800,wet:true});
+      voice(step(base+2), {at:.01,dur:.60,type:'triangle',gain:.012,atk:.06,lp:1800,wet:true});
+      /* ② 모티프 — 3음이 차례로. 간격 90ms(말의 리듬에 가깝고 박자로는 안 들린다) */
+      [0,2,4].forEach((d,k)=>
+        voice(step(base+d+5),{at:.02+k*.09,dur:.30,type:'sine',gain:.020-k*.003,wet:true}));
     },
     setVol(v){ if(master)master.gain.value=v },
     ctx(){ return actx }
@@ -7113,9 +7170,13 @@ const AMBIENT=(()=>{
     const c=Object.assign(ctxNow(),extra||{});
     const crowd=S.crowd!==false;
     const r=Math.random();
-    const order = r<.55 ? ['ki','mo','da','bu','si']
-                : r<.70 ? ['si','ki','bu','da','mo']
-                : ['bu','da','mo','ki','si'];
+    let order = r<.55 ? ['ki','mo','da','bu','si']
+              : r<.70 ? ['si','ki','bu','da','mo']
+              : ['bu','da','mo','ki','si'];
+    /* 🤝 오늘의 파트너를 맨 앞으로 — ★고른 사람이 실제로 더 말해야★
+       고른 보람이 있다. 단 독점하진 않는다(70%에서만 앞세운다). */
+    const duo=DUO.who();
+    if(duo&&Math.random()<.7)order=[duo].concat(order.filter(w=>w!==duo));
     for(const who of order){
       if((who==='da'||who==='bu'||who==='mo')&&!crowd)continue;
       if(who==='si'&&S.sub===false)continue;
@@ -7783,7 +7844,7 @@ function renderAch(){
 function renderHome(){
   const m=CPPG.meta;
   updDash(); renderComeback(); renderResume(); renderAch(); chalToday(); updChal(); updEvo(); updTerrain();
-  markReveal(); showReveal();
+  markReveal(); showReveal(); DUO.render();
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -8967,6 +9028,88 @@ $('startWrong').onclick=$('reviewWrong').onclick=()=>{
   go('quiz'); startQuiz(items,'practice',{revenge:true});
 };
 
+
+/* ═══════════ 🤝 오늘의 파트너 ═══════════
+   ★대사만 바뀌면 3일 만에 "누굴 고르든 같다" 가 된다.★ 선택이 살아 있으려면
+   다음에 보는 문제가 실제로 달라져야 한다. 그래서 배역마다 ★동행 효과★ 를
+   하나씩 준다 — 단, 어느 것도 XP·점수를 건드리지 않는다.
+   유리한 파트너가 생기면 그때부터는 선택이 아니라 정답이 되기 때문이다. */
+const DUO=(()=>{
+  const WHO=[
+    {k:'ki',n:'치노',c:'var(--ac)',  d:'틀린 문제를 오답노트 맨 위로'},
+    {k:'si',n:'시니',c:'#8b7bd8',    d:'잘 맞히는 단원에서 함정을 더'},
+    {k:'da',n:'다람',c:'#f59e0b',    d:'결과에 단원별 장부를 붙임'},
+    {k:'bu',n:'부엉',c:'#60a5fa',    d:'문제마다 난이도·내 정답률 표시'},
+    {k:'mo',n:'모모',c:'#34d399',    d:'25분 넘으면 쉬어 가자고 말함'}
+  ];
+  const ICON={
+    ki:'<circle cx="10" cy="11" r="7" fill="var(--ac)"/><circle cx="10" cy="12" r="4.6" fill="#fff" opacity=".9"/><path d="M10 4c-.5-2 .7-3 .3-4 1.2.7 2.1 2.1 1.9 3.7z" fill="var(--ac)"/>',
+    si:'<rect x="4" y="6" width="12" height="11" rx="4" fill="#8b7bd8"/><path d="M5 7L4 2l4 2zM15 7l1-5-4 2z" fill="#8b7bd8"/><path d="M7 11h2M11 11h2" stroke="#2a2536" stroke-width="1.4" stroke-linecap="round"/>',
+    da:'<ellipse cx="9" cy="12" rx="5.5" ry="6" fill="#f59e0b"/><path d="M15 15c4-1 4.5-6 1.5-8.5 2 4 .2 6.5-2.5 7z" fill="#f59e0b"/><circle cx="7.4" cy="11" r="1" fill="#22252b"/><circle cx="11" cy="11" r="1" fill="#22252b"/>',
+    bu:'<ellipse cx="10" cy="11.5" rx="6" ry="6.5" fill="#60a5fa"/><circle cx="8" cy="10" r="2.3" fill="#fff"/><circle cx="12" cy="10" r="2.3" fill="#fff"/><circle cx="8" cy="10" r="1" fill="#22252b"/><circle cx="12" cy="10" r="1" fill="#22252b"/><path d="M10 12.5l-1.2 2h2.4z" fill="#f9a825"/>',
+    mo:'<circle cx="10" cy="7" r="3.2" fill="#6ee7b7"/><ellipse cx="10" cy="13.5" rx="7" ry="4.6" fill="#34d399"/><circle cx="8.8" cy="6.6" r=".8" fill="#22252b"/><circle cx="11.2" cy="6.6" r=".8" fill="#22252b"/>'
+  };
+  const svg=k=>`<svg viewBox="0 0 20 20" aria-hidden="true">${ICON[k]}</svg>`;
+  const today=()=>S.duo.day===localDay()?S.duo.who:'';
+  const info=k=>WHO.find(w=>w.k===k);
+
+  function render(){
+    const bar=$('duoBar'); if(!bar)return;
+    /* 첫 방문에는 보여 주지 않는다 — 아무것도 모르는 사람에게 고르라고 하면 부담이다 */
+    if(!(S.xp.total>0||(S.solved&&S.solved.length))){bar.hidden=true;return}
+    bar.hidden=false;
+    const cur=today(), runs=S.duo.runs||{};
+    bar.innerHTML=`<span class="dlbl">🤝 오늘 누구랑?</span>
+      <span class="dwrap">${WHO.map(w=>{
+        const n=runs[w.k]||0;
+        return `<button class="dchip${cur===w.k?' on':''}" data-duo="${w.k}" style="--c:${w.c}"
+          title="${esc(w.d)}">${svg(w.k)}${w.n}${n?`<span class="druns">${n}</span>`:''}</button>`;
+      }).join('')}</span>
+      <span class="dnote">${cur
+        ? `오늘은 <b>${info(cur).n}</b> — ${esc(info(cur).d)}`
+        : '고르면 오늘 하루 그 친구가 함께합니다. 안 골라도 됩니다.'}</span>`;
+  }
+  function pick(k){
+    if(S.duo.day===localDay()&&S.duo.who&&S.duo.who!==k){
+      /* 하루 한 번 — 바꾸려 들면 본인이 한마디 한다(막지는 않되 티는 낸다) */
+      const prev=info(S.duo.who);
+      FX.toast(`오늘은 이미 ${prev.n}(으)로 정했어요`,'bad',1800);
+      return;
+    }
+    S.duo.who=k; S.duo.day=localDay(); save();
+    render();
+    FX.snd.tap&&FX.snd.tap();
+    const w=info(k);
+    FX.toast(`🤝 오늘은 ${w.n} — ${w.d}`,'good',2400);
+    /* 고른 배역이 직접 대답한다 */
+    setTimeout(()=>{
+      if(k==='ki')MASCOT.talk&&MASCOT.talk('오늘 잘 부탁해요','happy',2600);
+      else if(k==='si')MASCOT.subSay&&MASCOT.subSay('굳이 나를 고르냐','s-roll',2600);
+      else CAST.say&&CAST.say(k,{da:'장부 펴놓고 기다릴게',bu:'기록은 내가 본다',
+        mo:'천천히 가보자'}[k],k==='da'?'f-joy':null,2800);
+    },420);
+  }
+  return {
+    render, pick,
+    /** 오늘의 파트너(없으면 '') */
+    who(){ return today() },
+    /** 동행 효과가 켜져 있는가 */
+    is(k){ return today()===k },
+    name(k){ const w=info(k||today()); return w?w.n:'' },
+    /** 세션을 끝까지 함께했다 — 흔적을 남긴다 */
+    finish(){
+      const k=today(); if(!k)return;
+      S.duo.runs=S.duo.runs||{};
+      S.duo.runs[k]=(S.duo.runs[k]||0)+1;
+      save();
+    }
+  };
+})();
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('[data-duo]');
+  if(b)DUO.pick(b.dataset.duo);
+});
+
 /* ═══════════ ▶ 원버튼 시작 ═══════════
    지금까지는 ★과목 고르고 유형 고르고 난이도 고르고 시작★ 이었다.
    유튜브는 아이콘 한 번이다. 이 격차가 "그냥 유튜브나 볼까" 를 만든다.
@@ -9018,8 +9161,20 @@ function renderQ(){
   renderQ._m=mark4;
   updCombo();
 
+  /* 🦉 부엉과 함께면 ★내 과거 기록★ 을 문제 옆에 붙여 준다 —
+     "이 문제를 전에 틀렸다" 는 사실이 가장 강한 힌트이자 경고다. */
+  let duoInfo='';
+  if(DUO.is('bu')&&quiz.mode==='practice'){
+    const w=S.wrong[q.id]||0, solved=SOLVED.has(q.id), best=S.time.best[q.id];
+    const bits=[];
+    if(w)bits.push(`전에 ${w}번 틀림`);
+    else if(solved)bits.push('맞힌 적 있음');
+    else bits.push('처음 보는 문제');
+    if(best)bits.push(`최고 ${(best/1000).toFixed(1)}초`);
+    duoInfo=`<span class="duotag" title="부엉과 함께하는 중">🦉 ${esc(bits.join(' · '))}</span>`;
+  }
   let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)}${HASSEC&&q.sec?' · '+secFull(q.sec):''} · ${typeName(q.type)}
-           <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span></div>
+           <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>${duoInfo}</div>
          <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}">${esc(q.q)}</div>`;
 
   if(q.type==='mcq'){
@@ -9140,7 +9295,13 @@ function answer(v){
   const ok=isRight(q,v);
   const wasWrong=!!S.wrong[q.id];              // 틀렸던 문제인가 — 되찾았을 때 더 보상한다
   const lore=S.wlog[q.id];                     // 📌 이 문제와의 지난 인연(몇 번째·뭘 골랐는지)
-  if(!ok){S.wrong[q.id]=(S.wrong[q.id]||0)+1}
+  if(!ok){
+    S.wrong[q.id]=(S.wrong[q.id]||0)+1;
+    /* 🐤 치노와 함께면 방금 틀린 것을 ★오답노트 맨 위★ 로 올린다.
+       오답노트는 쌓일수록 뒤로 밀려 안 보는데, 그 반대로 만든다. */
+    if(DUO.is('ki')){ S.wpin=S.wpin||[];
+      S.wpin=[q.id].concat(S.wpin.filter(x=>x!==q.id)).slice(0,30); }
+  }
   else if(S.wrong[q.id]){ delete S.wrong[q.id]; S.ach.redeem++; }
   if(first&&quiz.mode==='practice'){
     if(!ok)S.wlog[q.id]={n:((lore&&lore.n)||0)+1,
@@ -9204,6 +9365,14 @@ function answer(v){
     }
     S.time.totalMs=(S.time.totalMs||0)+Math.min(ms,180000);   /* 자리 비운 시간은 상한으로 자른다 */
     ucMs+=Math.min(ms,180000); ucPace.push(ms); if(ucPace.length>8)ucPace.shift();
+    /* 🐢 모모와 함께면 25분에 한 번 쉬자고 한다 — ★세션당 한 번만★ */
+    if(DUO.is('mo')&&ucMs>=1500000&&!quiz._rested){
+      quiz._rested=true;
+      setTimeout(()=>{
+        CAST.say&&CAST.say('mo','25분 지났어. 한 번 쉬자','f-sad',3400);
+        FX.toast('🐢 25분 지났습니다 — 잠깐 쉬어도 기록은 그대로예요','good',3000);
+      },900);
+    }
     ucN++; if(ok)ucRight++;
     if(ms<2500)ucFast++; else ucFast=0;
     if(q.t){ ucSameT = (q.t===ucLastT?ucSameT+1:1); ucLastT=q.t;
@@ -9677,7 +9846,31 @@ function finishQuiz(){
     Object.keys(byT).forEach(k=>{ if(byT[k].w>wm){wm=byT[k].w;wt=k} });
     CAST.remember({n:total,wrong:total-right,best:comboMax,wt:wm>=2?wt:null,
                    ms:ucMs, avg:total?Math.round(ucMs/total):0});
+    DUO.finish();                       /* 🤝 함께 끝낸 세션 한 번 */
   })();
+  /* 🐿 다람과 함께면 ★단원별 장부★ 를 붙인다 — 어디서 깎였는지 한 장으로 */
+  if(DUO.is('da')){
+    const box=$('quizResult');
+    const by={};
+    quiz.items.forEach((q,i)=>{
+      if(!q.t||quiz.ans[i]==null)return;
+      const o=by[q.t]||(by[q.t]={n:0,r:0});
+      o.n++; if(isRight(q,quiz.ans[i]))o.r++;
+    });
+    const rows=Object.entries(by).sort((a,b)=>(a[1].r/a[1].n)-(b[1].r/b[1].n));
+    if(box&&rows.length){
+      const el=document.createElement('div');
+      el.className='box'; el.style.marginTop='12px';
+      el.innerHTML=`<h3 style="font-size:14.5px;font-weight:800;margin-bottom:6px">🐿 다람의 장부</h3>`+
+        `<div class="tw"><table><thead><tr><th>${UNIT}</th><th>정답</th><th>정답률</th></tr></thead><tbody>`+
+        rows.map(([t,o])=>{
+          const pc=Math.round(o.r/o.n*100);
+          return `<tr><td>${esc(t)}</td><td>${o.r}/${o.n}</td>`+
+            `<td style="color:${pc>=80?'var(--ok)':pc>=50?'var(--wa)':'var(--no)'}">${pc}%</td></tr>`;
+        }).join('')+`</tbody></table></div>`;
+      box.appendChild(el);
+    }
+  }
   /* ⏱ 이번 판에 쓴 시간 — ★점수 옆이 아니라 아래에★ 둔다.
      점수와 나란히 두면 "빨리 풀어야 한다" 로 읽힌다. */
   (function(){
