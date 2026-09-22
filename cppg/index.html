@@ -3118,6 +3118,96 @@ html.nomotion .rig .rig-mouth{animation:none!important}
    ② `scale` 개별 속성은 합의상 MOTION 채널이라 무대 스케일과도 싸운다.
    대체 규칙은 아래 한 줄 + JS 한 줄(`svg.style.setProperty('--flip',-1)`). */
 #mascot.faceL .rig{--flip:-1}
+
+/* ═══ ⚡ 실시간 XP 게이지 (퀴즈) ═══════════════════════════════════════════
+   "내가 지금 얼마나 나아가고 있는지" 가 안 보이면 같은 공부가 두 배로 지친다.
+   ★맞힌 즉시 눈앞에서 차오르는 것★ 이 보여야 다음 문제로 손이 간다.
+   원칙 — ① 얇게(본문·선지를 가리지 않는다) ② 레벨업 직전에만 강해진다
+        ③ 모의고사에서도 방해되지 않을 만큼 조용히 */
+.qxp{position:relative;height:5px;margin:6px 0 2px;border-radius:99px;
+  background:color-mix(in srgb,var(--line) 70%,transparent);overflow:hidden}
+.qxp>i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--ac),var(--ac2));
+  transition:width .55s cubic-bezier(.16,1,.3,1)}
+.qxp>i::after{content:'';position:absolute;inset:0;border-radius:99px;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,#fff 42%,transparent),transparent);
+  background-size:38% 100%;background-repeat:no-repeat;opacity:0}
+.qxp.gain>i::after{animation:xpSheen .62s ease-out}
+@keyframes xpSheen{0%{opacity:.9;background-position:-40% 0}100%{opacity:0;background-position:140% 0}}
+/* 레벨업 직전 — ★목표 달성 직전에 가장 세게 끌린다★ */
+.qxp.near{box-shadow:0 0 0 1px color-mix(in srgb,var(--ac) 45%,transparent)}
+.qxp.near>i{animation:xpPulse 1.1s ease-in-out infinite}
+@keyframes xpPulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
+.qxprow{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:11px;color:var(--tx3);margin-top:3px}
+.qxprow b{color:var(--ac);font-weight:800}
+.qxpgain{position:absolute;right:0;top:-16px;font-size:12px;font-weight:800;
+  color:var(--ac);opacity:0;pointer-events:none}
+.qxpgain.show{animation:xpFloat 1s cubic-bezier(.2,1,.3,1)}
+@keyframes xpFloat{0%{opacity:0;transform:translateY(6px)}
+  25%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-12px)}}
+
+/* ═══ 🗺 퀘스트 구간 (개념정리) ═══════════════════════════════════════════
+   긴 글은 ★끝이 안 보여서★ 지친다. 과목별로 구간을 끊고 체크포인트를 두면
+   "조금만 더 내리면 이 파트 완료" 가 보인다 — 그 한 줄이 스크롤을 끌어당긴다. */
+.quest{position:sticky;top:0;z-index:30;margin:0 0 10px;padding:8px 10px;
+  background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(6px);
+  border:1px solid var(--line);border-radius:12px}
+.quest .qhead{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tx3);
+  margin-bottom:6px;flex-wrap:wrap}
+.quest .qhead b{color:var(--tx);font-size:12.5px}
+.quest .qhead .near{margin-left:auto;color:var(--ac);font-weight:800}
+.quest .qtrack{position:relative;height:8px;border-radius:99px;
+  background:color-mix(in srgb,var(--line) 60%,transparent);overflow:hidden}
+.quest .qfill{height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--ac),var(--ac2));
+  transition:width .5s cubic-bezier(.16,1,.3,1)}
+.quest .qdots{display:flex;gap:4px;margin-top:6px}
+.quest .qdot{flex:1;height:4px;border-radius:99px;
+  background:color-mix(in srgb,var(--line) 70%,transparent);transition:background .3s ease}
+.quest .qdot.on{background:var(--ac)}
+.quest .qdot.now{background:var(--ac2);box-shadow:0 0 0 2px color-mix(in srgb,var(--ac2) 30%,transparent)}
+.quest.done .qtrack{box-shadow:0 0 12px -4px var(--ac)}
+@media (max-width:520px){ .quest{padding:7px 8px} .quest .qhead{font-size:11.5px} }
+@media (prefers-reduced-motion:reduce){
+  .qxp>i,.quest .qfill{transition:none}
+  .qxp.near>i,.qxp.gain>i::after,.qxpgain.show{animation:none!important}
+}
+html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgain.show{animation:none!important}
+
+
+/* ═══ 👻 고스트 비교 (결과 화면) ══════════════════════════════════════════
+   풀이 중에는 아무 것도 보여 주지 않는다. ★끝나고 한 번에★ 터뜨린다.
+   이겼을 때는 크게, 졌을 때는 승부욕만 건드린다(책망하지 않는다). */
+.ghost{margin:14px 0 4px;padding:12px 14px;border-radius:14px;text-align:left;
+  border:1px solid var(--line);background:var(--card2)}
+.ghost.win{border-color:color-mix(in srgb,var(--ok) 55%,var(--line));
+  background:color-mix(in srgb,var(--ok) 9%,var(--card2))}
+.ghost.lose{border-color:color-mix(in srgb,var(--wa) 45%,var(--line));
+  background:color-mix(in srgb,var(--wa) 7%,var(--card2))}
+.ghost .gh-head{font-size:12.5px;font-weight:800;color:var(--tx2);margin-bottom:8px}
+.ghost .gh-head i{font-style:normal;color:var(--tx3);font-weight:400}
+.ghost .gh-row{display:flex;align-items:center;gap:10px}
+.ghost .gh-col{flex:1;min-width:0}
+.ghost .gh-lbl{font-size:11px;color:var(--tx3);font-weight:700}
+.ghost .gh-t{font-size:19px;font-weight:800;letter-spacing:-.4px}
+.ghost .gh-col.now .gh-t{color:var(--ac)}
+.ghost .gh-s{font-size:11.5px;color:var(--tx3)}
+.ghost .gh-mid{flex:none;text-align:center;font-size:12px;color:var(--tx3);line-height:1.5}
+.ghost .gh-mid b{display:block;font-size:14px;font-weight:800}
+.ghost.win .gh-mid b{color:var(--ok)} .ghost.lose .gh-mid b{color:var(--wa)}
+/* 문항별 막대 — 내 기록(채움)과 고스트(윤곽선)를 겹쳐 본다 */
+.ghost .gh-bars{display:flex;align-items:flex-end;gap:3px;height:42px;margin:10px 0 6px}
+.ghost .gh-bar{position:relative;flex:1;height:100%;display:flex;align-items:flex-end;
+  background:color-mix(in srgb,var(--line) 45%,transparent);border-radius:3px;overflow:hidden}
+.ghost .gh-bar>i{display:block;width:100%;border-radius:3px 3px 0 0;background:var(--ok)}
+.ghost .gh-bar.no>i{background:var(--no)}
+.ghost .gh-bar>u{position:absolute;left:0;right:0;bottom:0;border-top:2px dashed var(--tx3);
+  opacity:.75;pointer-events:none}
+.ghost .gh-note{font-size:11.5px;color:var(--tx3)}
+.ghost .gh-note b{color:var(--tx2)}
+@media (max-width:520px){ .ghost .gh-t{font-size:17px} .ghost .gh-bars{height:34px} }
+
 </style>
 </head>
 <body>
@@ -3691,6 +3781,8 @@ html.nomotion .rig .rig-mouth{animation:none!important}
     <input class="search" id="conceptSearch" placeholder="🔍 개념·본문 검색 (예: 위탁, 72시간, 접속기록)" />
     <button class="chip" id="conceptFold">전체 접기</button>
   </div>
+  <!-- 🗺 퀘스트 구간 — 어디까지 왔고 이 파트까지 얼마 남았는지 -->
+  <div id="quest"></div>
   <div class="box" id="conceptToc" style="margin-bottom:14px"></div>
   <div id="conceptList"></div>
 </section>
@@ -3764,6 +3856,9 @@ html.nomotion .rig .rig-mouth{animation:none!important}
       <button class="btn gh" id="quitQuiz">그만두기 <kbd>Esc</kbd></button>
     </div>
     <div class="qbar" id="qBarWrap"><i id="qBar"></i></div>
+    <!-- ⚡ 실시간 XP — 맞히는 즉시 눈앞에서 차오른다 -->
+    <div class="qxp" id="qXp"><i id="qXpFill"></i><span class="qxpgain" id="qXpGain"></span></div>
+    <div class="qxprow"><span id="qXpLv">Lv.1</span><span id="qXpNext"></span></div>
     <div class="qcard" id="qCard"></div>
     <!-- 🆘 막혔을 때의 출구 — 도망칠 곳이 유튜브뿐이면 유튜브로 간다.
          사이트 안에 ★불이익 없는 출구★ 를 둔다. -->
@@ -3974,6 +4069,7 @@ function addXp(q,ok,wasWrong){
   const g=Math.round(base*(wasWrong?1.5:1));
   const before=xpLv(S.xp.total);
   S.xp.total+=g;
+  try{ XPBAR.gain(g) }catch(e){}                /* ⚡ 눈앞에서 차오른다 */
   if(xpLv(S.xp.total)>before)setTimeout(()=>{FX.snd.levelup();MASCOT.level(xpLv(S.xp.total));
     FX.milestone(`⚡ Lv.${xpLv(S.xp.total)} 달성!`);
     setTimeout(()=>TALK.now('levelup'),2400);   /* 🎭 넷이 나와 한 마디씩 */},520);
@@ -10390,6 +10486,7 @@ const READ=(()=>{
       if(cur&&cur.id!==curId){
         curId=cur.id;
         try{ SOCIAL.section(curId) }catch(e){}     /* 🗳 새 단원에 들어왔다 */
+        try{ QUEST.mark(curId) }catch(e){}         /* 🗺 체크포인트 — 읽은 구간을 채운다 */
         const toc=document.getElementById('conceptToc');
         if(toc){
           toc.querySelectorAll('a.now').forEach(a=>a.classList.remove('now'));
@@ -10888,6 +10985,175 @@ const INTERJECTS=[
         fx 장면당 ≤2(논쟁·합의는 1~2) · win·mood·bond 값 유효 · bond 배역 전원 장면 등장
    ────────────────────────────────────────────────────────────────── */
 
+/* ═══════════ 👻 고스트 퀴즈 ═══════════
+   ★풀 때는 조용히, 끝나고 한 번에 터뜨린다.★
+   실시간 레이스는 넣지 않았다 — 문제를 푸는 중에 경쟁 UI 가 움직이면
+   집중이 깨지고, 구현·유지 비용만 커진다. 대신 백그라운드로 기록만 모아
+   결과 화면에서 ①기록 비교 ②캐릭터의 극적 반응 ③다음 행동 버튼으로 잇는다.
+
+   비교 상대(고스트)
+     · 1순위 — ★같은 문제 묶음을 지난번에 푼 나★ (문항 id 집합이 같으면 같은 퀴즈)
+     · 없으면 — ★기준 페이스★ (난이도별 표준 시간의 합)
+       ※ "다른 사용자 평균" 은 쓰지 않는다. 이 사이트는 서버가 없어 그런 데이터가
+         존재하지 않는다 — 없는 숫자를 지어내면 그 순간 신뢰가 깨진다.
+   기준 페이스는 난이도별로 기초 22초 · 표준 38초 · 심화 62초로 잡았다(문항당).
+   ★근거★ 이 사이트 종목들의 실제 시험 시간(문항당 약 70~77초)의 절반 수준 —
+   연습은 시험보다 빨라야 실전에서 여유가 생긴다는 뜻으로 기준을 잡았다. */
+const GHOST=(()=>{
+  /* 문항당 기준 — 기초 16초 · 표준 28초 · 심화 45초.
+     실제 시험은 문항당 70~77초다. 연습은 그보다 빨라야 실전에서 여유가 생기므로
+     ★시험 페이스의 절반 아래★ 로 잡았다. 너무 후하면 첫 판부터 무조건 이겨서
+     비교가 심심해지고, 너무 빡세면 첫 판에 기가 죽는다. */
+  const PACE={1:16000,2:28000,3:45000};
+  if(!S.ghost||typeof S.ghost!=='object')S.ghost={};
+
+  /** 같은 문제 묶음인지 — 문항 id 를 정렬해 해시(djb2) */
+  function keyOf(items,mode){
+    const ids=items.map(q=>q.id).sort().join('|');
+    let h=5381;
+    for(let i=0;i<ids.length;i++)h=((h<<5)+h+ids.charCodeAt(i))|0;
+    return (mode||'practice')+':'+items.length+':'+(h>>>0).toString(36);
+  }
+  const fmt=ms=>{
+    const s=ms/1000;
+    return s<60?s.toFixed(1)+'초':Math.floor(s/60)+'분 '+Math.round(s%60)+'초';
+  };
+  /** 기준 페이스 — 난이도 구성에 맞춘 합 */
+  const baseline=items=>items.reduce((a,q)=>a+(PACE[q.d]||PACE[2]),0);
+
+  /** 이번 세션 기록을 남긴다(최근 40개만 — 저장을 무겁게 하지 않는다) */
+  function save_(key,rec){
+    S.ghost[key]=rec;
+    const keys=Object.keys(S.ghost);
+    if(keys.length>40){
+      keys.sort((a,b)=>(S.ghost[a].date||'').localeCompare(S.ghost[b].date||''));
+      keys.slice(0,keys.length-40).forEach(k=>delete S.ghost[k]);
+    }
+    save();
+  }
+  return {
+    key:keyOf,
+    /** 결과 화면에서 부른다 — 비교 결과를 돌려주고, 이번 기록을 저장한다 */
+    settle(items,mode,per,totalMs,right){
+      const key=keyOf(items,mode);
+      const prev=S.ghost[key]||null;
+      const now={ms:totalMs,right:right,total:items.length,
+                 per:per.map(x=>({i:x.i,ok:!!x.ok,ms:x.ms})),date:localDay()};
+      /* 기록 갱신은 ★더 좋을 때만★ — 고스트가 나빠지면 비교가 위로용이 된다 */
+      const better=!prev||now.right>prev.right||(now.right===prev.right&&now.ms<prev.ms);
+      save_(key,better?now:prev);
+      const ghost=prev?{kind:'me',ms:prev.ms,right:prev.right,total:prev.total,date:prev.date,per:prev.per}
+                     :{kind:'pace',ms:baseline(items),right:null,total:items.length};
+      const dMs=ghost.ms-now.ms;                    /* +면 빨라졌다 */
+      const dRight=ghost.right==null?null:now.right-ghost.right;
+      const win=(dRight==null? dMs>0 : (dRight>0||(dRight===0&&dMs>0)));
+      /* 가장 오래 걸린 문항 — 아쉬운 지점을 콕 짚어 준다 */
+      let slow=null;
+      per.forEach(x=>{ if(!slow||x.ms>slow.ms)slow=x });
+      return {key,now,ghost,dMs,dRight,win,better,slow,fmt};
+    },
+    fmt, baseline
+  };
+})();
+
+/* ═══════════ ⚡ 실시간 XP 게이지 ═══════════
+   지루함의 정체는 "얼마나 나아갔는지 안 보이는 것" 이다. 대시보드에만 있던 레벨을
+   ★문제를 푸는 화면 안으로★ 끌어온다. 맞힌 즉시 바가 차오르고, 레벨업 직전에만
+   맥동한다 — 목표 직전이 가장 끌리는 구간이라 거기서만 세게 준다.
+   ★찍기를 보상하지 않는다★ — XP 는 원래 정답에만 붙고, 이 게이지는 그 값을 비추기만 한다. */
+const XPBAR=(()=>{
+  let shown=-1;
+  function paint(gain){
+    const bar=$('qXp'), fill=$('qXpFill'); if(!bar||!fill)return;
+    const lv=xpLv(S.xp.total), lo=lvFloor(lv), hi=lvNext(lv);
+    const cur=S.xp.total-lo, need=hi-lo;
+    const pct=Math.max(0,Math.min(100,cur/Math.max(1,need)*100));
+    fill.style.width=pct.toFixed(1)+'%';
+    const lvEl=$('qXpLv'), nx=$('qXpNext');
+    if(lvEl)lvEl.textContent='Lv.'+lv;
+    if(nx)nx.innerHTML=`다음 레벨까지 <b>${Math.max(0,need-cur)}</b> XP`;
+    /* ★레벨업 직전★ — 85% 부터 바가 숨을 쉰다 */
+    bar.classList.toggle('near',pct>=85);
+    if(gain>0){
+      bar.classList.remove('gain'); void bar.offsetWidth; bar.classList.add('gain');
+      const g=$('qXpGain');
+      if(g){ g.textContent='+'+gain+' XP';
+             g.classList.remove('show'); void g.offsetWidth; g.classList.add('show') }
+      /* 레벨업이 ★한 문제 앞★ 이면 귀로도 알려 준다 */
+      if(pct>=85&&shown!==lv&&S.sound&&FX.snd.on){ shown=lv; FX.snd.on() }
+    }
+    if(pct<85&&shown===lv)shown=-1;
+  }
+  return { sync:()=>paint(0), gain:g=>paint(g||0) };
+})();
+
+/* ═══════════ 🗺 퀘스트 구간 (개념정리) ═══════════
+   긴 글은 ★끝이 안 보여서★ 지친다. 과목별로 구간을 끊고, 읽은 섹션을 체크포인트로
+   채운다. 핵심은 ★"조금만 더 내리면 이 파트 완료"★ 한 줄 — 목표 직전의 단서가
+   스크롤을 끌어당긴다.
+   ★읽음 판정은 관대하게★ — 화면 중앙을 지난 섹션은 읽은 것으로 본다.
+   빡빡하게 재면 "다 읽었는데 안 찼다" 가 되어 오히려 의욕을 깎는다. */
+const QUEST=(()=>{
+  let parts=[], cur=-1, lastCue='';
+  if(!S.readSec||typeof S.readSec!=='object')S.readSec={};
+  const key=n=>'cn-'+n.no;
+
+  /** 현재 화면의 개념 목록을 과목별 구간으로 끊는다 */
+  function build(list){
+    parts=[];
+    (list||[]).forEach(n=>{
+      const last=parts[parts.length-1];
+      if(last&&last.s===n.s)last.ids.push(key(n));
+      else parts.push({s:n.s,name:subShort(n.s),ids:[key(n)]});
+    });
+    cur=-1; render();
+  }
+  const readCnt=p=>p.ids.filter(id=>S.readSec[id]).length;
+  function render(){
+    const box=$('quest'); if(!box)return;
+    if(!parts.length||view!=='concept'){ box.innerHTML=''; return }
+    const i=Math.max(0,cur<0?0:cur), p=parts[i];
+    const done=readCnt(p), tot=p.ids.length;
+    const pct=tot?done/tot*100:0;
+    const left=tot-done;
+    /* ★목표 직전 단서★ — 2개 이하 남았을 때만 말한다(항상 말하면 잔소리) */
+    const near=left>0&&left<=2?`조금만 더 — ${left}개 남음`:'';
+    const allDone=parts.filter(x=>readCnt(x)===x.ids.length).length;
+    box.innerHTML=`<div class="quest${left===0?' done':''}">
+      <div class="qhead">🗺 <b>${esc(p.name)}</b> 구간 ${done}/${tot}
+        <span style="color:var(--dim)">· 완료한 구간 ${allDone}/${parts.length}</span>
+        ${near?`<span class="near">${near}</span>`:''}</div>
+      <div class="qtrack"><div class="qfill" style="width:${pct.toFixed(1)}%"></div></div>
+      <div class="qdots">${parts.map((x,j)=>{
+        const c=readCnt(x)===x.ids.length?'on':(j===i?'now':'');
+        return `<span class="qdot ${c}" title="${esc(x.name)} ${readCnt(x)}/${x.ids.length}"></span>`;
+      }).join('')}</div></div>`;
+    /* 같은 단서를 반복해 띄우지 않는다 */
+    if(near&&near!==lastCue){ lastCue=near } else if(!near){ lastCue='' }
+  }
+  return {
+    build,
+    /** 섹션을 지나갔다 — 읽은 것으로 표시하고 구간 완료를 축하한다 */
+    mark(id){
+      if(!id||!parts.length)return;
+      const i=parts.findIndex(p=>p.ids.includes(id));
+      if(i<0)return;
+      const before=readCnt(parts[i]);
+      if(!S.readSec[id]){ S.readSec[id]=1; save() }
+      cur=i;
+      const after=readCnt(parts[i]), tot=parts[i].ids.length;
+      render();
+      /* 구간을 막 끝냈다 — ★한 번만★, 그리고 크지 않게 */
+      if(before<tot&&after===tot){
+        FX.toast(`🗺 ${parts[i].name} 구간 완료 — ${tot}개 읽음`,'good',2600);
+        if(S.sound&&FX.snd.badge)FX.snd.badge();
+        if(typeof TALK!=='undefined')setTimeout(()=>TALK.maybe('study'),900);
+      }
+    },
+    render
+  };
+})();
+
 /* ═══════════ 🗳 사회 동역학 — 논쟁·동의 ═══════════
    읽는 화면에서 캐릭터가 ★너무 조금★ 나왔다. 원인은 둘이었다.
      ① 간격이 42~88초이고 말할수록 최대 2.44배까지 벌어졌다(최대 3분 침묵)
@@ -11098,7 +11364,7 @@ function renderConcept(){
       <div class="cbody">${(n.body||[]).map(noteBlock).join('')}${go}</div></details>`;
   }).join('')||`<div class="empty"><div class="ic">🔍</div>검색 결과가 없습니다</div>`;
   /* 🖍 새로 그려진 다이어그램을 처리하고, 📖 진행바·목차를 현재 목록에 맞춘다 */
-  try{ MMD.scan($('conceptList')); READ.sync(); READFX.scan($('conceptList')); }catch(e){}
+  try{ MMD.scan($('conceptList')); READ.sync(); READFX.scan($('conceptList')); QUEST.build(list); }catch(e){}
 }
 /* 개념 → 퀴즈 연결: 해당 과목·단원으로 필터를 세팅한 뒤 퀴즈 화면으로 보낸다 */
 $('conceptList').onclick=e=>{
@@ -11260,6 +11526,8 @@ function startQuiz(items,mode,opt){
   }
   if(view!=='quiz')go('quiz');   // 어디서 호출되든 퀴즈 뷰를 보장 (키보드 컨텍스트도 여기에 맞춰짐)
   combo=0; comboMax=0; wrongRun=0; renderQ._m=0; sesPt=0; updPt(); updHeat(); FX.resetBudget();
+  try{ XPBAR.sync() }catch(e){}                  /* ⚡ 시작 시점의 레벨·진행도 */
+  ghostPer=[]; ghostMs=0;                        /* 👻 문항별 기록을 조용히 모은다 */
   ucN=0; ucRight=0; ucFast=0; ucPrevWrong=0; ucLastT=null; ucSameT=0;
   ucMs=0; ucPace.length=0; S.time.sessions=(S.time.sessions||0)+1;
   Object.keys(ucTWrong).forEach(k=>delete ucTWrong[k]);
@@ -12238,6 +12506,9 @@ function answer(v){
       if(!S.time.fastest||ms<S.time.fastest)S.time.fastest=ms;
     }
     S.time.totalMs=(S.time.totalMs||0)+Math.min(ms,180000);   /* 자리 비운 시간은 상한으로 자른다 */
+    /* 👻 고스트용 기록 — ★풀이 중에는 표시하지 않는다★(경쟁 UI 가 집중을 깬다) */
+    ghostPer.push({i:quiz.i,ok:!!ok,ms:Math.min(ms,180000),d:q.d});
+    ghostMs+=Math.min(ms,180000);
     ucMs+=Math.min(ms,180000); ucPace.push(ms); if(ucPace.length>8)ucPace.shift();
     /* 🐢 모모와 함께면 25분에 한 번 쉬자고 한다 — ★세션당 한 번만★ */
     if((DUO.is('mo')||arcDone('mo'))&&ucMs>=1500000&&!quiz._rested){
@@ -12423,6 +12694,7 @@ function clkStop(){ clkOn=false; cancelAnimationFrame(clkRaf); clkRaf=0 }
 
 /* 🪙 세션 포인트 — 이번 판에서 번 양을 칩에 실시간으로 쌓는다.
    숫자만 올리면 체감이 없다. ★코인이 날아가 꽂히는 양★ 으로 보여 준다. */
+let ghostPer=[], ghostMs=0;      /* 👻 이번 세션의 문항별 기록·총 시간 */
 let sesPt=0;
 function updPt(){
   const el=$('qPt'); if(!el)return;
@@ -12655,6 +12927,10 @@ function finishQuiz(){
   if(comboMax>0&&S.best-comboMax>0&&S.best-comboMax<=2)near.push(`역대 최고 콤보까지 ${S.best-comboMax}개`);
   if(!S.goal.hit&&S.goal.target-S.goal.done>0&&S.goal.target-S.goal.done<=5)near.push(`오늘 목표까지 ${S.goal.target-S.goal.done}문제`);
 
+  /* 👻 고스트 정산 — 같은 문제 묶음을 지난번에 푼 나(없으면 기준 페이스)와 비교 */
+  let GH=null;
+  try{ if(ghostPer.length)GH=GHOST.settle(quiz.items,quiz.mode,ghostPer,ghostMs,right) }catch(e){}
+
   $('quizRun').style.display='none'; $('quizResult').style.display='block';
   $('quizResult').innerHTML=`
     <div class="box res pop">
@@ -12666,6 +12942,32 @@ function finishQuiz(){
            <div class="lb">${right} / ${total} 정답 · ${pass?`✅ 합격선 통과 (${esc(CPPG.meta.pass)})`:'❌ 합격선 미달'}</div>`}
       ${hi.length?`<div class="hilite">${hi.map(h=>`<span>${esc(h)}</span>`).join('')}</div>`:''}
       ${near.length?`<div class="nearmiss">🤏 ${near.map(esc).join(' · ')} — 한 번 더 가볼까요?</div>`:''}
+      ${GH?`<div class="ghost ${GH.win?'win':'lose'}">
+        <div class="gh-head">👻 ${GH.ghost.kind==='me'?`지난번의 나 <i>(${esc(GH.ghost.date)})</i>`:'기준 페이스'} 와 비교</div>
+        <div class="gh-row">
+          <div class="gh-col">
+            <div class="gh-lbl">${GH.ghost.kind==='me'?'지난번':'기준'}</div>
+            <div class="gh-t">${GHOST.fmt(GH.ghost.ms)}</div>
+            <div class="gh-s">${GH.ghost.right==null?`${GH.ghost.total}문항 기준`:`${GH.ghost.right}/${GH.ghost.total} 정답`}</div>
+          </div>
+          <div class="gh-mid">${GH.dMs>0?`<b>${(GH.dMs/1000).toFixed(1)}초 빠름</b>`:`<b>${(-GH.dMs/1000).toFixed(1)}초 느림</b>`}
+            ${GH.dRight!=null&&GH.dRight!==0?`<span>정답 ${GH.dRight>0?'+':''}${GH.dRight}</span>`:''}</div>
+          <div class="gh-col now">
+            <div class="gh-lbl">오늘</div>
+            <div class="gh-t">${GHOST.fmt(GH.now.ms)}</div>
+            <div class="gh-s">${GH.now.right}/${GH.now.total} 정답</div>
+          </div>
+        </div>
+        <div class="gh-bars">${GH.now.per.map((x,i)=>{
+          const g=GH.ghost.per&&GH.ghost.per[i];
+          const w=Math.max(6,Math.min(100,x.ms/Math.max(1,GH.slow.ms)*100));
+          const gw=g?Math.max(6,Math.min(100,g.ms/Math.max(1,GH.slow.ms)*100)):0;
+          return `<span class="gh-bar ${x.ok?'ok':'no'}" title="${i+1}번 ${(x.ms/1000).toFixed(1)}초${g?` · 지난번 ${(g.ms/1000).toFixed(1)}초`:''}">
+            <i style="height:${w}%"></i>${g?`<u style="height:${gw}%"></u>`:''}</span>`;
+        }).join('')}</div>
+        <div class="gh-note">${GH.slow?`가장 오래 걸린 곳 — <b>${GH.slow.i+1}번</b> ${(GH.slow.ms/1000).toFixed(1)}초`:''}
+          ${GH.better?' · <b>기록 갱신</b>':''}</div>
+      </div>`:''}
       ${hooks.length?`<div class="nexthook"><span class="nh">이어서</span>${hooks.slice(0,2).map(h=>`<span>${h}</span>`).join('')}</div>`:''}
       ${newAch.length?`<div class="achwon">🏅 새 배지 ${newAch.map(a=>esc(a.n)).join(' · ')}</div>`:''}
       ${quiz.revenge&&quiz.redeemed?`<div class="nearmiss">⚔ 복수전 — 틀렸던 ${quiz.redeemed}문제를 되찾았습니다</div>`:''}
@@ -12688,7 +12990,8 @@ function finishQuiz(){
         }).join('')}
       </div>
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-        <button class="btn" id="againQuiz">🔁 새 퀴즈</button>
+        ${GH?`<button class="btn" id="revengeQuiz">👻 ${GH.ghost.kind==='me'?'지난번의 나':'기준 페이스'}와 리벤지</button>`:''}
+        <button class="btn${GH?' gh':''}" id="againQuiz">🔁 새 퀴즈</button>
         ${wrongList.length?`<button class="btn gh" id="reviewNow">📕 틀린 ${wrongList.length}문제 다시 풀기</button>`:''}
         <button class="btn gh" id="toNote">오답노트 보기</button>
       </div>
@@ -12697,6 +13000,24 @@ function finishQuiz(){
     ${wrongList.map(x=>wrongCard(x.q)).join('')}`;
 
   $('againQuiz').onclick=()=>{$('quizResult').style.display='none';$('quizSetup').style.display='block';renderQuizSetup()};
+  /* 👻 리벤지 — ★같은 문제 묶음★ 을 다시 푼다(순서만 섞는다). 그래야 기록 비교가 성립한다 */
+  const rv=$('revengeQuiz');
+  if(rv)rv.onclick=()=>startQuiz(shuffle(quiz.items.slice()),quiz.mode,{revenge:true});
+  /* Step 2 — 캐릭터의 극적 반응. ★이겼을 때는 크게, 졌을 때는 승부욕만 건드린다★
+     (졌다고 책망하지 않는다 — 이 화면의 원칙이다) */
+  /* 기존 종료 대사(MASCOT.end)가 먼저 나온다 — 그 뒤에 와야 덮이지 않는다(실측) */
+  if(GH)setTimeout(()=>{
+    const d=Math.abs(GH.dMs/1000).toFixed(1);
+    if(GH.win){
+      FX.snd.era&&FX.snd.era(); FX.confetti&&FX.confetti(120);
+      MASCOT.talk(GH.ghost.kind==='me'?`지난번의 나를 ${d}초 차로 이겼어요!`
+                                      :`기준보다 ${d}초 빨랐어요!`,'party',3600);
+      if(typeof TALK!=='undefined')setTimeout(()=>TALK.now('goal'),1500);
+    }else{
+      MASCOT.talk(GH.slow?`${GH.slow.i+1}번에서 좀 지체했어요`:`아깝게 ${d}초 차예요`,'worry',3200);
+      MASCOT.subSay&&setTimeout(()=>MASCOT.subSay('한 번 더 가면 넘겠는데','s-turn',2600),1400);
+    }
+  },2600);
   const rn=$('reviewNow'); if(rn)rn.onclick=()=>startQuiz(shuffle(wrongList.map(x=>x.q)),'practice');
   $('toNote').onclick=()=>go('note');
   window.scrollTo({top:0,behavior:'smooth'});
