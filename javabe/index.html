@@ -2508,7 +2508,12 @@ html.nomotion .emark{display:none!important}
   border:1px dashed color-mix(in srgb,var(--ac) 32%,var(--line));overflow-x:auto;
   text-align:center;min-height:44px}
 /* 그림이 화면을 통째로 차지하면 ★쉼표가 아니라 벽★ 이 된다 — 높이에 상한을 둔다 */
-.mmd svg{max-width:100%;max-height:52vh;height:auto}
+/* ★축소하지 않는다★ — 줄이면 글자도 같이 줄어 읽히지 않는다.
+   자연 크기로 두고, 넘치는 폭은 좌우 스크롤로 본다(표와 같은 방식). */
+.mmd svg{max-width:none;height:auto}
+.mmd{scrollbar-width:thin}
+.mmd::-webkit-scrollbar{height:8px}
+.mmd::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
 @media (max-width:520px){ .mmd svg{max-height:46vh} }
 .mmd .mmd-fallback{font-family:var(--f-num);font-size:12px;color:var(--tx3);
   white-space:pre-wrap;text-align:left;line-height:1.6}
@@ -2534,6 +2539,18 @@ html.nomotion .emark{display:none!important}
   stroke-dasharray:1 13;opacity:.85;pointer-events:none;
   animation:mmdFlow 2.4s linear infinite}
 @keyframes mmdFlow{to{stroke-dashoffset:-56}}
+/* 시퀀스 메시지선 — 길고 수평이라 점이 작으면 안 보인다. 조금 길게, 조금 진하게 */
+.mmd svg line.mmd-flow{stroke-dasharray:3 15;stroke-width:3px;opacity:.95}
+/* ★보이지 않는 그림은 흐르지 않는다★ — 개념정리 한 화면에 흐름선이 383개까지
+   생기는데(실측), 전부 무한 재생이면 노트북 팬이 돈다. 화면 밖이면 정지. */
+.mmd.fxoff svg .mmd-flow,.mmd.fxoff svg .mmd-node{animation-play-state:paused!important}
+body.tabhidden .mmd svg .mmd-flow,body.tabhidden .mmd svg .mmd-node{animation-play-state:paused!important}
+/* 좌우로 넘치는 그림에는 ★밀 수 있다는 신호★ 를 준다(글자를 키운 뒤 14개가 넘친다) */
+.mmd.wide{--fade:linear-gradient(90deg,#000 0,#000 92%,transparent 100%)}
+.mmd.wide::after{content:'← →';position:absolute;right:8px;bottom:6px;z-index:2;
+  font-size:11px;font-weight:800;color:var(--tx3);background:var(--card);
+  border:1px solid var(--line);border-radius:99px;padding:1px 7px;opacity:.9;
+  pointer-events:none}
 /* 도형 테두리 광택 — 한 번에 하나씩, 순서대로 훑고 지나간다 */
 .mmd svg .mmd-node{animation:mmdGlow 5.2s ease-in-out infinite}
 @keyframes mmdGlow{0%,72%,100%{filter:none}
@@ -5827,6 +5844,7 @@ const CAST=(()=>{
       const pool=P[w]||P.da;
       pop(w,'idle',{msg:pool[(Math.random()*pool.length)|0],face:w==='mo'?null:'f-look',hold:2400});
       nudge('ki',w,1); save();
+      try{ SOCIAL.cheerFor(w) }catch(e){}          /* 🗳 이 배역을 편들었다 */
     },
     /** 지정한 문구로 한마디 — 화면별 맥락 대사(AMBIENT)가 쓰는 통로 */
     say(w,msg,face,hold,stay){
@@ -5842,6 +5860,8 @@ const CAST=(()=>{
         setTimeout(()=>d.classList.remove('on','out','f-joy','f-sad','f-mad','f-look'),330);
       },delay||0);
     },
+    /** 관계값을 밖에서 움직인다(논쟁 결과가 관계에 남아야 다음 장면이 달라진다) */
+    bond(a,b,d){ if(a&&b&&d){ nudge(a,b,d); save() } },
     /** 관계 상태 — 디버그·문서용 */
     rels(){ const o={}; CH.forEach((a,i)=>CH.slice(i+1).forEach(b=>o[pairKey(a,b)]=rel(a,b))); return o },
     /** 상황 유즈케이스 — answer() 가 모은 맥락을 넘겨 준다.
@@ -6199,6 +6219,7 @@ const MASCOT=(()=>{
     }
     tapLast=now; clearTimeout(tapTrailT);
     tapStage();
+    try{ SOCIAL.cheerFor('ki') }catch(e){}        /* 🗳 치노를 편들었다 */
     if(tapN>=4&&Math.random()<.5)setTimeout(()=>subSay(softPool(JEAL,JEAL_SOFT),'s-poke',2200),700);
     if(tapN===3)CAST.cameo('idle');
     petAch();
@@ -8551,9 +8572,12 @@ const TALK=(()=>{
     /* 많이 본 사람일수록 뜸하게 — 희소성은 관리 대상이다 */
     return force||Math.random()<Math.max(.25,.7*Math.pow(.88,count));
   }
+  /** when 자리에 ★장면 객체★ 를 바로 넘길 수도 있다 — 논쟁처럼 즉석에서
+      만들어진 장면(치환자 적용·인원 조정)을 대본 없이 재생하기 위한 통로. */
   function play(when,force){
     if(!allowed(force))return false;
-    const sc=pick(when); if(!sc)return false;
+    const sc=(when&&typeof when==='object'&&when.beats)?when:pick(when);
+    if(!sc||!sc.beats||!sc.beats.length)return false;
     FXLIB.warm();                       /* 다음 장면은 더 부드럽게 나온다 */
     busy=true; last=Date.now(); count++; lastId=sc.id;
     const box=document.getElementById('mascot'); if(box)box.classList.add('scene');
@@ -8586,8 +8610,12 @@ const TALK=(()=>{
     maybe(when){ return play(when,false) },
     /** 큰 순간에는 확실히 — 배지·목표 달성 등 */
     now(when){ return play(when,true) },
+    /** 즉석에서 만든 장면을 재생한다(논쟁·동의 — SOCIAL 이 쓴다) */
+    scene(obj,force){ return play(obj,force!==false) },
     busy(){ return busy },
-    count(){ return count }
+    count(){ return count },
+    /** 마지막 재생 시각을 앞으로 당겨 준다(섹션 진입처럼 ★자격 있는 트리거★ 용) */
+    relax(ms){ last=Math.min(last,Date.now()-(ms||0)) }
   };
 })();
 
@@ -8704,8 +8732,14 @@ const AMBIENT=(()=>{
   function plan(first){
     clearTimeout(t);
     if(S.mascot===false||view==='quiz')return;     /* 퀴즈는 자체 반응이 촘촘하다 */
-    const base=first?(16000+Math.random()*14000):(42000+Math.random()*46000);
-    const decay=1+Math.min(spoke,8)*0.18;
+    /* ★읽는 화면은 더 촘촘하게★ — 42~88초에 감쇠 2.44배까지 붙으면 최대 3분이
+       조용하다. 긴 글을 내려가는 동안 그건 "아무도 없다" 와 같다.
+       단 감쇠는 남긴다(오래 있으면 조금씩 뜸해져야 잔소리가 되지 않는다). */
+    const reading=({concept:1,sheet:1,note:1})[view];
+    const base=first
+      ? (reading? 8000+Math.random()* 8000 : 16000+Math.random()*14000)
+      : (reading?20000+Math.random()*18000 : 42000+Math.random()*46000);
+    const decay=1+Math.min(spoke,8)*(reading?0.06:0.18);
     t=setTimeout(()=>{
       const k=keyFor();
       /* ★가끔은 한 줄이 아니라 장면이 열린다★ — 둘이 주고받는 걸 보는 것이
@@ -8716,7 +8750,10 @@ const AMBIENT=(()=>{
       /* 📚 개념·시트를 보는 중엔 가끔 ★공부 얘기★ 로 빠진다 —
          잡담만 하면 캐릭터가 화면과 무관해지고, 늘 공부 얘기면 잔소리가 된다. */
       if(scene==='sheet'&&Math.random()<.45)scene='study';
-      if(!(scene&&Math.random()<.3&&TALK.maybe(scene)))fire(k);
+      /* 🗳 읽는 화면에서는 ★논쟁·동의★ 를 먼저 시도한다(둘이 다투는 게 제일 재미있다) */
+      let done=false;
+      try{ if(({concept:1,sheet:1,note:1})[view]&&Math.random()<.45)done=SOCIAL.tick() }catch(e){}
+      if(!done&&!(scene&&Math.random()<.3&&TALK.maybe(scene)))fire(k);
       plan(false);
     },base*decay);
   }
@@ -9061,7 +9098,7 @@ MASCOT.show(); MASCOT.greet(); idlePing();
    없는 환경에서는 ★아무것도 하지 않는다★ — 그 경우 예전처럼 전부 돈다(기능 손실 0). */
 (function(){
   if(!('IntersectionObserver' in window))return;
-  const SEL='.box,.stat,.resume,.dash,.thpop,.qcard,.fcf,.fcb,.chalbar,.subrow,.kbrow,.prog,.pb,.lvlbar,.thsep,.tw';
+  const SEL='.box,.stat,.resume,.dash,.thpop,.qcard,.fcf,.fcb,.chalbar,.subrow,.kbrow,.prog,.pb,.lvlbar,.thsep,.tw,.mmd';
   const io=new IntersectionObserver(es=>{
     es.forEach(e=>e.target.classList.toggle('fxoff',!e.isIntersecting));
   },{rootMargin:'150px 0px'});
@@ -10105,9 +10142,14 @@ const MMD=(()=>{
       startOnLoad:false, securityLevel:'strict',
       look:'handDrawn', handDrawnSeed:7,          /* 같은 그림은 늘 같은 손맛으로 */
       theme:dark()?'dark':'default',
-      themeVariables:{ fontFamily:'inherit', fontSize:'13px' },
-      flowchart:{curve:'basis',padding:8},
-      sequence:{actorMargin:38,width:128,height:34,mirrorActors:false,useMaxWidth:true}
+      /* ★글자 크기를 본문에 맞춘다★ — 본문 14px 인데 다이어그램이 10.8~16px 로
+         들쭉날쭉했다(실측). 축소 배율까지 곱해지면 11px 이하로 내려가 안 읽힌다. */
+      themeVariables:{ fontFamily:'inherit', fontSize:'14px' },
+      /* ★useMaxWidth:false★ — 폭을 컨테이너에 맞춰 줄이면 글자까지 같이 작아진다.
+         자연 크기로 그리고, 넘치면 표처럼 좌우로 밀어 본다(.mmd 가 스크롤 컨테이너). */
+      flowchart:{curve:'basis',padding:10,useMaxWidth:false,nodeSpacing:44,rankSpacing:48},
+      sequence:{actorMargin:44,width:140,height:38,mirrorActors:false,useMaxWidth:false,
+                actorFontSize:14,messageFontSize:14,noteFontSize:13.5}
     };
   }
   function boot(){
@@ -10135,15 +10177,39 @@ const MMD=(()=>{
       위에 겹쳐 그린다 — 라이브러리가 판을 바꿔도 그림 자체는 살아남는다. */
   function decorate(el){
     const svg=el.querySelector('svg'); if(!svg)return;
-    /* 선 — 굵게 + 흐름용 복제본을 위에 얹는다 */
-    const edges=[...svg.querySelectorAll('path.flowchart-link, path.messageLine0, path.messageLine1, .edgePath path, .edgePaths path')];
-    edges.forEach((p,i)=>{
+    /* 선 — 굵게 + 흐름용 복제본을 위에 얹는다.
+       ★Mermaid v11 은 시퀀스 메시지를 <line> 으로 그린다★ — path 만 찾으면
+       시퀀스 다이어그램 11개 중 10개가 흐름 없이 남는다(실측으로 확인).
+       순서가 가장 중요한 그림이 바로 시퀀스라서, 여기서 빠지면 의미가 없다. */
+    const edges=[...svg.querySelectorAll(
+      'path.flowchart-link, path.messageLine0, path.messageLine1,'+
+      'line.messageLine0, line.messageLine1, .edgePath path, .edgePaths path')];
+    /* 시퀀스는 ★위에서 아래로★ 차례차례 흐르는 것이 순서를 말해 준다.
+       DOM 순서가 아니라 화면상 y 좌표로 줄을 세운다. */
+    const seq=edges.some(e=>/messageLine/.test(e.getAttribute('class')||''));
+    const order=edges.map((e,i)=>{
+      let y=0,x=0;
+      try{ const b=e.getBBox(); y=b.y+b.height/2; x=b.x }catch(_){}
+      return {e,i,y,x};
+    });
+    if(seq)order.sort((a,b)=>(a.y-b.y)||(a.x-b.x));
+    order.forEach((o,i)=>{
+      const p=o.e;
       p.classList.add('mmd-edge');
       const f=p.cloneNode(false);
       f.setAttribute('class','mmd-flow');
       f.removeAttribute('marker-end'); f.removeAttribute('marker-start');
       f.style.stroke='var(--ac)';
-      f.style.animationDelay=(i*0.18).toFixed(2)+'s';
+      f.style.animationDelay=(i*(seq?0.22:0.18)).toFixed(2)+'s';
+      /* ★속도를 길이로 정규화★ — 같은 주기를 주면 짧은 선은 쌩 지나가고 긴 선은
+         기어간다. 길이에 비례한 시간을 줘야 모든 선이 ★같은 속도로★ 흐른다. */
+      let len=0; try{ len=p.getTotalLength() }catch(_){}
+      if(len>0){
+        /* 상한이 낮으면 긴 선이 상한에 걸려 오히려 빨라진다(실측 최대 413px/s) */
+        const sec=Math.min(9,Math.max(1.5,len/78));
+        f.style.animationDuration=sec.toFixed(2)+'s';
+        f.style.setProperty('--flow-len',Math.round(len));
+      }
       p.parentNode.insertBefore(f,p.nextSibling);
     });
     /* 도형 — 등장 순서를 줄 수 있게 표시하고 지연을 심는다 */
@@ -10153,6 +10219,12 @@ const MMD=(()=>{
       n.style.setProperty('--d',(i*0.07).toFixed(2)+'s');
     });
     el.dataset.n=nodes.length;
+    /* 넘치는지는 그려 본 뒤에야 안다 — 폭을 재서 스크롤 신호를 붙인다 */
+    const markWide=()=>el.classList.toggle('wide',el.scrollWidth>el.clientWidth+4);
+    markWide(); setTimeout(markWide,120);
+    if(!MMD._wideBound){ MMD._wideBound=1;
+      addEventListener('resize',()=>document.querySelectorAll('.mmd[data-done="ok"]').forEach(x=>
+        x.classList.toggle('wide',x.scrollWidth>x.clientWidth+4)),{passive:true}); }
     /* 스크롤로 들어올 때 한 번만 켠다 — 매번 다시 켜지면 읽는 데 방해가 된다.
        ★켜지지 않아도 그림은 보인다★(기본 상태가 '보임'이라 안전하다). */
     if(nodes.length&&!matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -10317,6 +10389,7 @@ const READ=(()=>{
       }
       if(cur&&cur.id!==curId){
         curId=cur.id;
+        try{ SOCIAL.section(curId) }catch(e){}     /* 🗳 새 단원에 들어왔다 */
         const toc=document.getElementById('conceptToc');
         if(toc){
           toc.querySelectorAll('a.now').forEach(a=>a.classList.remove('now'));
@@ -10340,7 +10413,609 @@ const READ=(()=>{
   addEventListener('resize',()=>{collect();onScroll()},{passive:true});
   return {
     /** 화면이 바뀌거나 목록을 다시 그린 뒤에 부른다 */
-    sync(){ curId=''; collect(); onScroll(); }
+    sync(){ curId=''; collect(); onScroll(); },
+    /** 지금 읽고 있는 섹션 id */
+    now(){ return curId }
+  };
+})();
+
+/* 🗳 논쟁·동의·난입 대본 — 캐릭터끼리 "이게 더 중요해" 로 갈린다.
+   근거는 빈출·함정·인출·흐름·간격만 쓴다(수치는 쓰지 않는다 — 확인 불가).
+   사용자에게 지시하지 않는다. 사용자는 ★관전자★ 이고, 편은 들 수 있다. */
+/* ═══════════════════════════════════════════════════════════════════
+   🗣 DEBATES / ACCORDS / INTERJECTS — 캐릭터 논쟁 대본
+   ──────────────────────────────────────────────────────────────────
+   원칙
+     ① 사용자를 다그치지 않는다 — 논쟁은 ★캐릭터끼리★ 한다
+     ② 책망·감시·가짜 긴급성 금지  ③ 한 대사 공백 포함 22자 이내
+     ④ 같은 배역이 연달아 말하지 않는다  ⑤ fx 는 장면당 1~2개
+     ⑥ 주장의 근거는 시험 관점(빈출·함정·흐름·인출)으로만 — ★수치·배점 금지★
+   배역  ki 치노(따뜻·응원) / si 시니(까칠한 츤데레, 결국 편)
+         da 다람(수집가·★이기는 편에 붙음★) / bu 부엉(분석가·위로 안 함)
+         mo 모모(느긋·쉬어 가자)
+   구조  주장(A) → 반박(B) → 개입·편들기(C) → 마무리(합의·중재·판정 유보)
+   필드  id axis min win('a'|'b'|'draw') mood(-2~+2) bond[[a,b,d]] beats[{w,msg,act,fx}]
+         act lean|hop|shake|turn|nod|none · fx anger|sweat|sparkle|heart|note|none
+   치환자 {unit} {unit2} {sub} {wrong} {pct} — 값이 없어도 돌아가게
+         ★치환자 없는 줄이 장면당 최소 2줄★
+   ═══════════════════════════════════════════════════════════════════ */
+
+const DEBATES=[
+
+  /* ── 1. 암기 vs 이해 ───────────────────────────── */
+  { id:'db-memo-under', axis:'암기 vs 이해', min:5, win:'b', mood:0,
+    bond:[['bu','ki',1]], beats:[
+      {w:'da', msg:'{unit} 표는 외우면 돼',   act:'hop',   fx:'none'},
+      {w:'bu', msg:'외운 건 변형에서 깨진다', act:'lean',  fx:'none'},
+      {w:'ki', msg:'이해하면 오래 남아요',    act:'nod',   fx:'sparkle'},
+      {w:'si', msg:'그럼 외우고 이해해',      act:'turn',  fx:'none'},
+      {w:'mo', msg:'순서만 정하면 되겠네',    act:'nod',   fx:'none'}
+  ]},
+
+  /* ── 2. 넓게 vs 깊게 ───────────────────────────── */
+  { id:'db-wide-deep', axis:'넓게 vs 깊게', min:5, win:'draw', mood:0,
+    bond:[['da','mo',1]], beats:[
+      {w:'da', msg:'범위부터 다 훑어야지',    act:'hop',   fx:'none'},
+      {w:'bu', msg:'얕게 넓히면 다 틀린다',   act:'lean',  fx:'none'},
+      {w:'ki', msg:'둘 다 필요해 보여요',     act:'nod',   fx:'none'},
+      {w:'mo', msg:'넓게 한 번, 깊게 한 번',  act:'turn',  fx:'note'},
+      {w:'si', msg:'결국 두 번 하라는 거네',  act:'shake', fx:'none'}
+  ]},
+
+  /* ── 3. 기출 vs 기본서 ─────────────────────────── */
+  { id:'db-past-book', axis:'기출 vs 기본서', min:5, win:'a', mood:1,
+    bond:[['si','da',1],['bu','mo',1]], beats:[
+      {w:'si', msg:'기출부터 돌려',            act:'lean',  fx:'none'},
+      {w:'bu', msg:'기본서 없이 기출은 모래성', act:'nod',  fx:'none'},
+      {w:'da', msg:'나는 기출 편에 선다',       act:'hop',   fx:'none'},
+      {w:'ki', msg:'기출로 범위를 알잖아요',    act:'nod',   fx:'sparkle'},
+      {w:'mo', msg:'기본서는 막힐 때 펴자',     act:'turn',  fx:'none'}
+  ]},
+
+  /* ── 4. 표 암기 vs 흐름 이해 ───────────────────── */
+  { id:'db-table-flow', axis:'표 암기 vs 흐름 이해', min:4, win:'draw', mood:0,
+    bond:[['bu','ki',1]], beats:[
+      {w:'bu', msg:'표 칸 차이가 답을 만든다', act:'lean',  fx:'none'},
+      {w:'mo', msg:'흐름을 알면 표가 보여',    act:'nod',   fx:'none'},
+      {w:'da', msg:'표는 수집이 쉬운데',       act:'hop',   fx:'none'},
+      {w:'ki', msg:'표 읽고 흐름 잡아요',      act:'nod',   fx:'note'}
+  ]},
+
+  /* ── 5. 오답 복습 vs 새 문제 ───────────────────── */
+  { id:'db-wrong-new', axis:'오답 복습 vs 새 문제', min:5, win:'a', mood:1,
+    bond:[['bu','ki',1]], beats:[
+      {w:'bu', msg:'오답 {wrong}개가 우선이다', act:'lean',  fx:'none'},
+      {w:'da', msg:'새 문제도 재밌잖아',        act:'hop',   fx:'none'},
+      {w:'ki', msg:'틀린 걸 지우면 오르죠',     act:'nod',   fx:'sparkle'},
+      {w:'si', msg:'재미로 공부하냐',           act:'turn',  fx:'none'},
+      {w:'mo', msg:'오답 하나만 보고 쉬자',     act:'nod',   fx:'none'},
+      {w:'bu', msg:'하나면 검증은 된다',        act:'none',  fx:'none'}
+  ]},
+
+  /* ── 6. 속도 vs 정확도 ─────────────────────────── */
+  { id:'db-speed-acc', axis:'속도 vs 정확도', min:5, win:'b', mood:0,
+    bond:[['mo','bu',2]], beats:[
+      {w:'da', msg:'빠르게 많이 풀자',           act:'hop',   fx:'none'},
+      {w:'bu', msg:'정확도 없는 속도는 헛돈다',  act:'lean',  fx:'none'},
+      {w:'mo', msg:'천천히가 결국 빠르다',       act:'nod',   fx:'none'},
+      {w:'si', msg:'느림보 둘이 뭉쳤네',         act:'shake', fx:'sweat'},
+      {w:'ki', msg:'속도는 나중에 붙어요',       act:'nod',   fx:'none'}
+  ]},
+
+  /* ── 7. 아침 vs 심야 ───────────────────────────── */
+  { id:'db-morn-night', axis:'아침 vs 심야', min:5, win:'draw', mood:0,
+    bond:[['si','da',1]], beats:[
+      {w:'bu', msg:'해 뜬 뒤가 유리하다',        act:'lean',  fx:'none'},
+      {w:'si', msg:'밤에 집중되는 쪽도 있어',    act:'turn',  fx:'none'},
+      {w:'da', msg:'나는 밤 편으로 갈아탄다',    act:'hop',   fx:'sweat'},
+      {w:'mo', msg:'본인 리듬이 정답이야',       act:'nod',   fx:'none'},
+      {w:'ki', msg:'둘 다 좋은 시간이에요',      act:'nod',   fx:'none'}
+  ]},
+
+  /* ── 8. 몰아서 vs 매일 조금 ────────────────────── */
+  { id:'db-cram-daily', axis:'몰아서 vs 매일 조금', min:5, win:'b', mood:1,
+    bond:[['mo','bu',1],['si','mo',1]], beats:[
+      {w:'da', msg:'주말에 몰아서 하면 돼',      act:'hop',   fx:'none'},
+      {w:'mo', msg:'매일 조금이 몸에 남아',      act:'nod',   fx:'none'},
+      {w:'bu', msg:'간격을 두면 덜 잊는다',      act:'lean',  fx:'none'},
+      {w:'si', msg:'몰아서 하다 뻗잖아',         act:'turn',  fx:'none'},
+      {w:'ki', msg:'오늘 한 문제도 쌓여요',      act:'hop',   fx:'sparkle'}
+  ]},
+
+  /* ── 9. 단원 우선순위 ──────────────────────────── */
+  { id:'db-unit-order', axis:'단원 우선순위', min:5, win:'a', mood:0,
+    bond:[['bu','ki',1]], beats:[
+      {w:'bu', msg:'{unit} 먼저다, 빈출이야',    act:'lean',  fx:'none'},
+      {w:'da', msg:'{unit2} 가 더 급해 보여',    act:'hop',   fx:'none'},
+      {w:'ki', msg:'앞 단원이 뒤를 받쳐요',      act:'nod',   fx:'none'},
+      {w:'si', msg:'순서 싸움이 더 오래 걸려',   act:'shake', fx:'anger'},
+      {w:'mo', msg:'가까운 것부터 펴자',         act:'turn',  fx:'none'},
+      {w:'bu', msg:'그럼 앞에서 내려간다',       act:'nod',   fx:'none'}
+  ]},
+
+  /* ── 10. 약점 보강 vs 강점 굳히기 ──────────────── */
+  { id:'db-weak-strong', axis:'약점 보강 vs 강점 굳히기', min:4, win:'draw', mood:0,
+    bond:[['si','da',1]], beats:[
+      {w:'bu', msg:'약한 데를 메워야 한다',      act:'lean',  fx:'none'},
+      {w:'si', msg:'강한 데로 점수를 지켜',      act:'turn',  fx:'none'},
+      {w:'da', msg:'지키는 쪽이 편하긴 해',      act:'hop',   fx:'none'},
+      {w:'ki', msg:'약점 하나면 충분해요',       act:'nod',   fx:'heart'}
+  ]},
+
+  /* ── 11. 혼자 풀기 vs 소리내어 설명 ────────────── */
+  { id:'db-solo-talk', axis:'혼자 풀기 vs 소리내어 설명', min:5, win:'b', mood:1,
+    bond:[['mo','bu',1]], beats:[
+      {w:'si', msg:'조용히 풀면 되잖아',         act:'lean',  fx:'none'},
+      {w:'mo', msg:'입으로 말해 보면 알아',      act:'nod',   fx:'none'},
+      {w:'bu', msg:'설명은 인출이 강하다',       act:'none',  fx:'none'},
+      {w:'da', msg:'나는 말하는 쪽으로',         act:'hop',   fx:'none'},
+      {w:'ki', msg:'저한테 설명해 주세요',       act:'hop',   fx:'heart'}
+  ]},
+
+  /* ── 12. 힌트 쓰기 vs 끝까지 버티기 ────────────── */
+  { id:'db-hint-hold', axis:'힌트 vs 버티기', min:4, win:'draw', mood:0,
+    bond:[['ki','si',1]], beats:[
+      {w:'si', msg:'힌트는 마지막에 써',         act:'lean',  fx:'none'},
+      {w:'ki', msg:'막히면 봐도 괜찮아요',       act:'nod',   fx:'none'},
+      {w:'bu', msg:'힌트 뒤 정답은 약하다',      act:'none',  fx:'note'},
+      {w:'mo', msg:'막히면 쉬어도 되고',         act:'turn',  fx:'none'}
+  ]},
+
+  /* ── 13. 용어 정의 vs 사례 적용 ────────────────── */
+  { id:'db-term-case', axis:'용어 정의 vs 사례 적용', min:5, win:'a', mood:0,
+    bond:[['bu','ki',1]], beats:[
+      {w:'bu', msg:'정의 문장이 먼저다',         act:'lean',  fx:'none'},
+      {w:'da', msg:'사례로 보면 쉬운데',         act:'hop',   fx:'none'},
+      {w:'ki', msg:'정의 알면 사례가 풀려요',    act:'nod',   fx:'sparkle'},
+      {w:'si', msg:'너 정의는 외웠냐',           act:'turn',  fx:'none'},
+      {w:'mo', msg:'사례 하나만 붙이자',         act:'nod',   fx:'none'}
+  ]},
+
+  /* ── 14. 무작위 vs 단원 순서 ───────────────────── */
+  { id:'db-shuffle-order', axis:'무작위 vs 단원 순서', min:5, win:'draw', mood:0,
+    bond:[['da','si',1]], beats:[
+      {w:'da', msg:'무작위로 섞어서 풀자',       act:'hop',   fx:'none'},
+      {w:'bu', msg:'단원 순서가 개념을 쌓는다',  act:'lean',  fx:'none'},
+      {w:'si', msg:'섞으면 시험장 같긴 해',      act:'turn',  fx:'none'},
+      {w:'ki', msg:'순서로 익히고 섞어요',       act:'nod',   fx:'note'},
+      {w:'mo', msg:'뭘 풀든 천천히',             act:'none',  fx:'none'}
+  ]},
+
+  /* ── 15. 모의고사 vs 단원 문제 ─────────────────── */
+  { id:'db-mock-drill', axis:'모의고사 vs 단원 문제', min:5, win:'a', mood:1,
+    bond:[['si','bu',1],['si','da',1]], beats:[
+      {w:'si', msg:'모의고사 한 번 돌려',        act:'lean',  fx:'none'},
+      {w:'mo', msg:'아직 단원 문제가 남았어',    act:'nod',   fx:'none'},
+      {w:'bu', msg:'전체 감각은 모의가 준다',    act:'none',  fx:'none'},
+      {w:'da', msg:'모의 쪽에 붙는다',           act:'hop',   fx:'none'},
+      {w:'ki', msg:'틀려도 지도가 생겨요',       act:'nod',   fx:'sparkle'}
+  ]},
+
+  /* ── 16. 오답노트 쓰기 vs 읽기 ─────────────────── */
+  { id:'db-note-write', axis:'오답노트 쓰기 vs 읽기', min:4, win:'b', mood:-1,
+    bond:[['da','bu',-1]], beats:[
+      {w:'da', msg:'오답노트 예쁘게 쓰자',       act:'hop',   fx:'none'},
+      {w:'bu', msg:'쓰는 시간이 복습을 먹는다',  act:'lean',  fx:'none'},
+      {w:'si', msg:'꾸미기는 공부가 아니지',     act:'shake', fx:'anger'},
+      {w:'ki', msg:'한 줄만 적어도 돼요',        act:'nod',   fx:'none'}
+  ]},
+
+  /* ── 17. 장시간 몰입 vs 짧게 여러 번 ───────────── */
+  { id:'db-long-short', axis:'장시간 vs 짧게 여러 번', min:5, win:'b', mood:1,
+    bond:[['mo','bu',1]], beats:[
+      {w:'si', msg:'몰입은 길게 가야지',         act:'lean',  fx:'none'},
+      {w:'mo', msg:'짧게 여러 번이 남아',        act:'nod',   fx:'none'},
+      {w:'bu', msg:'휴식 뒤 인출이 낫다',        act:'none',  fx:'none'},
+      {w:'da', msg:'짧은 쪽으로 옮긴다',         act:'hop',   fx:'sweat'},
+      {w:'ki', msg:'중간에 쉬어도 돼요',         act:'nod',   fx:'none'}
+  ]},
+
+  /* ── 18. 법규 vs 기술 ──────────────────────────── */
+  { id:'db-law-tech', axis:'법규 vs 기술', min:5, win:'draw', mood:0,
+    bond:[['bu','si',1]], beats:[
+      {w:'bu', msg:'법규 조문부터 잡아라',       act:'lean',  fx:'none'},
+      {w:'da', msg:'기술 문제가 더 많잖아',      act:'hop',   fx:'none'},
+      {w:'si', msg:'법규는 외우면 점수 되지',    act:'turn',  fx:'none'},
+      {w:'mo', msg:'기술은 이해가 필요해',       act:'nod',   fx:'none'},
+      {w:'ki', msg:'한쪽만 버리진 말아요',       act:'nod',   fx:'note'},
+      {w:'bu', msg:'둘 다 섞여서 나온다',        act:'none',  fx:'none'}
+  ]},
+
+  /* ── 19. 약어 암기 vs 풀이 이해 ────────────────── */
+  { id:'db-abbr-full', axis:'약어 암기 vs 풀이 이해', min:5, win:'b', mood:0,
+    bond:[['bu','si',1]], beats:[
+      {w:'da', msg:'약어만 외우면 빠르지',       act:'hop',   fx:'none'},
+      {w:'bu', msg:'풀이를 알면 안 헷갈린다',    act:'lean',  fx:'none'},
+      {w:'si', msg:'{sub} 약어가 특히 그래',     act:'turn',  fx:'none'},
+      {w:'ki', msg:'풀이까지 한 줄로 적어요',    act:'nod',   fx:'sparkle'},
+      {w:'mo', msg:'천천히 풀어 읽자',           act:'none',  fx:'none'}
+  ]},
+
+  /* ── 20. 오늘 또 vs 뒤에 다시 (복습 간격) ──────── */
+  { id:'db-review-gap', axis:'복습 간격', min:5, win:'b', mood:0,
+    bond:[['mo','bu',1]], beats:[
+      {w:'da', msg:'오늘 한 번 더 보자',         act:'hop',   fx:'none'},
+      {w:'mo', msg:'며칠 뒤가 더 잘 남아',       act:'nod',   fx:'none'},
+      {w:'bu', msg:'간격 뒤 인출이 굳는다',      act:'lean',  fx:'none'},
+      {w:'si', msg:'기억 안 나면 그때 봐',       act:'turn',  fx:'none'},
+      {w:'ki', msg:'두 번 보면 충분해요',        act:'nod',   fx:'heart'}
+  ]},
+
+  /* ── 21. 함정 찾기 vs 개념 정독 ────────────────── */
+  { id:'db-trap-concept', axis:'함정 찾기 vs 개념 정독', min:4, win:'draw', mood:0,
+    bond:[['si','da',1]], beats:[
+      {w:'si', msg:'함정 패턴만 골라 봐',        act:'lean',  fx:'none'},
+      {w:'bu', msg:'개념 없이 함정은 안 보여',   act:'nod',   fx:'none'},
+      {w:'ki', msg:'개념 먼저가 안전해요',       act:'nod',   fx:'none'},
+      {w:'da', msg:'나는 함정 수집이 좋아',      act:'hop',   fx:'note'}
+  ]},
+
+  /* ── 22. 문제 수 vs 한 문제 깊게 ───────────────── */
+  { id:'db-many-one', axis:'문제 수 vs 한 문제 깊게', min:5, win:'b', mood:0,
+    bond:[['mo','bu',1]], beats:[
+      {w:'da', msg:'{pct}% 까지는 양으로 간다',  act:'hop',   fx:'none'},
+      {w:'bu', msg:'한 문제를 끝까지 봐라',      act:'lean',  fx:'none'},
+      {w:'mo', msg:'천천히 하나만 파자',         act:'nod',   fx:'none'},
+      {w:'si', msg:'많이 풀고 다 잊지 마',       act:'turn',  fx:'none'},
+      {w:'ki', msg:'한 문제도 크게 남아요',      act:'nod',   fx:'sparkle'}
+  ]},
+
+  /* ── 23. 막히면 넘기기 vs 붙잡기 ───────────────── */
+  { id:'db-skip-stick', axis:'넘기기 vs 붙잡기', min:4, win:'draw', mood:0,
+    bond:[['si','bu',1]], beats:[
+      {w:'mo', msg:'막히면 넘기고 가자',         act:'nod',   fx:'none'},
+      {w:'bu', msg:'붙잡은 자리가 약점이다',     act:'lean',  fx:'none'},
+      {w:'si', msg:'넘기면 또 만나는데',         act:'turn',  fx:'none'},
+      {w:'ki', msg:'표시하고 넘겨요',            act:'hop',   fx:'note'}
+  ]},
+
+  /* ── 24. 시험 전날 — 새 것 vs 본 것 ────────────── */
+  { id:'db-exam-eve', axis:'전날 새 것 vs 본 것', min:5, win:'a', mood:1,
+    bond:[['mo','bu',1],['si','mo',1]], beats:[
+      {w:'mo', msg:'전날은 본 것만 보자',        act:'nod',   fx:'none'},
+      {w:'da', msg:'새 문제도 하나쯤',           act:'hop',   fx:'none'},
+      {w:'bu', msg:'새 것은 불안만 키운다',      act:'lean',  fx:'none'},
+      {w:'si', msg:'전날에 뭘 새로 외우냐',      act:'shake', fx:'none'},
+      {w:'ki', msg:'오늘 본 걸 믿어요',          act:'nod',   fx:'heart'}
+  ]},
+
+  /* ── 25. 강의 듣기 vs 문제 풀기 ────────────────── */
+  { id:'db-lecture-solve', axis:'강의 vs 문제', min:5, win:'b', mood:0,
+    bond:[['bu','si',1]], beats:[
+      {w:'da', msg:'설명 들으면 편하잖아',       act:'hop',   fx:'none'},
+      {w:'bu', msg:'듣기만 하면 인출이 없다',    act:'lean',  fx:'none'},
+      {w:'si', msg:'듣고 아는 척하기 쉽지',      act:'turn',  fx:'none'},
+      {w:'ki', msg:'듣고 바로 풀어봐요',         act:'nod',   fx:'sparkle'},
+      {w:'mo', msg:'한 강 듣고 쉬어도 돼',       act:'none',  fx:'none'}
+  ]},
+
+  /* ── 26. 목표 개수 vs 시간 재기 ────────────────── */
+  { id:'db-count-clock', axis:'문제 수 목표 vs 시간 목표', min:5, win:'draw', mood:0,
+    bond:[['da','mo',1]], beats:[
+      {w:'da', msg:'개수로 끊는 게 깔끔해',      act:'hop',   fx:'none'},
+      {w:'mo', msg:'시간으로 끊으면 편해',       act:'nod',   fx:'none'},
+      {w:'bu', msg:'둘 다 기준이 되긴 한다',     act:'lean',  fx:'none'},
+      {w:'si', msg:'끊는 얘기만 하고 있네',      act:'shake', fx:'sweat'},
+      {w:'ki', msg:'각자 편한 기준으로요',       act:'nod',   fx:'none'}
+  ]}
+];
+
+/* ═══════════ 🤝 ACCORDS — 서로 동의해 편드는 장면 ═══════════
+   3~4 beat. 논쟁이 아니라 ★합의★ — 관계값이 오른다.               */
+const ACCORDS=[
+
+  { id:'ac-wrong-first', axis:'오답 우선', min:3, mood:1,
+    bond:[['da','bu',2]], beats:[
+      {w:'da', msg:'오답 {wrong}개부터 열었어',  act:'hop',  fx:'none'},
+      {w:'bu', msg:'순서가 맞다',                act:'nod',  fx:'none'},
+      {w:'ki', msg:'같은 생각이었어요',          act:'hop',  fx:'sparkle'}
+  ]},
+
+  { id:'ac-slow-win', axis:'천천히', min:3, mood:1,
+    bond:[['mo','si',2]], beats:[
+      {w:'mo', msg:'오늘은 천천히 가자',         act:'nod',  fx:'none'},
+      {w:'si', msg:'뭐, 그러자',                 act:'turn', fx:'none'},
+      {w:'ki', msg:'둘이 통했네요',              act:'hop',  fx:'heart'},
+      {w:'mo', msg:'드문 일이지',                act:'none', fx:'none'}
+  ]},
+
+  { id:'ac-table-share', axis:'표 정리', min:3, mood:1,
+    bond:[['bu','da',2]], beats:[
+      {w:'bu', msg:'{unit} 표만 봐도 된다',      act:'lean', fx:'none'},
+      {w:'da', msg:'나도 표 쪽이야',             act:'hop',  fx:'none'},
+      {w:'ki', msg:'깔끔하게 정리됐죠',          act:'nod',  fx:'note'}
+  ]},
+
+  { id:'ac-rest-agree', axis:'휴식', min:4, mood:1,
+    bond:[['mo','bu',2]], beats:[
+      {w:'mo', msg:'어깨 좀 펴고 오자',          act:'turn', fx:'none'},
+      {w:'bu', msg:'피로는 무시할 변수가 아니다',act:'lean', fx:'none'},
+      {w:'da', msg:'휴식 칸도 적어둔다',         act:'hop',  fx:'none'},
+      {w:'ki', msg:'다들 같이 쉬어요',           act:'nod',  fx:'heart'}
+  ]},
+
+  { id:'ac-daily-small', axis:'매일 조금', min:3, mood:1,
+    bond:[['ki','mo',2]], beats:[
+      {w:'ki', msg:'조금씩이 결국 이겨요',       act:'hop',  fx:'none'},
+      {w:'mo', msg:'내 말이 그거야',             act:'nod',  fx:'none'},
+      {w:'da', msg:'매일 쪽에 붙는다',           act:'hop',  fx:'sparkle'}
+  ]},
+
+  { id:'ac-si-agrees-ki', axis:'시니의 인정', min:3, mood:2,
+    bond:[['ki','si',2]], beats:[
+      {w:'si', msg:'이번엔 네 말이 맞다',        act:'turn', fx:'none'},
+      {w:'ki', msg:'어, 고마워요',               act:'hop',  fx:'heart'},
+      {w:'mo', msg:'이건 기록할 만한데',         act:'nod',  fx:'none'}
+  ]},
+
+  { id:'ac-review-two', axis:'두 번 보기', min:3, mood:1,
+    bond:[['bu','si',2]], beats:[
+      {w:'bu', msg:'{unit} 은 한 번 더 보자',    act:'lean', fx:'none'},
+      {w:'da', msg:'두 번이면 적립이지',         act:'hop',  fx:'none'},
+      {w:'si', msg:'그건 동의한다',              act:'nod',  fx:'note'}
+  ]},
+
+  { id:'ac-past-paper', axis:'기출 한 세트', min:4, mood:1,
+    bond:[['si','da',2],['si','bu',1]], beats:[
+      {w:'si', msg:'기출 한 세트 가자',          act:'lean', fx:'none'},
+      {w:'da', msg:'나도 그쪽으로',              act:'hop',  fx:'none'},
+      {w:'bu', msg:'범위 감각이 생긴다',         act:'nod',  fx:'none'},
+      {w:'ki', msg:'이 조합 마음에 들어요',      act:'hop',  fx:'sparkle'}
+  ]},
+
+  { id:'ac-explain-out', axis:'소리내어 설명', min:3, mood:1,
+    bond:[['mo','bu',2]], beats:[
+      {w:'mo', msg:'입으로 말해 보자',           act:'nod',  fx:'none'},
+      {w:'ki', msg:'제가 들어줄게요',            act:'hop',  fx:'heart'},
+      {w:'bu', msg:'그 방식이 인출을 키운다',    act:'lean', fx:'none'}
+  ]},
+
+  { id:'ac-weak-unit', axis:'약한 단원', min:3, mood:1,
+    bond:[['bu','ki',2]], beats:[
+      {w:'bu', msg:'{unit} 부터 메우자',         act:'lean', fx:'none'},
+      {w:'ki', msg:'거기가 급해 보여요',         act:'nod',  fx:'none'},
+      {w:'mo', msg:'하나만 하고 쉬자',           act:'turn', fx:'note'}
+  ]},
+
+  { id:'ac-mark-skip', axis:'표시하고 넘기기', min:3, mood:1,
+    bond:[['da','si',2]], beats:[
+      {w:'da', msg:'표시만 하고 넘기자',         act:'hop',  fx:'none'},
+      {w:'si', msg:'그게 제일 빠르다',           act:'turn', fx:'none'},
+      {w:'mo', msg:'나도 찬성이야',              act:'nod',  fx:'note'}
+  ]},
+
+  { id:'ac-night-stop', axis:'오늘 마감', min:4, mood:1,
+    bond:[['si','mo',2],['ki','si',1]], beats:[
+      {w:'mo', msg:'이쯤에서 접자',              act:'nod',  fx:'none'},
+      {w:'si', msg:'자라, 진짜',                 act:'turn', fx:'none'},
+      {w:'ki', msg:'내일 또 만나요',             act:'hop',  fx:'heart'},
+      {w:'da', msg:'마감 한 줄 적었어',          act:'hop',  fx:'none'}
+  ]},
+
+  { id:'ac-sub-focus', axis:'세부 집중', min:3, mood:1,
+    bond:[['bu','da',2]], beats:[
+      {w:'bu', msg:'{sub} 하나만 파고들자',      act:'lean', fx:'none'},
+      {w:'da', msg:'좁으면 모으기 쉽지',         act:'hop',  fx:'none'},
+      {w:'ki', msg:'범위가 줄어 좋네요',         act:'nod',  fx:'sparkle'}
+  ]}
+];
+
+/* ═══════════ 💬 INTERJECTS — 끼어드는 조각 ═══════════
+   1~2줄. 엔진이 ★아무 장면 중간·끝에★ 끼울 수 있다.
+   kind  mediate(모모 중재) · betray(다람 배신) · side(치노 편들기) · snark(시니 비꼼) · jab(부엉 찌르기)
+   치환자 없음 — 어느 장면에 끼워도 안전하게.                        */
+const INTERJECTS=[
+
+  { id:'ij-mo-half', kind:'mediate', min:1, mood:0, bond:[], beats:[
+      {w:'mo', msg:'둘 다 반은 맞아', act:'nod', fx:'none'}
+  ]},
+  { id:'ij-mo-water', kind:'mediate', min:2, mood:0, bond:[], beats:[
+      {w:'mo', msg:'잠깐, 물 한 잔',        act:'turn', fx:'none'},
+      {w:'si', msg:'지금 그 타이밍이냐',    act:'shake',fx:'sweat'}
+  ]},
+  { id:'ij-mo-coin', kind:'mediate', min:1, mood:0, bond:[], beats:[
+      {w:'mo', msg:'동전 던질까',           act:'none', fx:'note'}
+  ]},
+  { id:'ij-mo-slow-talk', kind:'mediate', min:2, mood:0, bond:[], beats:[
+      {w:'mo', msg:'천천히 풀어 말해',      act:'nod',  fx:'none'},
+      {w:'bu', msg:'요점만 말하면 된다',    act:'lean', fx:'none'}
+  ]},
+  { id:'ij-da-switch', kind:'betray', min:1, mood:0, bond:[], beats:[
+      {w:'da', msg:'나 이쪽으로 갈아탄다',  act:'hop',  fx:'sweat'}
+  ]},
+  { id:'ij-da-erase', kind:'betray', min:2, mood:0, bond:[['da','bu',-1]], beats:[
+      {w:'da', msg:'방금 적은 건 지운다',   act:'hop',  fx:'none'},
+      {w:'bu', msg:'정정이 너무 잦다',      act:'lean', fx:'none'}
+  ]},
+  { id:'ij-da-log', kind:'betray', min:1, mood:0, bond:[], beats:[
+      {w:'da', msg:'이 논쟁도 기록해 둔다', act:'nod',  fx:'note'}
+  ]},
+  { id:'ij-ki-hand', kind:'side', min:1, mood:0, bond:[], beats:[
+      {w:'ki', msg:'저는 이쪽 손 들어요',   act:'hop',  fx:'heart'}
+  ]},
+  { id:'ij-ki-both', kind:'side', min:2, mood:0, bond:[['ki','si',1]], beats:[
+      {w:'ki', msg:'그 말도 맞긴 해요',     act:'nod',  fx:'none'},
+      {w:'si', msg:'편 좀 정해라',          act:'turn', fx:'none'}
+  ]},
+  { id:'ij-ki-share', kind:'side', min:1, mood:0, bond:[], beats:[
+      {w:'ki', msg:'싸우지 말고 나눠요',    act:'nod',  fx:'heart'}
+  ]},
+  { id:'ij-si-fight', kind:'snark', min:1, mood:-1, bond:[], beats:[
+      {w:'si', msg:'말싸움이 공부냐',       act:'shake',fx:'anger'}
+  ]},
+  { id:'ij-si-point', kind:'snark', min:2, mood:0, bond:[], beats:[
+      {w:'si', msg:'결론부터 말해',         act:'turn', fx:'none'},
+      {w:'bu', msg:'결론은 근거 다음이다',  act:'lean', fx:'none'}
+  ]},
+  { id:'ij-si-concede', kind:'snark', min:1, mood:1, bond:[], beats:[
+      {w:'si', msg:'틀린 말은 아니네',      act:'nod',  fx:'none'}
+  ]},
+  { id:'ij-bu-basis', kind:'jab', min:1, mood:0, bond:[], beats:[
+      {w:'bu', msg:'근거가 빠졌다',         act:'lean', fx:'none'}
+  ]},
+  { id:'ij-bu-two', kind:'jab', min:2, mood:-1, bond:[['bu','da',-1]], beats:[
+      {w:'bu', msg:'주장만 두 개다',        act:'lean', fx:'none'},
+      {w:'da', msg:'그럼 내가 하나 접지',   act:'hop',  fx:'sweat'}
+  ]},
+  { id:'ij-bu-hold', kind:'jab', min:1, mood:0, bond:[], beats:[
+      {w:'bu', msg:'판정은 보류한다',       act:'none', fx:'note'}
+  ]},
+  { id:'ij-mo-sleepy', kind:'mediate', min:1, mood:0, bond:[], beats:[
+      {w:'mo', msg:'나는 졸린 쪽인데',      act:'none', fx:'none'}
+  ]},
+  { id:'ij-da-both', kind:'betray', min:2, mood:0, bond:[['da','mo',1]], beats:[
+      {w:'da', msg:'양쪽에 다 적어두면 돼', act:'hop',  fx:'none'},
+      {w:'mo', msg:'그게 제일 다람이답다',  act:'nod',  fx:'none'}
+  ]}
+];
+
+/* ── 집계 ──────────────────────────────────────────────────────────
+   DEBATES   26장면 (4beat 6 · 5beat 17 · 6beat 3), 논쟁 축 26종
+     암기vs이해 · 넓게vs깊게 · 기출vs기본서 · 표암기vs흐름이해 ·
+     오답복습vs새문제 · 속도vs정확도 · 아침vs심야 · 몰아서vs매일조금 ·
+     단원우선순위 · 약점vs강점 · 혼자풀기vs설명 · 힌트vs버티기 ·
+     용어정의vs사례 · 무작위vs단원순서 · 모의고사vs단원문제 ·
+     오답노트쓰기vs읽기 · 장시간vs짧게여러번 · 법규vs기술 ·
+     약어vs풀이 · 복습간격 · 함정찾기vs개념정독 · 문제수vs한문제 ·
+     넘기기vs붙잡기 · 전날새것vs본것 · 강의vs문제 · 개수목표vs시간목표
+     win 분포 a 6 · b 10 · draw 10
+   ACCORDS   13장면 (3beat 9 · 4beat 4) — 전부 관계값 상승(+1~+2)
+   INTERJECTS 18조각 (1줄 11 · 2줄 7) — mediate 5 · betray 4 · side 3 · snark 3 · jab 3
+   총 대사 195줄 (DEBATES 127 · ACCORDS 43 · INTERJECTS 25)
+   검증: 22자 초과 0 · 같은 배역 연속 발화 0 · min=실제 등장 인원 일치 ·
+        기존 대사(AMB·TALKS·L·LINE·SUB) 중복 0 · 내부 중복 0 ·
+        치환자 없는 줄 ≥2/장면(1줄 조각은 치환자 미사용) ·
+        fx 장면당 ≤2(논쟁·합의는 1~2) · win·mood·bond 값 유효 · bond 배역 전원 장면 등장
+   ────────────────────────────────────────────────────────────────── */
+
+/* ═══════════ 🗳 사회 동역학 — 논쟁·동의 ═══════════
+   읽는 화면에서 캐릭터가 ★너무 조금★ 나왔다. 원인은 둘이었다.
+     ① 간격이 42~88초이고 말할수록 최대 2.44배까지 벌어졌다(최대 3분 침묵)
+     ② 트리거가 시간뿐이라, 스크롤로 새 단원에 들어가도 아무 일이 없었다
+   그래서 ★섹션 진입★ 을 주 트리거로 삼고, 시간은 보조로 돌린다.
+
+   재미의 축은 ★의견 충돌★ 이다 — 같은 단원을 두고 "이게 더 중요해" 로 갈리고,
+   편이 갈리고, 다람이는 이기는 쪽에 붙고, 모모가 중재한다. 그 결과가
+   세력 균형(S.soc.mood)·관계(S.soc.rel)에 남아 다음 장면이 달라진다.
+
+   원칙 — ① 읽기를 방해하지 않는다(빠르게 스크롤 중이면 침묵)
+        ② 한 섹션에서 한 번(같은 자리에서 두 번 말하지 않는다)
+        ③ 모의고사는 성역 ④ XP·점수는 건드리지 않는다(재미와 학습을 섞지 않는다)
+        ⑤ 대본이 없으면 기존 장면으로 대신한다(느슨한 결합) */
+const SOCIAL=(()=>{
+  const READING={concept:1,sheet:1,note:1};
+  const seen={};                       /* 섹션 id → 이미 말했다 */
+  let lastAt=0, lastAxis='', vel=0, lastY=0, lastT=0, n=0;
+
+  /* 스크롤 속도 — 빠르게 훑는 중에는 말을 걸지 않는다(찾는 중이라는 뜻이다) */
+  addEventListener('scroll',()=>{
+    const y=scrollY, t=Date.now(), dt=Math.max(16,t-lastT);
+    vel=vel*0.6+Math.abs(y-lastY)/dt*1000*0.4;    /* px/s, 지수 평활 */
+    lastY=y; lastT=t;
+  },{passive:true});
+
+  const has=k=>typeof window[k]!=='undefined'||(()=>{try{return eval('typeof '+k)!=='undefined'}catch(e){return false}})();
+  const pool=k=>{ try{ return eval(k)||[] }catch(e){ return [] } };
+
+  /** 치환자 — 값이 없으면 그 줄을 쓰지 않는다(빈칸이 새면 바로 가짜가 된다) */
+  function fill(msg,c){
+    let bad=false;
+    const out=String(msg).replace(/\{(\w+)\}/g,(m,k)=>{
+      const v=c[k];
+      if(v===''||v===undefined||v===null)  { bad=true; return m }
+      return v;
+    });
+    return bad?null:out;
+  }
+  function ctxOf(note){
+    const tot=ALLQ.length;
+    const others=(CPPG.notes||[]).filter(x=>note&&x.t&&x.t!==note.t);
+    const o2=others.length?others[(Math.random()*others.length)|0]:null;
+    return {
+      unit:(note&&(note.t||note.title))||'',
+      unit2:(o2&&(o2.t||o2.title))||'',
+      sub:note?subShort(note.s):'',
+      wrong:Object.keys(S.wrong).length||'',
+      pct:tot?Math.round(S.solved.length/tot*100):''
+    };
+  }
+  /** 장면 하나를 만든다 — 치환 실패한 줄은 버리고, 남은 줄로 장면을 세운다 */
+  function build(sc,c){
+    const beats=[];
+    (sc.beats||[]).forEach(b=>{
+      const msg=fill(b.msg,c);
+      if(!msg)return;
+      if(beats.length&&beats[beats.length-1].w===b.w)return;   /* 같은 배역 연속 금지 */
+      beats.push(Object.assign({},b,{msg}));
+    });
+    if(beats.length<3)return null;
+    /* 난입 — 3분의 1 확률로 제3자가 끼어든다(누가 낄지는 아직 무대에 없는 배역) */
+    const ij=pool('INTERJECTS');
+    if(ij.length&&Math.random()<.34&&beats.length>=3){
+      const on=new Set(beats.map(b=>b.w));
+      const cand=ij.filter(x=>!on.has(x.w)&&fill(x.msg,c));
+      if(cand.length){
+        const pick=cand[(Math.random()*cand.length)|0];
+        beats.splice(beats.length-1,0,{w:pick.w,msg:fill(pick.msg,c),
+                                       act:pick.act||'nod',fx:pick.fx||'none'});
+      }
+    }
+    return {id:sc.id||'ad-hoc',when:'debate',beats:beats.slice(0,6)};
+  }
+  /** 결과를 남긴다 — 이겼다고 사용자에게 지시하지 않는다. 판만 기운다. */
+  function outcome(sc){
+    if(typeof sc.mood==='number'&&sc.mood)CAST.tilt(sc.mood);
+    (sc.bond||[]).forEach(([a,b,d])=>{ if(CAST.bond)CAST.bond(a,b,d) });
+    if(sc.win==='a'||sc.win==='b')n++;
+  }
+  /** 논쟁/동의 중 하나를 골라 재생 */
+  function spark(note,force){
+    if(S.mascot===false||S.crowd===false)return false;
+    if(quiz&&quiz.mode==='exam')return false;
+    if(document.hidden)return false;
+    if(!force&&vel>1400)return false;                     /* 빠르게 훑는 중 — 조용히 */
+    const gap=Date.now()-lastAt;
+    /* 장면은 4~6줄이 몰아서 나온다 — 간격이 짧으면 분당 20줄을 넘어 소음이 된다.
+       실측(빠른 스크롤 50초)에서 분당 16.7줄이 나왔고, 그 절반쯤이 적당했다. */
+    if(gap<22000)return false;
+    const c=ctxOf(note);
+    const debates=pool('DEBATES'), accords=pool('ACCORDS');
+    /* 동의(3):논쟁(7) — 싸움만 하면 피곤하고, 화기애애만 하면 심심하다 */
+    const wantAccord=accords.length&&Math.random()<.3;
+    let list=wantAccord?accords:debates;
+    if(!list.length)list=wantAccord?debates:accords;
+    if(!list.length)return TALK.maybe('study');           /* 대본이 없으면 기존 장면으로 */
+    const alt=list.filter(x=>x.axis!==lastAxis);
+    const sc=(alt.length?alt:list)[(Math.random()*(alt.length?alt.length:list.length))|0];
+    const built=build(sc,c);
+    if(!built)return false;
+    TALK.relax(60000);                                    /* 섹션 진입은 자격 있는 트리거 */
+    const ok=TALK.scene(built,true);
+    if(ok){ lastAt=Date.now(); lastAxis=sc.axis||''; outcome(sc) }
+    return ok;
+  }
+  return {
+    /** READ 가 새 섹션을 알려 준다 — ★한 섹션에서 한 번만★ */
+    section(id){
+      if(!id||!READING[view])return;
+      if(seen[id])return;
+      seen[id]=1;
+      const note=(CPPG.notes||[]).find(n=>('cn-'+n.no)===id);
+      /* 섹션에 들어와도 매번 떠들면 잔소리다 — 절반쯤만 */
+      setTimeout(()=>{ if(Math.random()<.5)spark(note,false) },900+Math.random()*1200);
+    },
+    /** 시간 기반 보조 트리거(AMBIENT 가 부른다) */
+    tick(){
+      if(!READING[view])return false;
+      const note=(CPPG.notes||[]).find(n=>('cn-'+n.no)===(READ.now&&READ.now()));
+      return spark(note,false);
+    },
+    /** 사용자가 캐릭터를 누르면 그 편을 드는 것으로 읽는다(판만 기운다) */
+    cheerFor(w){
+      const warm={ki:1,mo:1}, sharp={si:1,bu:1};
+      if(warm[w])CAST.tilt(2); else if(sharp[w])CAST.tilt(-2);
+    },
+    stats(){ return {말한섹션:Object.keys(seen).length,논쟁수:n,스크롤속도:Math.round(vel)} }
   };
 })();
 
