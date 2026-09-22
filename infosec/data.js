@@ -1070,7 +1070,7 @@ CPPG.notes = [
     ['★증분(Incremental)★','★직전 백업★ 이후 변경분','★가장 짧다★','★가장 길다★','전체 + ★모든 증분★'],
     ['★차등(Differential)★','★마지막 전체 백업★ 이후 변경분','중간','중간','전체 + ★최신 차등 1개★']
   ]}},
-  { h:'RPO·RTO 타임라인', cap:'손실 시점과 복구 시간의 구분', mmd:'flowchart LR\n  A["마지막 백업 시점"] -->|"RPO · 허용 데이터 손실"| B["장애 발생"]\n  B -->|"RTO · 허용 복구 시간"| C["시스템 복구 완료"]\n  C -->|"WRT · 업무 재개 준비"| D["정상 업무 재개"]\n  B -.->|"MTD = RTO + WRT"| D' },
+  { h:'RPO·RTO 타임라인', cap:'손실 시점과 복구 시간의 구분', mmd:'flowchart LR\n  A["마지막<br/>백업 시점"] -->|"RPO<br/>허용 데이터 손실"| B["장애 발생"]\n  B -->|"RTO<br/>허용 복구 시간"| C["시스템<br/>복구 완료"]\n  C -->|"WRT<br/>업무 재개 준비"| D["정상 업무 재개"]\n  B -.->|"MTD = RTO + WRT"| D' },
   { h:'복구 지표', li:[
     '★RPO★ (Recovery Point Objective) — 허용 가능한 ★데이터 손실량★ (얼마나 과거로 돌아가는가)',
     '★RTO★ (Recovery Time Objective) — 허용 가능한 ★복구 시간★',
@@ -1190,7 +1190,7 @@ CPPG.notes = [
     ['★Protocol 기반★','★서버·장비 자원 고갈★','SYN Flood · Ping of Death · 단편화 공격'],
     ['★Application 기반★','L7 처리 자원 고갈 · ★소량 트래픽★','★HTTP GET/POST Flood · Slowloris · RUDY★']
   ]}},
-  { h:'반사·증폭 공격 구조', cap:'위조 질의가 응답 폭주로', mmd:'flowchart LR\n  A["공격자"] -->|"출발지 IP를 피해자로 위조한 소량 질의"| R["개방 리졸버 · NTP · Memcached"]\n  R -->|"질의보다 큰 응답이 대량 반사"| V["피해자 서버"]\n  V -.->|"대역폭 고갈"| X["서비스 거부"]' },
+  { h:'반사·증폭 공격 구조', cap:'위조 질의가 응답 폭주로', mmd:'flowchart LR\n  A["공격자"] -->|"출발지 IP 위조<br/>소량 질의"| R["개방 리졸버<br/>NTP · Memcached"]\n  R -->|"질의보다 큰 응답<br/>대량 반사"| V["피해자 서버"]\n  V -.->|"대역폭 고갈"| X["서비스 거부"]' },
   { h:'반사·증폭(Reflection·Amplification)', li:[
     '출발지를 피해자로 위조해 ★응답이 피해자에게 쏟아지게★ 만드는 구조',
     '증폭률 — DNS 약 50배 · ★NTP 약 556배★ · ★Memcached 약 51,000배★',
@@ -1666,7 +1666,7 @@ CPPG.notes = [
 
 { s:'s3', no:'3-11', t:'침해대응·포렌식', title:'침해사고 대응 절차와 디지털 포렌식', body:[
   { h:'해커의 공격 단계', li:['★정보 수집 → 침투 → 권한 상승 → 백도어 설치 → 흔적 제거★'] },
-  { h:'침해사고 대응 6단계 순환', cap:'봉쇄가 제거보다 먼저', mmd:'flowchart LR\n  P["① 준비"] --> D["② 탐지·분석"]\n  D --> C["③ 봉쇄 · 확산 차단"]\n  C --> E["④ 제거"]\n  E --> R["⑤ 복구"]\n  R --> L["⑥ 교훈"]\n  L -.->|"절차 개선 환류"| P' },
+  { h:'침해사고 대응 6단계 순환', cap:'봉쇄가 제거보다 먼저', mmd:'flowchart LR\n  P["① 준비"] --> D["② 탐지·분석"]\n  D --> C["③ 봉쇄"]\n  C --> E["④ 제거"]\n  E --> R["⑤ 복구"]\n  R --> L["⑥ 교훈"]\n  L -.->|"절차 개선"| P' },
   { h:'침해사고 대응 6단계 (★순서 암기★)', tb:{ head:['단계','핵심 활동'], rows:[
     ['① 준비(Preparation)','체계·연락망·도구 사전 구축'],
     ['② 탐지·분석(Detection & Analysis)','징후 확인·범위 판단'],
@@ -1870,7 +1870,7 @@ CPPG.notes = [
 ]},
 
 { s:'s4', no:'4-7', t:'전자서명·PKI', title:'PKI 구성요소와 인증서 폐기 확인', body:[
-  { h:'인증서 발급과 폐기 확인 경로', cap:'RA는 확인 · CA는 발급', mmd:'flowchart LR\n  U["이용자 · 키쌍 생성"] -->|"① 발급 신청"| RA["RA · 신원 확인"]\n  RA -->|"② 확인 결과 전달"| CA["CA · 발급 및 서명"]\n  CA -->|"③ 인증서 전달"| U\n  CA -->|"④ 인증서·CRL 게시"| RP["저장소"]\n  RL["검증자"] -->|"⑤ 유효성 질의 · CRL 또는 OCSP"| VA["VA · 검증 서비스"]\n  VA --> RP' },
+  { h:'인증서 발급과 폐기 확인 경로', cap:'RA는 확인 · CA는 발급', mmd:'flowchart LR\n  U["이용자<br/>키쌍 생성"] -->|"① 발급 신청"| RA["RA<br/>신원 확인"]\n  RA -->|"② 확인 결과"| CA["CA<br/>발급·서명"]\n  CA -->|"③ 인증서 전달"| U\n  CA -->|"④ 인증서·CRL 게시"| RP["저장소"]\n  RL["검증자"] -->|"⑤ 유효성 질의<br/>CRL 또는 OCSP"| VA["VA<br/>검증 서비스"]\n  VA --> RP' },
   { h:'PKI 구성요소', tb:{ head:['요소','풀이','역할'], rows:[
     ['★CA★','Certificate Authority','★인증서 발급·서명·폐기★ — 신뢰의 뿌리'],
     ['★RA★','Registration Authority','★신원 확인·등록 대행★ (발급은 하지 않음)'],
@@ -3629,9 +3629,9 @@ CPPG.order.push(
   {no:'1-13', h:'RAID 선택 분기', cap:'요구 조건에 따른 레벨 결정', mmd:"flowchart TD\n  A[요구 조건] -->|성능| B[RAID 0]\n  A -->|가용성| C[RAID 1]\n  A -->|절충| D[RAID 5]\n  D -->|이중 장애| E[RAID 6]\n  B --> F[중복 없음 취약]\n  C --> G[최소 2개 용량 절반]\n  D --> H[최소 3개 패리티 1]\n  E --> I[최소 4개 패리티 2]"},
   {no:'1-15', h:'샌드박스 격리 구조', cap:'커널의 샌드박스가 최종 방어선', mmd:"flowchart TD\n  A[앱 계층 APK] --> B[프레임워크]\n  B --> C[ART 런타임]\n  C --> D[HAL 추상화]\n  D --> E[리눅스 커널]\n  E --> F[앱별 UID 샌드박스]\n  E --> G[SELinux 접근통제]\n  A -->|설치 시| H[앱 서명 검증]\n  F --> I[루팅 시 무력화]\n  G --> I"},
   {no:'5-1', h:'목표와 문서 위계', cap:'상위 정책에서 기록까지 하향 전개', mmd:"flowchart TD\n  A[기밀성] --> D[정보보호 정책]\n  B[무결성] --> D\n  C[가용성] --> D\n  D -->|최상위 선언| E[지침 표준]\n  E -->|세부 기준| F[절차 매뉴얼]\n  F -->|수행 근거| G[양식 기록]\n  G -->|개선 반영| D"},
-  {no:'5-3', h:'전략 수립 순환', cap:'BIA 결과가 복구 전략을 결정', mmd:"flowchart LR\n  A[1 범위 기획] --> B[2 사업영향분석]\n  B -->|RTO RPO| C[3 복구전략 개발]\n  C --> D[4 복구계획 수립]\n  D --> E[5 훈련 유지보수]\n  E -->|개선 반영| A\n  C -->|RTO 짧음| F[미러 핫 사이트]\n  C -->|RTO 김| G[웜 콜드 사이트]"},
-  {no:'5-4', h:'SDLC 보안 시점', cap:'앞 단계일수록 대응 비용이 작다', mmd:"flowchart LR\n  A[요구 분석] -->|영향평가| B[설계]\n  B -->|위협모델링| C[구현]\n  C -->|시큐어코딩| D[시험]\n  D -->|취약점진단| E[운영]\n  E -->|파기 절차| F[기본값 보호]\n  G[사후 대응] -->|사고 후| H[비용 급증]"},
-  {no:'5-5', h:'인증 취득 절차', cap:'발급 후에도 사후 갱신 심사 지속', mmd:"flowchart LR\n  A[인증 신청] --> B[계약 예비점검]\n  B --> C[인증 심사]\n  C -->|결함 발견| D[보완 조치]\n  D --> C\n  C --> E[인증위원회 심의]\n  E --> F[인증서 발급 3년]\n  F -->|매년 1회| G[사후 심사]\n  F -->|만료 전| H[갱신 심사]"},
+  {no:'5-3', h:'전략 수립 순환', cap:'BIA 결과가 복구 전략을 결정', mmd:"flowchart LR\n  A[① 범위 기획] --> B[② BIA]\n  B -->|RTO·RPO| C[③ 복구전략]\n  C --> D[④ 복구계획]\n  D --> E[⑤ 훈련·유지]\n  E -->|개선 반영| A\n  C -->|RTO 짧음| F[미러·핫]\n  C -->|RTO 김| G[웜·콜드]"},
+  {no:'5-4', h:'SDLC 보안 시점', cap:'앞 단계일수록 대응 비용이 작다', mmd:"flowchart TD\n  A[요구분석] -->|영향평가| B[설계]\n  B -->|위협모델링| C[구현]\n  C -->|시큐어코딩| D[시험]\n  D -->|취약점진단| E[운영]\n  E -->|파기 절차| F[기본값 보호]\n  G[사후 대응] -->|사고 후| H[비용 급증]"},
+  {no:'5-5', h:'인증 취득 절차', cap:'발급 후에도 사후 갱신 심사 지속', mmd:"flowchart LR\n  A[신청] --> B[예비점검]\n  B --> C[심사]\n  C -->|결함| D[보완]\n  D --> C\n  C --> E[위원회]\n  E --> F[인증서 발급]\n  F -->|매년| G[사후 심사]\n  F -->|만료 전| H[갱신 심사]"},
   {no:'5-6', h:'CC 평가 구조', cap:'PP·ST 기준으로 TOE 평가', mmd:"flowchart TD\n  A[PP 보호프로파일] -->|요구 참조| B[ST 보안목표명세]\n  B -->|평가 범위| C[TOE 평가대상]\n  C --> D[평가기관 심사]\n  D -->|보증 충족| E[EAL 1 에서 7]\n  E --> F[CCRA 상호인정]\n  A --> G[제품군 공통요구]"},
   {no:'5-7', h:'가명과 익명의 갈림', cap:'복원 가능성이 법 적용을 가른다', mmd:"flowchart TD\n  A[개인 식별정보] -->|가명처리| B[가명정보]\n  A -->|익명처리| C[익명정보]\n  B -->|추가정보 결합| A\n  B --> D[개인정보에 해당]\n  B --> E[추가정보 분리보관]\n  C --> F[개인정보 아님]\n  D --> G[통계 연구 공익기록]\n  F --> H[동의 없이 활용]"},
   {no:'5-8', h:'개인정보 생애주기', cap:'단계마다 적용되는 원칙과 권리', mmd:"flowchart LR\n  A[수집] -->|최소 수집| B[이용]\n  B -->|목적 범위| C[제공 위탁]\n  C -->|고지 동의| D[보관]\n  D -->|목적 달성| E[지체없이 파기]\n  F[정보주체] -->|열람 정정| D\n  F -->|처리 정지| B\n  F -->|삭제 요구| C"},
@@ -3639,22 +3639,22 @@ CPPG.order.push(
   {no:'5-10', h:'광고 전송 요건', cap:'옵트인이 원칙 야간은 별도 동의', mmd:"flowchart TD\n  A[영리 광고성 정보] -->|옵트인| B[사전 수신동의]\n  A -->|동의 없음| C[전송 금지]\n  B --> D[제목 앞 광고 표기]\n  D --> E[수신거부 방법 명시]\n  E --> F[무료 수신거부 처리]\n  B -->|야간 전송| G[21시 8시 별도동의]\n  B -->|2년마다| H[수신동의 재확인]"},
   {no:'2-2', h:'트레이스루트 원리', cap:'TTL 1씩 늘려 경로 추적', mmd:"sequenceDiagram\n  participant S as 송신 호스트\n  participant R1 as 라우터 1\n  participant R2 as 라우터 2\n  participant D as 목적지\n  S->>R1: ① TTL 1 패킷 전송\n  R1->>S: ② ICMP 시간 초과 응답\n  S->>R2: ③ TTL 2 패킷 전송\n  R2->>S: ④ ICMP 시간 초과 응답\n  S->>D: ⑤ TTL 3 패킷 전송\n  D->>S: ⑥ 목적지 도달 응답\n  Note over S,D: 응답 IP 를 홉 순서대로 기록"},
   {no:'2-4', h:'TCP 스캔 판정 흐름', cap:'열림·닫힘·필터링 구분법', mmd:"flowchart TD\n  A[SYN 스캔 전송] --> B{응답 종류}\n  B -->|SYNACK| C[포트 열림]\n  B -->|RST| D[포트 닫힘]\n  B -->|무응답| E[필터링 상태]\n  C --> F[RST 전송 종료]\n  G[NULL FIN XMAS] --> H{응답 종류}\n  H -->|무응답| I[열림 또는 필터]\n  H -->|RST| J[포트 닫힘 판정]"},
-  {no:'2-9', h:'탐지와 차단 위치', cap:'차단은 인라인 탐지는 복사', mmd:"flowchart LR\n  A[인터넷] --> B[방화벽]\n  B --> C[DMZ 웹서버]\n  B --> D[IPS 인라인 통과]\n  D --> E[내부 스위치]\n  E --> F[내부망 단말]\n  E -->|미러링| G[IDS 복사 수신]\n  G --> H[탐지 경보만]"},
+  {no:'2-9', h:'탐지와 차단 위치', cap:'차단은 인라인 탐지는 복사', mmd:"flowchart LR\n  A[인터넷] --> B[방화벽]\n  B --> C[DMZ 웹서버]\n  B --> D[IPS 인라인]\n  D --> E[내부 스위치]\n  E --> F[내부망 단말]\n  E -->|미러링| G[IDS 미러]\n  G --> H[탐지·경보]"},
   {no:'2-10', h:'WPA2 키 합의 절차', cap:'논스 교환으로 PTK 생성', mmd:"sequenceDiagram\n  participant C as 단말 STA\n  participant A as AP 인증자\n  Note over C,A: 사전 공유된 PMK 보유 상태\n  A->>C: ① ANonce 전달\n  C->>A: ② SNonce 와 MIC 전달\n  Note over C,A: 양쪽이 동일한 PTK 산출\n  A->>C: ③ GTK 와 MIC 전달\n  C->>A: ④ 설치 완료 응답\n  Note over C,A: 3단계 재전송 악용이 KRACK"},
   {no:'3-3', h:'브라우저 전송 판정', cap:'속성별 전송·접근 제한', mmd:"flowchart TD\n  A[서버 Set-Cookie] --> B[브라우저 저장]\n  B --> C{HttpOnly 여부}\n  C -->|설정| D[스크립트 접근 차단]\n  B --> E{Secure 여부}\n  E -->|설정| F[HTTPS 만 전송]\n  B --> G{SameSite 값}\n  G -->|Strict| H[타 사이트 전송 차단]\n  G -->|Lax| I[최상위 GET 만 허용]"},
   {no:'3-4', h:'HSTS 동작 원리', cap:'평문 요청 자체를 없앤다', mmd:"flowchart TD\n  A[최초 HTTPS 접속] --> B[HSTS 헤더 수신]\n  B --> C[브라우저 정책 저장]\n  C --> D[이후 http 입력]\n  D --> E[브라우저 HTTPS 전환]\n  E --> F[평문 요청 미발생]\n  F --> G[SSL 스트리핑 차단]\n  H[Preload 등록] --> I[최초 접속도 보호]"},
   {no:'3-5', h:'BOLA 발생 경로', cap:'객체 ID 변조와 권한 누락', mmd:"flowchart TD\n  A[정상 사용자 요청] --> B[API 객체 ID 전달]\n  C[공격자 ID 변조] --> B\n  B --> D{소유권 검증}\n  D -->|검증 수행| E[본인 자원만 반환]\n  D -->|검증 누락| F[권한 우회 성공]\n  F --> G[타인 데이터 노출]\n  G --> H[API1 BOLA 항목]\n  G --> I[웹 A01 접근통제]"},
   {no:'3-6', h:'CSRF 성립 조건', cap:'쿠키 자동 첨부가 핵심', mmd:"sequenceDiagram\n  participant U as 피해자 브라우저\n  participant B as 은행 사이트\n  participant M as 공격자 페이지\n  U->>B: ① 로그인 후 세션 쿠키 저장\n  U->>M: ② 악성 페이지 방문\n  M->>U: ③ 위조 송금 요청 삽입\n  U->>B: ④ 쿠키가 자동 첨부되어 전송\n  B->>U: ⑤ 정상 요청으로 오인해 처리\n  Note over U,B: CSRF 토큰과 SameSite 로 차단"},
   {no:'3-8', h:'암호화 적용 계층', cap:'API·플러그인·TDE 위치', mmd:"flowchart TD\n  A[응용 프로그램] -->|API| B[앱단 암복호화]\n  A --> C[DB 서버]\n  C -->|플러그인| D[DB 단 암복호화]\n  C --> E[스토리지]\n  E -->|TDE| F[파일 단위 암호화]\n  B --> G[암호문 저장]\n  D --> G\n  F --> G"},
-  {no:'3-9', h:'진단 도구 투입 시점', cap:'SAST는 코드 DAST는 실행', mmd:"flowchart LR\n  A[설계] --> B[구현 코딩]\n  B --> C[빌드 통합]\n  C --> D[테스트 실행]\n  D --> E[운영 배포]\n  B -->|정적 분석| F[SAST 소스 점검]\n  D -->|동적 분석| G[DAST 실행 점검]\n  D -->|에이전트| H[IAST 내부 관측]\n  E -->|모의해킹| I[취약점 점검]"},
+  {no:'3-9', h:'진단 도구 투입 시점', cap:'SAST는 코드 DAST는 실행', mmd:"flowchart LR\n  A[설계] --> B[구현]\n  B --> C[빌드]\n  C --> D[테스트]\n  D --> E[운영]\n  B -->|정적| F[SAST]\n  D -->|동적| G[DAST]\n  D -->|에이전트| H[IAST]\n  E -->|모의해킹| I[취약점 점검]"},
   {no:'3-10', h:'SET 이중서명', cap:'상점과 PG가 볼 정보 분리', mmd:"flowchart TD\n  A[주문정보 OI] --> B[OI 해시값]\n  C[지불정보 PI] --> D[PI 해시값]\n  B --> E[두 해시 연결]\n  D --> E\n  E --> F[연결값 재해시]\n  F -->|서명| G[이중서명 생성]\n  G --> H[상점은 OI 확인]\n  G --> I[PG 는 PI 확인]"},
   {no:'4-2', h:'파이스텔 한 라운드', cap:'L과 R 교차로 반복 구성', mmd:"flowchart TD\n  A[평문 블록 분할] --> B[좌측 L0]\n  A --> C[우측 R0]\n  C --> D[라운드 함수 F]\n  E[라운드 키 Kn] --> D\n  D --> F[L0 와 XOR]\n  B --> F\n  C --> G[다음 좌측 L1]\n  F --> H[다음 우측 R1]\n  G --> I[라운드 반복 결합]\n  H --> I"},
-  {no:'4-3', h:'CBC 체이닝 흐름', cap:'앞 암호문이 다음 입력', mmd:"flowchart LR\n  A[초기벡터 IV] --> B[XOR 연산 1]\n  C[평문 블록 1] --> B\n  B --> D[블록 암호화 1]\n  D --> E[암호문 블록 1]\n  E --> F[XOR 연산 2]\n  G[평문 블록 2] --> F\n  F --> H[블록 암호화 2]\n  H --> I[암호문 블록 2]"},
+  {no:'4-3', h:'CBC 체이닝 흐름', cap:'앞 암호문이 다음 입력', mmd:"flowchart LR\n  A[IV] --> B[⊕]\n  C[평문①] --> B\n  B --> D[암호화] --> E[암호문①]\n  E --> F[⊕]\n  G[평문②] --> F\n  F --> H[암호화] --> I[암호문②]"},
   {no:'4-4', h:'DH 키 교환 절차', cap:'비밀값 없이 공유키 도출', mmd:"sequenceDiagram\n  participant A as 앨리스\n  participant B as 밥\n  Note over A,B: 공개 파라미터 소수 p 와 생성원 g 합의\n  A->>B: ① g^a mod p 공개값 전송\n  B->>A: ② g^b mod p 공개값 전송\n  Note over A,B: 받은 값에 각자 비밀지수 a 와 b 적용\n  Note over A,B: 동일한 공유 비밀 g^ab mod p 도출\n  Note over A,B: 인증 없으면 중간자 공격에 취약"},
   {no:'4-5', h:'HMAC 생성 구조', cap:'키를 두 번 섞어 해시', mmd:"flowchart TD\n  A[대칭키 K] --> B[ipad 와 XOR]\n  C[메시지 M] --> D[내부 해시 입력]\n  B --> D\n  D --> E[내부 해시값]\n  A --> F[opad 와 XOR]\n  F --> G[외부 해시 입력]\n  E --> G\n  G --> H[HMAC 태그]\n  H --> I[수신측 재계산 비교]"},
   {no:'4-8', h:'FIDO 인증 흐름', cap:'생체는 단말에서만 검증', mmd:"sequenceDiagram\n  participant U as 사용자\n  participant D as 단말 인증장치\n  participant S as 서비스 서버\n  S->>D: ① 챌린지 난수 전송\n  U->>D: ② 생체 확인 로컬 검증\n  D->>D: ③ 보관 중인 개인키 사용\n  D->>S: ④ 챌린지 서명값 응답\n  S->>S: ⑤ 등록된 공개키로 검증\n  Note over U,S: 생체정보는 서버로 전송되지 않음"},
   {no:'4-10', h:'인가 판정 경로', cap:'식별·인증 후 정책 적용', mmd:"flowchart TD\n  A[주체 접근 요청] --> B[식별 ID 제시]\n  B --> C{인증 자격 검증}\n  C -->|실패| D[접근 거부]\n  C -->|성공| E[인가 정책 판정]\n  E --> F[DAC 소유자 재량]\n  E --> G[MAC 보안등급 비교]\n  E --> H[RBAC 역할 권한]\n  E --> I[ABAC 속성 조합]\n  F --> J[허용 후 감사기록]\n  G --> J\n  H --> J\n  I --> J"},
-  {no:'4-11', h:'BLP Biba 방향', cap:'읽기·쓰기 허용 방향 반대', mmd:"flowchart TD\n  subgraph BLP기밀성\n  A[상위 등급 객체] -->|읽기 금지| B[주체]\n  B -->|쓰기 허용| A\n  B -->|쓰기 금지| C[하위 등급 객체]\n  C -->|읽기 허용| B\n  end\n  subgraph Biba무결성\n  D[상위 무결성 객체] -->|읽기 허용| E[주체]\n  E -->|쓰기 금지| D\n  E -->|쓰기 허용| F[하위 무결성 객체]\n  F -->|읽기 금지| E\n  end"}
+  {no:'4-11', h:'BLP Biba 방향', cap:'읽기·쓰기 허용 방향 반대', mmd:"flowchart TD\n  subgraph BLP기밀성\n  A[상위 등급 객체] -->|읽기 금지| B[주체]\n  B -->|쓰기 허용| A\n  B -->|쓰기 금지| C[하위 등급 객체]\n  C -->|읽기 허용| B\n  end\n  subgraph Biba무결성\n  D[상위 무결성 객체] -->|읽기 허용| E[주체]\n  E -->|쓰기 금지| D\n  E -->|쓰기 허용| F[하위 무결성 객체]\n  F -->|읽기 금지| E\n  end\n  C ~~~ D\n  linkStyle 8 stroke:transparent,stroke-width:0px"}
   ];
   var byNo = {};
   (CPPG.notes || []).forEach(function(n){ byNo[n.no] = n; });

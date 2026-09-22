@@ -2514,10 +2514,10 @@ html.nomotion .emark{display:none!important}
 .mmd{scrollbar-width:thin}
 .mmd::-webkit-scrollbar{height:8px}
 .mmd::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
-@media (max-width:520px){ .mmd svg{max-height:46vh} }
+
 .mmd .mmd-fallback{font-family:var(--f-num);font-size:12px;color:var(--tx3);
   white-space:pre-wrap;text-align:left;line-height:1.6}
-.mmd .mmd-cap{display:block;margin-top:6px;font-size:11.5px;color:var(--tx3)}
+.mmd .mmd-cap{display:block;margin-top:6px;font-size:12px;color:var(--tx2)}
 @media print{ #readbar,#readtag{display:none!important} .mmd{border-style:solid} }
 
 
@@ -3208,6 +3208,47 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
 .ghost .gh-note b{color:var(--tx2)}
 @media (max-width:520px){ .ghost .gh-t{font-size:17px} .ghost .gh-bars{height:34px} }
 
+
+/* ── 🖍 다이어그램 타이포 위계 ────────────────────────────────────
+   크기는 ★두 단계(14 / 13)★ 만 쓴다. 한글은 12px 아래로 내려가면 받침이
+   뭉개지고, 세 단계로 나누면 같은 그림 안에서 글자가 들쭉날쭉해 보인다.
+   나머지 위계는 ★굵기와 색★ 으로 만든다(손그림은 선이 흐려 굵기가 잘 먹는다).
+     1차(14 / 600~700 / --tx) 노드라벨 · 서브그래프 제목 · 액터
+     2차(13 / 500    / --tx2) 간선라벨 · 시퀀스 메시지
+     2차(13 / 500    / --tx ) 노트 — 박스 위라 색을 낮추지 않는다
+     캡션(12 / 400   / --tx2)
+   ※ Mermaid 는 14px·400 으로 박스를 재므로, 굵기만 올리면 글자가 넘칠 수
+     있다. 실측 결과 라벨이 박스의 ★최대 81.5%★ 만 쓰므로 600 은 안전하다. */
+.mmd svg .nodeLabel,.mmd svg .nodeLabel p{font-weight:600!important;letter-spacing:-.005em}
+.mmd svg .cluster-label span,.mmd svg .cluster-label p{font-weight:700!important;letter-spacing:.01em}
+/* 서브그래프 제목이 테두리 위에 걸쳐 읽히지 않던 것 — 배경으로 선을 끊는다 */
+.mmd svg .cluster-label p{background:var(--card2)!important;padding:0!important;
+  border-radius:5px;white-space:nowrap}
+/* ★Mermaid 는 라벨 상자를 400 굵기·패딩 0 기준으로 잰다★ — 굵기를 올리거나 패딩을
+   주면 그만큼 넘치고, foreignObject 의 기본 overflow:hidden 이 글자를 잘라 낸다
+   (실측: 서브그래프 제목 최대 14.8px 잘림 "BLP기밀성"→"BLP기밀<", 노드 라벨 33개 최대 4px).
+   상자를 다시 재게 할 수는 없으니 ★넘친 부분을 보이게★ 한다. */
+.mmd svg foreignObject{overflow:visible}
+.mmd svg .edgeLabel p{font-size:13px!important;font-weight:500!important;color:var(--tx2)!important}
+.mmd svg text.messageText{font-size:13px!important}
+.mmd svg text.noteText{font-size:13px!important}
+/* 캡션 — --tx3 은 dark 3.46 · light 2.95 로 AA 미달이었다 → --tx2 로 올린다 */
+.mmd .mmd-cap{font-size:12px;color:var(--tx2)}
+
+/* ── 🖍 손그림 보정 ───────────────────────────────────────────────
+   rough.js 는 한 선을 두세 번 떨면서 긋는다 — 가늘면 끊겨 보이고 대비가
+   실측치보다 낮게 느껴진다. ★감성은 유지하고 굵기로만 보정한다.★
+   (노드는 g.basic 안의 마지막 path 가 외곽선, 앞의 것은 빗금 채움) */
+.mmd svg g.rough-node>g.basic>path:last-of-type{stroke-width:1.9px!important}
+.mmd svg g.cluster>g>path{stroke-width:1.7px!important}
+.mmd svg rect.actor,.mmd svg rect.note{stroke-width:1.8px!important}
+
+/* ── ★모바일에서 그림을 눌러 담지 않는다★ ────────────────────────
+   max-height:46vh 는 SVG 의 가로세로비를 지키느라 ★폭까지 같이★ 줄인다.
+   실측: 360px 화면에서 57개 중 35개가 축소(최소 배율 0.517) → 14px 글자가
+   ★7.2px★ 로 떨어졌다. 26개가 13px 미만. 높이 제한을 버리고 세로로 길게
+   두면(원래 방침대로) 전부 14px 로 돌아온다. 넘치는 폭은 좌우 스크롤. */
+@media (max-width:520px){ .mmd svg{max-height:none} }
 </style>
 </head>
 <body>
@@ -10233,19 +10274,101 @@ const MMD=(()=>{
   let state='idle';                 /* idle | loading | ok | fail */
   const queue=[];
   const dark=()=>['dark','dawn','lamp'].indexOf(S.theme)>=0;
+  /* 토큰 → 색 계산 도구. 테마가 늘어도 손댈 곳이 없다. */
+  const CLR=(()=>{
+    const px=s=>{ s=(s||'').trim();
+      if(s[0]==='#'){ let h=s.slice(1);
+        if(h.length===3)h=h.split('').map(c=>c+c).join('');
+        return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)]; }
+      const m=s.match(/rgba?\(([^)]+)\)/);
+      if(m){ const p=m[1].split(/[,\s/]+/).filter(Boolean).map(Number); return [p[0],p[1],p[2]] }
+      return [0,0,0]; };
+    const hex=a=>'#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');
+    const mix=(a,b,p)=>{ const A=px(a),B=px(b); return hex([0,1,2].map(i=>A[i]*p+B[i]*(1-p))) };
+    /* WCAG 2.1 상대휘도 */
+    const lum=c=>{ const f=v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)};
+      return .2126*f(c[0])+.7152*f(c[1])+.0722*f(c[2]) };
+    const cr=(a,b)=>{ const l1=lum(px(a)),l2=lum(px(b));
+      return (Math.max(l1,l2)+.05)/(Math.min(l1,l2)+.05) };
+    /* 목표 대비에 닿을 때까지 글자색 쪽으로 민다(테두리·선용) */
+    const fit=(color,bg,target,toward)=>{ let o=color;
+      for(let p=0;p<=1.001;p+=0.05){ o=mix(toward,color,p); if(cr(o,bg)>=target)return o } return o };
+    /* 배경에 색조를 섞어 '면'을 만든다(목표 대비에 닿는 최소량만) */
+    const surf=(tint,bg,target)=>{ let o=bg;
+      for(let p=0.06;p<=0.40;p+=0.02){ o=mix(tint,bg,p); if(cr(o,bg)>=target)return o } return o };
+    return {px,hex,mix,lum,cr,fit,surf};
+  })();
+
   function conf(){
+    const cs=getComputedStyle(document.documentElement);
+    const T=k=>(cs.getPropertyValue(k)||'').trim();
+    const bg =T('--card2')||T('--card')||'#ffffff';   /* 그림이 놓이는 면 */
+    const tx =T('--tx'), tx2=T('--tx2'), tx3=T('--tx3');
+    const ac =T('--ac'), wa=T('--wa')||T('--ac2');
+    const isDark=CLR.lum(CLR.px(bg))<0.35;
+
+    /* ── 경계선: 비문자 3:1 → 손그림이 흐리므로 3.5 를 목표로 잡는다 ── */
+    const nodeBd = CLR.fit(tx2, bg, 3.5, tx);   /* 노드·액터 외곽선 (연필) */
+    const softBd = CLR.fit(tx3, bg, 3.5, tx);   /* 클러스터·생명선 (연한 연필) */
+    /* ── 면: 손그림 채움은 빗금(선)이라 1.45:1 이면 '면'으로 읽힌다 ── */
+    const nodeBk = CLR.surf(ac, bg, 1.45);
+    const noteBk = CLR.surf(wa, bg, 1.45);
+    const softBk = CLR.surf(ac, bg, 1.16);      /* 루프/alt 박스 */
+    const noteBd = CLR.fit(wa, noteBk, 3.5, tx);
+
     return {
       startOnLoad:false, securityLevel:'strict',
       look:'handDrawn', handDrawnSeed:7,          /* 같은 그림은 늘 같은 손맛으로 */
-      theme:dark()?'dark':'default',
-      /* ★글자 크기를 본문에 맞춘다★ — 본문 14px 인데 다이어그램이 10.8~16px 로
-         들쭉날쭉했다(실측). 축소 배율까지 곱해지면 11px 이하로 내려가 안 읽힌다. */
-      themeVariables:{ fontFamily:'inherit', fontSize:'14px' },
+
+      /* ★theme:'base'★ — 'dark'/'default' 내장 팔레트는 사이트 색과 무관한
+         라벤더·겨자색을 쓴다(lamp 의 세피아 화면에 회청색 상자가 떴다).
+         base 로 두고 아래 themeVariables 를 전부 토큰에서 계산한다. */
+      theme:'base',
+
+      /* ★fontSize 는 반드시 top-level 에도★ — Mermaid v11 의 시퀀스 렌더러는
+         sequence.actorFontSize / messageFontSize / noteFontSize 를 무시하고
+         config.fontSize(기본 16) 를 inline style 로 박는다(실측).
+         그래서 플로차트 14px · 시퀀스 16px 로 갈라져 있었다. */
+      fontSize:14,
+
+      themeVariables:{
+        fontFamily:'inherit', fontSize:'14px', darkMode:isDark,
+        background:bg,
+        /* 노드 */
+        primaryColor:nodeBk, mainBkg:nodeBk,
+        primaryBorderColor:nodeBd, nodeBorder:nodeBd,
+        primaryTextColor:tx, nodeTextColor:tx, textColor:tx, titleColor:tx,
+        secondaryColor:softBk, tertiaryColor:softBk,
+        /* 선·화살촉 */
+        lineColor:nodeBd, arrowheadColor:nodeBd,
+        /* 간선 라벨 — ★배경을 카드색으로★ 두면 선을 깔끔히 끊는다.
+           기본값 rgba(232,232,232,.8) 은 다크 테마에서 회색 알약이 되어
+           글자 대비를 4.43:1 로 떨어뜨렸다. */
+        edgeLabelBackground:bg, labelBackground:bg,
+        /* 서브그래프 — ★면을 칠하지 않는다★. 손그림 채움은 빗금이라
+           넓은 영역을 칠하면 안쪽 노드·글자와 겹쳐 읽기를 방해한다.
+           테두리(3.7~5.4:1)만으로 충분히 구분된다. */
+        clusterBkg:'transparent', clusterBorder:softBd,
+        /* 시퀀스 */
+        actorBkg:nodeBk, actorBorder:nodeBd, actorTextColor:tx, actorLineColor:softBd,
+        signalColor:nodeBd, signalTextColor:tx2,
+        noteBkgColor:noteBk, noteBorderColor:noteBd, noteTextColor:tx,
+        labelBoxBkgColor:softBk, labelBoxBorderColor:softBd, labelTextColor:tx,
+        loopTextColor:tx, activationBkgColor:softBk, activationBorderColor:nodeBd,
+        sequenceNumberColor:bg, altBackground:softBk
+      },
+
       /* ★useMaxWidth:false★ — 폭을 컨테이너에 맞춰 줄이면 글자까지 같이 작아진다.
          자연 크기로 그리고, 넘치면 표처럼 좌우로 밀어 본다(.mmd 가 스크롤 컨테이너). */
-      flowchart:{curve:'basis',padding:10,useMaxWidth:false,nodeSpacing:44,rankSpacing:48},
+      flowchart:{curve:'basis',padding:10,useMaxWidth:false,nodeSpacing:44,rankSpacing:48,
+                 htmlLabels:true,wrappingWidth:190},
+      /* actorFontSize/messageFontSize 는 v11 이 무시하지만(위 ③), 구버전·향후
+         복구를 대비해 남겨 둔다. ★굵기(FontWeight)는 실제로 먹는다★ — 실측 확인. */
       sequence:{actorMargin:44,width:140,height:38,mirrorActors:false,useMaxWidth:false,
-                actorFontSize:14,messageFontSize:14,noteFontSize:13.5}
+                actorFontSize:14,actorFontWeight:700,
+                messageFontSize:13,messageFontWeight:500,
+                noteFontSize:13,noteFontWeight:500,
+                wrap:true,wrapPadding:10}
     };
   }
   function boot(){
@@ -10291,6 +10414,12 @@ const MMD=(()=>{
     if(seq)order.sort((a,b)=>(a.y-b.y)||(a.x-b.x));
     order.forEach((o,i)=>{
       const p=o.e;
+      /* ★보이지 않는 링크(~~~)는 복제하지 않는다★ — Mermaid 는 선을 안 그리지만
+         여기서 복제해 흐름선을 얹으면 ★없는 관계를 뜻하는 점선★ 이 되살아난다
+         (실측: 보안모델 그림에서 BLP→Biba 로 유령 점선이 제목을 관통했다). */
+      const cs=getComputedStyle(p);
+      if(cs.stroke==='none'||cs.stroke==='transparent'||cs.stroke==='rgba(0, 0, 0, 0)'
+         ||parseFloat(cs.strokeWidth)===0||cs.opacity==='0')return;
       p.classList.add('mmd-edge');
       const f=p.cloneNode(false);
       f.setAttribute('class','mmd-flow');
