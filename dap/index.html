@@ -2351,7 +2351,7 @@ html[data-theme="dawn"]{--edge-boost:1.1}
 /* 표 머리글 아래 선 — 표는 학습의 핵심이라 ★머리글 한 줄만★, 아주 옅게.
    ★반드시 ::after 에★ — th 자체에 걸면 opacity 키프레임이 머리글 글자까지
    0 으로 끌어내려 ★읽는 도중 표 제목이 사라진다★(실제 결함이었다). */
-.tw thead{position:relative}
+.tw thead th{position:relative}
 .tw thead th::after{
   content:'';position:absolute;left:0;right:0;bottom:0;height:2px;pointer-events:none;
   background-image:linear-gradient(90deg,transparent,
@@ -2360,8 +2360,6 @@ html[data-theme="dawn"]{--edge-boost:1.1}
   animation:fxLineSweep 15s cubic-bezier(.4,0,.2,1) infinite;
   --ln-o:.5;
 }
-/* ★th 마다 걸면 안 된다★ — 홈 한 화면에서 183개가 동시에 돌았다(실측) */
-.fxoff thead,.fxoff .mmd{animation-play-state:paused!important}
 
 /* ── 보이는 것만 움직인다 ────────────────────────────────────────────────
    화면 밖 카드까지 매 프레임 칠하면 스크롤이 끈적해지고 배터리만 먹는다.
@@ -5733,6 +5731,7 @@ const CAST=(()=>{
     if(isCast){
       ['f-joy','f-sad','f-mad','f-look'].forEach(c=>d.classList.remove(c));
       if(opt.face)d.classList.add(opt.face);
+    rigFace(d,opt.face||'listen');            /* 🎭 조연단도 파츠로 표정을 만든다 */
     }
     T[w]=setTimeout(()=>{
       /* ★장면 중(stay)에는 말풍선을 지우지 않는다.★ 시간이 지나 하나씩 사라지면
@@ -5978,8 +5977,12 @@ const MASCOT=(()=>{
     const b=box(); if(!b)return;
     FACES.forEach(f=>b.classList.remove(f));
     if(cls)b.classList.add(cls);
+    rigFace(document.getElementById('mbody'),cls||'neutral');   /* 🎭 리그 파츠도 함께 */
     clearTimeout(faceT);
-    if(ms)faceT=setTimeout(()=>{FACES.forEach(f=>b.classList.remove(f))},ms);
+    if(ms)faceT=setTimeout(()=>{
+      FACES.forEach(f=>b.classList.remove(f));
+      rigFace(document.getElementById('mbody'),'neutral');
+    },ms);
   }
   function say(msg,cls,hold){
     const b=box(), t=talk(); if(!b||!t||S.mascot===false)return;
@@ -6088,8 +6091,10 @@ const MASCOT=(()=>{
     const b=box(); if(!b)return;
     b.classList.remove('s-roll','s-wide','s-poke','s-turn');
     if(cls)b.classList.add(cls);
+    rigFace(document.getElementById('sbody'),cls||'glare');      /* 🎭 시니 기본은 시니컬 */
     clearTimeout(sFaceT);
-    if(cls)sFaceT=setTimeout(()=>b.classList.remove(cls),ms||1200);
+    if(cls)sFaceT=setTimeout(()=>{ b.classList.remove(cls);
+      rigFace(document.getElementById('sbody'),'glare') },ms||1200);
   }
   /** 서브가 한마디 — 확률(p)을 넘지 못하면 조용히 넘어간다 */
   /** ★시니는 시간이 지날수록 누그러진다★ — 관계값(ki↔si)이 쌓이면
@@ -7768,6 +7773,39 @@ const FXLIB=(()=>{
     party(){ return (state.party==='ok'&&window.party)||null }
   };
 })();
+
+/* ═══════════ 🎭 표정 다리(리그 ↔ 기존 코드) ═══════════
+   기존 코드는 표정을 ★클래스★ 로 건다(MASCOT.face('happy') → #mascot.happy).
+   새 리그는 ★파츠 조합★(data-eye/brow/mouth/cheek)으로 표정을 만든다.
+   둘을 잇지 않으면 클래스는 붙는데 얼굴은 그대로다 — 실제로 그랬다(통합 중 발견).
+   표는 리그 설계의 표정 매트릭스 그대로다. */
+const FACEMAP={
+  neutral :['open','flat','smile','off'],   idle    :['open','flat','smile','off'],
+  smile   :['open','up','smile','soft'],    happy   :['open','up','smile','soft'],
+  joy     :['shut','up','grin','soft'],     cheer   :['shut','up','open','hot'],
+  party   :['shut','up','open','hot'],      hype    :['shut','up','grin','hot'],
+  love    :['heart','up','open','hot'],     wink    :['wink','arch','smile','soft'],
+  smug    :['wink','arch','grin','off'],    proud   :['half','up','grin','soft'],
+  surprise:['wide','up','gasp','off'],      worry   :['sad','worry','wave','off'],
+  care    :['sad','worry','smile','soft'],  oops    :['half','worry','wave','hot'],
+  think   :['half','arch','small','off'],   sleepy  :['shut','flat','small','off'],
+  sulk    :['glare','down','pout','hot'],   glare   :['glare','down','flat','off'],
+  listen  :['open','flat','flat','off'],
+  /* 시니 전용(서브 마스코트 표정 클래스) */
+  's-roll':['glare','down','flat','off'],   's-wide':['wide','up','gasp','off'],
+  's-poke':['glare','down','pout','hot'],   's-turn':['half','arch','small','off'],
+  /* 조연단 전용 */
+  'f-joy' :['shut','up','grin','soft'],     'f-sad' :['sad','worry','wave','off'],
+  'f-mad' :['glare','down','pout','hot'],   'f-look':['half','arch','small','off']
+};
+/** 클래스 이름 하나로 리그 파츠를 맞춘다. 모르는 이름이면 평온으로 되돌린다. */
+function rigFace(host,cls){
+  if(!host)return;
+  const rig=host.matches&&host.matches('svg.rig')?host:host.querySelector('svg.rig');
+  if(!rig)return;
+  const v=FACEMAP[cls]||FACEMAP.neutral;
+  rig.dataset.eye=v[0]; rig.dataset.brow=v[1]; rig.dataset.mouth=v[2]; rig.dataset.cheek=v[3];
+}
 
 /* ═══════════ 🎬 캐릭터 모션 엔진 ═══════════
    대화 장면의 몸짓·발화·턴 교대·등퇴장을 맡는다.
