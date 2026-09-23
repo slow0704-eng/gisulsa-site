@@ -846,8 +846,13 @@ body[data-heat="hot"] #heat{animation:heatPulse 1.6s ease-in-out infinite}
    표정·동작은 #mascot 의 클래스 하나로 전환한다(상태 기계). */
 /* ★자동 스크롤 바(#ascroll, bottom 16px · z 930)와 자리가 겹치지 않게★
    그 위로 올려 둔다. z-index 도 함께 올려야 클릭이 먹는다. */
-#mascot{position:fixed;z-index:940;display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap;
-  justify-content:flex-end;max-width:min(420px,92vw);
+/* ★세로 한 줄★ — 가로로 늘어서면 조연단이 나올 때마다 폭이 250px 까지 벌어져
+   보기 문장의 오른쪽을 통째로 덮었다. 세로로 쌓으면 폭이 캐릭터 한 마리(74px)로
+   고정되고, 늘어나는 것은 오른쪽 가장자리의 높이뿐이다.
+   순서는 DOM 그대로 위→아래: 말풍선 → 조연단 → 시니 → 치노(구석에 가장 가깝게). */
+#mascot{position:fixed;z-index:940;display:flex;flex-direction:column;
+  align-items:flex-end;justify-content:flex-end;gap:6px;flex-wrap:nowrap;
+  max-width:min(240px,74vw);
   right:max(16px,env(safe-area-inset-right));
   bottom:calc(78px + env(safe-area-inset-bottom))}
 #mascot .mbody{background:none;border:0;padding:0;cursor:pointer;line-height:0;
@@ -1053,7 +1058,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 /* 🎭 조연단 — 등장 자체가 보상이 되도록 ★말할 때만 존재★ */
 /* ★조연단은 자기 줄을 갖는다★ — 메인·서브와 같은 줄에 두면 좁은 화면에서
    말풍선이 서로를 덮는다(실제로 겹쳤다). width:100% 로 줄을 끊어 위로 올린다. */
-#crowd{display:flex;align-items:flex-end;justify-content:flex-end;gap:6px;width:100%}
+#crowd{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;
+  gap:6px;width:100%}
 .cw{display:none;flex-direction:column;align-items:center;position:relative;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.18))}
 .cw.on{display:flex;animation:cIn .5s cubic-bezier(.2,1.6,.4,1)}
@@ -1142,8 +1148,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .mtalk::after,.stalk::after{content:'';position:absolute;bottom:-6px;
   width:0;height:0;border:6px solid transparent;border-bottom:0}
 .mtalk::after{right:16px;border-top-color:var(--bg2)}
-.stalk::after{right:76px;border-top-color:color-mix(in srgb,#8b7bd8 14%,var(--bg2))}
-@media (max-width:520px){ .stalk::after{right:60px} }
+/* 세로 배치라 시니도 치노와 ★같은 열★ 에 선다 — 꼬리를 왼쪽(76px)으로 뺄 이유가 없어졌다 */
+.stalk::after{right:16px;border-top-color:color-mix(in srgb,#8b7bd8 14%,var(--bg2))}
 .mtalk{max-width:190px;padding:9px 12px;border-radius:14px 14px 4px 14px;
   background:var(--bg2);border:1px solid var(--bd);box-shadow:0 8px 22px rgba(0,0,0,.2);
   font-size:12.5px;line-height:1.45;color:var(--tx);animation:mPop .28s cubic-bezier(.2,1.4,.4,1)}
@@ -12689,6 +12695,22 @@ function renderQ(){
     fi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('fillSubmit').click()}};
   }
   renderQNav(revealed);
+  /* ⬇ 방금 채점했다면 ★'다음' 을 화면 안으로★ 끌어온다.
+     버튼은 예전에도 즉시 만들어졌다 — 다만 해설이 끼어들면서 아래로 밀려
+     모바일(390×844 실측)에서는 ★언제나 접은 선 아래(y 1,040~1,140)★ 였다.
+     "늦게 생긴다" 로 보인 것은 생성이 늦어서가 아니라 ★보이지 않아서★ 다.
+     이미 보이면 건드리지 않는다 — 읽는 중에 화면이 움직이면 그게 더 방해다. */
+  if(quiz&&quiz._scrollNav){
+    quiz._scrollNav=false;
+    requestAnimationFrame(()=>{
+      const n=$('qNext'); if(!n)return;
+      const r=n.getBoundingClientRect();
+      if(r.top>=0&&r.bottom<=innerHeight)return;             /* 이미 보인다 */
+      /* ★center 로 세운다.★ end 로 붙이면 화면 맨 아래 — 거기는 캐릭터 기둥(78~311px)과
+         ⤓ 자동스크롤이 떠 있는 자리라, 정작 눌러야 할 버튼이 그 밑에 깔린다. */
+      n.scrollIntoView({block:'center',behavior:REDUCED?'auto':'smooth'});
+    });
+  }
 }
 function renderQNav(revealed){
   const last=quiz.i===quiz.items.length-1;
@@ -12797,6 +12819,8 @@ function answer(v){
     if(newAch.length&&quiz.mode!=='practice'){quiz.pendAch=(quiz.pendAch||[]).concat(newAch);newAch=[]}
   }
   save();
+  /* 채점 결과를 처음 보는 순간에만 화면을 옮긴다(앞뒤로 다시 넘겨볼 땐 그대로 둔다) */
+  if(first)quiz._scrollNav=true;
   renderQ();   // 모의고사 모드는 선택만 표시하고 '다음'으로 이동 (답 변경 가능)
   if(react){
     /* ── 맥락을 한 번에 모아 조연단에게 넘긴다 ──
