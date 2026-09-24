@@ -174,11 +174,7 @@ body{
   font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased;
 }
 button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
-/* ★clip 이어야 한다.★ overflow-x:hidden 은 body 를 스크롤 컨테이너로 만들고,
-   그러면 header 의 position:sticky(아래 ═══ 헤더 ═══)가 뷰포트가 아니라 body 를
-   기준으로 삼아 ★그냥 흘러가 버린다★ — 실측 scrollY 1500 에서 header top −1500.
-   clip 은 스크롤 컨테이너를 만들지 않아 넘침만 자르고 sticky 는 살아난다. */
-html,body{overflow-x:clip;-webkit-text-size-adjust:100%}
+html,body{overflow-x:hidden;-webkit-text-size-adjust:100%}
 /* 한국어는 어절 단위로 끊는다.
    overflow-wrap 은 break-word — anywhere 를 쓰면 min-content 가 1글자로 떨어져
    keep-all 이 무력화되고 버튼·칩 글자가 세로로 쪼개진다. */
@@ -659,19 +655,6 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 @media print{ #ascroll{display:none !important} }
 @media (prefers-reduced-motion:reduce){ /* 스크롤 자체가 목적이므로 기능은 유지하되 시작은 사용자 조작에만 의존 */ }
 
-/* ═══ 📦 접이식 박스 — 🏅배지(#achBox)와 같은 말투 ═══
-   홈에는 "매일 쓰는 것"(▶ 시작·진도)과 "가끔 펴 보는 것"(체크리스트·로드맵)이
-   섞여 있다. 좁은 화면에서는 뒤쪽이 ★4,600px 의 벽★ 이 되어 앞쪽을 밀어낸다.
-   지우지 않고 접는다 — 데스크톱은 펼친 채로 두고, 모바일에서만 닫는다(renderHome). */
-.foldbox>summary{cursor:pointer;font-size:15px;font-weight:800;list-style:none;
-  display:flex;align-items:center;gap:7px;padding:2px 0}
-.foldbox>summary::-webkit-details-marker{display:none}
-.foldbox>summary::before{content:'▸';color:var(--tx3);font-size:13px;line-height:1;
-  transition:transform .15s ease}
-.foldbox[open]>summary::before{transform:rotate(90deg)}
-.foldbox>summary+*{margin-top:10px}
-@media (prefers-reduced-motion:reduce){ .foldbox>summary::before{transition:none} }
-
 /* 토스트 */
 #toasts{position:fixed;left:50%;top:74px;transform:translateX(-50%);z-index:950;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
 .toast{
@@ -846,13 +829,8 @@ body[data-heat="hot"] #heat{animation:heatPulse 1.6s ease-in-out infinite}
    표정·동작은 #mascot 의 클래스 하나로 전환한다(상태 기계). */
 /* ★자동 스크롤 바(#ascroll, bottom 16px · z 930)와 자리가 겹치지 않게★
    그 위로 올려 둔다. z-index 도 함께 올려야 클릭이 먹는다. */
-/* ★세로 한 줄★ — 가로로 늘어서면 조연단이 나올 때마다 폭이 250px 까지 벌어져
-   보기 문장의 오른쪽을 통째로 덮었다. 세로로 쌓으면 폭이 캐릭터 한 마리(74px)로
-   고정되고, 늘어나는 것은 오른쪽 가장자리의 높이뿐이다.
-   순서는 DOM 그대로 위→아래: 말풍선 → 조연단 → 시니 → 치노(구석에 가장 가깝게). */
-#mascot{position:fixed;z-index:940;display:flex;flex-direction:column;
-  align-items:flex-end;justify-content:flex-end;gap:6px;flex-wrap:nowrap;
-  max-width:min(240px,74vw);
+#mascot{position:fixed;z-index:940;display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap;
+  justify-content:flex-end;max-width:min(420px,92vw);
   right:max(16px,env(safe-area-inset-right));
   bottom:calc(78px + env(safe-area-inset-bottom))}
 #mascot .mbody{background:none;border:0;padding:0;cursor:pointer;line-height:0;
@@ -1058,8 +1036,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 /* 🎭 조연단 — 등장 자체가 보상이 되도록 ★말할 때만 존재★ */
 /* ★조연단은 자기 줄을 갖는다★ — 메인·서브와 같은 줄에 두면 좁은 화면에서
    말풍선이 서로를 덮는다(실제로 겹쳤다). width:100% 로 줄을 끊어 위로 올린다. */
-#crowd{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;
-  gap:6px;width:100%}
+#crowd{display:flex;align-items:flex-end;justify-content:flex-end;gap:6px;width:100%}
 .cw{display:none;flex-direction:column;align-items:center;position:relative;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.18))}
 .cw.on{display:flex;animation:cIn .5s cubic-bezier(.2,1.6,.4,1)}
@@ -1148,8 +1125,8 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
 .mtalk::after,.stalk::after{content:'';position:absolute;bottom:-6px;
   width:0;height:0;border:6px solid transparent;border-bottom:0}
 .mtalk::after{right:16px;border-top-color:var(--bg2)}
-/* 세로 배치라 시니도 치노와 ★같은 열★ 에 선다 — 꼬리를 왼쪽(76px)으로 뺄 이유가 없어졌다 */
-.stalk::after{right:16px;border-top-color:color-mix(in srgb,#8b7bd8 14%,var(--bg2))}
+.stalk::after{right:76px;border-top-color:color-mix(in srgb,#8b7bd8 14%,var(--bg2))}
+@media (max-width:520px){ .stalk::after{right:60px} }
 .mtalk{max-width:190px;padding:9px 12px;border-radius:14px 14px 4px 14px;
   background:var(--bg2);border:1px solid var(--bd);box-shadow:0 8px 22px rgba(0,0,0,.2);
   font-size:12.5px;line-height:1.45;color:var(--tx);animation:mPop .28s cubic-bezier(.2,1.4,.4,1)}
@@ -1162,41 +1139,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
   .mwrap,.meyes,.mwingL,.mwingR,.msweat,.mnote,.mbang{animation:none!important}
   .mtalk{animation:none}
 }
-
-/* ═══ ⏱ 연출 감속 — ★문제를 가리지 않는 것이 먼저★ ══════════════════
-   데스크톱에서 토스트·색종이·글로우는 여백 위를 지나간다. 좁은 화면에서는
-   그대로 ★문제와 보기 위★ 다 — 특히 색종이는 1~2초간 답지를 덮는다.
-   연출을 끄면 보상감이 죽으므로 ★길이만★ 줄인다(있었다는 건 남기고 비킨다).
-   body.fxq = 좁은 화면 이거나 퀴즈 화면 · body.inquiz = 퀴즈 화면(스크립트가 붙임) */
-body.fxq .conf{animation-duration:.6s!important}
-body.fxq .spark{animation-duration:.3s}
-body.fxq #glow.on{animation-duration:.26s}
-body.fxq #fx{opacity:.68}                    /* 겹쳐도 글자가 비치게 */
-body.fxq .toast{animation-duration:.22s,.24s}
-
-/* ═══ 🙈 캐릭터 접기 / 펼치기 ═════════════════════════════════════
-   M 키(완전 숨김)는 "안 쓰겠다" 는 결정이고, 접기는 ★잠깐만 비켜줘★ 다.
-   모바일에서 문제를 푸는 동안만 치우고 싶은 쪽이 훨씬 많으므로, 키보드가
-   아니라 ★엄지가 닿는 자리★ 에 손잡이를 상시 둔다. 접힌 상태는 저장된다. */
-#mfold{
-  position:absolute; right:-4px; bottom:54px; z-index:3;
-  width:28px; height:28px; padding:0; border-radius:999px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  font-size:13px; font-weight:800; line-height:1; letter-spacing:-.5px;
-  color:var(--tx3); background:color-mix(in srgb,var(--card) 92%,transparent);
-  border:1px solid var(--line2); backdrop-filter:blur(8px);
-  box-shadow:0 4px 14px rgba(0,0,0,.2); transition:color .15s,border-color .15s;
-}
-#mfold:hover{color:var(--ac);border-color:var(--ac)}
-#mfold:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-/* 접힘 — 손잡이 하나(38px)만 남는다. 말풍선·조연단·본체가 모두 자리를 비운다 */
-#mascot.fold{max-width:none}
-#mascot.fold .mbody,#mascot.fold #sbody,#mascot.fold #mtalk,
-#mascot.fold #stalk,#mascot.fold #cstack,#mascot.fold #crowd{display:none!important}
-#mascot.fold #mfold{position:static;width:38px;height:38px;font-size:19px;opacity:.9}
-#mascot.fold #mfold:hover{opacity:1}
-@media (max-width:520px){ #mfold{width:30px;height:30px;bottom:52px} }
-@media print{ #mfold{display:none!important} }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1489,20 +1431,16 @@ body::before{background-size:160% 140%;animation:evoDrift 46s ease-in-out infini
   /* 제목은 줄이 늘어도 되니 크기를 지킨다 — 작아지는 쪽이 훨씬 나쁘다 */
   .vt{font-size:19px;line-height:1.32;letter-spacing:-.022em}
   .vd{font-size:12.5px;line-height:1.5}
+  .hero>h1{font-size:26px;line-height:1.2}
   .gtitle,.sname{font-size:14.5px;line-height:1.35}
   /* 홈 히어로 — 한 줄에 다 넣으려다 깨지던 자리 */
   #v-home .vt{margin-bottom:4px}
   #v-home .vd{word-break:keep-all}
   /* 메타 줄 — 가운뎃점으로 이어 붙인 긴 줄은 ★칩처럼 접어★ 내린다 */
   .metas,.meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11.5px;line-height:1.5}
-  /* ★숫자 타일만★ 2열로 접는다(4열은 360px 에서 숫자가 뭉갠다).
-     예전엔 선택자가 `.grid` 전부였는데, 그러면 본문 박스(.g2)까지 ★170px 2열★ 이
-     되어 체크 항목 하나가 4줄로 쪼개졌다(실측 #selfcheck 2,604px). */
-  .resgrid,.grid.g3{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
-  /* 본문 박스는 1열 — #sheetList 는 데스크톱이 1열인데 모바일만 2열이던 자리다 */
-  .grid.g2,#sheetList{grid-template-columns:1fr!important;gap:10px}
-  /* .stat 의 숫자는 <b> 가 아니라 <div class="v"> 다(renderHome) — 예전 선택자는 죽어 있었다 */
-  .stat .v,.cnt{font-size:23px}
+  /* 통계 카드 — 2열로 접는다(4열은 360px 에서 숫자가 뭉갠다) */
+  .resgrid,.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+  .stat b,.cnt,.hero>h1{font-size:23px}
   /* 대시보드 한 줄 — 넘치면 접히게 */
   .dash{flex-wrap:wrap;gap:6px 12px;font-size:12px}
   .dash .d1{white-space:nowrap}
@@ -1517,43 +1455,10 @@ body::before{background-size:160% 140%;animation:evoDrift 46s ease-in-out infini
   .ansbox{font-size:13.5px;line-height:1.7}
   /* 초시계·포인트 칩이 한 줄에 안 들어가면 접는다 */
   .qbar,.qmeta{flex-wrap:wrap;gap:5px 8px}
-
-  /* ═══ 📱 홈 — ★첫 화면에 시작 버튼★ ═══════════════════════════
-     실측(390×844): 헤더 151 + 히어로 463 이 먼저 와서 ▶ 버튼이 1,166px,
-     즉 한 화면 하고도 300px 아래였다. 첫 화면에 보이는 것이 전부 '읽을 것'
-     뿐이면 홈은 관문이 아니라 ★장애물★ 이다.
-     DOM 은 그대로 두고 order 로만 끌어올린다 — 종목마다 hidden 인 블록이
-     달라서 :nth-child 로는 배치를 짤 수 없고, smoke-test 가 보는 구조도 지켜진다. */
-  #v-home.on{display:flex;flex-direction:column;gap:12px}
-  /* 세로 리듬을 gap 하나로 통일 — flex 는 마진이 겹쳐지지 않아 그냥 두면 간격이 두 배가 된다 */
-  #v-home>*{margin-top:0!important;margin-bottom:0!important}
-  #v-home>#comeback{order:-3}   /* 👋 돌아왔다는 인사 */
-  #v-home>#resume  {order:-2}   /* ▶ 바로 N문제 — 홈에 온 이유 */
-  #v-home>#dash    {order:-1}   /* 🔥 연속일·오늘 목표 */
-  #v-home>#chalBar {order:-1}   /* ⚡ 오늘의 도전 (DOM 순서로 dash 뒤) */
-
-  /* ── 히어로 압축 ── 같은 내용이 ℹ️시험정보 '시험 개요' 표(renderInfo)에 전부 있다 */
-  #v-home>.hero{padding:16px 16px 18px;border-radius:14px}
-  #v-home .hero h1{font-size:20px;line-height:1.25;margin-bottom:4px}
-  #v-home .hero .sub{font-size:12.5px;line-height:1.45;margin-bottom:10px;
-    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  #v-home .hero .slog{font-size:12.5px;line-height:1.45;padding:7px 12px}
-  #v-home .hero .slog:empty{display:none}        /* slogan 없는 종목에서 빈 배지가 남지 않게 */
-  #v-home .hero .metas{display:none}             /* 검정방법·시험시간·합격기준·기본서 = ℹ️ 탭과 중복 */
-
-  /* ── 헤더 압축 ── sticky 가 살아났으므로 151px 가 ★상시★ 18% 를 먹는다.
-     ★특정도를 한 단계 올린다★ — 같은 이름의 규칙이 아래 @media(max-width:820px)
-     에도 있고(.hwrap·.logo span), CSS 는 특정도가 같으면 ★뒤에 쓴 쪽★ 이 이긴다. */
-  header .hwrap{padding:calc(5px + env(safe-area-inset-top)) 12px 5px;gap:5px 8px}
-  header .logo{font-size:16px;line-height:1.2}
-  header .logo span{display:none}                /* 로고 부제 = 히어로 h1 과 같은 말 */
-  /* 가로 여백만 줄인다 — 40px 아래로 내리면 헤더는 2px 줄고 손가락은 빗나간다 */
-  header .themebtn{padding:6px 9px;font-size:15px}
-  #v-home .box{padding:14px 15px}                /* 18/20px → 좁은 화면에서 여백 회수 */
 }
 @media (max-width:380px){
   .vt{font-size:17.5px}
-  .stat .v,.cnt{font-size:21px}
+  .hero>h1,.stat b,.cnt{font-size:21px}
   .logo{font-size:16px}
   .logo span{font-size:11px;margin-left:0}
   .qclock{padding:3px 7px;font-size:11px}
@@ -1785,16 +1690,6 @@ body::before{background-size:160% 140%;animation:evoDrift 46s ease-in-out infini
   .ch{padding:14px 15px;font-size:15px;min-height:52px}
   .ordbtn{padding:12px 14px;min-height:44px}
   .cm-btn,.qnavbtn{min-height:38px}
-  /* 실측 미달분 — 🤝파트너 칩 26.6px · ✓체크박스 17px · 🏅배지 접개 24.8px */
-  .dchip{min-height:44px;padding:6px 12px 6px 8px}
-  .ckrow{min-height:44px;padding:11px 0}
-  .ckrow input{width:22px;height:22px}
-  .foldbox>summary,#achBox>summary{padding:12px 0;line-height:1.4}
-  /* 🗺 지형도 — 52px 칸에 9.5px 글자는 읽히지 않는다 */
-  #terrain{grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:6px}
-  .tcell{font-size:11px}
-  /* 🐤 캐릭터(80px)·⤓ 자동스크롤이 오른쪽 아래 탭 대상 위에 떠 있다 — 접기 손잡이와 별개로 축소 */
-  #mascot{transform:scale(.84);transform-origin:100% 100%}
 
   /* ── iOS 자동 확대 방지: 입력 글자 16px 이상 ── */
   .inp,.fillin,input[type=text],input[type=search]{font-size:16px}
@@ -3412,9 +3307,6 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
      기성 캐릭터(Octocat 등)는 상표·저작권 제약이 있어 쓰지 않는다.
      외부 파일·라이브러리 0. 표정과 동작은 클래스 교체로만 바꾼다. -->
 <div id="mascot" class="noprint" hidden>
-  <!-- 🙈 접기 손잡이 — 퀴즈 풀 때 캐릭터를 한 손으로 치운다(상태 저장) -->
-  <button type="button" id="mfold" aria-expanded="true"
-          title="캐릭터 접기" aria-label="캐릭터 접기">⌄</button>
   <div class="stalk" id="stalk" hidden></div>
   <div class="mtalk" id="mtalk" hidden></div>
   <!-- 🎭 조연단 — ★평소엔 없다가 특수 상황에만 튀어나온다.★
@@ -3730,7 +3622,7 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
     <div class="kbrow"><span class="keys"><kbd>1</kbd>~<kbd>9</kbd></span><span class="desc">메뉴 순서대로 화면 전환 (홈 / 암기카드 / 핵심시트 / 개념정리 / 퀴즈 / 오답노트 …)<br><span style="color:var(--tx3);font-size:12.5px">단, 암기카드의 <kbd>1</kbd><kbd>2</kbd> 와 퀴즈 풀이 중 <kbd>1</kbd>~<kbd>4</kbd> 는 그 화면의 동작이 우선합니다. 자료가 없어 감춰진 메뉴의 번호는 동작하지 않습니다</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>T</kbd></span><span class="desc">테마 순환 — 🌙 다크 · ☀️ 라이트 · 🌌 새벽 · 📚 도서관 · 🕯 독서등<br><span style="color:var(--tx3);font-size:12.5px">헤더의 테마 버튼을 누르면 목록에서 고를 수 있고, 같은 창에서 <b>🎬 모션 끄기</b>도 켤 수 있습니다</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>S</kbd></span><span class="desc">효과음 켜기 / 끄기</span></div>
-    <div class="kbrow"><span class="keys"><kbd>M</kbd></span><span class="desc">응원 친구 보이기 / 숨기기<br><span style="color:var(--tx3);font-size:12.5px">캐릭터를 <b>누르면 말을 걸고</b>, <b>길게 누르면 쓰다듬습니다</b> — 조연단도 나와 있을 때 누를 수 있어요<br>캐릭터 오른쪽 위 <b>⌄ 손잡이</b>를 누르면 <b>잠깐 접어둡니다</b>(모바일에서 퀴즈 풀 때 · 접은 상태는 저장됩니다)</span></span></div>
+    <div class="kbrow"><span class="keys"><kbd>M</kbd></span><span class="desc">응원 친구 보이기 / 숨기기<br><span style="color:var(--tx3);font-size:12.5px">캐릭터를 <b>누르면 말을 걸고</b>, <b>길게 누르면 쓰다듬습니다</b> — 조연단도 나와 있을 때 누를 수 있어요</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>N</kbd></span><span class="desc">조연단(다람·부엉·모모) 보이기 / 숨기기</span></div>
     <div class="kbrow"><span class="keys"><kbd>G</kbd></span><span class="desc">배경음악 켜기 / 끄기</span></div>
     <div class="kbrow"><span class="keys"><kbd>-</kbd> <kbd>+</kbd></span><span class="desc">글자 작게 / 크게 (4단계 · 저장됨)</span></div>
@@ -3789,8 +3681,8 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
   <div class="grid g3" style="margin-bottom:14px" id="stats"></div>
 
   <div class="grid g2">
-    <details class="box foldbox" id="foldSub" open>
-      <summary><span id="lblSubList">과목별 출제 비중 · 암기 진도</span></summary>
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:6px" id="lblSubList">과목별 출제 비중 · 암기 진도</h3>
       <div id="subList"></div>
       <!-- 🗺 진도 지형도 — 빈 칸이 보이면 채우고 싶어진다 -->
       <div id="terrainWrap" hidden>
@@ -3807,16 +3699,16 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
         <div style="font-size:12px;color:var(--dim)">같이 축하하면 가까워지고, 다투면 멀어집니다.</div>
         <div id="penta"></div>
       </div>
-    </details>
-    <details class="box foldbox" id="foldCheck" open>
-      <summary>자가 진단 체크리스트</summary>
+    </div>
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:6px">자가 진단 체크리스트</h3>
       <div id="ckGuide" style="font-size:12.5px;color:var(--tx3);margin-bottom:8px">13개 이상 ✓ → 합격선 도달 / 10~12 → 보강 / 9 이하 → 8주 코스</div>
       <div id="selfcheck"></div>
-    </details>
+    </div>
   </div>
 
   <!-- 배지 — 채워 가는 재미. 접어 둔 상태가 기본이라 화면을 어지럽히지 않는다 -->
-  <details class="box foldbox" id="achBox" style="margin-top:14px">
+  <details class="box" id="achBox" style="margin-top:14px">
     <summary style="cursor:pointer;font-size:15px;font-weight:800">🏅 배지 <span id="achCnt" style="color:var(--tx3);font-weight:600"></span></summary>
     <div id="achList" style="margin-top:10px"></div>
   </details>
@@ -3829,14 +3721,14 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
   </div>
 
   <div class="grid g2" style="margin-top:14px">
-    <details class="box foldbox" id="foldTiers" open>
-      <summary>학습 우선순위 (출제 빈도)</summary>
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:10px">학습 우선순위 (출제 빈도)</h3>
       <div id="tiers"></div>
-    </details>
-    <details class="box foldbox" id="foldRoad" open>
-      <summary>학습 로드맵</summary>
+    </div>
+    <div class="box">
+      <h3 style="font-size:15px;font-weight:800;margin-bottom:10px">학습 로드맵</h3>
       <div id="roadmap"></div>
-    </details>
+    </div>
   </div>
 </section>
 
@@ -4361,17 +4253,6 @@ CPPG.order=CPPG.order||[];
 CPPG.order.forEach((q,i)=>{q.id='r'+i;q.type='order'});
 const ALLQ=[...CPPG.mcq,...CPPG.ox,...CPPG.fill,...CPPG.order];
 const QBYID={}; ALLQ.forEach(q=>QBYID[q.id]=q);
-/* ── 🔀 4지선다 보기 순서 섞기 ──────────────────────────────────────
-   같은 문제를 반복해 풀면 내용이 아니라 ★위치★ 를 외운다("두 번째가 답").
-   그래서 ★세션이 시작될 때마다★ 보기 순서를 새로 섞는다(startQuiz 에서 q._cs).
-   ★저장값은 원본 번호 그대로 둔다.★ data-i 에 원본 인덱스를 실어 보내므로
-   q.a 비교·오답노트(S.wlog.p)·50:50 힌트는 한 줄도 고치지 않아도 그대로 맞는다.
-   섞이는 것은 ★화면에 그려지는 차례와 ①②③④ 번호★ 뿐이다.
-   종목별로 켠다 — data.js 의 meta.shuffleChoices(기본 꺼짐). */
-const SHUFCH = CPPG.meta.shuffleChoices === true;
-/** 이 문항의 보기 표시 순서 — 원본 인덱스 배열(섞지 않으면 0,1,2…) */
-const chOrder = q => (q._cs && q._cs.length === q.c.length) ? q._cs : q.c.map((c,i)=>i);
-const CHNO = '①②③④⑤⑥⑦⑧';
 /* 문항이 하나도 없는 유형은 칩·표·필터에서 아예 감춘다 (예: 단답형을 쓰지 않는 종목) */
 const ALLTYPES=[{k:'mcq',n:'4지선다'},{k:'ox',n:'OX'},{k:'fill',n:'단답형'},{k:'order',n:'순서정렬'}];
 const TYPES=ALLTYPES.filter(t=>ALLQ.some(q=>q.type===t.k));
@@ -4385,25 +4266,6 @@ const bankCount=(sub,type,lv)=>ALLQ.filter(q=>
 
 /* ═══════════ 🎉 보상 연출(FX) ═══════════ */
 const REDUCED=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-/* ── ⏱ 연출 지속시간 — ★좁은 화면·퀴즈 중에는 짧게★ ──────────────────
-   토스트 2.4초, 말풍선 3.4초는 데스크톱에서는 여백 위를 지나가는 시간이지만
-   모바일 퀴즈에서는 ★보기를 덮고 있는 시간★ 이다. 끄지 않고 길이만 줄인다.
-     k()   지속시간 배율 — 화면이 좁을수록, 퀴즈 중일수록 작다
-     cap() 절대 상한 — 배율만 곱하면 3.4초짜리가 여전히 1.4초로 남는다
-   둘을 함께 걸어야 "길게 잡아 둔 연출" 이 예외 없이 짧아진다. */
-const FXQ={
-  narrow(){ return window.matchMedia('(max-width:640px)').matches },
-  inQuiz(){ try{ return view==='quiz' }catch(e){ return false } },
-  k(){ const n=this.narrow(); return this.inQuiz()?(n?.40:.65):(n?.70:1) },
-  cap(){ const n=this.narrow(); return this.inQuiz()?(n?900:1500):(n?1900:1e9) },
-  /** 연출 하나의 실제 지속시간(ms) — floor 아래로는 깎지 않는다(읽을 틈은 남긴다) */
-  ms(v,floor){ return Math.max(floor||300,Math.min(Math.round((v||0)*this.k()),this.cap())) },
-  /** CSS 쪽 감속(.conf/.spark/#glow/#toasts)을 켠다 */
-  sync(){ const b=document.body; if(!b)return;
-    b.classList.toggle('fxq',this.narrow()||this.inQuiz());
-    b.classList.toggle('inquiz',this.inQuiz()); }
-};
-window.addEventListener('resize',()=>FXQ.sync());
 const FX=(()=>{
   const layer=()=>document.getElementById('fx');
   const PAL=['#5b9dff','#7c5cff','#34d399','#fbbf24','#fb7185','#22d3ee'];
@@ -4631,9 +4493,6 @@ const FX=(()=>{
   function confetti(n,originY){
     if(REDUCED)return;
     const L=layer(); if(!L)return;
-    /* 좁은 화면·퀴즈 중에는 ★적게, 짧게★ — 색종이가 보기 네 줄을 덮는 게 제일 크다 */
-    const q=FXQ.k(), fall=Math.max(.5,1.1*q), life=Math.round((fall+1.1*q)*1000)+300;
-    n=Math.max(8,Math.round(n*(q<1?Math.max(.45,q):1)));
     const frag=document.createDocumentFragment();
     for(let i=0;i<n;i++){
       const d=document.createElement('i');
@@ -4645,12 +4504,12 @@ const FX=(()=>{
       d.style.setProperty('--x',((Math.random()-0.5)*280)+'px');
       d.style.setProperty('--y',(90+Math.random()*40)+'vh');
       d.style.setProperty('--r',((Math.random()*4-2)*360)+'deg');
-      d.style.setProperty('--d',(fall+Math.random()*fall)+'s');
+      d.style.setProperty('--d',(1.1+Math.random()*1.1)+'s');
       d.style.width=(6+Math.random()*7)+'px';
       d.style.height=(9+Math.random()*9)+'px';
       d.style.opacity=String(0.75+Math.random()*0.25);
       frag.appendChild(d);
-      setTimeout(()=>d.remove(),life);
+      setTimeout(()=>d.remove(),2600);
     }
     L.appendChild(frag);
   }
@@ -4713,14 +4572,12 @@ const FX=(()=>{
   }
   function toast(msg,kind,hold){
     const box=document.getElementById('toasts'); if(!box)return;
-    /* ★상한 통과★ — 3.6초짜리 축하 토스트가 모바일 퀴즈에서 문제를 덮지 않게 */
-    hold=FXQ.ms(hold||1500,700);
     const t=document.createElement('div');
     t.className='toast '+(kind||'good');
-    t.style.setProperty('--hold',hold+'ms');
+    t.style.setProperty('--hold',(hold||1500)+'ms');
     t.textContent=msg;
     box.appendChild(t);
-    setTimeout(()=>t.remove(),hold+700);
+    setTimeout(()=>t.remove(),(hold||1500)+700);
   }
 
   function glow(color){
@@ -5007,7 +4864,16 @@ const FX=(()=>{
       {r:9, ch:[0,3,7,14],    mel:[]}           /* vim9   */
     ]
   };
-  const songOf=name=>SONG[name]||SONG.quiz;
+  /* 🔥 콤보 최고 구간 전용 진행 — 루트는 그대로 두고 ★텐션만 올린다.★
+     곡이 통째로 바뀌면 "다른 노래"가 되어 흐름이 끊긴다. 9th 가 #9 로,
+     V13 이 올터드로 바뀌는 것만으로 같은 곡이 뜨거워진다. */
+  SONG.quizHot=[
+    {r:0, ch:[0,4,7,11,14],  mel:[14,16,19,23]},  /* Cmaj9    */
+    {r:9, ch:[0,4,7,10,15],  mel:[12,15,19,22]},  /* A7(#9)   */
+    {r:2, ch:[0,3,7,10,17],  mel:[14,17,19,24]},  /* Dm9(11)  */
+    {r:7, ch:[0,4,8,10,13],  mel:[13,16,19,22]}   /* G7(b9b13)*/
+  ];
+  const songOf=name=>(name==='quiz'&&bgm&&(bgm.boost||0)>=1&&SONG.quizHot)||SONG[name]||SONG.quiz;
   const SCENE={
     /*        바이닐 로즈 베이스 멜로디 드럼 하이햇 */
     home:    {lay:[.60, .85, .80, .55, .70, .55], bpm:84, rhythm:true},
@@ -5046,7 +4912,7 @@ const FX=(()=>{
        스텝마다 버퍼를 새로 만들면 GC 가 튀어 박자가 흔들린다. */
     const wb=A.createBuffer(1,A.sampleRate*2,A.sampleRate), wd=wb.getChannelData(0);
     for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
-    bgm={out,g,sc,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb};
+    bgm={out,g,sc,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb,lp,boost:0};
     return bgm;
   }
   /* ── 🎷 재즈 로파이 음색 ───────────────────────────────
@@ -5167,7 +5033,7 @@ const FX=(()=>{
 
     /* 🎹 로즈 코드 — 마디 앞에 한 번, 뒤늦은 박(11)에 가볍게 한 번.
        길게 깔지 않고 ★끊어 치는★ 것이 로파이 컴핑이다. */
-    if(L[1]>0&&(b===0||(rhy&&b===11&&bar%2===0))){
+    if(L[1]>0&&(b===0||(rhy&&b===11&&(bar%2===0||(bgm.boost||0)>=.7)))){
       /* ★읽기 화면에선 한 마디를 통째로 울린다★ — 끊어 치면 그 자체가 리듬이
          되어 박자가 생기고, 박자가 생기면 시간 압박이 된다. */
       const full=b===0, dur=rhy?(full?sp*7:sp*4):sp*15;
@@ -5178,20 +5044,29 @@ const FX=(()=>{
       });
     }
     /* 🎻 업라이트 — 근음 → 5도 → ★다음 코드로 반음 접근★(워킹의 맛) */
-    if(L[2]>0&&rhy&&(b===0||b===6||b===10)){
-      const semi = b===0?J.r : b===6?J.r+7 : NJ.r-1;
+    if(L[2]>0&&rhy&&(b===0||b===6||b===10||(b===13&&(bgm.boost||0)>=.45))){
+      /* 🔥 달아오르면 한 음이 더 들어가 ★워킹이 걷기 시작한다★ */
+      const semi = b===0?J.r : b===6?J.r+7 : b===13?J.r+10 : NJ.r-1;
       bUpright(t+hz(),sp*(b===0?3.4:2.2),bgm.g[2],nf(semi)/2,b===0?.115:.085,b===10);
     }else if(L[2]>0&&!rhy&&b===0){
       bUpright(t,sp*14,bgm.g[2],nf(J.r)/2,.06,false);   /* 앰비언트: 길게 한 음만 */
     }
     /* 🎹 멜로디 조각 — 드물게, 코드 위쪽 음 하나씩. 멜로디는 ★비어 있어야★ 한다 */
-    if(L[3]>0&&rhy&&J.mel.length&&(b===6||b===14)&&Math.random()<.65){
+    if(L[3]>0&&rhy&&J.mel.length&&(b===6||b===14||((bgm.boost||0)>=.72&&b===2))
+        &&Math.random()<((bgm.boost||0)>=.45?.9:.65)){
       const m=J.mel[(Math.random()*J.mel.length)|0];
       bRhodes(t+hz(),sp*3,bgm.g[3],nf(J.r+m+12),.034);
+      /* 🔥 최고 구간에서는 ★한 음 더 얹어 리프가 된다★ */
+      if((bgm.boost||0)>=1&&Math.random()<.5)
+        bRhodes(t+sp*1.1+hz(),sp*2,bgm.g[3],nf(J.r+m+19),.026);
     }
     if(L[4]>0&&rhy){                            /* 🥁 킥 1·3and(+짝수마디 2and) */
-      if(b===0||b===10||(b===6&&bar%2===1)){ bKick(t+hz(),bgm.g[4],.30); bPump(t,sp*2.4) }
+      if(b===0||b===10||(b===6&&bar%2===1)||(b===14&&(bgm.boost||0)>=1)){
+        bKick(t+hz(),bgm.g[4],.30); bPump(t,sp*2.4) }
       if(b===4||b===12)bBrush(t+hz(),bgm.g[4],.085);   /* 🧹 브러시 2·4 */
+      /* 🔥 고스트 스네이크 — 세게가 아니라 ★잘게★. 세기를 올리면 시끄럽고,
+         밀도를 올리면 빨라진 것처럼 들린다 */
+      if((bgm.boost||0)>=.45&&(b===7||b===15))bBrush(t+hz(),bgm.g[4],.030);
     }
     if(L[5]>0&&rhy&&b%2===0){                   /* 하이햇 — 8분, 박머리를 강하게 */
       bHat(t+hz(),bgm.g[5],b%4===0?.036:.022,b===14&&bar%2===1);
@@ -5233,6 +5108,15 @@ const FX=(()=>{
       bgm.g[i].gain.setValueAtTime(bgm.g[i].gain.value,t);
       bgm.g[i].gain.linearRampToValueAtTime(lv*(i===0?.5:1)*k,t+fade);
     });
+    /* 🔥 ★덮개가 열린다★ — 로파이는 고역을 깎아 만든 질감이라,
+       그 필터를 여는 것이 볼륨을 키우는 것보다 훨씬 또렷하게 인지된다.
+       (같은 연주가 이불 밖으로 나오는 느낌 — 음량은 거의 그대로다) */
+    if(bgm.lp&&sc.bpm){
+      const cut=3800+bo*3100;
+      bgm.lp.frequency.cancelScheduledValues(t);
+      bgm.lp.frequency.setValueAtTime(bgm.lp.frequency.value,t);
+      bgm.lp.frequency.linearRampToValueAtTime(cut,t+fade);
+    }
   }
   /** 룩어헤드 스케줄러 — ★0.12초 앞까지 미리 예약★ 한다.
       setInterval 지터를 오디오 클럭이 흡수해 박자가 흔들리지 않는다. */
@@ -5241,7 +5125,8 @@ const FX=(()=>{
     const sc=SCENE[bgm.scene]||SCENE.home;
     if(!sc.bpm)return;
     tempoTick();
-    const sp=60/(sc.bpm*tempoNow())/4;           /* 16분음표 길이 × 루바토 */
+    /* 🔥 콤보가 오르면 ★박이 앞으로 밀린다★ — +5% 까지(그 이상은 재촉으로 느껴진다) */
+    const sp=60/(sc.bpm*tempoNow()*(1+(bgm.boost||0)*.05))/4;   /* 16분음표 × 루바토 × 열기 */
     if(bgm.next<A.currentTime)bgm.next=A.currentTime+.04;
     let guard=0;
     while(bgm.next<A.currentTime+.12&&guard++<32){
@@ -5249,6 +5134,19 @@ const FX=(()=>{
       bgm.next+=sp;
       bgm.step=(bgm.step+1)%64;
     }
+  }
+  /* 🔥 단계 상승 신호 — ★효과음이 아니라 연주★ 로 알린다.
+     삑 소리를 넣으면 UI 알림이 되고, 연주 안에서 울리면 밴드가 달아오른 것이 된다.
+     그래서 지금 코드의 위쪽 음 두 개 + 열린 하이햇 하나로만 만든다. */
+  function lift(lv){
+    const A=ac(); if(!A||!bgm||!bgm.scene)return;
+    const sc=SCENE[bgm.scene]; if(!sc||!sc.bpm)return;
+    const t=A.currentTime+.02;
+    const SG=songOf(bgm.scene), J=SG[(bgm.step>>4)%4];
+    const sp=60/(sc.bpm*tempoNow())/4;
+    bHat(t,bgm.g[5],.030,true);                                  /* 열린 하이햇 — 숨을 들이쉬는 소리 */
+    bRhodes(t+sp*.5,sp*3,bgm.g[3],nf(J.r+J.ch[3]+12),.030*lv);
+    bRhodes(t+sp*1.3,sp*4,bgm.g[3],nf(J.r+J.ch[4]+12),.034*lv);
   }
   const BGM={
     /** 장면 전환 — 레이어 볼륨을 길게 페이드해 갈아 끼운다 */
@@ -5281,11 +5179,20 @@ const FX=(()=>{
     heat(c){
       if(!bgm||S.bgm!==true||!bgm.scene)return;
       const sc=SCENE[bgm.scene]; if(!sc||!sc.bpm)return;
-      const lv=c>=12?1:c>=8?.72:c>=5?.45:c>=3?.2:0;
-      if(Math.abs(lv-(bgm.boost||0))<.01)return;
+      const lv=BGM.heatLevel(c);
+      const was=bgm.boost||0;
+      if(Math.abs(lv-was)<.01)return;
       /* 끊길 땐 천천히 식는다 — 갑자기 꺼지면 벌처럼 느껴진다 */
       bgm.boost=lv; bgmLayers(lv>0?.45:1.6);
+      /* 🔥 한 단계 올라선 ★그 순간★ 에만 짧은 신호 — 올라갈 때만,
+         끊길 때는 아무 소리도 내지 않는다(실패에 소리를 붙이지 않는다) */
+      if(lv>was)lift(lv);
     },
+    /** 콤보 → 열기 단계(0~1). 3연속부터 열리고 12연속에서 최대 */
+    heatLevel(c){ return c>=12?1:c>=8?.72:c>=5?.45:c>=3?.2:0 },
+    /** 지금의 열기 상태 — 검증·디버그용 */
+    state(){ return bgm?{boost:bgm.boost||0, lp:bgm.lp?Math.round(bgm.lp.frequency.value):0,
+      scene:bgm.scene, song:(bgm.boost||0)>=1&&bgm.scene==='quiz'?'quizHot':bgm.scene}:null },
     /** 효과음이 터지는 순간 잠깐 비켜 준다 — ★자극이 겹치면 과부하★ */
     duck(ms){
       if(!bgm||S.bgm!==true)return;
@@ -6039,7 +5946,7 @@ const CAST=(()=>{
       if(!isCast)return;
       d.classList.add('out');
       hide[w]=setTimeout(()=>{ d.classList.remove('on','out','f-joy','f-sad','f-mad','f-look') },330);
-    },FXQ.ms(opt.hold||2400,900));   /* 좁은 화면·퀴즈 중에는 상한까지 깎는다 */
+    },opt.hold||2400);
   }
   /** 세력 균형 이동 — 값이 아니라 ★누가 말할 자격을 얻는지★ 를 바꾼다 */
   function tilt(d){ S.soc.mood=Math.max(-100,Math.min(100,(S.soc.mood||0)+d)); save() }
@@ -6287,11 +6194,9 @@ const MASCOT=(()=>{
   function say(msg,cls,hold){
     const b=box(), t=talk(); if(!b||!t||S.mascot===false)return;
     t.textContent=msg; t.hidden=false;
-    /* 말풍선은 화면 오른쪽 아래 — 모바일 퀴즈에서는 보기 위다. 짧게 끊는다 */
-    hold=FXQ.ms(hold||2600,900);
-    if(cls)face(cls,hold);
+    if(cls)face(cls,hold||1800);
     clearTimeout(hideT);
-    hideT=setTimeout(()=>{t.hidden=true;face('idle')},hold);   /* 말이 끝나면 대기 표정으로 */
+    hideT=setTimeout(()=>{t.hidden=true;face('idle')},hold||2600);   /* 말이 끝나면 대기 표정으로 */
     moodBump();                       /* 말했으면 무언의 표정 틱은 뒤로 미룬다 */
   }
   /** ★두 마디 이어 말하기★ — 한 마디만 하고 사라지면 '알림'이지 대화가 아니다.
@@ -6304,7 +6209,7 @@ const MASCOT=(()=>{
     addT=setTimeout(()=>{
       if(S.mascot===false)return;
       say(pick('add'),Math.random()<.5?'shy':'wink',1900);
-    },Math.max(700,FXQ.ms(hold||2600,900)-500));
+    },(hold||2600)-500);
   }
   /** 표정 시퀀스 — 한 대사 동안 표정이 1~2번 바뀐다.
       고정 표정은 스티커 같고, 바뀌면 ★반응하는 중★ 으로 읽힌다. */
@@ -9372,29 +9277,6 @@ $('sound').addEventListener('pointerdown',()=>{_volFired=false;_volT=setTimeout(
 $('sound').addEventListener('contextmenu',e=>{e.preventDefault();_volFired=true;volPop()});
 applySound();
 MASCOT.show(); MASCOT.greet(); idlePing();
-FXQ.sync();
-/* ── 🙈 캐릭터 접기 / 펼치기 ─────────────────────────────────
-   접힌 상태(S.mfold)는 저장한다 — 모바일에서 한 번 치운 사람이 화면을 옮길
-   때마다 다시 접어야 한다면 그건 기능이 아니라 잔소리다. */
-(function(){
-  const b=$('mfold'), m=$('mascot');
-  if(!b||!m)return;
-  function apply(){
-    const on=S.mfold===true;
-    m.classList.toggle('fold',on);
-    b.textContent=on?'🐤':'⌄';
-    b.setAttribute('aria-expanded',String(!on));
-    const lab=on?'캐릭터 펼치기':'캐릭터 접기';
-    b.title=lab; b.setAttribute('aria-label',lab);
-  }
-  b.addEventListener('click',e=>{
-    e.stopPropagation();
-    S.mfold=(S.mfold!==true); save(); apply();
-    FX.snd.nav&&FX.snd.nav();
-    FX.toast(S.mfold?'🙈 캐릭터 접음 — 손잡이를 누르면 다시 나와요':'🐤 캐릭터 펼침','good',1200);
-  });
-  apply();
-})();
 
 /* ── ✨ 보이는 것만 움직인다 ─────────────────────────────────
    가장자리·선 연출은 ★화면 밖에서도 매 프레임 칠해진다.★ 홈처럼 박스가 많은
@@ -9466,7 +9348,6 @@ function go(v){
   if(view!==v){FX.snd.nav();FX.clearCoins()}
   if(FX.bgm.on())FX.bgm.scene(BGM_SCENE[v]||'home');          // 화면 전환음 — 아주 작게, 이동했다는 감각만
   view=v;
-  FXQ.sync();                     /* ⏱ 퀴즈로 들어오면 연출이 짧아진다 */
   asStop(); setTimeout(asSync,90);
   if(v!=='cards'&&typeof SLIDE!=='undefined')SLIDE.stop(true);   /* 🎞 암기카드를 떠나면 슬라이드도 멈춘다 */
   if(typeof AMBIENT!=='undefined')AMBIENT.view();                 /* 🗣 새 화면에 맞는 맥락 대사 준비 */
@@ -9736,16 +9617,6 @@ function renderHome(){
     `<div class="gtitle">${esc(k)}</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
   $('roadmap').innerHTML=Object.entries(CPPG.roadmap).map(([k,v])=>
     `<div class="gtitle">${esc(k)} 코스</div><ul class="sl">${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`).join('');
-  foldLong();
-}
-/* 📱 긴 참고 박스는 ★좁은 화면에서만★ 접어 둔다. details 의 open 은 CSS 로 못 건드린다.
-   ★한 번만 정한다★ — renderHome 은 자주 다시 도는데(진도·배지 갱신) 그때마다 닫으면
-   방금 펼쳐 본 사람의 손을 되돌리는 꼴이 된다. */
-let _folded=false;
-function foldLong(){
-  if(_folded)return; _folded=true;
-  if(!matchMedia('(max-width:560px)').matches)return;
-  ['foldSub','foldCheck','foldTiers','foldRoad'].forEach(id=>{const d=$(id); if(d)d.open=false});
 }
 /* ═══════════ 📚 교재 목차 (PART · CHAPTER · SECTION) ═══════════
    화면의 모든 단원 메뉴가 이 하나의 체계를 쓴다 — 카드·시트·퀴즈 필터가 같은 순서·같은 이름.
@@ -11849,9 +11720,6 @@ function startQuiz(items,mode,opt){
     for(let k=t.length-1;k>0;k--){const r=Math.floor(Math.random()*(k+1));[t[k],t[r]]=[t[r],t[k]]}
     q._shuf=t;
   }});
-  /* 🔀 보기 순서 — 순서정렬(_shuf)과 달리 ★캐시하지 않는다.★ 매 세션 새로 섞여야
-     "위치 암기" 가 불가능해진다. 한 세션 안에서는 고정이라 앞뒤로 오가도 안 흔들린다. */
-  if(SHUFCH)items.forEach(q=>{ if(q.type==='mcq')q._cs=shuffle(q.c.map((c,i)=>i)) });
   quiz={items,i:0,ans:new Array(items.length).fill(null),mode,
         revenge:!!opt.revenge, quick:!!opt.quick,
         left:mode==='exam'?Math.max(60,Math.round(items.length*1.2*60)):0};
@@ -12619,13 +12487,12 @@ function renderQ(){
          <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}">${esc(q.q)}</div>`;
 
   if(q.type==='mcq'){
-    /* oi = 원본 보기 번호(저장·채점의 기준) · n = 화면에 놓인 자리(①②③④) */
-    h+=chOrder(q).map((oi,n)=>{
+    h+=q.c.map((c,i)=>{
       let cls='ch';
-      if(revealed){ if(oi===q.a)cls+=' right'; else if(oi===a)cls+=' wrong'; }
-      else if(a===oi)cls+=' sel';
-      return `<button class="${cls}" data-i="${oi}">
-        <span class="no">${CHNO[n]}</span><span>${esc(q.c[oi])}</span></button>`;
+      if(revealed){ if(i===q.a)cls+=' right'; else if(i===a)cls+=' wrong'; }
+      else if(a===i)cls+=' sel';
+      return `<button class="${cls}" data-i="${i}">
+        <span class="no">${'①②③④'[i]}</span><span>${esc(c)}</span></button>`;
     }).join('');
   }else if(q.type==='ox'){
     h+=[['O',true],['X',false]].map(([lb,val],i)=>{
@@ -12659,8 +12526,7 @@ function renderQ(){
 
   if(revealed){
     const ok=isRight(q,a);
-    /* ★방금 본 화면의 번호★ 로 말한다 — 보기를 섞었는데 원본 번호를 부르면 어긋난다 */
-    let ansTxt = q.type==='mcq' ? `${CHNO[chOrder(q).indexOf(q.a)]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)')
+    let ansTxt = q.type==='mcq' ? `${'①②③④'[q.a]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)')
       : q.type==='order' ? q.steps.map((t,i)=>`${i+1}. ${t}`).join('  →  ') : q.a;
     h+=`<div class="expl ${ok?'good':'bad'}"><b>${ok?'✅ 정답':'❌ 오답'}</b> — 정답: <b>${esc(ansTxt)}</b><br>${esc(q.e||'')}</div>`;
   }
@@ -12695,22 +12561,6 @@ function renderQ(){
     fi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('fillSubmit').click()}};
   }
   renderQNav(revealed);
-  /* ⬇ 방금 채점했다면 ★'다음' 을 화면 안으로★ 끌어온다.
-     버튼은 예전에도 즉시 만들어졌다 — 다만 해설이 끼어들면서 아래로 밀려
-     모바일(390×844 실측)에서는 ★언제나 접은 선 아래(y 1,040~1,140)★ 였다.
-     "늦게 생긴다" 로 보인 것은 생성이 늦어서가 아니라 ★보이지 않아서★ 다.
-     이미 보이면 건드리지 않는다 — 읽는 중에 화면이 움직이면 그게 더 방해다. */
-  if(quiz&&quiz._scrollNav){
-    quiz._scrollNav=false;
-    requestAnimationFrame(()=>{
-      const n=$('qNext'); if(!n)return;
-      const r=n.getBoundingClientRect();
-      if(r.top>=0&&r.bottom<=innerHeight)return;             /* 이미 보인다 */
-      /* ★center 로 세운다.★ end 로 붙이면 화면 맨 아래 — 거기는 캐릭터 기둥(78~311px)과
-         ⤓ 자동스크롤이 떠 있는 자리라, 정작 눌러야 할 버튼이 그 밑에 깔린다. */
-      n.scrollIntoView({block:'center',behavior:REDUCED?'auto':'smooth'});
-    });
-  }
 }
 function renderQNav(revealed){
   const last=quiz.i===quiz.items.length-1;
@@ -12819,8 +12669,6 @@ function answer(v){
     if(newAch.length&&quiz.mode!=='practice'){quiz.pendAch=(quiz.pendAch||[]).concat(newAch);newAch=[]}
   }
   save();
-  /* 채점 결과를 처음 보는 순간에만 화면을 옮긴다(앞뒤로 다시 넘겨볼 땐 그대로 둔다) */
-  if(first)quiz._scrollNav=true;
   renderQ();   // 모의고사 모드는 선택만 표시하고 '다음'으로 이동 (답 변경 가능)
   if(react){
     /* ── 맥락을 한 번에 모아 조연단에게 넘긴다 ──
