@@ -3382,6 +3382,95 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
    ★7.2px★ 로 떨어졌다. 26개가 13px 미만. 높이 제한을 버리고 세로로 길게
    두면(원래 방침대로) 전부 14px 로 돌아온다. 넘치는 폭은 좌우 스크롤. */
 @media (max-width:520px){ .mmd svg{max-height:none} }
+/* ═══════════════════════════════════════════════════════════════════════════
+   🎚 감각 다양화(feel:rich) — ★data.js meta.feel:'rich' 사이트 전용★
+   전부 html[data-feel="rich"] 하위라 다른 사이트에는 한 줄도 적용되지 않는다.
+   ① 선지 질감(상단 하이라이트 + 그레인) ② 누름 깊이 ③ 정답 히트스톱(chHit)
+   ④ 오답은 선지만 둔탁하게(chThud)·지문 고정 ⑤ 콤보 요동 ⑥ 레벨업 모음 ⑦ 카드 광택
+   transform·opacity 만 움직이고, reduced-motion·html.nomotion 에서 전부 멈춘다.
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-feel="rich"]{
+  --e-press:cubic-bezier(.3,0,.2,1); --e-heavy:cubic-bezier(.45,0,.25,1.12); --e-thud:cubic-bezier(.2,.7,.3,1);
+  --hitstop:60ms;
+  /* 테마별 소재 — 그레인 세기(--grain-a 는 기록용, 실제 값은 --grain 에 구워 둔다)·하이라이트·눌림 그림자 */
+  --grain-a:.05; --hl-a:.10; --press-sh:.45;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html[data-feel="rich"][data-theme="light"]{--grain-a:.035;--hl-a:.55;--press-sh:.14;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.07 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-feel="rich"][data-theme="dawn"]{--grain-a:.045;--hl-a:.35;--press-sh:.40;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.92 0 0 0 0 0.88 0.09 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-feel="rich"][data-theme="library"]{--grain-a:.07;--hl-a:.30;--press-sh:.16;   /* 종이 */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.16 0 0 0 0 0.07 0.14 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-feel="rich"][data-theme="lamp"]{--grain-a:.06;--hl-a:.14;--press-sh:.50;      /* 금속 */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.9 0 0 0 0 0.75 0.12 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ① 선지 질감 — ::before 는 비어 있던 자리(::after 는 정답 번짐 전용). z-index:-1 + isolation 으로
+   ★배경 위·글자 아래★ 에만 깔려 텍스트 대비를 건드리지 않는다 */
+html[data-feel="rich"] .ch{position:relative;isolation:isolate}
+html[data-feel="rich"] .ch::before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,var(--hl-a)) 0,rgba(255,255,255,0) 42%),var(--grain);
+  background-size:auto,160px 160px;transition:opacity .06s var(--e-press)}
+/* ② 누름 — 2px 가라앉고 세로로 더 눌린다(60ms). 하이라이트는 줄고 안쪽 그림자가 생긴다 */
+html[data-feel="rich"] .ch:active:not(.killed):not(:disabled){
+  transform:translateY(2px) scale(.992,.975);transition:transform 60ms var(--e-press),box-shadow 60ms var(--e-press);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,var(--press-sh))}
+html[data-feel="rich"] .ch:active:not(.killed):not(:disabled)::before{opacity:.35}
+html[data-feel="rich"] .ch:active:not(:disabled) .no{transform:scale(.9)}
+
+/* ③ 정답 — 눌린 채 멈춤(히트스톱) → 45% 지점 1.04 → 제자리. 번짐도 같은 순간에 시작 */
+html[data-feel="rich"] .ch.right{animation:chHit .42s var(--e-heavy) var(--hitstop) both}
+@keyframes chHit{0%{transform:translateY(2px) scale(.992,.975)}45%{transform:scale(1.04)}100%{transform:none}}
+html[data-feel="rich"] .ch.right::after{animation-delay:var(--hitstop);animation-fill-mode:both}
+/* 빛 링 — 흰빛에서 정답색으로 번진다(어두운 테마는 screen 합성) */
+html[data-feel="rich"] .fxpulse{position:absolute;border-radius:12px;border:2px solid #fff;pointer-events:none;
+  box-shadow:0 0 14px color-mix(in srgb,var(--ok) 60%,transparent);
+  animation:fxPulse .52s var(--e-press) forwards}
+html[data-feel="rich"] .fxpulse.metal{border-radius:99px;box-shadow:0 0 14px rgba(251,191,36,.6);animation-name:fxPulseM}
+@keyframes fxPulse{0%{transform:none;opacity:.95;border-color:#fff}100%{transform:scale(var(--sx),var(--sy));opacity:0;border-color:var(--ok)}}
+@keyframes fxPulseM{0%{transform:none;opacity:.95;border-color:#fff7d6}100%{transform:scale(var(--sx),var(--sy));opacity:0;border-color:#f59e0b}}
+html[data-feel="rich"]:is([data-theme="dark"],[data-theme="dawn"],[data-theme="lamp"]) .fxpulse{mix-blend-mode:screen}
+/* 유리 스파크 — 색종이 팔레트와 구분되는 흰빛, 작고 빠르게 */
+html[data-feel="rich"] .spark.glass{width:5px;height:5px;box-shadow:0 0 6px rgba(255,255,255,.9);animation-duration:.48s}
+html[data-feel="rich"] .spark.metal{width:5px;height:5px;box-shadow:0 0 6px rgba(251,191,36,.8)}
+/* 가장자리 빛 — 피크를 5% 지점으로(소리·진동과 ±20ms) */
+html[data-feel="rich"] #glow.on{animation:glowHit .5s var(--e-press)}
+html[data-feel="rich"] body.fxq #glow.on{animation-duration:.26s}
+@keyframes glowHit{0%{opacity:0}5%{opacity:1}100%{opacity:0}}
+
+/* ④ 오답 — ★카드(지문) 흔들림 없음★. 고른 선지만 80ms 뒤 둔탁하게(±5px, 8% 피크, 감쇠만) */
+html[data-feel="rich"] .qcard.shake{animation:none}
+html[data-feel="rich"] .ch.wrong{animation:chThud .36s var(--e-thud) 80ms both;filter:grayscale(.35)}
+@keyframes chThud{0%{transform:none}8%{transform:translate(-5px,2px)}32%{transform:translate(3px,1px)}58%{transform:translate(-1px,0)}100%{transform:none}}
+html[data-feel="rich"] .dust{position:absolute;width:4px;height:4px;border-radius:50%;pointer-events:none;
+  background:color-mix(in srgb,var(--tx3) 75%,transparent);animation:dustFall .7s var(--e-thud) both}
+@keyframes dustFall{0%{transform:none;opacity:.85}100%{transform:translate(var(--x),var(--y)) scale(.6);opacity:0}}
+
+/* ⑤ 콤보 요동 — 선지만 세로 1→3px(--qa, 12콤보 포화). 지문·정답 선지는 가만히 */
+html[data-feel="rich"] .qcard.quake .ch:not(.right){animation:chQuake .34s var(--e-thud)}
+@keyframes chQuake{0%,100%{transform:none}18%{transform:translateY(calc(var(--qa,1px) * -1))}42%{transform:translateY(var(--qa,1px))}68%{transform:translateY(calc(var(--qa,1px) * -.4))}}
+
+/* ⑥ 레벨업 — XP 바가 380ms 안쪽으로 모인다(놓이는 순간 소리 임팩트·링·스파크) */
+html[data-feel="rich"] .qxp.lvgather{animation:xpGather .38s var(--e-heavy) both}
+@keyframes xpGather{0%{transform:none}100%{transform:scale(.9,.6)}}
+
+/* ⑦ 카드 뒤집기 — 사선 광택이 한 번 지나간다(0 → .18 → 0) */
+html[data-feel="rich"] .fc .fcin::after{content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;z-index:3;
+  background:linear-gradient(115deg,transparent 28%,#fff 50%,transparent 72%);opacity:0;animation:fcSheenB .34s var(--e-press)}
+html[data-feel="rich"] .fc.flip .fcin::after{animation-name:fcSheenA}
+@keyframes fcSheenA{0%,100%{opacity:0}50%{opacity:.18}}
+@keyframes fcSheenB{0%,100%{opacity:0}50%{opacity:.18}}
+
+/* 끄기 — 접근성 설정·🎬 모션 끄기. 질감·안쪽 그림자는 정적이라 남긴다 */
+@media (prefers-reduced-motion:reduce){
+  html[data-feel="rich"] .ch.right,html[data-feel="rich"] .ch.wrong,html[data-feel="rich"] .qcard.quake .ch,
+  html[data-feel="rich"] .qxp.lvgather,html[data-feel="rich"] .fc .fcin::after,html[data-feel="rich"] #glow.on{animation:none!important}
+  html[data-feel="rich"] .ch:active:not(.killed):not(:disabled){transform:none}
+}
+html[data-feel="rich"].nomotion .ch.right,html[data-feel="rich"].nomotion .ch.wrong,
+html[data-feel="rich"].nomotion .qcard.quake .ch,html[data-feel="rich"].nomotion .qxp.lvgather,
+html[data-feel="rich"].nomotion .fc .fcin::after{animation:none!important}
+html[data-feel="rich"].nomotion .ch:active:not(.killed):not(:disabled){transform:none}
 </style>
 </head>
 <body>
@@ -4335,6 +4424,10 @@ if(CPPG.meta.font==='serif'){
     document.head.appendChild(l);
   }
 }
+/* 🎚 감각 다양화 — meta.feel:'rich' 인 사이트만 소재감 효과음·질감·히트스톱·햅틱을 켠다.
+   ★다른 사이트는 RICH=false 라 소리·화면·동작이 기존 경로 그대로★(CSS 는 html[data-feel="rich"] 하위) */
+const RICH=CPPG.meta.feel==='rich';
+if(RICH)document.documentElement.dataset.feel='rich';
 const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
 /* 자격증마다 구분 단위가 다르다 — 필기 종목은 '과목', AWS 같은 종목은 '영역' */
 const UNIT=CPPG.meta.unit||'과목';
@@ -4441,6 +4534,66 @@ const FXQ={
     b.classList.toggle('inquiz',this.inQuiz()); }
 };
 window.addEventListener('resize',()=>FXQ.sync());
+/* 🎚 모션 없음 — 접근성 설정(실시간) 또는 🎬 모션 끄기. RICH 연출 전용 가드 */
+const MOTIONLESS=()=>REDUCED||document.documentElement.classList.contains('nomotion')
+  ||!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+/* ═══ 📳 햅틱(FEEL) — ★RICH 전용★. 길이·펄스 수로 세기를 만든다(Android Chrome, 최소 8ms).
+   iOS 는 navigator.vibrate 가 없어 조용히 무시된다.
+   · 같은 틱의 여러 요청은 ★우선순위 최고 1개★ 로 합친다(queueMicrotask)
+   · 피로 관리 — 60ms 쿨다운 · 1.2초 4회 초과면 길이 절반 · 1분 40회 초과면 탭 생략
+   · 오디오 출력 지연만큼 늦춰 ★소리와 같은 순간★ 에 떨게 한다(최대 120ms) ═══ */
+const FEEL=(()=>{
+  const PRI={tap:0,pick:0,right:1,wrong:1,redeem:2,combo:3,badge:3,levelup:4,pass:4,fail:4};
+  const can=()=>RICH&&typeof navigator!=='undefined'&&typeof navigator.vibrate==='function';
+  let pend=null, last=0, lastP=-1, hist=[];
+  const off=()=>!can()||S.haptic===false||MOTIONLESS()||document.hidden;
+  const k=c=>Math.max(0,Math.min(1,((c||0)-2)/12));
+  function pat(kind,x){
+    if(kind==='tap')return [10];
+    if(kind==='pick')return [8];
+    if(kind==='right')return [12,45,Math.round((x&&x.hard?26:18)+14*k(x&&x.c))];
+    if(kind==='wrong'){ const r=(x&&x.run)||0; return r>=4?null:r>=2?[22]:[36] }
+    if(kind==='combo'){ const s=(x&&x.s)||1, p=[];
+      for(let i=0;i<=s;i++){ if(i)p.push(40); p.push(14+6*s) }
+      if(s>=4)p.push(40,60); return p }
+    if(kind==='redeem')return [14,40,14,40,30];
+    if(kind==='levelup')return [8,90,10,90,12,170,50,60,18,50,18];   /* 50ms 펄스 = 소리 임팩트(+380ms) */
+    if(kind==='badge')return [30,50,16];
+    if(kind==='pass')return [40,60,20,60,20,60,60];
+    if(kind==='fail')return [24];
+    return null;
+  }
+  function flush(){
+    const r=pend; pend=null; if(!r||off())return;
+    const now=performance.now();
+    if(r.p<2&&now-last<60&&r.p<=lastP)return;                      /* 쿨다운 */
+    hist=hist.filter(t=>now-t<60000);
+    if(r.p===0&&hist.length>40)return;                               /* 1분 과다 — 탭 생략 */
+    let pt=pat(r.kind,r.x); if(!pt)return;
+    if(hist.filter(t=>now-t<1200).length>=4)pt=pt.map((v,i)=>i%2?v:Math.max(8,Math.round(v/2)));
+    hist.push(now); last=now; lastP=r.p;
+    let lat=0; try{ lat=S.sound?Math.min(120,(FX.snd.latency()||0)*1000):0 }catch(e){}
+    const go=()=>{ try{ if(!off())navigator.vibrate(pt) }catch(e){} };
+    const d=Math.round((r.delay||0)+lat);
+    if(d>0)setTimeout(go,d); else go();
+  }
+  return {
+    can,
+    /** 진동 요청 — kind(패턴) · x(콤보 등 인자) · delay(ms) */
+    buzz(kind,x,delay){
+      if(!RICH||off())return;
+      const p=PRI[kind]||0;
+      if(pend){ if(p>pend.p)pend={kind,x,p,delay}; return }
+      pend={kind,x,p,delay};
+      (window.queueMicrotask||(f=>Promise.resolve().then(f)))(flush);
+    },
+    /** 연출 + 진동을 ★같은 프레임★ 에 — rich 가 아니면 fire() 만 */
+    hit(kind,x,fire,o){
+      if(!RICH){ fire&&fire(); return }
+      (window.requestAnimationFrame||(f=>setTimeout(f,16)))(()=>{ fire&&fire(); FEEL.buzz(kind,x,o&&o.delay) });
+    }
+  };
+})();
 const FX=(()=>{
   const layer=()=>document.getElementById('fx');
   const PAL=['#5b9dff','#7c5cff','#34d399','#fbbf24','#fb7185','#22d3ee'];
@@ -4455,6 +4608,14 @@ const FX=(()=>{
          반복되면 그 순간부터 소음으로 인지된다.
        · UI 음은 아주 작게(0.03~0.06), 보상 음은 크게 — ★대비★ 가 보상감을 만든다. */
   let actx=null, master=null, verb=null, dry=null;
+  /* 🎚 RICH 전용 — 슬랩 딜레이 · 공유 노이즈 버퍼 · 보이스 예산 */
+  let slap=null, NB=null, LIVE=0, PRIO=1, SWAP=null;
+  /* 동시 소스 상한 — 모바일 28 / 데스크톱 48. prio 0=호버 1=UI 2=보상.
+     호버는 절반에서, UI 는 상한에서, 보상은 1.5배까지 — ★낮은 것부터 생략★ */
+  const CAP=(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches)?28:48;
+  const grab=p=>{ if(!RICH)return true;
+    if(LIVE>=CAP*(p>=2?1.5:p>=1?1:.5))return false; LIVE++; return true };
+  const rel=n=>{ if(RICH&&n)n.onended=()=>{LIVE=Math.max(0,LIVE-1)} };
   /* C 메이저 펜타토닉 3옥타브 — 인덱스가 올라갈수록 음이 높아진다(상승감) */
   const PENTA=[261.63,293.66,329.63,392.00,440.00,
                523.25,587.33,659.25,783.99,880.00,
@@ -4503,13 +4664,29 @@ const FX=(()=>{
       dry.connect(rumble);
       verb.connect(revHP); revHP.connect(wet); wet.connect(rumble);
       rumble.connect(comp); comp.connect(lim); lim.connect(master);
-      master.connect(actx.destination);
+      if(RICH){
+        /* 🎚 RICH — 2ms 트랜지언트가 리미터를 빠져나가지 않게 어택 1ms,
+           마스터 뒤 tanh 소프트클립(2x 오버샘플), 유리·금속 꼬리용 슬랩 딜레이 send */
+        lim.attack.value=0.001;
+        const clip=actx.createWaveShaper(), cv=new Float32Array(1024);
+        for(let i=0;i<1024;i++)cv[i]=Math.tanh(i/511.5-1);
+        clip.curve=cv; clip.oversample='2x';
+        master.connect(clip); clip.connect(actx.destination);
+        slap=actx.createDelay(0.2); slap.delayTime.value=0.072;
+        const fb=actx.createGain(); fb.gain.value=0.22;
+        const slp=actx.createBiquadFilter(); slp.type='lowpass'; slp.frequency.value=3200;
+        slap.connect(slp); slp.connect(fb); fb.connect(slap); slp.connect(rumble);
+        /* 공유 노이즈 1초 — 호출마다 createBuffer 하지 않고 ★재생 위치만★ 바꾼다 */
+        NB=actx.createBuffer(1,actx.sampleRate,actx.sampleRate);
+        const nd=NB.getChannelData(0); for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+      }else master.connect(actx.destination);
     }catch(e){actx=null}
     return actx;
   }
   /** 음 하나 — ADSR 로 부드럽게 열고 닫는다(클릭 잡음 방지) */
   function voice(f,o={}){
     const A=ac(); if(!A)return;
+    if(!grab(o.prio==null?PRIO:o.prio))return;
     const t0=A.currentTime+(o.at||0), dur=o.dur||0.3;
     const osc=A.createOscillator(), g=A.createGain();
     osc.type=o.type||'sine';
@@ -4527,12 +4704,26 @@ const FX=(()=>{
     if(o.lp){const f2=A.createBiquadFilter();f2.type='lowpass';f2.frequency.value=o.lp;node.connect(f2);node=f2}
     node.connect(g);
     g.connect(dry); if(o.wet!==false)g.connect(verb);
-    osc.start(t0); osc.stop(t0+dur+0.03);
+    osc.start(t0); osc.stop(t0+dur+0.03); rel(osc);
   }
   /** 짧은 노이즈 — 틱·쉭 같은 질감용 */
   function noise(o={}){
     const A=ac(); if(!A)return;
     const dur=o.dur||0.06, t0=A.currentTime+(o.at||0);
+    if(RICH&&NB){
+      /* 🎚 공유 버퍼 + 랜덤 오프셋 — 감쇠(decay)는 버퍼 대신 ★게인 곡선★ 으로 */
+      if(!grab(o.prio==null?PRIO:o.prio))return;
+      const src=A.createBufferSource(); src.buffer=NB; src.loop=true;
+      const bp=A.createBiquadFilter(); bp.type=o.type||'bandpass';
+      bp.frequency.setValueAtTime(o.f||2200,t0); bp.Q.value=o.q||1.2;
+      if(o.f2)bp.frequency.exponentialRampToValueAtTime(o.f2,t0+dur);   /* 스윕 */
+      const g=A.createGain(), pk=o.gain==null?0.06:o.gain;
+      g.gain.setValueAtTime(Math.max(.0001,pk),t0);
+      g.gain.setTargetAtTime(0,t0,dur/((o.decay||3)+1));
+      src.connect(bp); bp.connect(g); g.connect(dry); if(o.wet)g.connect(verb);
+      src.start(t0,Math.random()*Math.max(0,1-dur-.01)); src.stop(t0+dur); rel(src);
+      return;
+    }
     const len=Math.floor(A.sampleRate*dur), buf=A.createBuffer(1,len,A.sampleRate);
     const d=buf.getChannelData(0);
     for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,o.decay||3);
@@ -4561,6 +4752,8 @@ const FX=(()=>{
   /** 저역 임팩트 — 킥처럼 "퍽" 하고 때린다. 몸으로 느끼는 타격감의 정체 */
   function impact(o={}){
     const A=ac(); if(!A)return;
+    if(RICH&&SWAP){ SWAP(o); return }        /* 🎚 RICH — 사건별 소재 타격(hit)으로 갈아 끼운다 */
+    if(!grab(o.prio==null?PRIO:o.prio))return;
     const t0=A.currentTime+(o.at||0), dur=o.dur||0.16;
     const osc=A.createOscillator(), g=A.createGain();
     osc.type='sine';
@@ -4570,8 +4763,82 @@ const FX=(()=>{
     g.gain.exponentialRampToValueAtTime(o.gain==null?0.22:o.gain,t0+0.006);
     g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
     osc.connect(g); g.connect(dry);
-    osc.start(t0); osc.stop(t0+dur+0.02);
+    osc.start(t0); osc.stop(t0+dur+0.02); rel(osc);
     noise({at:o.at||0,f:o.click||1400,q:1,gain:(o.gain==null?0.22:o.gain)*0.35,dur:0.03,decay:5});
+  }
+  /* ── 🎚 소재 타격 hit() — ★RICH 전용★ ───────────────────────────────
+     정수배 배음뿐인 사인·삼각파는 '무엇에 부딪혔는지' 가 없다. 4층을 쌓는다.
+       ① 트랜지언트 2~8ms(필터 노이즈) — 닿는 순간
+       ② 바디 — 피치드롭 사인 + 비대칭 포화로 ★2·3차 배음★(폰 스피커는 40~60Hz 를 못 내므로
+          무게를 배음으로 옮긴다)
+       ③ 모드 — 소재 고유의 ★비조화★ 배음비(나무 2.57 · 유리 2.32 · 금속 2.76)
+       ④ 테일 — 필터 노이즈 · 슬랩 딜레이
+     변주: 키별 라운드로빈 4변형(cents 0/-18/+12/-7 ±5) · 지터 0~6ms · 게인 ±1.3dB · 필터 ±8%.
+     w(무게 0~1, 콤보 열기) ↑ → 바디 시작음 +40% · 길이 ×1.6 · .4 넘으면 포화. */
+  const MAT={
+    paper: {tr:['highpass',4500,.003], tail:{t:'bandpass',f:1800,f2:3200,d:.06,g:.8}},
+    button:{tr:['bandpass',5000,.002], body:[900,500,.018]},
+    wood:  {tr:['bandpass',1200,.004], body:[220,160,.06], modes:[[1,.08],[2.57,.05],[4.2,.03]], wet:.05, f:440},
+    rubber:{tr:['lowpass',600,.006],   body:[150,70,.12], sat:1, tail:{t:'lowpass',f:400,d:.08,g:.5}},
+    glass: {tr:['highpass',7000,.002], body:[400,380,.03], modes:[[1,.45],[2.32,.3],[4.25,.2],[6.63,.12]], slap:.18, wet:.25, f:1046.5},
+    metal: {tr:['bandpass',3500,.003], body:[300,260,.05], modes:[[1,.9],[2.76,.6],[5.4,.35],[8.93,.2]], tail:{t:'bandpass',f:7500,d:.35,g:.25}, wet:.3, f:659.25},
+    stone: {tr:['bandpass',2000,.008], body:[160,42,.22], sat:1, tail:{t:'lowpass',f:900,d:.25,g:.4}, wet:.15}
+  };
+  const RR={}, RRC=[0,-18,12,-7];
+  let SATC=null;
+  /* 비대칭 tanh — 짝수(2차) 배음까지 만든다. 대칭이면 홀수만 나온다 */
+  const satCurve=()=>{ if(SATC)return SATC; SATC=new Float32Array(1024);
+    const n=Math.tanh(2.6+.5)-Math.tanh(.5);
+    for(let i=0;i<1024;i++){const x=i/511.5-1; SATC[i]=(Math.tanh(2.6*x+.5)-Math.tanh(.5))/n}
+    return SATC };
+  function hit(o={}){
+    const A=ac(); if(!A||!NB)return;
+    const M=MAT[o.material]||MAT.wood, p=o.prio==null?PRIO:o.prio;
+    if(!grab(p))return;                              /* 트랜지언트 자리도 없으면 통째로 생략 */
+    const w=Math.max(0,Math.min(1,o.w||0)), key=o.key||o.material;
+    RR[key]=((RR[key]||0)+1)%4;
+    const rt=Math.pow(2,(RRC[RR[key]]+Math.random()*10-5)/1200);
+    const t0=A.currentTime+(o.at||0)+Math.random()*.006;
+    const G=Math.min(.3,(o.gain==null?.1:o.gain)*Math.pow(10,(Math.random()*2-1)*1.3/20));
+    const out=A.createGain(); out.connect(dry);
+    if(M.wet){ const s=A.createGain(); s.gain.value=M.wet; out.connect(s); s.connect(verb) }
+    if(M.slap&&slap){ const s=A.createGain(); s.gain.value=M.slap; out.connect(s); s.connect(slap) }
+    const nz=(ty,f,q)=>{ const src=A.createBufferSource(); src.buffer=NB; src.loop=true;
+      const fl=A.createBiquadFilter(); fl.type=ty; fl.frequency.setValueAtTime(f,t0); fl.Q.value=q;
+      src.connect(fl); return [src,fl] };
+    { /* ① 트랜지언트 */
+      const [ty,f,d]=M.tr, [src,fl]=nz(ty,f*(1+Math.random()*.16-.08),ty==='bandpass'?1.4:.7);
+      const g=A.createGain(); g.gain.setValueAtTime(Math.max(.0001,G*.9),t0);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+d+.002);
+      fl.connect(g); g.connect(out); src.start(t0,Math.random()*.9); src.stop(t0+d+.01); rel(src); }
+    if(M.body&&grab(p)){ /* ② 바디 */
+      const [b0,b1,bd]=M.body, d=bd*(1+.6*w);
+      const osc=A.createOscillator(), g=A.createGain(); osc.type='sine';
+      osc.frequency.setValueAtTime(b0*(1+.4*w)*rt,t0);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(20,b1*rt),t0+d*.85);
+      g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(Math.max(.0002,G),t0+.003);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+      let n=osc;
+      if(M.sat||w>.4){ const ws=A.createWaveShaper(); ws.curve=satCurve(); ws.oversample='2x'; osc.connect(ws); n=ws }
+      n.connect(g); g.connect(out); osc.start(t0); osc.stop(t0+d+.02); rel(osc); }
+    if(M.modes){ /* ③ 모드 — 고역일수록 작고 빨리 죽는다 */
+      const base=(o.f||M.f||440)*rt;
+      M.modes.forEach(([r,dc],j)=>{
+        const fr=base*r, d=dc*(1+.4*w); if(fr>16000||!grab(p))return;
+        const osc=A.createOscillator(), g=A.createGain(); osc.type='sine'; osc.frequency.value=fr;
+        g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(Math.max(.0002,G*.55/(1+j*.6)),t0+.002);
+        g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+        osc.connect(g); g.connect(out); osc.start(t0); osc.stop(t0+d+.02); rel(osc); });
+    }
+    if(M.tail&&grab(p)){ /* ④ 테일 */
+      const T=M.tail, d=T.d*(1+.5*w), [src,fl]=nz(T.t,T.f,T.t==='bandpass'?1.1:.7);
+      if(T.f2)fl.frequency.exponentialRampToValueAtTime(T.f2,t0+d);
+      const g=A.createGain(); g.gain.setValueAtTime(.0001,t0);
+      g.gain.exponentialRampToValueAtTime(Math.max(.0002,G*T.g),t0+.004);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+      fl.connect(g); g.connect(out); src.start(t0,Math.random()*.6); src.stop(t0+d+.02); rel(src); }
+    /* 무거운 타격 직후 BGM 이 잠깐 비켜 준다 — 이미 덕킹 중이면(마일스톤·시대 전환) 건드리지 않는다 */
+    if(w>=.45&&!(bgm&&bgm.duck<1))BGM.duck(350);
   }
   /** 상승 스윕 — ★무언가 올 것 같은★ 기대를 만든다. 콤보가 쌓일수록 길게 */
   function riser(o={}){
@@ -4628,7 +4895,7 @@ const FX=(()=>{
       /* 앞쪽에 몰렸다가 흩어지는 분포 — 일제히 터진 뒤 잦아드는 느낌 */
       const t=(o.at||0)+Math.pow(Math.random(),.6)*spread;
       noise({at:t,f:1100+Math.random()*2600,q:.7+Math.random(),
-             gain:g*(.5+Math.random()*.8),dur:.028,decay:6,wet:true});
+             gain:g*(.5+Math.random()*.8),dur:.028,decay:6,wet:true,prio:1});
     }
   }
   /** 함성 — 대역 제한 노이즈에 비브라토를 걸어 사람 목소리 무리처럼 */
@@ -4724,23 +4991,93 @@ const FX=(()=>{
     }
   }
 
-  /** 특정 요소에서 터지는 스파크 */
-  function burst(el,n){
+  /** 특정 요소에서 터지는 스파크 — kind('glass'·'metal', RICH 전용)면 소재 팔레트 */
+  const KPAL={glass:['#ffffff','#effcff','#d4f4ff'],metal:['#fbbf24','#fde68a','#f59e0b','#fff7d6']};
+  function burst(el,n,kind){
     if(REDUCED||!el)return;
     const L=layer(); if(!L)return;
     const r=el.getBoundingClientRect();
     const cx=r.left+r.width/2, cy=r.top+r.height/2;
     for(let i=0;i<(n||14);i++){
       const d=document.createElement('i');
-      d.className='spark';
+      d.className=kind?'spark '+kind:'spark';
       d.style.left=cx+'px'; d.style.top=cy+'px';
-      d.style.background=PAL[(Math.random()*PAL.length)|0];
+      const pal=(kind&&KPAL[kind])||PAL;
+      d.style.background=pal[(Math.random()*pal.length)|0];
       const a=Math.random()*Math.PI*2, dist=40+Math.random()*90;
       d.style.setProperty('--x',Math.cos(a)*dist+'px');
       d.style.setProperty('--y',Math.sin(a)*dist+'px');
       L.appendChild(d);
       setTimeout(()=>d.remove(),700);
     }
+  }
+
+  /* ── 🎚 RICH 전용 연출 ─────────────────────────────────────────── */
+  /** 링 — 요소 윤곽에서 흰빛 → 정답색(금속이면 앰버)으로 번지는 테두리. s = 퍼짐 배율 */
+  function ring(el,s,kind){
+    if(MOTIONLESS()||!el)return;
+    const L=layer(); if(!L)return;
+    const r=el.getBoundingClientRect(); if(!r.width)return;
+    const d=document.createElement('i'), e=14*(s||1);
+    d.className=kind?'fxpulse '+kind:'fxpulse';
+    d.style.left=r.left+'px'; d.style.top=r.top+'px';
+    d.style.width=r.width+'px'; d.style.height=r.height+'px';
+    d.style.setProperty('--sx',((r.width+e*2)/r.width).toFixed(3));
+    d.style.setProperty('--sy',((r.height+e*2)/Math.max(1,r.height)).toFixed(3));
+    L.appendChild(d); setTimeout(()=>d.remove(),620);
+  }
+  /** 먼지 — 오답 선지 아래로 떨어지는 무채색 입자(상한 6) */
+  function dust(el,n){
+    if(MOTIONLESS()||!el)return;
+    const L=layer(); if(!L)return;
+    const r=el.getBoundingClientRect(); if(!r.width)return;
+    for(let i=0;i<Math.min(n||6,6);i++){
+      const d=document.createElement('i'); d.className='dust';
+      d.style.left=(r.left+r.width*(.12+Math.random()*.76))+'px'; d.style.top=(r.bottom-3)+'px';
+      d.style.setProperty('--x',((Math.random()-.5)*26).toFixed(1)+'px');
+      d.style.setProperty('--y',(16+Math.random()*24).toFixed(1)+'px');
+      d.style.animationDelay=(Math.random()*60|0)+'ms';
+      L.appendChild(d); setTimeout(()=>d.remove(),820);
+    }
+  }
+  /** 모바일 감속 배율(body.fxq) — 입자 수에 곱한다 */
+  const pk=()=>document.body&&document.body.classList.contains('fxq')?Math.max(.5,FXQ.k()):1;
+  /* ★히트스톱★ — 눌린 채 60ms 멈췄다가(CSS chHit 지연) 빛·링·유리 스파크·소리·진동이
+     ★한 프레임★ 에 터진다. 색종이는 콤보 5의 배수에서만(남발하면 값이 떨어진다). */
+  const HS=60;
+  function richRight(el,combo,opt){
+    const c=combo||0, card=el&&el.closest?el.closest('.qcard'):null;
+    const st={3:1,5:2,8:3,12:4}[c];
+    setTimeout(()=>FEEL.hit(st?'combo':'right',st?{s:st}:{c,hard:!!(opt&&opt.hard)},()=>{
+      glow('color-mix(in srgb, var(--ok) 45%, transparent)');
+      ring(el,1);
+      burst(el,Math.min(20,Math.max(6,Math.round(16*pk()))),'glass');
+      SND.right(combo,opt||{});
+      if(c>=5&&c%5===0)confetti(Math.min(14+c*4,60));
+      /* 콤보 요동 — 지문은 두고 ★선지만★ 세로로 1→3px(12콤보 포화) */
+      if(card&&c>=3&&!MOTIONLESS()){
+        card.style.setProperty('--qa',(1+2*Math.min(1,(c-3)/9)).toFixed(2)+'px');
+        card.classList.remove('quake'); void card.offsetWidth; card.classList.add('quake');
+        setTimeout(()=>card.classList.remove('quake'),400);
+      }
+    }),HS);
+  }
+  /* 오답 — 카드(지문)는 흔들지 않고 고른 선지만 80ms 뒤 둔탁하게(CSS chThud), 먼지가 떨어진다 */
+  function richWrong(el){
+    let run=0; try{ run=wrongRun }catch(e){}
+    setTimeout(()=>FEEL.hit('wrong',{run},()=>{
+      glow('color-mix(in srgb, var(--no) 40%, transparent)');
+      dust(el,6); SND.wrong();
+    }),80);
+  }
+  /** 레벨업 — XP 바가 380ms 모였다가(소리 임팩트 +0.38s 와 같은 순간) 링 2겹 + 앰버 스파크 */
+  function lvup(){
+    const x=document.getElementById('qXp');
+    if(!x||MOTIONLESS()||!x.offsetParent)return;
+    x.classList.remove('lvgather'); void x.offsetWidth; x.classList.add('lvgather');
+    setTimeout(()=>{ x.classList.remove('lvgather');
+      ring(x,1,'metal'); setTimeout(()=>ring(x,1.8,'metal'),110);
+      burst(x,Math.min(18,Math.max(8,Math.round(18*pk()))),'metal') },380);
   }
 
   /** 남아 있는 코인 제거 — 착지 전에 화면이 바뀌면 유령처럼 남는다 */
@@ -4979,6 +5316,77 @@ const FX=(()=>{
     setVol(v){ if(master)master.gain.value=v },
     ctx(){ return actx }
   };
+
+  /* ── 🎚 RICH 레시피 — ★기존 SND 는 한 줄도 고치지 않고★ RICH 사이트에서만 덮어쓴다.
+     impact() 를 쓰는 기존 레시피는 SWAP 으로 그 자리만 소재 타격(hit)으로 갈아 끼워
+     나머지 층(음정·스파클·환호)은 그대로 재사용한다. PRIO 2 = 보상(보이스 예산 우선). */
+  if(RICH){
+    const O=Object.assign({},SND);
+    /** 원본 레시피 name 을 부르되 impact 자리를 mk(o) 로 바꾼다 */
+    const run=(name,args,mk,p)=>{
+      if(!S.sound)return;
+      const q=PRIO, s0=SWAP; if(p!=null)PRIO=p; SWAP=mk;
+      try{ return O[name].apply(SND,args) }finally{ PRIO=q; SWAP=s0 }
+    };
+    const at=o=>(o&&o.at)||0;
+    Object.assign(SND,{
+      tap(){ if(S.sound)hit({material:'button',gain:.06,key:'tap'}) },
+      hover(){ if(S.sound)noise({f:7200,q:3.2,gain:.012,dur:.012,decay:6,prio:0}) },
+      hoverPick(){ if(!S.sound)return;
+        noise({f:7200,q:3.2,gain:.012,dur:.012,decay:6,prio:0});
+        hit({material:'paper',gain:.02,prio:0,key:'hpick'}) },
+      nav(){ if(!S.sound)return; hit({material:'paper',gain:.05,key:'nav'}); O.nav.call(SND) },
+      on(){ if(!S.sound)return; hit({material:'button',gain:.05,key:'on'}); O.on.call(SND) },
+      off(){ if(S.sound)hit({material:'rubber',gain:.05,key:'off'}) },
+      /** 🃏 넘김 — 스치는 결이 위로 쓸리고(1500→3400) 종이가 착지한다 */
+      flip(){ if(!S.sound)return;
+        noise({f:1500,f2:3400,q:.9,gain:.055,dur:.11,decay:1.6});
+        hit({material:'paper',at:.07,gain:.05,key:'flip'});
+        voice(step(7),{at:.07,dur:.18,type:'triangle',gain:.06});
+        voice(step(9),{at:.1,dur:.2,type:'sine',gain:.035}) },
+      check(){ run('check',[],o=>hit({material:'wood',f:step(8),gain:.11,at:at(o),key:'chk'})) },
+      uncheck(){ run('uncheck',[],o=>hit({material:'wood',f:step(5),gain:.08,at:at(o),key:'chk'})) },
+      know(ok){ run('know',[ok],o=>hit(ok?{material:'glass',f:step(11),gain:.08,at:at(o),key:'know'}
+                                          :{material:'wood',f:step(4),gain:.08,at:at(o),key:'know'})) },
+      /** 정답 — 콤보 열기(w)가 소재를 바꾼다: 나무 → 유리 → 금속 (+8콤보부터 돌의 무게) */
+      right(combo,opt){
+        const c=Math.min(combo||1,12), i=3+Math.min(c,9), w=BGM.heatLevel(c);
+        run('right',[combo,opt||{}],o=>{
+          hit({material:w<.2?'wood':w<.45?'glass':'metal',f:step(i),w,gain:.14,at:at(o),key:'right'});
+          if(w>=.72)hit({material:'stone',w,gain:.12,at:at(o),key:'rstone'}) },2) },
+      /** 오답 — 고무의 둔탁함 + 낮은 나무 한 번. 정답 계열(음정 상승)과 ★소재부터 다르다★ */
+      wrong(){ if(!S.sound)return; const q=PRIO; PRIO=2;
+        try{ hit({material:'rubber',gain:.11,key:'wrong'});
+             hit({material:'wood',at:.05,f:196,gain:.06,key:'wrongw'});
+             voice(174.61,{at:.09,dur:.3,type:'sine',gain:.06,lp:700}) }finally{ PRIO=q } },
+      /** 콤보 끊김 — 나무 한 번 + 미끄러져 내려가는 한 음(칩 off 와 구분) */
+      comboBreak(){ if(!S.sound)return;
+        hit({material:'wood',f:step(3),gain:.05,key:'cbrk'});
+        voice(step(5),{at:.06,glide:step(2),dur:.3,type:'sine',gain:.045,lp:1100}) },
+      redeem(){ run('redeem',[],o=>hit({material:'glass',f:step(6),w:.3,gain:.13,at:at(o),key:'redeem'}),2) },
+      coin(k){ if(!S.sound)return;
+        voice(step(10+(k%4)),{dur:.1,type:'triangle',gain:.055,wet:false});
+        hit({material:'metal',f:step(10+(k%4))*.5,gain:.05,key:'coin'}) },
+      tease(){ if(!S.sound)return; O.tease.call(SND); hit({material:'glass',f:step(11),gain:.025,key:'tease'}) },
+      sub(boo){ if(!S.sound)return; hit({material:'rubber',gain:.03,key:'sub'}); O.sub.call(SND,boo) },
+      milestone(){ run('milestone',[],o=>{
+        hit({material:'stone',w:.8,gain:.24,at:at(o),key:'ms'});
+        hit({material:'metal',at:at(o)+.02,f:step(9),w:.6,gain:.12,key:'msm'}) },2) },
+      levelup(){ run('levelup',[],o=>{                     /* 임팩트 자리 = +0.38s — 햅틱 50ms 펄스와 같은 순간 */
+        hit({material:'stone',w:1,gain:.24,at:at(o),key:'lv'});
+        hit({material:'glass',at:at(o)+.02,f:step(12),gain:.12,key:'lvg'}) },2) },
+      badge(){ run('badge',[],o=>hit({material:'metal',f:step(9),w:.7,gain:.16,at:at(o),key:'badge'}),2) },
+      finish(pass){ run('finish',[pass],o=>{
+        if(pass){ hit({material:'stone',w:1,gain:.26,at:at(o),key:'fin'});
+                  hit({material:'metal',at:at(o)+.02,f:step(9),w:.6,gain:.12,key:'finm'}) }
+        else hit({material:'rubber',w:.5,gain:.12,at:at(o),key:'fin'}) },2) },
+      era(){ run('era',[],o=>{
+        hit({material:'stone',w:1,gain:.3,at:at(o),prio:2,key:'era'});
+        hit({material:'metal',at:at(o)+.03,f:step(9),w:.8,gain:.14,key:'erab'}) },2) },
+      /** 오디오 출력 지연(초) — 햅틱을 소리에 맞춰 늦추는 데 쓴다 */
+      latency(){ return actx?((actx.baseLatency||0)+(actx.outputLatency||0)):0 }
+    });
+  }
 
   /* ═══ 🎵 배경음악 — 적응형 레이어 ═══════════════════════
      ★외부 음원 파일을 쓰지 않는다.★ 용량·라이선스 부담 없이 WebAudio 로 합성하고,
@@ -5408,15 +5816,17 @@ const FX=(()=>{
   };
 
   let bigLeft=3;              /* 세션당 남은 '큰 연출' 횟수 */
-  return {
+  const API={
     bgm:BGM,
     right(el,combo,opt){
+      if(RICH)return richRight(el,combo,opt);
       glow('color-mix(in srgb, var(--ok) 45%, transparent)');
       burst(el,14);
       SND.right(combo,opt||{});
       if(combo>=3)confetti(Math.min(14+combo*4,60));
     },
-    wrong(){
+    wrong(el){
+      if(RICH)return richWrong(el);
       glow('color-mix(in srgb, var(--no) 40%, transparent)');
       SND.wrong();
     },
@@ -5438,6 +5848,20 @@ const FX=(()=>{
     card(el){ burst(el,10); SND.flip(); },
     coins, clearCoins, toast, confetti, tone, snd:SND
   };
+  /* 🎚 RICH — 보상 사건에 햅틱을 잇고, 레벨업은 시각(토스트·색종이)을 소리 임팩트(+380ms)에 맞춘다 */
+  if(RICH){
+    const _ms=API.milestone, _fin=API.finish, _lv=SND.levelup, _bd=SND.badge, _rd=SND.redeem;
+    let lvAt=-1e9;
+    API.milestone=function(msg){
+      const go=()=>FEEL.hit('badge',null,()=>_ms.call(API,msg));
+      if(performance.now()-lvAt<150)setTimeout(go,380); else go();
+    };
+    API.finish=function(pass,pct){ FEEL.buzz(pass?'pass':'fail',null,pass?480:0); return _fin.call(API,pass,pct) };
+    SND.levelup=function(){ lvAt=performance.now(); FEEL.buzz('levelup'); lvup(); return _lv.apply(SND,arguments) };
+    SND.badge=function(){ FEEL.buzz('badge'); return _bd.apply(SND,arguments) };
+    SND.redeem=function(){ FEEL.buzz('redeem'); return _rd.apply(SND,arguments) };
+  }
+  return API;
 })();
 
 /* ═══════════ 환경설정 — 테마 · 글자 크기 ═══════════ */
@@ -5498,7 +5922,12 @@ function paintThemePop(d){
      <button class="thopt ${motionOff()?'on':''}" id="thMotion">
        <span class="the">🎬</span>
        <span class="thn">${motionOff()?'모션 켜기':'모션 끄기'}<i>${motionOff()?'지금은 연출이 꺼져 있어요':'카드·연출의 움직임을 줄입니다'}</i></span>
-     </button>`;
+     </button>`
+   /* 📳 진동 — RICH 이고 기기가 진동을 지원할 때만 보인다 */
+   +(RICH&&FEEL.can()?`<button class="thopt ${S.haptic===false?'on':''}" id="thHaptic">
+       <span class="the">📳</span>
+       <span class="thn">${S.haptic===false?'진동 켜기':'진동 끄기'}<i>${S.haptic===false?'지금은 진동이 꺼져 있어요':'정답·콤보·레벨업을 손끝으로 알립니다'}</i></span>
+     </button>`:'');
 }
 /** 테마 고르기 — 이름만으로는 감이 안 오므로 ★작은 색 견본★ 을 함께 보여 준다 */
 function themePop(){
@@ -5511,6 +5940,9 @@ function themePop(){
   document.body.appendChild(d);
   d.onclick=e=>{
     if(e.target.closest('#thMotion')){ setMotion(!motionOff()); return }
+    if(e.target.closest('#thHaptic')){ S.haptic=S.haptic===false; save(); paintThemePop(d);
+      if(S.haptic)FEEL.buzz('right',{c:0});                       /* 켤 때 확인 진동 */
+      FX.toast(S.haptic?'📳 진동 켬':'📳 진동 끔','good',1100); return }
     const x=e.target.closest('[data-th]'); if(!x)return;
     setTheme(x.dataset.th); FX.snd.on&&FX.snd.on(); };
   setTimeout(()=>document.addEventListener('pointerdown',function h(e){
@@ -9412,6 +9844,9 @@ function bgmVolPop(){
    개별 버튼마다 호출을 심으면 유지보수가 안 된다 — ★문서 레벨에서 한 번★ 잡는다.
    칩(필터 토글)은 켜짐/꺼짐 음을 달리해 상태 변화가 귀로도 들리게 한다. */
 document.addEventListener('pointerdown',e=>{
+  /* 📳 RICH — 누르는 순간의 진동(선지는 더 짧게). 소리가 꺼져 있어도 진동은 따로 켜고 끈다 */
+  if(RICH){ const h=e.target.closest&&e.target.closest('.ch,button,.chip,summary,a.tocitem,label');
+    if(h&&!h.disabled&&!h.classList.contains('killed'))FEEL.buzz(h.classList.contains('ch')?'pick':'tap') }
   if(!S.sound)return;
   const t=e.target.closest('button,.chip,summary,a.tocitem,label');
   if(!t)return;
@@ -13070,10 +13505,14 @@ function celebrate(ok,gain,wasWrong,q,handled){
     else FX.toast((combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨')+(gain?`  +${gain} XP`:''),'good',1000);
   }else{
     card.classList.add('flash-no');
+    /* 🎚 RICH — 카드(지문)는 고정, 고른 선지만 둔탁하게(FX.wrong 에 선지를 넘긴다) */
+    if(RICH)FX.wrong(card.querySelector('.ch.wrong'));
+    else{
     /* 흔들림은 ★짧게 한 번★ 만. 길면 질책처럼 느껴진다(0.34s) */
     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
     setTimeout(()=>card.classList.remove('shake'),400);
-    FX.wrong(); MASCOT.wrong(wrongRun,handled);
+    FX.wrong(); }
+    MASCOT.wrong(wrongRun,handled);
     FX.toast(WRONG_MSGS[(Math.random()*WRONG_MSGS.length)|0],'bad',1400);
   }
   setTimeout(()=>card.classList.remove('flash-ok','flash-no'),800);
