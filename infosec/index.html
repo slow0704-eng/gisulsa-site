@@ -713,6 +713,16 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   clip-path:inset(0 0 0 0);animation:ringGo var(--sec,6s) linear forwards}
 @keyframes ringGo{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 100% 0 0)}}
 #qNext{position:relative}
+/* ⬇ 떠 있는 '다음 문제' — 채점 직후 본문의 '다음' 이 화면 밖이면 ★스크롤은 그대로 두고★
+   현재 화면 우측 하단에 띄운다. 예전엔 scrollIntoView 로 끌어왔는데, 버튼이 페이지 끝에
+   있어 결국 ★맨 아래로 내려가 해설·보기를 놓쳤다.★
+   자리: ⤓ 자동스크롤(우하단 16px, 접힌 폭 ≈46px) 왼쪽 · 캐릭터 기둥(bottom 78px~) 아래. */
+#qFloat{position:fixed;z-index:935;
+  right:calc(max(16px,env(safe-area-inset-right)) + 56px);
+  bottom:calc(16px + env(safe-area-inset-bottom));
+  box-shadow:0 8px 24px rgba(0,0,0,.3);animation:mPop .24s cubic-bezier(.2,1.4,.4,1)}
+#qFloat[hidden]{display:none}
+@media print{ #qFloat{display:none !important} }
 @media (prefers-reduced-motion: reduce){ .autoring{animation:none;opacity:.35} }
 .sosmenu{position:absolute;right:0;bottom:calc(100% + 8px);z-index:40;
   display:flex;flex-direction:column;gap:4px;padding:7px;border-radius:12px;
@@ -1223,6 +1233,24 @@ h1,h2,h3,.vt{font-family:var(--f-head);font-weight:800;letter-spacing:-.018em}
 /* 말풍선은 둥근 스택 — 말투가 눈으로도 읽힌다 */
 .mtalk,.stalk,.ctalk{font-family:var(--f-soft);letter-spacing:-.004em}
 kbd{font-family:var(--f-num)}
+
+/* ── ✒ 명조 모드 — 사이트별 선택(data.js meta.font:'serif') ──────────
+   ★읽는 글 전체(지문·보기·해설·개념)★ 를 화면용 명조로 바꾼다. 시스템 명조(바탕·
+   나눔명조)는 가는 획이 화면에서 뭉개지고 모바일엔 아예 없는 경우가 많아, 이 모드에서만
+   웹폰트 Noto Serif KR(본명조)을 불러온다 — 한글 subset(unicode-range) 로 쓰는 글자만
+   받고, sw.js 가 교차 출처 자원을 cache-first 로 담아 두 번째 방문부터는 오프라인에서도 산다.
+   웹폰트가 늦거나 막히면 스택의 시스템 명조로 떨어진다(display=swap — 빈 화면 없음).
+   조작 요소(헤더·메뉴·버튼·칩·숫자)는 ★고딕 그대로★ — '누르는 것' 과 '읽는 것' 의 결을 가른다. */
+:root[data-font="serif"]{
+  --f-serif:"Noto Serif KR","MaruBuri","Nanum Myeongjo","나눔명조","Apple Myungjo","Batang","바탕",Georgia,serif;
+  --f-ui:var(--f-serif);
+  --f-label:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+}
+:root[data-font="serif"] :is(header,nav,.btn,.chip,.ctag,.sbadge,.qmeta,.meta,.cap,.lbl,.dash,.stat,.timer,.pg,.prog,#ascroll,#qFloat,input,select){
+  font-family:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif}
+/* 명조는 같은 크기에서 고딕보다 작고 성기게 보인다 — 줄 간격만 살짝 연다 */
+:root[data-font="serif"] body{line-height:1.7;letter-spacing:.003em}
+:root[data-font="serif"] .ch{line-height:1.6}
 
 /* ── 🎞 진입 — 화면이 '켜지는' 느낌 ─────────────────────── */
 @keyframes upIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -4298,6 +4326,15 @@ function checkAch(){
   return got;
 }
 
+/* ✒ 사이트별 본문 서체 — meta.font:'serif' 면 명조 모드(CSS ✒ 명조 모드 참조) */
+if(CPPG.meta.font==='serif'){
+  document.documentElement.dataset.font='serif';
+  if(!document.getElementById('fontSerif')){
+    const l=document.createElement('link'); l.id='fontSerif'; l.rel='stylesheet';
+    l.href='https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap';
+    document.head.appendChild(l);
+  }
+}
 const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
 /* 자격증마다 구분 단위가 다르다 — 필기 종목은 '과목', AWS 같은 종목은 '영역' */
 const UNIT=CPPG.meta.unit||'과목';
@@ -9513,6 +9550,7 @@ let view='home';
 const BGM_SCENE={home:'home',concept:'read',sheet:'read',note:'read',info:'read',
                  shortcut:'read',cards:'cards',example:'read',quiz:'quiz'};
 function go(v){
+  if(typeof qFloatHide==='function')qFloatHide();          /* ⬇ 퀴즈를 떠나면 떠 있는 '다음' 도 걷는다 */
   if(view!==v){FX.snd.nav();FX.clearCoins()}
   if(FX.bgm.on())FX.bgm.scene(BGM_SCENE[v]||'home');          // 화면 전환음 — 아주 작게, 이동했다는 감각만
   view=v;
@@ -12750,16 +12788,38 @@ function renderQ(){
      모바일(390×844 실측)에서는 ★언제나 접은 선 아래(y 1,040~1,140)★ 였다.
      "늦게 생긴다" 로 보인 것은 생성이 늦어서가 아니라 ★보이지 않아서★ 다.
      이미 보이면 건드리지 않는다 — 읽는 중에 화면이 움직이면 그게 더 방해다. */
+  /* ★스크롤은 옮기지 않는다★ — scrollIntoView 로 끌어오면 버튼이 페이지 끝이라 결국
+     맨 아래까지 내려가 방금 본 정답·해설이 화면 위로 사라졌다. 대신 현재 화면의
+     우측 하단에 '다음' 을 띄우고(#qFloat), 본문 버튼이 보이게 되면 스스로 걷힌다. */
+  qFloatHide();
   if(quiz&&quiz._scrollNav){
     quiz._scrollNav=false;
-    requestAnimationFrame(()=>{
-      const n=$('qNext'); if(!n)return;
-      const r=n.getBoundingClientRect();
-      if(r.top>=0&&r.bottom<=innerHeight)return;             /* 이미 보인다 */
-      /* ★center 로 세운다.★ end 로 붙이면 화면 맨 아래 — 거기는 캐릭터 기둥(78~311px)과
-         ⤓ 자동스크롤이 떠 있는 자리라, 정작 눌러야 할 버튼이 그 밑에 깔린다. */
-      n.scrollIntoView({block:'center',behavior:REDUCED?'auto':'smooth'});
-    });
+    requestAnimationFrame(qFloatShow);
+  }
+}
+let qFloatIO=null;
+function qFloatHide(){
+  if(qFloatIO){qFloatIO.disconnect();qFloatIO=null}
+  const f=$('qFloat'); if(f)f.hidden=true;
+}
+function qFloatShow(){
+  const n=$('qNext'); if(!n||n.disabled||view!=='quiz')return;
+  const r=n.getBoundingClientRect();
+  if(r.top>=0&&r.bottom<=innerHeight)return;               /* 이미 보인다 */
+  let f=$('qFloat');
+  if(!f){
+    f=document.createElement('button');
+    f.id='qFloat'; f.type='button'; f.className='btn noprint';
+    f.onclick=()=>{ const b=$('qNext'); qFloatHide(); if(b&&!b.disabled)b.click() };
+    document.body.appendChild(f);
+  }
+  f.textContent=n.textContent.replace(/\s*Enter\s*$/,'').trim()+' →';
+  f.setAttribute('aria-label',f.textContent);
+  f.hidden=false;
+  /* 본문의 '다음' 이 화면에 들어오면 떠 있는 쪽은 걷는다 — 같은 버튼이 두 개 보이면 헷갈린다 */
+  if('IntersectionObserver' in window){
+    qFloatIO=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting))qFloatHide() });
+    qFloatIO.observe(n);
   }
 }
 function renderQNav(revealed){
