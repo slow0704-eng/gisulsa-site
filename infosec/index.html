@@ -1168,6 +1168,27 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
   #mascot{right:10px;bottom:calc(74px + env(safe-area-inset-bottom))}
   .mtalk{max-width:150px;font-size:12px}
 }
+/* 👆 ★클릭 칸은 작게, 그림 크기는 그대로★ — 모바일 실측(390×844)에서 #mascot 상자가
+   125×250px 로 오른쪽 아래를 통째로 덮어, 그 밑으로 스크롤된 '다음 문제' 가 안 눌렸다.
+   상자·말풍선·그림은 클릭을 통과시키고, 캐릭터 몸통 가운데 작은 타원만 눌리게 한다.
+   (::after 를 누르면 이벤트 대상은 부모 버튼 — 기존 onclick 이 그대로 산다) */
+#mascot,#mascot #cstack,#mascot #crowd,#mascot .cw,#mascot .mtalk,#mascot .stalk,#mascot .ctalk,
+#mascot .mbody,#mascot .mbody *,#mascot .sbody,#mascot .sbody *,#mascot .cw *{pointer-events:none}
+#mascot #mfold{pointer-events:auto}
+#mascot .mbody,#mascot .sbody{position:relative}
+#mascot .mbody::after,#mascot .sbody::after,#mascot .cw::after{content:'';position:absolute;pointer-events:auto;
+  left:26%;right:26%;top:30%;bottom:18%;border-radius:50%}
+/* 💬 말풍선 반투명 — 뒤의 보기·버튼이 비쳐 보여야 가려진 줄 안다 */
+.mtalk,.ctalk{background:color-mix(in srgb,var(--bg2) 74%,transparent);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.stalk{background:color-mix(in srgb,color-mix(in srgb,#8b7bd8 14%,var(--bg2)) 74%,transparent);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.mtalk::after{border-top-color:color-mix(in srgb,var(--bg2) 74%,transparent)}
+.stalk::after{border-top-color:color-mix(in srgb,color-mix(in srgb,#8b7bd8 14%,var(--bg2)) 74%,transparent)}
+/* ⬅ 모바일에선 퀴즈 버튼 줄을 캐릭터 기둥(오른쪽 ≈80px) 밖으로 비킨다 — 접으면 원위치 */
+@media (max-width:520px){
+  body:has(#mascot:not([hidden]):not(.fold)) #qNav{padding-right:82px}
+}
 @media (prefers-reduced-motion: reduce){
   .mwrap,.meyes,.mwingL,.mwingR,.msweat,.mnote,.mbang{animation:none!important}
   .mtalk{animation:none}
