@@ -724,6 +724,13 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
 #qFloat[hidden]{display:none}
 @media print{ #qFloat{display:none !important} }
 @media (prefers-reduced-motion: reduce){ .autoring{animation:none;opacity:.35} }
+/* 👉 스와이프로 넘긴 방향에서 새 문제가 들어온다 — 손가락이 민 쪽과 화면이 같이 움직여야 '넘겼다' 로 읽힌다 */
+.qcard.sw-next{animation:swNext .24s cubic-bezier(.2,.9,.3,1)}
+.qcard.sw-prev{animation:swPrev .24s cubic-bezier(.2,.9,.3,1)}
+@keyframes swNext{from{transform:translateX(36px);opacity:.35}to{transform:none;opacity:1}}
+@keyframes swPrev{from{transform:translateX(-36px);opacity:.35}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){ .qcard.sw-next,.qcard.sw-prev{animation:none} }
+html.nomotion .qcard.sw-next,html.nomotion .qcard.sw-prev{animation:none}
 .sosmenu{position:absolute;right:0;bottom:calc(100% + 8px);z-index:40;
   display:flex;flex-direction:column;gap:4px;padding:7px;border-radius:12px;
   background:var(--bg2);border:1px solid var(--bd);box-shadow:0 12px 30px rgba(0,0,0,.26);
@@ -13278,6 +13285,36 @@ function qFloatShow(){
     qFloatIO.observe(n);
   }
 }
+/* 👉 모바일 스와이프 — ←(왼쪽으로 밀기)=다음 · →(오른쪽으로 밀기)=이전.
+   ★버튼을 대신 눌러 준다★ — '다음' 이 없으면(연습 모드에서 아직 안 풀었으면) 아무 일도 없다.
+   세로 스크롤·표 가로 스크롤·입력칸·텍스트 선택과 싸우지 않도록:
+     가로 이동 ≥ 60px · 세로 이동 < 가로의 0.6 · 0.7초 안 · 가로로 스크롤되는 상자 안에서 시작하면 무시. */
+(function(){
+  const card=$('qCard'); if(!card)return;
+  let sx=0, sy=0, st=0, ok=false;
+  const scroller=el=>{ for(let e=el;e&&e!==card;e=e.parentElement){
+      if(e.scrollWidth>e.clientWidth+2&&/(auto|scroll)/.test(getComputedStyle(e).overflowX))return true }
+    return false };
+  card.addEventListener('touchstart',e=>{
+    ok=false; if(e.touches.length!==1||view!=='quiz')return;
+    const t=e.target; if(t.closest('input,textarea,select')||scroller(t))return;
+    const p=e.touches[0]; sx=p.clientX; sy=p.clientY; st=Date.now(); ok=true;
+  },{passive:true});
+  card.addEventListener('touchend',e=>{
+    if(!ok)return; ok=false;
+    const p=e.changedTouches[0], dx=p.clientX-sx, dy=p.clientY-sy;
+    if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)*.6||Date.now()-st>700)return;
+    const sel=window.getSelection&&String(getSelection()); if(sel&&sel.length)return;   /* 글자 선택 중 */
+    /* 마지막 문제의 '다음' 은 ★채점하기·제출하기★ — 스치는 손짓으로 시험을 끝내면 안 된다(버튼으로만) */
+    if(dx<0&&typeof quiz!=='undefined'&&quiz&&quiz.i>=quiz.items.length-1)return;
+    const b=$(dx<0?'qNext':'qPrev'); if(!b||b.disabled)return;
+    b.click();
+    const c=$('qCard'); if(!c)return;
+    c.classList.remove('sw-next','sw-prev'); void c.offsetWidth;
+    c.classList.add(dx<0?'sw-next':'sw-prev');
+    setTimeout(()=>c.classList.remove('sw-next','sw-prev'),300);
+  },{passive:true});
+})();
 function renderQNav(revealed){
   const last=quiz.i===quiz.items.length-1;
   const answered=quiz.ans[quiz.i]!==null;
