@@ -572,6 +572,52 @@ ul.sl li::before{content:"▸";position:absolute;left:2px;color:var(--ac)}
 .wrong-item .meta{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .wrong-item .cnt{font-size:11px;color:var(--no);font-weight:800}
 
+/* ═══ 📜 기출풀이 — ★data.js meta.past 가 있는 사이트 전용★ (없으면 아무 요소도 생기지 않는다) ═══ */
+.pround{margin-bottom:12px;padding:15px 16px}
+.pround .prh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.pround .prt{font-size:15.5px;font-weight:800}
+.pwarn{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:99px;
+  color:var(--wa);background:color-mix(in srgb,var(--wa) 14%,var(--card));border:1px solid color-mix(in srgb,var(--wa) 40%,var(--line))}
+.pround .prs{font-size:12.5px;color:var(--tx3);margin-top:3px}
+.pround .prm{font-size:13px;color:var(--tx2);margin-top:8px}
+.pround .prm b{color:var(--tx)}
+.pround .prb{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pround .prb .btn span{font-size:11.5px;opacity:.78;font-weight:600;margin-left:3px}
+.pround .prsub{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:var(--tx3);font-weight:700}
+.pround .prsub .chip{padding:5px 10px;font-size:12px}
+.pno{font-weight:900;margin-right:3px}
+.ptag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;text-transform:none;letter-spacing:0;
+  background:color-mix(in srgb,var(--ac) 14%,var(--card));color:var(--ac)}
+/* 〈보기〉 상자 — 시험지의 테두리 상자 그대로. 줄바꿈·들여쓰기(코드·로그)를 살린다 */
+.pbox{border:1.5px solid var(--line2);border-radius:8px;padding:10px 13px;margin:-8px 0 16px;
+  white-space:pre-wrap;overflow-wrap:anywhere;font-size:14.5px;line-height:1.7;color:var(--tx)}
+/* 그림 — 스캔본이라 ★다크 테마에서도 흰 바탕을 유지★ 한다(투명 PNG 의 검은 선이 사라지지 않게) */
+.pfig{margin:-6px 0 16px;text-align:center}
+.pfig img{max-width:100%;height:auto;background:#fff;padding:6px;border-radius:8px;border:1px solid var(--line)}
+.wrong-item .pbox{margin:0 0 8px;font-size:13px}
+.wrong-item .pfig{margin:0 0 8px}
+.punsure{display:inline-block;margin-left:6px;font-size:11.5px;font-weight:800;color:var(--wa)}
+.pflag{margin-top:6px;font-size:12.5px;color:var(--tx3)}
+.pres{margin:16px 0 4px;text-align:left}
+.pres .presh{font-weight:800;font-size:14.5px;margin-bottom:6px}
+.pres .pwarn{margin-bottom:8px}
+.pres th,.pres td{text-align:center}
+.pverd{margin-top:10px;font-size:14.5px;font-weight:700;color:var(--tx2)}
+.pverd.p b{color:var(--ok)} .pverd.f b{color:var(--no)}
+.pverd small{display:block;font-size:11.5px;color:var(--tx3);font-weight:500;margin-top:2px}
+.pnb{margin-top:6px;font-weight:800;color:var(--wa)}
+/* 실전 번호판 — 100문항을 앞뒤로만 넘기면 안 푼 문제를 찾을 수 없다 */
+.ppal{margin-top:12px}
+.ppal summary{cursor:pointer;font-size:13px;color:var(--tx3);font-weight:700}
+.ppal .ppg{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:4px;margin-top:8px}
+.ppal .ppg button{padding:7px 0;font-size:12px;border-radius:6px;border:1px solid var(--line);background:var(--card);
+  color:var(--tx3);font-variant-numeric:tabular-nums;cursor:pointer}
+.ppal .ppg button.a{background:color-mix(in srgb,var(--ac) 18%,var(--card));color:var(--tx);border-color:color-mix(in srgb,var(--ac) 45%,var(--line))}
+.ppal .ppg button.cur{outline:2px solid var(--ac);outline-offset:1px}
+.phome{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:12px 15px}
+.phome .ptx{font-size:13px;color:var(--tx2);line-height:1.55}
+.phome .ptx b{color:var(--tx)}
+
 .empty{text-align:center;padding:60px 20px;color:var(--tx3)}
 .empty .ic{font-size:44px;margin-bottom:10px;opacity:.5}
 
@@ -3512,6 +3558,7 @@ html[data-feel="rich"].nomotion .ch:active:not(.killed):not(:disabled){transform
       <button data-v="sheet">📋 핵심시트 <kbd>3</kbd></button>
       <button data-v="concept" id="navConcept" hidden>📖 개념정리 <kbd>4</kbd></button>
       <button data-v="quiz">🧩 퀴즈 <kbd>5</kbd></button>
+      <button data-v="past" id="navPast" hidden>📜 기출 <kbd>0</kbd></button>
       <button data-v="note">📕 오답노트 <kbd>6</kbd></button>
       <button data-v="example" id="navExample" hidden>📄 예시문제 <kbd>7</kbd></button>
       <button data-v="info">ℹ️ 시험정보 <kbd>8</kbd></button>
@@ -3872,6 +3919,7 @@ html[data-feel="rich"].nomotion .ch:active:not(.killed):not(:disabled){transform
     <h3>⌨ 키보드 단축키</h3>
     <div class="sub">마우스 없이 전부 조작할 수 있습니다. <kbd>?</kbd> 또는 <kbd>Esc</kbd> 로 이 창을 닫습니다.</div>
     <div class="kbsec">전역</div>
+    <div class="kbrow" id="kbPast" hidden><span class="keys"><kbd>0</kbd></span><span class="desc">📜 기출풀이 — 회차 목록(기출 자료가 있는 종목만)</span></div>
     <div class="kbrow"><span class="keys"><kbd>1</kbd>~<kbd>9</kbd></span><span class="desc">메뉴 순서대로 화면 전환 (홈 / 암기카드 / 핵심시트 / 개념정리 / 퀴즈 / 오답노트 …)<br><span style="color:var(--tx3);font-size:12.5px">단, 암기카드의 <kbd>1</kbd><kbd>2</kbd> 와 퀴즈 풀이 중 <kbd>1</kbd>~<kbd>4</kbd> 는 그 화면의 동작이 우선합니다. 자료가 없어 감춰진 메뉴의 번호는 동작하지 않습니다</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>T</kbd></span><span class="desc">테마 순환 — 🌙 다크 · ☀️ 라이트 · 🌌 새벽 · 📚 도서관 · 🕯 독서등<br><span style="color:var(--tx3);font-size:12.5px">헤더의 테마 버튼을 누르면 목록에서 고를 수 있고, 같은 창에서 <b>🎬 모션 끄기</b>도 켤 수 있습니다</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>S</kbd></span><span class="desc">효과음 켜기 / 끄기</span></div>
@@ -3929,6 +3977,8 @@ html[data-feel="rich"].nomotion .ch:active:not(.killed):not(:disabled){transform
   <div id="weekBar" hidden></div>
   <!-- ▶ 원버튼 시작 — ★뭘 풀지 정하는 부담★ 을 없앤다. 사이트가 골라 준다. -->
   <div id="resume"></div>
+  <!-- 📜 기출풀이 진입 — meta.past 가 있는 사이트에서만 보인다 -->
+  <div class="box phome" id="pastHome" hidden></div>
   <div class="dash" id="dash" hidden></div>
   <div class="chalbar" id="chalBar" hidden></div>
   <div class="grid g3" style="margin-bottom:14px" id="stats"></div>
@@ -4192,6 +4242,13 @@ html[data-feel="rich"].nomotion .ch:active:not(.killed):not(:disabled){transform
     <span style="font-size:13px;color:var(--tx3)" id="noteStat"></span>
   </div>
   <div id="noteList"></div>
+</section>
+
+<!-- ══════════ 📜 기출풀이 (meta.past 사이트 전용 · past.js 지연 로드) ══════════ -->
+<section class="view" id="v-past">
+  <h2 class="vt">📜 기출풀이</h2>
+  <p class="vd">실제 시험 회차를 원번호·보기 순서 그대로 풉니다. 연습은 한 문제씩 즉시 채점, 실전은 제한 시간 뒤 한꺼번에 채점합니다.</p>
+  <div id="pastBody"></div>
 </section>
 
 <section class="view" id="v-example">
@@ -4530,6 +4587,194 @@ const SHUFCH = CPPG.meta.shuffleChoices === true;
 /** 이 문항의 보기 표시 순서 — 원본 인덱스 배열(섞지 않으면 0,1,2…) */
 const chOrder = q => (q._cs && q._cs.length === q.c.length) ? q._cs : q.c.map((c,i)=>i);
 const CHNO = '①②③④⑤⑥⑦⑧';
+
+/* ═══════════ 📜 기출풀이 ═══════════
+   ★실제 회차를 원형 그대로★ 푼다 — 원번호 n., 〈보기〉 상자, 그림, 보기 순서(①②③④)까지.
+   그래서 meta.shuffleChoices 를 ★무시한다★(q.pr 이 있는 문항은 섞지 않는다) — 기출은 "몇 번이 답" 을
+   해설·오답노트·다른 수험생과 같은 번호로 말해야 한다.
+   데이터 — 사이트 폴더의 past.js(CPPG.past). 11회차 × 100문항이라 무겁다 →
+   ★처음 기출을 열 때만★ <script> 를 붙인다(지연 로드). 동일 출처라 sw.js 가 런타임 캐시해 오프라인도 된다.
+   data.js 에 meta.past 가 없으면 메뉴·홈·단축키가 전부 숨는다 — ★다른 사이트 영향 0★.
+   문항 id = 'past:{회차id}:{원번호}' — 문제은행 id(m0·o0·f0·r0)와 겹치지 않아
+   오답노트(S.wrong)·정복(S.solved)·기록(S.time)에 그대로 합류한다. QBYID 에는 로드 뒤에 등록된다.
+   저장 S.past[회차id] = { n:응시 수, last:'YYYY-MM-DD', best:{pct,mode,d}|null,
+                           done:[푼 원번호…](진행률), hist:[{d,m,pct,pass,sub,per}] 최근 10회 } */
+const HASPAST=!!CPPG.meta.past;
+if(!S.past||typeof S.past!=='object'||Array.isArray(S.past))S.past={};
+const PAST=(()=>{
+  let st='idle', wait=null;            /* idle → loading → ok | fail */
+  const examMin=n=>Math.round(n*1.5);  /* 100문항 150분 — 과목만 풀면 20문항 30분 */
+  const rounds=()=>(CPPG.past||[]).slice().sort((a,b)=>String(b.id).localeCompare(String(a.id)));
+  const byId=id=>(CPPG.past||[]).find(r=>r.id===id);
+  const rec=id=>{ const o=S.past[id]||(S.past[id]={});
+    if(typeof o.n!=='number')o.n=0; if(!Array.isArray(o.done))o.done=[]; if(!Array.isArray(o.hist))o.hist=[];
+    if(!('best' in o))o.best=null; if(!o.last)o.last=''; return o };
+  /** 로드된 회차의 문항에 엔진 공용 필드를 붙인다 — 퀴즈·오답노트가 문제은행 문항과 똑같이 다룬다 */
+  function prep(){
+    (CPPG.past||[]).forEach(r=>(r.items||[]).forEach(q=>{
+      q.id=`past:${r.id}:${q.n}`; q.type='mcq'; q.pr=r.id; q.po=r.official!==false;
+      QBYID[q.id]=q;
+    }));
+    st='ok';
+  }
+  function load(){
+    if(st==='ok')return Promise.resolve(CPPG.past);
+    if(Array.isArray(CPPG.past)){ prep(); return Promise.resolve(CPPG.past) }   /* 이미 들어와 있다(테스트·인라인) */
+    if(!HASPAST)return Promise.reject(new Error('meta.past 없음'));
+    if(wait)return wait;
+    st='loading';
+    try{ LOAD.start('📜 기출 회차 불러오는 중',1) }catch(e){}
+    wait=new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src=CPPG.meta.past; s.async=true;
+      const fin=ok=>{ try{ LOAD.done() }catch(e){} wait=null;
+        if(ok&&Array.isArray(CPPG.past)){ prep(); res(CPPG.past) }
+        else{ st='fail'; s.remove(); rej(new Error('past.js 로드 실패')) } };
+      s.onload=()=>fin(true); s.onerror=()=>fin(false);
+      document.head.appendChild(s);
+    });
+    return wait;
+  }
+  /** 오답노트에 기출 문항이 있는데 아직 안 불러왔는가(실패한 뒤엔 다시 조르지 않는다) */
+  const need=ids=>HASPAST&&st!=='ok'&&st!=='fail'&&!Array.isArray(CPPG.past)&&ids.some(id=>String(id).indexOf('past:')===0);
+
+  /* ── 회차 목록 ── */
+  function render(){
+    const box=$('pastBody'); if(!box)return;
+    if(st!=='ok'&&!Array.isArray(CPPG.past)){
+      box.innerHTML=`<div class="empty"><div class="ic">📜</div>기출 회차를 불러오는 중…</div>`;
+      load().then(()=>{ if(view==='past')render() }).catch(()=>{
+        box.innerHTML=`<div class="empty"><div class="ic">⚠</div>기출 데이터를 불러오지 못했습니다.<br>
+          네트워크 연결을 확인한 뒤 다시 시도하세요.<div style="margin-top:12px"><button class="btn gh" id="pastRetry">↻ 다시 시도</button></div></div>`;
+        const b=$('pastRetry'); if(b)b.onclick=()=>{ st='idle'; render() };
+      });
+      return;
+    }
+    if(st!=='ok')prep();
+    const list=rounds();
+    box.innerHTML=list.map(r=>{
+      const it=r.items||[], o=S.past[r.id], tot=it.length, dn=o&&o.done?o.done.length:0;
+      const pc=tot?Math.round(dn/tot*100):0;
+      const bits=[];
+      if(o&&o.best)bits.push(`최고 <b>${o.best.pct}점</b>${o.best.mode==='exam'?'':' (연습)'}`);
+      if(o&&o.last)bits.push(`최근 ${esc(o.last)}`);
+      bits.push(`진행 <b>${dn}</b>/${tot}`);
+      const subs=CPPG.subjects.filter(s=>it.some(q=>q.s===s.id));
+      return `<div class="box pround" data-r="${esc(r.id)}">
+        <div class="prh"><b class="prt">${esc(r.title||r.id)}</b>${r.official===false?'<span class="pwarn">⚠ 정답 미공개 · 풀이 기준</span>':''}</div>
+        ${r.src?`<div class="prs">${esc(r.src)}</div>`:''}
+        <div class="prm">${bits.join(' · ')}</div>
+        <div class="prog"><i style="width:${pc}%"></i></div>
+        <div class="prb">
+          <button class="btn" data-pm="practice">✍ 연습 <span>즉시 채점</span></button>
+          <button class="btn gh" data-pm="exam">⏱ 실전 <span>${tot}문항 · ${examMin(tot)}분</span></button>
+        </div>
+        ${subs.length>1?`<div class="prsub">${esc(UNIT)}만${subs.map(s=>
+          `<button class="chip" data-ps="${s.id}" title="${subName(s.id)} ${it.filter(q=>q.s===s.id).length}문항 — 연습">${subChip(s.id)}</button>`).join('')}</div>`:''}
+      </div>`;
+    }).join('')||`<div class="empty"><div class="ic">📜</div>등록된 기출 회차가 없습니다.</div>`;
+    box.onclick=e=>{
+      const c=e.target.closest('.pround'); if(!c)return;
+      const m=e.target.closest('[data-pm]'), s=e.target.closest('[data-ps]');
+      if(m)start(c.dataset.r,m.dataset.pm);
+      else if(s)start(c.dataset.r,'practice',s.dataset.ps);
+    };
+  }
+  /** 회차(또는 그 안의 과목 하나)를 푼다 — ★퀴즈 엔진을 그대로 탄다★(스와이프·떠 있는 다음·연출·단축키) */
+  function start(rid,mode,sub){
+    const r=byId(rid); if(!r)return;
+    if(st!=='ok')prep();
+    let items=(r.items||[]).slice().sort((a,b)=>a.n-b.n);
+    if(sub)items=items.filter(q=>q.s===sub);
+    if(!items.length){FX.toast('출제할 문항이 없습니다','bad',1600);return}
+    if(mode==='exam'&&!confirm(`⏱ 실전 — ${items.length}문항 · ${examMin(items.length)}분\n제출할 때까지 채점하지 않습니다. 시작할까요?`))return;
+    startQuiz(items,mode==='exam'?'exam':'practice',{past:{rid:r.id,title:r.title||r.id,sub:sub||'',full:!sub,off:r.official===false}});
+  }
+  /** 문항을 한 번이라도 풀었다 — 회차 진행률 */
+  function mark(q){ const o=rec(q.pr); if(o.done.indexOf(q.n)<0)o.done.push(q.n) }
+  /** 세션 결과를 회차 기록에 남긴다 — 최고점은 ★회차 전체★ 를 푼 세션만 */
+  function record(P,res){
+    if(!P||!res.answered)return null;
+    const o=rec(P.rid), d=localDay();
+    o.n++; o.last=d;
+    const per={}; Object.keys(res.per).forEach(k=>{ const v=res.per[k]; per[k]=Math.round(v.r/v.t*100) });
+    o.hist.push({d,m:res.mode,pct:res.pct,pass:!!res.pass,sub:P.sub||'',per});
+    if(o.hist.length>10)o.hist.shift();
+    let nb=false;
+    if(P.full&&(res.mode==='exam'||res.all)){   /* 연습은 끝까지 푼 판만 — 중간에 그만둔 점수가 최고점이 되면 안 된다 */
+      const b=o.best;
+      /* 같은 점수면 실전 기록으로 갈아 끼운다 — 실전 점수가 더 믿을 만하다 */
+      if(!b||res.pct>b.pct||(res.pct===b.pct&&res.mode==='exam'&&b.mode!=='exam')){ nb=!!b&&res.pct>b.pct; o.best={pct:res.pct,mode:res.mode,d} }
+    }
+    return {nb};
+  }
+  /** 결과 화면 — 과목별 점수·평균·과락 판정 */
+  function resBlock(P,res){
+    const PR=CPPG.meta.passRule||{pct:60,per:40};
+    const subs=CPPG.subjects.filter(s=>res.per[s.id]);
+    let cuts=0;
+    const rows=subs.map(s=>{
+      const v=res.per[s.id], sc=Math.round(v.r/v.t*100), cut=sc<(PR.per||0);
+      if(cut)cuts++;
+      return `<tr><td style="color:${s.color};font-weight:800">${subShort(s.id)}</td><td>${v.r}/${v.t}</td>
+        <td><b>${sc}</b>점</td><td>${cut?'<b style="color:var(--no)">과락</b>':'<span style="color:var(--ok)">통과</span>'}</td></tr>`;
+    }).join('');
+    const avg=subs.length?Math.round(subs.reduce((a,s)=>a+res.per[s.id].r/res.per[s.id].t*100,0)/subs.length):0;
+    const pass=P.sub?cuts===0:res.pass;
+    const verdict=P.sub?(cuts?'과락':'과락 면함')
+      :res.pass?'✅ 합격':`❌ 불합격 — ${[cuts?`과락 ${cuts}${esc(UNIT)}`:'',res.pct<PR.pct?'평균 미달':''].filter(Boolean).join(' · ')}`;
+    return `<div class="pres">
+      <div class="presh">📜 ${esc(P.title)}${P.sub?' · '+subShort(P.sub):''} · ${res.mode==='exam'?'실전':'연습'}</div>
+      ${P.off?'<div class="pwarn">⚠ 정답 미공개 회차 — 풀이 기준 정답으로 채점했습니다</div>':''}
+      <div class="tw"><table><thead><tr><th>${esc(UNIT)}</th><th>정답</th><th>점수</th><th>판정</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="pverd ${pass?'p':'f'}">${P.sub?'점수':'평균'} <b>${P.sub?avg:res.pct}점</b> · ${verdict}
+        <small>합격 기준 — 평균 ${PR.pct}점 이상 · ${esc(UNIT)}별 ${PR.per||0}점 이상${res.left?` · 미응답 ${res.left}문항은 오답 처리`:''}</small></div>
+      ${res.nb?'<div class="pnb">🏅 이 회차 최고점 갱신</div>':''}
+    </div>`;
+  }
+  /** 문항 부속 — 〈보기〉 상자·그림 (퀴즈·오답노트 공용) */
+  function extra(q){
+    let h='';
+    if(q.box)h+=`<div class="pbox">${esc(q.box)}</div>`;
+    if(q.fig)h+=`<div class="pfig"><img loading="lazy" src="${esc(q.fig)}" alt="${q.n}번 문항 그림"></div>`;
+    return h;
+  }
+  const tag=q=>`📜 기출 ${esc(q.pr)} ${q.n}번`;
+  /** 실전 번호판 — 푼 문항·현재 문항을 한눈에, 눌러서 바로 이동 */
+  function pal(){
+    let el=$('pPal');
+    const on=!!(quiz&&quiz.past&&quiz.mode==='exam');
+    if(!on){ if(el)el.hidden=true; return }
+    if(!el){
+      el=document.createElement('details'); el.id='pPal'; el.className='ppal noprint';
+      const nav=$('qNav'); nav.parentNode.insertBefore(el,nav.nextSibling);
+      el.addEventListener('toggle',()=>{ if(quiz)quiz._palOpen=el.open });
+      el.addEventListener('click',e=>{ const b=e.target.closest('[data-j]'); if(!b||!quiz)return;
+        quiz.i=+b.dataset.j; renderQ(); });
+    }
+    el.hidden=false;
+    const left=quiz.ans.filter(a=>a===null).length;
+    el.open=!!quiz._palOpen;
+    el.innerHTML=`<summary>🔢 문항 번호판 — 남은 ${left}문항</summary><div class="ppg">${quiz.items.map((q,j)=>
+      `<button type="button" data-j="${j}" class="${quiz.ans[j]!==null?'a':''}${j===quiz.i?' cur':''}">${q.n}</button>`).join('')}</div>`;
+  }
+  /** 홈 진입 배너 — 로드 전에도 그릴 수 있게 ★저장 기록만★ 쓴다 */
+  function home(){
+    const el=$('pastHome'); if(!el)return;
+    if(!HASPAST){ el.hidden=true; return }
+    const ids=Object.keys(S.past).filter(k=>S.past[k]&&S.past[k].n);
+    const lastId=ids.sort((a,b)=>String(S.past[b].last).localeCompare(String(S.past[a].last)))[0];
+    const lo=lastId&&S.past[lastId];
+    el.hidden=false;
+    el.innerHTML=`<button class="btn" id="goPast">📜 기출풀이</button>
+      <span class="ptx">${lo?`최근 <b>${esc(lastId)}</b> 회차 · ${esc(lo.last)}${lo.best?` · 최고 <b>${lo.best.pct}점</b>`:''} · ${ids.length}개 회차 응시`
+        :'실제 기출 회차를 원번호 그대로 — 연습(즉시 채점) · 실전(시간 제한)'}</span>`;
+    $('goPast').onclick=()=>go('past');
+  }
+  return {load,need,render,start,mark,record,resBlock,extra,tag,pal,home,examMin,
+          ready:()=>st==='ok', rounds};
+})();
+if(HASPAST){ ['navPast','kbPast'].forEach(id=>{ const b=$(id); if(b)b.hidden=false }) }
 /* 문항이 하나도 없는 유형은 칩·표·필터에서 아예 감춘다 (예: 단답형을 쓰지 않는 종목) */
 const ALLTYPES=[{k:'mcq',n:'4지선다'},{k:'ox',n:'OX'},{k:'fill',n:'단답형'},{k:'order',n:'순서정렬'}];
 const TYPES=ALLTYPES.filter(t=>ALLQ.some(q=>q.type===t.k));
@@ -10011,7 +10256,7 @@ $('kbHelp').onclick=e=>{ if(e.target===$('kbHelp'))toggleHelp(false) };
 let view='home';
 /* 화면 성격에 맞는 배경음악 장면 — ★읽기 화면은 리듬을 빼고 패드만★ */
 const BGM_SCENE={home:'home',concept:'read',sheet:'read',note:'read',info:'read',
-                 shortcut:'read',cards:'cards',example:'read',quiz:'quiz'};
+                 shortcut:'read',cards:'cards',example:'read',quiz:'quiz',past:'read'};
 function go(v){
   if(typeof qFloatHide==='function')qFloatHide();          /* ⬇ 퀴즈를 떠나면 떠 있는 '다음' 도 걷는다 */
   if(view!==v){FX.snd.nav();FX.clearCoins()}
@@ -10037,6 +10282,7 @@ function go(v){
   if(v==='example')renderExample();
   if(v==='info')renderInfo();
   if(v==='shortcut')renderShortcut();
+  if(v==='past')PAST.render();                                     /* 📜 첫 진입 때 past.js 를 붙인다 */
   /* 이어보기 — 다음 방문 때 마지막으로 보던 화면으로 복귀(시험지 화면은 제외) */
   if(v!=='paper'){S.view=v;save()}
 }
@@ -10229,6 +10475,7 @@ function renderHome(){
   const m=CPPG.meta;
   updDash(); renderComeback(); renderResume(); renderAch(); chalToday(); updChal(); updEvo(); updTerrain();
   markReveal(); showReveal(); DUO.render(); PREP.render(); PENTA.render(); WEEK.render(); STORY.home();
+  PAST.home();                                         /* 📜 기출풀이 진입(meta.past 사이트만) */
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -10605,6 +10852,8 @@ document.addEventListener('keydown',e=>{
     const hidden=(target==='example'&&!HASEX)||(target==='shortcut'&&!HASSC)||(target==='concept'&&!HASNOTE);
     if(!consumed&&!hidden){e.preventDefault();go(target);return}
   }
+  /* 📜 0 = 기출풀이(meta.past 사이트만) — 1~9 는 이미 다 찼다 */
+  if(k==='0'&&HASPAST&&!quizRunning){e.preventDefault();go('past');return}
 
   // ── 🃏 암기카드 ──
   if(view==='cards'){
@@ -12402,10 +12651,12 @@ function startQuiz(items,mode,opt){
   }});
   /* 🔀 보기 순서 — 순서정렬(_shuf)과 달리 ★캐시하지 않는다.★ 매 세션 새로 섞여야
      "위치 암기" 가 불가능해진다. 한 세션 안에서는 고정이라 앞뒤로 오가도 안 흔들린다. */
-  if(SHUFCH)items.forEach(q=>{ if(q.type==='mcq')q._cs=shuffle(q.c.map((c,i)=>i)) });
+  /* 📜 기출(q.pr)은 ★섞지 않는다★ — 원번호 ①②③④ 가 해설·정답표와 같아야 한다 */
+  if(SHUFCH)items.forEach(q=>{ if(q.type==='mcq'&&!q.pr)q._cs=shuffle(q.c.map((c,i)=>i)) });
   quiz={items,i:0,ans:new Array(items.length).fill(null),mode,
-        revenge:!!opt.revenge, quick:!!opt.quick,
-        left:mode==='exam'?Math.max(60,Math.round(items.length*1.2*60)):0};
+        revenge:!!opt.revenge, quick:!!opt.quick, past:opt.past||null,
+        /* 📜 기출 실전은 실제 시험 시간(100문항 150분)으로 잰다 */
+        left:mode==='exam'?(opt.past?PAST.examMin(items.length)*60:Math.max(60,Math.round(items.length*1.2*60))):0};
   /* ⚔ 복수전 — 오답만 모아 푸는 세션은 ★이름과 포장★ 을 따로 준다.
      같은 문제라도 "틀린 것 복습" 과 "복수전" 은 다른 일처럼 느껴진다. */
   if(opt.revenge){
@@ -12413,6 +12664,8 @@ function startQuiz(items,mode,opt){
     if(!TALK.now('revenge'))MASCOT.amb&&MASCOT.amb('revenge');
   }else if(opt.quick){
     FX.toast(`▶ 오늘의 ${items.length}문제 — 복습·오답·새 문제를 섞었습니다`,'good',2400);
+  }else if(opt.past){
+    FX.toast(`📜 ${opt.past.title}${opt.past.sub&&SUB[opt.past.sub]?' · '+SUB[opt.past.sub].name:''} — ${mode==='exam'?`실전 ${PAST.examMin(items.length)}분`:'연습'}`,'good',2400);
   }
   $('quizSetup').style.display='none'; $('quizResult').style.display='none'; $('quizRun').style.display='block';
   if(timerId)clearInterval(timerId);
@@ -12436,6 +12689,8 @@ $('startQuiz').onclick=()=>{
 };
 $('startWrong').onclick=$('reviewWrong').onclick=()=>{
   const ids=Object.keys(S.wrong).sort((a,b)=>S.wrong[b]-S.wrong[a]);
+  /* 📜 기출 오답이 섞여 있으면 past.js 부터(실패해도 문제은행 오답만으로 진행) */
+  if(PAST.need(ids)){ const again=()=>$('startWrong').click(); PAST.load().then(again,again); return }
   const items=ids.map(id=>QBYID[id]).filter(Boolean);
   if(!items.length){alert('오답노트가 비어 있습니다. 먼저 퀴즈를 풀어보세요.');return}
   go('quiz'); startQuiz(items,'practice',{revenge:true});
@@ -13165,7 +13420,11 @@ function renderQ(){
     if(best)bits.push(`최고 ${(best/1000).toFixed(1)}초`);
     duoInfo=`<span class="duotag" title="부엉과 함께하는 중">🦉 ${esc(bits.join(' · '))}</span>`;
   }
-  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)}${HASSEC&&q.sec?' · '+secFull(q.sec):''} · ${typeName(q.type)}
+  let h=q.pr
+    /* 📜 기출 — 난이도 대신 ★출처(회차·원번호)★, 발문 앞에 원번호, 〈보기〉 상자·그림 */
+    ? `<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} <span class="ptag">${PAST.tag(q)}</span>${duoInfo}</div>
+         <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}"><b class="pno">${q.n}.</b>${esc(q.q)}</div>${PAST.extra(q)}`
+    : `<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)}${HASSEC&&q.sec?' · '+secFull(q.sec):''} · ${typeName(q.type)}
            <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>${duoInfo}</div>
          <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}">${esc(q.q)}</div>`;
 
@@ -13213,7 +13472,7 @@ function renderQ(){
     /* ★방금 본 화면의 번호★ 로 말한다 — 보기를 섞었는데 원본 번호를 부르면 어긋난다 */
     let ansTxt = q.type==='mcq' ? `${CHNO[chOrder(q).indexOf(q.a)]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)')
       : q.type==='order' ? q.steps.map((t,i)=>`${i+1}. ${t}`).join('  →  ') : q.a;
-    h+=`<div class="expl ${ok?'good':'bad'}"><b>${ok?'✅ 정답':'❌ 오답'}</b> — 정답: <b>${esc(ansTxt)}</b><br>${esc(q.e||'')}</div>`;
+    h+=`<div class="expl ${ok?'good':'bad'}"><b>${ok?'✅ 정답':'❌ 오답'}</b> — 정답: <b>${esc(ansTxt)}</b>${q.sure===false?'<span class="punsure">풀이 기준 정답(공식 아님)</span>':''}<br>${esc(q.e||'')}${q.flag?`<div class="pflag">⚑ ${esc(q.flag)}</div>`:''}</div>`;
   }
   /* ✨ 선지 스태거는 ★새 문제일 때만★ — renderQ 는 채점 때도 전체를 다시 그리므로
      조건이 없으면 답을 고를 때마다 선지가 다시 등장해 정답 연출과 겹친다. */
@@ -13246,6 +13505,7 @@ function renderQ(){
     fi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('fillSubmit').click()}};
   }
   renderQNav(revealed);
+  PAST.pal();                             /* 📜 기출 실전이면 번호판, 아니면 숨김 */
   /* ⬇ 방금 채점했다면 ★'다음' 을 화면 안으로★ 끌어온다.
      버튼은 예전에도 즉시 만들어졌다 — 다만 해설이 끼어들면서 아래로 밀려
      모바일(390×844 실측)에서는 ★언제나 접은 선 아래(y 1,040~1,140)★ 였다.
@@ -13374,7 +13634,7 @@ function answer(v){
   if(first&&quiz.mode==='practice'){
     if(!ok)S.wlog[q.id]={n:((lore&&lore.n)||0)+1,
                          p:(q.type==='mcq'&&typeof v==='number')?v:null, d:localDay()};
-    repTouch(q.id,ok);                         /* 🔁 다음 복습 시점을 다시 잡는다 */
+    if(!q.pr)repTouch(q.id,ok);                /* 🔁 다음 복습 시점(기출은 회차로 복습 — 간격 반복에서 뺀다) */
     /* 📖 치노 3막 완결 — ★감싸지 않는다.★ 같은 문제 세 번째면 정직하게 말한다(세션당 1회) */
     if(!ok&&arcDone('ki')&&S.wlog[q.id]&&S.wlog[q.id].n>=3&&!quiz._honest){
       quiz._honest=true;
@@ -13421,6 +13681,7 @@ function answer(v){
     /* 모의고사 중에는 배지 토스트를 띄우지 않고 결과 화면에서 몰아 보여준다 */
     if(newAch.length&&quiz.mode!=='practice'){quiz.pendAch=(quiz.pendAch||[]).concat(newAch);newAch=[]}
   }
+  if(q.pr)PAST.mark(q);                        /* 📜 회차 진행률 */
   save();
   /* 채점 결과를 처음 보는 순간에만 화면을 옮긴다(앞뒤로 다시 넘겨볼 땐 그대로 둔다) */
   if(first)quiz._scrollNav=true;
@@ -13806,6 +14067,9 @@ function finishQuiz(){
   const PR=CPPG.meta.passRule||{pct:60,per:40};
   const perOk=Object.entries(per).every(([,v])=>v.r/v.t>=(PR.per||0)/100);
   const pass=pct>=PR.pct&&perOk;
+  /* 📜 기출 — 회차 기록(응시 수·최근·최고점·과목별 점수)에 남긴다 */
+  const pastLeft=quiz.ans.filter(a=>a===null).length;
+  const pastRec=quiz.past?PAST.record(quiz.past,{pct,per,pass,mode:quiz.mode,answered:pastLeft<total,all:pastLeft===0}):null;
   S.quizzes.push({pct,right,total,mode:quiz.mode,pass,date:localDay()});
   if(S.quizzes.length>50)S.quizzes.shift();
   /* 모의고사는 종료 시점에 하루 학습으로 인정하고, 목표 진행도 한 번에 반영한다 */
@@ -13878,6 +14142,7 @@ function finishQuiz(){
            <div class="lb sub">${right} / ${total} 정답 · <span class="sc mini ${pass?'p':'f'}" id="scNum">0점</span></div>`
         : `<div class="sc ${pass?'p':'f'}" id="scNum">0점</div>
            <div class="lb">${right} / ${total} 정답 · ${pass?`✅ 합격선 통과 (${esc(CPPG.meta.pass)})`:'❌ 합격선 미달'}</div>`}
+      ${quiz.past?PAST.resBlock(quiz.past,{pct,per,pass,mode:quiz.mode,left:quiz.mode==='exam'?pastLeft:0,nb:!!(pastRec&&pastRec.nb)}):''}
       ${hi.length?`<div class="hilite">${hi.map(h=>`<span>${esc(h)}</span>`).join('')}</div>`:''}
       ${near.length?`<div class="nearmiss">🤏 ${near.map(esc).join(' · ')} — 한 번 더 가볼까요?</div>`:''}
       ${GH?`<div class="ghost ${GH.win?'win':'lose'}">
@@ -13919,17 +14184,18 @@ function finishQuiz(){
             <div class="k">${v.r}/${v.t}</div></div>`;
         }).join('')}
       </div>
-      <div style="font-size:12px;color:var(--tx3);margin:-8px 0 14px">난이도별 정답률</div>
+      ${CPPG.levels.some(l=>lv[l.d])?`<div style="font-size:12px;color:var(--tx3);margin:-8px 0 14px">난이도별 정답률</div>
       <div class="resgrid" style="margin-top:0">
         ${CPPG.levels.filter(l=>lv[l.d]).map(l=>{
           const v=lv[l.d], p=Math.round(v.r/v.t*100);
           return `<div><div class="k" style="color:${l.color}">${l.name}</div>
             <div class="v">${p}%</div><div class="k">${v.r}/${v.t}</div></div>`;
         }).join('')}
-      </div>
+      </div>`:''}
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-        ${GH?`<button class="btn" id="revengeQuiz">👻 ${GH.ghost.kind==='me'?'지난번의 나':'기준 페이스'}와 리벤지</button>`:''}
-        <button class="btn${GH?' gh':''}" id="againQuiz">🔁 새 퀴즈</button>
+        ${quiz.past?`<button class="btn" id="pastAgain">🔁 이 회차 다시</button><button class="btn gh" id="pastList">📜 회차 목록</button>`:''}
+        ${GH?`<button class="btn${quiz.past?' gh':''}" id="revengeQuiz">👻 ${GH.ghost.kind==='me'?'지난번의 나':'기준 페이스'}와 리벤지</button>`:''}
+        <button class="btn${GH||quiz.past?' gh':''}" id="againQuiz">🔁 새 퀴즈</button>
         ${wrongList.length?`<button class="btn gh" id="reviewNow">📕 틀린 ${wrongList.length}문제 다시 풀기</button>`:''}
         <button class="btn gh" id="toNote">오답노트 보기</button>
       </div>
@@ -13940,7 +14206,14 @@ function finishQuiz(){
   $('againQuiz').onclick=()=>{$('quizResult').style.display='none';$('quizSetup').style.display='block';renderQuizSetup()};
   /* 👻 리벤지 — ★같은 문제 묶음★ 을 다시 푼다(순서만 섞는다). 그래야 기록 비교가 성립한다 */
   const rv=$('revengeQuiz');
-  if(rv)rv.onclick=()=>startQuiz(shuffle(quiz.items.slice()),quiz.mode,{revenge:true});
+  /* 📜 기출 세션의 리벤지도 기출로 남긴다 — 다만 순서를 섞었으니 ★회차 최고점 후보는 아니다★ */
+  if(rv)rv.onclick=()=>startQuiz(shuffle(quiz.items.slice()),quiz.mode,
+    {revenge:true,past:quiz.past?Object.assign({},quiz.past,{full:false}):null});
+  if(quiz.past){
+    const P=quiz.past, M=quiz.mode;
+    $('pastAgain').onclick=()=>PAST.start(P.rid,M,P.sub);
+    $('pastList').onclick=()=>go('past');
+  }
   /* Step 2 — 캐릭터의 극적 반응. ★이겼을 때는 크게, 졌을 때는 승부욕만 건드린다★
      (졌다고 책망하지 않는다 — 이 화면의 원칙이다) */
   /* 기존 종료 대사(MASCOT.end)가 먼저 나온다 — 그 뒤에 와야 덮이지 않는다(실측) */
@@ -14104,11 +14377,11 @@ function wrongCard(q,cnt){
   return `<div class="wrong-item">
     <div class="meta"><span class="sbadge" style="background:${subColor(q.s)}">${subShort(q.s)}</span>
       ${HASSEC&&q.sec?`<span style="font-size:11.5px;color:var(--tx3);font-weight:600">${secFull(q.sec)}</span>`:''}
-      <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>
+      ${q.pr?`<span class="ptag">${PAST.tag(q)}</span>`:`<span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>`}
       ${cnt?`<span class="cnt">✗ ${cnt}회 오답</span>`:''}</div>
-    <div class="q">${esc(q.q)}</div>
+    <div class="q">${q.pr?`<b class="pno">${q.n}.</b>`:''}${esc(q.q)}</div>${q.pr?PAST.extra(q):''}
     ${q.type==='mcq'?`<div style="font-size:13px;color:var(--tx3);margin-bottom:5px">${q.c.map((c,i)=>`${'①②③④'[i]} ${esc(c)}`).join(' &nbsp; ')}</div>`:''}
-    <div class="a">정답: ${esc(ansTxt)}</div>
+    <div class="a">정답: ${esc(ansTxt)}${q.sure===false?'<span class="punsure">풀이 기준 정답(공식 아님)</span>':''}</div>
     <div class="e">${esc(q.e||'')}</div></div>`;
 }
 
@@ -14317,6 +14590,12 @@ $('scSearch').oninput=e=>{scQ=e.target.value.trim().toLowerCase();renderShortcut
 function renderNote(){
   const ids=Object.keys(S.wrong).sort((a,b)=>S.wrong[b]-S.wrong[a]);
   $('noteStat').textContent=ids.length?`${ids.length}문제 누적`:'';
+  /* 📜 기출 오답(past:…)은 past.js 를 불러와야 문항을 그릴 수 있다 — 로드 뒤 다시 그린다 */
+  if(PAST.need(ids)){
+    $('noteList').innerHTML=`<div class="empty"><div class="ic">📜</div>기출 오답을 불러오는 중…</div>`;
+    PAST.load().then(()=>{ if(view==='note')renderNote() },()=>{ if(view==='note')renderNote() });
+    return;
+  }
   if(!ids.length){
     $('noteList').innerHTML=`<div class="empty"><div class="ic">📗</div>오답노트가 비어 있습니다.<br>퀴즈를 풀면 틀린 문제가 자동으로 쌓입니다.</div>`;
     return;
@@ -14338,8 +14617,8 @@ function ntEmpty(list){
 }
 function ntRows(){
   return ntItems().map(q=>({
-    유형:typeName(q.type), 과목:subShort(q.s), 난이도:lvName(q.d),
-    문제:q.q, 보기:q.type==='mcq'?q.c.map((c,i)=>`${'①②③④'[i]} ${c}`).join(' / '):'',
+    유형:typeName(q.type), 과목:subShort(q.s), 난이도:q.pr?`기출 ${q.pr} ${q.n}번`:lvName(q.d),
+    문제:q.box?q.q+'\n'+q.box:q.q, 보기:q.type==='mcq'?q.c.map((c,i)=>`${'①②③④'[i]} ${c}`).join(' / '):'',
     정답:String(ansText(q)), 해설:q.e||'', 틀린횟수:S.wrong[q.id]
   }));
 }
@@ -14348,8 +14627,9 @@ function ntExpTxt(){
   const bar=new Array(66).join('=');
   const L=[BRAND()+' — 오답노트',`추출 ${EX.stampH()}  ·  ${list.length}문제 누적`,bar];
   list.forEach((q,i)=>{
-    L.push('',`${i+1}. [${subShort(q.s)}·${typeName(q.type)}·${lvName(q.d)}] ✗ ${S.wrong[q.id]}회`);
+    L.push('',`${i+1}. [${subShort(q.s)}·${typeName(q.type)}·${q.pr?`기출 ${q.pr} ${q.n}번`:lvName(q.d)}] ✗ ${S.wrong[q.id]}회`);
     L.push('   '+q.q);
+    if(q.box)String(q.box).split('\n').forEach(t=>L.push('      │ '+t));
     if(q.type==='mcq')q.c.forEach((c,j)=>L.push(`      ${'①②③④'[j]} ${c}`));
     L.push('   ▶ 정답: '+ansText(q));
     if(q.e)L.push('   ▶ 해설: '+q.e);
@@ -14384,7 +14664,7 @@ renderQuizSetup();
 /* 이어보기 — 마지막으로 보던 화면으로 복귀(감춰진 뷰·시험지 화면은 제외) */
 (function(){
   const v=S.view;
-  if(!v||v==='home'||v==='paper'||VIEWS.indexOf(v)<0)return;
+  if(!v||v==='home'||v==='paper'||(VIEWS.indexOf(v)<0&&!(v==='past'&&HASPAST)))return;
   if((v==='example'&&!HASEX)||(v==='shortcut'&&!HASSC)||(v==='concept'&&!HASNOTE))return;
   go(v);
 })();

@@ -24,6 +24,8 @@ CPPG.meta = {
   font: 'serif',
   /* 🎚 감각 다양화 — 소재감 효과음·질감·히트스톱·햅틱(index.html FEEL, 이 사이트 전용) */
   feel: 'rich',
+  /* 📜 기출풀이 — 회차별 실제 기출(past.js, 첫 진입 때 지연 로드). 없애면 메뉴째 숨는다 */
+  past: 'past.js',
   footer: [
     '정보보안기사 필기 / 주관 <b>한국방송통신전파진흥원(KCA)</b> · 5과목 100문항 · 객관식 5지선다',
     '데이터 소스: <code>02_타자격증_학습자료/정보보안기사_필기/*.txt</code> → <code>학습사이트/data.js</code> · 진도·오답노트는 브라우저(localStorage)에만 저장됩니다.',
