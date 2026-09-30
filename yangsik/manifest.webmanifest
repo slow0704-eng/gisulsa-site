@@ -1,0 +1,30 @@
+{
+ "name": "양식조리기능사 필기",
+ "short_name": "양식",
+ "description": "양식조리 필기 = 위생·식중독 + 법규·공중보건·안전 + 식품학·영양 + 구매·원가 계산 + 조리원리 + 양식 조리실무",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#ec4899",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
