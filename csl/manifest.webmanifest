@@ -1,0 +1,30 @@
+{
+ "name": "CS Leaders(관리사) · SMAT 통합",
+ "short_name": "CS·SMAT",
+ "description": "CS리더스·SMAT = 서비스 정의 학자 짝 + SERVQUAL·청사진·MOT + VOC·서비스 회복 + 교류분석·매너 + 소비자법",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#ec4899",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
