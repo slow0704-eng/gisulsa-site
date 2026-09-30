@@ -1,0 +1,30 @@
+{
+ "name": "ERP 정보관리사 1급 생산",
+ "short_name": "ERP생산",
+ "description": "ERP 생산 1급 = 공통 ERP 이론(BPR·구축 단계) + 생산계획·수요예측 · MPS·MRP·CRP · 공정관리·JIT · 품질관리 + iCUBE 실무 메뉴·처리 순서",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#f59e0b",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
