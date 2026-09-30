@@ -1,0 +1,30 @@
+{
+ "name": "SMAT 서비스경영자격",
+ "short_name": "SMAT",
+ "description": "SMAT = A 커뮤니케이션(매너·이미지·설득) + B 마케팅·세일즈(CRM·VOC·코칭) + C 운영전략(품질·청사진·대기행렬·HRM)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0ea5e9",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
