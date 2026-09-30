@@ -1,0 +1,30 @@
+{
+ "name": "웹디자인개발기능사 실기",
+ "short_name": "WEB",
+ "description": "웹디자인개발 실기 = 제출 규칙·실격 방지 + 시맨틱 HTML + CSS 레이아웃 6계열 + 메뉴 6방식 + 슬라이드 3종·탭·팝업 + W3C 오류 0",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#f97316",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
