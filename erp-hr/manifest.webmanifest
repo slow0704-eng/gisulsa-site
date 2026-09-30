@@ -1,0 +1,30 @@
+{
+ "name": "ERP 정보관리사 1급 인사",
+ "short_name": "ERP인사",
+ "description": "ERP 인사 1급 = 공통 ERP 이론(BPR·구축 단계) + 인적자원관리 · 급여·4대보험·연말정산 · 노사관계·관련법규 + iCUBE 실무 메뉴·처리 순서",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#10b981",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
