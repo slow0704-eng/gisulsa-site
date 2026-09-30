@@ -1,0 +1,30 @@
+{
+ "name": "컴퓨터그래픽기능사 실기",
+ "short_name": "CG",
+ "description": "컴퓨터그래픽 실기 = 실격 방지(15MB·편집 프로그램 출력) + 일러스트(패스·아웃라인·그라디언트) + 포토샵(마스크·합성·필터) + 인디자인(재단선·비번호·출력)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#e11d48",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
