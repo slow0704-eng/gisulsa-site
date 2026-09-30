@@ -1,0 +1,30 @@
+{
+ "name": "ERP 정보관리사 1급 물류",
+ "short_name": "ERP물류",
+ "description": "ERP 물류 1급 = 공통 ERP 이론(BPR·구축 단계) + 영업·구매·재고관리 · SCM · 무역관리 + iCUBE 실무 메뉴·처리 순서",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#8b5cf6",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
