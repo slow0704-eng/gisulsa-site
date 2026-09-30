@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192" role="img" aria-label="CS Leaders(관리사) · SMAT 통합">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192" role="img" aria-label="CS Leaders(관리사)">
   <rect width="192" height="192" rx="28" fill="#ec4899"/>
   <text x="96" y="88" fill="#fff" font-family="Pretendard,'Malgun Gothic','맑은 고딕',sans-serif"
-        font-size="28" font-weight="800" text-anchor="middle" dominant-baseline="central"
-        letter-spacing="-2">CS·SMAT</text>
+        font-size="52" font-weight="800" text-anchor="middle" dominant-baseline="central"
+        letter-spacing="-2">CS</text>
   <text x="96" y="138" fill="#ffffffcc" font-family="Pretendard,'Malgun Gothic','맑은 고딕',sans-serif"
-        font-size="17" font-weight="600" text-anchor="middle" dominant-baseline="central">CS리더스·SMAT</text>
+        font-size="17" font-weight="600" text-anchor="middle" dominant-baseline="central">CS Leaders</text>
 </svg>

@@ -1,7 +1,7 @@
 {
- "name": "CS Leaders(관리사) · SMAT 통합",
- "short_name": "CS·SMAT",
- "description": "CS리더스·SMAT = 서비스 정의 학자 짝 + SERVQUAL·청사진·MOT + VOC·서비스 회복 + 교류분석·매너 + 소비자법",
+ "name": "CS Leaders(관리사)",
+ "short_name": "CS",
+ "description": "CS리더스 = CS개론(서비스 정의 학자 짝·고객 분류) + CS전략론(SERVQUAL·청사진·MOT·서비스 회복) + 실무론(매너·불만 처리·소비자법)",
  "start_url": "./",
  "scope": "./",
  "display": "standalone",
