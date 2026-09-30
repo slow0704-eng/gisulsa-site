@@ -1,0 +1,30 @@
+{
+ "name": "ERP 정보관리사 1급 회계",
+ "short_name": "ERP회계",
+ "description": "ERP 회계 1급 = 공통 ERP 이론(BPR·구축 단계) + 재무회계 · 세무회계(부가세·법인세) · 관리회계(원가·CVP) + iCUBE 실무 메뉴·처리 순서",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0ea5e9",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
