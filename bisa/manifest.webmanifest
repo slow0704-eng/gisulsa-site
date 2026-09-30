@@ -1,0 +1,30 @@
+{
+ "name": "비서 1·2급 필기",
+ "short_name": "비서",
+ "description": "비서 합격 = 비서실무 응대·일정·회의 + 경영일반 이론 짝 + 사무영어 서신·약어 + 사무정보관리 문서·기록물",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#8b5cf6",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
