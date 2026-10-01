@@ -1,0 +1,30 @@
+{
+ "name": "ITIL Foundation",
+ "short_name": "ITIL",
+ "description": "ITIL Foundation = 핵심 개념(가치·유틸리티·워런티) + 7 지침 원칙 + 4차원·SVS·가치 사슬 + 관행 상세 7개(42.5%) + 관행 목적 8개",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0ea5e9",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
