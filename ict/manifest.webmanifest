@@ -1,0 +1,30 @@
+{
+ "name": "정보통신기사 필기",
+ "short_name": "정보통신기사",
+ "description": "정보통신기사 합격 = 전송(변조·다중화) + 기기(단말·방송·IoT) + 네트워크(OSI·IP 서브네팅) + 시스템운용(보안·가용성) + 컴퓨터일반·설비기준",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0891b2",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
