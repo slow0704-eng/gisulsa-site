@@ -572,6 +572,62 @@ ul.sl li::before{content:"▸";position:absolute;left:2px;color:var(--ac)}
 .wrong-item .meta{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .wrong-item .cnt{font-size:11px;color:var(--no);font-weight:800}
 
+/* ═══ 📜 기출풀이 — ★data.js meta.past 가 있는 사이트 전용★ (없으면 아무 요소도 생기지 않는다) ═══ */
+.pround{margin-bottom:12px;padding:15px 16px}
+.pround .prh{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.pround .prt{font-size:15.5px;font-weight:800}
+.pwarn{display:inline-block;font-size:11.5px;font-weight:800;padding:2px 9px;border-radius:99px;
+  color:var(--wa);background:color-mix(in srgb,var(--wa) 14%,var(--card));border:1px solid color-mix(in srgb,var(--wa) 40%,var(--line))}
+.pround .prs{font-size:12.5px;color:var(--tx3);margin-top:3px}
+.pround .prm{font-size:13px;color:var(--tx2);margin-top:8px}
+.pround .prm b{color:var(--tx)}
+.pround .prb{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.pround .prb .btn span{font-size:11.5px;opacity:.78;font-weight:600;margin-left:3px}
+.pround .prsub{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px;font-size:12px;color:var(--tx3);font-weight:700}
+.pround .prsub .chip{padding:5px 10px;font-size:12px}
+.pno{font-weight:900;margin-right:3px}
+.ptag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;text-transform:none;letter-spacing:0;
+  background:color-mix(in srgb,var(--ac) 14%,var(--card));color:var(--ac)}
+/* 〈보기〉 상자 — 시험지의 테두리 상자 그대로. 줄바꿈·들여쓰기(코드·로그)를 살린다 */
+.pbox{border:1.5px solid var(--line2);border-radius:8px;padding:10px 13px;margin:-8px 0 16px;
+  white-space:pre-wrap;overflow-wrap:anywhere;font-size:14.5px;line-height:1.7;color:var(--tx)}
+/* 그림 — 스캔본이라 ★다크 테마에서도 흰 바탕을 유지★ 한다(투명 PNG 의 검은 선이 사라지지 않게) */
+.pfig{margin:-6px 0 16px;text-align:center}
+.pfig img{max-width:100%;height:auto;background:#fff;padding:6px;border-radius:8px;border:1px solid var(--line)}
+.wrong-item .pbox{margin:0 0 8px;font-size:13px}
+.wrong-item .pfig{margin:0 0 8px}
+.punsure{display:inline-block;margin-left:6px;font-size:11.5px;font-weight:800;color:var(--wa)}
+.pflag{margin-top:6px;font-size:12.5px;color:var(--tx3)}
+/* 📜 보기별 해설 — ★오답이 왜 오답인지★ 보기마다 한 줄. 정답 줄은 초록, 내가 고른 오답 줄은 빨강 테두리 */
+.celist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.celist li{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;border-radius:9px;
+  font-size:13.5px;line-height:1.6;background:color-mix(in srgb,var(--tx3) 7%,transparent);border:1px solid transparent}
+.celist li.ok{background:color-mix(in srgb,var(--ok) 12%,transparent)}
+.celist li.mine:not(.ok){border-color:color-mix(in srgb,var(--no) 55%,transparent)}
+.celist .cn{flex:none;font-weight:800;min-width:2.6em;white-space:nowrap}
+.celist li.ok .cn{color:var(--ok)}
+.celist li:not(.ok) .cn{color:var(--no)}
+.celist .me{font-size:11px;font-weight:800;color:var(--tx3);margin-left:4px}
+.pres{margin:16px 0 4px;text-align:left}
+.pres .presh{font-weight:800;font-size:14.5px;margin-bottom:6px}
+.pres .pwarn{margin-bottom:8px}
+.pres th,.pres td{text-align:center}
+.pverd{margin-top:10px;font-size:14.5px;font-weight:700;color:var(--tx2)}
+.pverd.p b{color:var(--ok)} .pverd.f b{color:var(--no)}
+.pverd small{display:block;font-size:11.5px;color:var(--tx3);font-weight:500;margin-top:2px}
+.pnb{margin-top:6px;font-weight:800;color:var(--wa)}
+/* 실전 번호판 — 100문항을 앞뒤로만 넘기면 안 푼 문제를 찾을 수 없다 */
+.ppal{margin-top:12px}
+.ppal summary{cursor:pointer;font-size:13px;color:var(--tx3);font-weight:700}
+.ppal .ppg{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:4px;margin-top:8px}
+.ppal .ppg button{padding:7px 0;font-size:12px;border-radius:6px;border:1px solid var(--line);background:var(--card);
+  color:var(--tx3);font-variant-numeric:tabular-nums;cursor:pointer}
+.ppal .ppg button.a{background:color-mix(in srgb,var(--ac) 18%,var(--card));color:var(--tx);border-color:color-mix(in srgb,var(--ac) 45%,var(--line))}
+.ppal .ppg button.cur{outline:2px solid var(--ac);outline-offset:1px}
+.phome{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:12px 15px}
+.phome .ptx{font-size:13px;color:var(--tx2);line-height:1.55}
+.phome .ptx b{color:var(--tx)}
+
 .empty{text-align:center;padding:60px 20px;color:var(--tx3)}
 .empty .ic{font-size:44px;margin-bottom:10px;opacity:.5}
 
@@ -713,7 +769,24 @@ kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px
   clip-path:inset(0 0 0 0);animation:ringGo var(--sec,6s) linear forwards}
 @keyframes ringGo{from{clip-path:inset(0 0 0 0)}to{clip-path:inset(0 100% 0 0)}}
 #qNext{position:relative}
+/* ⬇ 떠 있는 '다음 문제' — 채점 직후 본문의 '다음' 이 화면 밖이면 ★스크롤은 그대로 두고★
+   현재 화면 우측 하단에 띄운다. 예전엔 scrollIntoView 로 끌어왔는데, 버튼이 페이지 끝에
+   있어 결국 ★맨 아래로 내려가 해설·보기를 놓쳤다.★
+   자리: ⤓ 자동스크롤(우하단 16px, 접힌 폭 ≈46px) 왼쪽 · 캐릭터 기둥(bottom 78px~) 아래. */
+#qFloat{position:fixed;z-index:935;
+  right:calc(max(16px,env(safe-area-inset-right)) + 56px);
+  bottom:calc(16px + env(safe-area-inset-bottom));
+  box-shadow:0 8px 24px rgba(0,0,0,.3);animation:mPop .24s cubic-bezier(.2,1.4,.4,1)}
+#qFloat[hidden]{display:none}
+@media print{ #qFloat{display:none !important} }
 @media (prefers-reduced-motion: reduce){ .autoring{animation:none;opacity:.35} }
+/* 👉 스와이프로 넘긴 방향에서 새 문제가 들어온다 — 손가락이 민 쪽과 화면이 같이 움직여야 '넘겼다' 로 읽힌다 */
+.qcard.sw-next{animation:swNext .24s cubic-bezier(.2,.9,.3,1)}
+.qcard.sw-prev{animation:swPrev .24s cubic-bezier(.2,.9,.3,1)}
+@keyframes swNext{from{transform:translateX(36px);opacity:.35}to{transform:none;opacity:1}}
+@keyframes swPrev{from{transform:translateX(-36px);opacity:.35}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){ .qcard.sw-next,.qcard.sw-prev{animation:none} }
+html.nomotion .qcard.sw-next,html.nomotion .qcard.sw-prev{animation:none}
 .sosmenu{position:absolute;right:0;bottom:calc(100% + 8px);z-index:40;
   display:flex;flex-direction:column;gap:4px;padding:7px;border-radius:12px;
   background:var(--bg2);border:1px solid var(--bd);box-shadow:0 12px 30px rgba(0,0,0,.26);
@@ -1158,6 +1231,27 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opa
   #mascot{right:10px;bottom:calc(74px + env(safe-area-inset-bottom))}
   .mtalk{max-width:150px;font-size:12px}
 }
+/* 👆 ★클릭 칸은 작게, 그림 크기는 그대로★ — 모바일 실측(390×844)에서 #mascot 상자가
+   125×250px 로 오른쪽 아래를 통째로 덮어, 그 밑으로 스크롤된 '다음 문제' 가 안 눌렸다.
+   상자·말풍선·그림은 클릭을 통과시키고, 캐릭터 몸통 가운데 작은 타원만 눌리게 한다.
+   (::after 를 누르면 이벤트 대상은 부모 버튼 — 기존 onclick 이 그대로 산다) */
+#mascot,#mascot #cstack,#mascot #crowd,#mascot .cw,#mascot .mtalk,#mascot .stalk,#mascot .ctalk,
+#mascot .mbody,#mascot .mbody *,#mascot .sbody,#mascot .sbody *,#mascot .cw *{pointer-events:none}
+#mascot #mfold{pointer-events:auto}
+#mascot .mbody,#mascot .sbody{position:relative}
+#mascot .mbody::after,#mascot .sbody::after,#mascot .cw::after{content:'';position:absolute;pointer-events:auto;
+  left:26%;right:26%;top:30%;bottom:18%;border-radius:50%}
+/* 💬 말풍선 반투명 — 뒤의 보기·버튼이 비쳐 보여야 가려진 줄 안다 */
+.mtalk,.ctalk{background:color-mix(in srgb,var(--bg2) 74%,transparent);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.stalk{background:color-mix(in srgb,color-mix(in srgb,#8b7bd8 14%,var(--bg2)) 74%,transparent);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.mtalk::after{border-top-color:color-mix(in srgb,var(--bg2) 74%,transparent)}
+.stalk::after{border-top-color:color-mix(in srgb,color-mix(in srgb,#8b7bd8 14%,var(--bg2)) 74%,transparent)}
+/* ⬅ 모바일에선 퀴즈 버튼 줄을 캐릭터 기둥(오른쪽 ≈80px) 밖으로 비킨다 — 접으면 원위치 */
+@media (max-width:520px){
+  body:has(#mascot:not([hidden]):not(.fold)) #qNav{padding-right:82px}
+}
 @media (prefers-reduced-motion: reduce){
   .mwrap,.meyes,.mwingL,.mwingR,.msweat,.mnote,.mbang{animation:none!important}
   .mtalk{animation:none}
@@ -1223,6 +1317,24 @@ h1,h2,h3,.vt{font-family:var(--f-head);font-weight:800;letter-spacing:-.018em}
 /* 말풍선은 둥근 스택 — 말투가 눈으로도 읽힌다 */
 .mtalk,.stalk,.ctalk{font-family:var(--f-soft);letter-spacing:-.004em}
 kbd{font-family:var(--f-num)}
+
+/* ── ✒ 명조 모드 — 사이트별 선택(data.js meta.font:'serif') ──────────
+   ★읽는 글 전체(지문·보기·해설·개념)★ 를 화면용 명조로 바꾼다. 시스템 명조(바탕·
+   나눔명조)는 가는 획이 화면에서 뭉개지고 모바일엔 아예 없는 경우가 많아, 이 모드에서만
+   웹폰트 Noto Serif KR(본명조)을 불러온다 — 한글 subset(unicode-range) 로 쓰는 글자만
+   받고, sw.js 가 교차 출처 자원을 cache-first 로 담아 두 번째 방문부터는 오프라인에서도 산다.
+   웹폰트가 늦거나 막히면 스택의 시스템 명조로 떨어진다(display=swap — 빈 화면 없음).
+   조작 요소(헤더·메뉴·버튼·칩·숫자)는 ★고딕 그대로★ — '누르는 것' 과 '읽는 것' 의 결을 가른다. */
+:root[data-font="serif"]{
+  --f-serif:"Noto Serif KR","MaruBuri","Nanum Myeongjo","나눔명조","Apple Myungjo","Batang","바탕",Georgia,serif;
+  --f-ui:var(--f-serif);
+  --f-label:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif;
+}
+:root[data-font="serif"] :is(header,nav,.btn,.chip,.ctag,.sbadge,.qmeta,.meta,.cap,.lbl,.dash,.stat,.timer,.pg,.prog,#ascroll,#qFloat,input,select){
+  font-family:"Pretendard","Malgun Gothic","맑은 고딕",-apple-system,"Segoe UI",sans-serif}
+/* 명조는 같은 크기에서 고딕보다 작고 성기게 보인다 — 줄 간격만 살짝 연다 */
+:root[data-font="serif"] body{line-height:1.7;letter-spacing:.003em}
+:root[data-font="serif"] .ch{line-height:1.6}
 
 /* ── 🎞 진입 — 화면이 '켜지는' 느낌 ─────────────────────── */
 @keyframes upIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
@@ -3354,6 +3466,95 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
    ★7.2px★ 로 떨어졌다. 26개가 13px 미만. 높이 제한을 버리고 세로로 길게
    두면(원래 방침대로) 전부 14px 로 돌아온다. 넘치는 폭은 좌우 스크롤. */
 @media (max-width:520px){ .mmd svg{max-height:none} }
+/* ═══════════════════════════════════════════════════════════════════════════
+   🎚 감각 다양화(feel:rich) — ★data.js meta.feel:'rich' 사이트 전용★
+   전부 html[data-feel="rich"] 하위라 다른 사이트에는 한 줄도 적용되지 않는다.
+   ① 선지 질감(상단 하이라이트 + 그레인) ② 누름 깊이 ③ 정답 히트스톱(chHit)
+   ④ 오답은 선지만 둔탁하게(chThud)·지문 고정 ⑤ 콤보 요동 ⑥ 레벨업 모음 ⑦ 카드 광택
+   transform·opacity 만 움직이고, reduced-motion·html.nomotion 에서 전부 멈춘다.
+   ═══════════════════════════════════════════════════════════════════════════ */
+html[data-feel="rich"]{
+  --e-press:cubic-bezier(.3,0,.2,1); --e-heavy:cubic-bezier(.45,0,.25,1.12); --e-thud:cubic-bezier(.2,.7,.3,1);
+  --hitstop:60ms;
+  /* 테마별 소재 — 그레인 세기(--grain-a 는 기록용, 실제 값은 --grain 에 구워 둔다)·하이라이트·눌림 그림자 */
+  --grain-a:.05; --hl-a:.10; --press-sh:.45;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+html[data-feel="rich"][data-theme="light"]{--grain-a:.035;--hl-a:.55;--press-sh:.14;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.07 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-feel="rich"][data-theme="dawn"]{--grain-a:.045;--hl-a:.35;--press-sh:.40;
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.92 0 0 0 0 0.88 0.09 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-feel="rich"][data-theme="library"]{--grain-a:.07;--hl-a:.30;--press-sh:.16;   /* 종이 */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.16 0 0 0 0 0.07 0.14 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-feel="rich"][data-theme="lamp"]{--grain-a:.06;--hl-a:.14;--press-sh:.50;      /* 금속 */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.9 0 0 0 0 0.75 0.12 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ① 선지 질감 — ::before 는 비어 있던 자리(::after 는 정답 번짐 전용). z-index:-1 + isolation 으로
+   ★배경 위·글자 아래★ 에만 깔려 텍스트 대비를 건드리지 않는다 */
+html[data-feel="rich"] .ch{position:relative;isolation:isolate}
+html[data-feel="rich"] .ch::before{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(255,255,255,var(--hl-a)) 0,rgba(255,255,255,0) 42%),var(--grain);
+  background-size:auto,160px 160px;transition:opacity .06s var(--e-press)}
+/* ② 누름 — 2px 가라앉고 세로로 더 눌린다(60ms). 하이라이트는 줄고 안쪽 그림자가 생긴다 */
+html[data-feel="rich"] .ch:active:not(.killed):not(:disabled){
+  transform:translateY(2px) scale(.992,.975);transition:transform 60ms var(--e-press),box-shadow 60ms var(--e-press);
+  box-shadow:inset 0 2px 7px rgba(0,0,0,var(--press-sh))}
+html[data-feel="rich"] .ch:active:not(.killed):not(:disabled)::before{opacity:.35}
+html[data-feel="rich"] .ch:active:not(:disabled) .no{transform:scale(.9)}
+
+/* ③ 정답 — 눌린 채 멈춤(히트스톱) → 45% 지점 1.04 → 제자리. 번짐도 같은 순간에 시작 */
+html[data-feel="rich"] .ch.right{animation:chHit .42s var(--e-heavy) var(--hitstop) both}
+@keyframes chHit{0%{transform:translateY(2px) scale(.992,.975)}45%{transform:scale(1.04)}100%{transform:none}}
+html[data-feel="rich"] .ch.right::after{animation-delay:var(--hitstop);animation-fill-mode:both}
+/* 빛 링 — 흰빛에서 정답색으로 번진다(어두운 테마는 screen 합성) */
+html[data-feel="rich"] .fxpulse{position:absolute;border-radius:12px;border:2px solid #fff;pointer-events:none;
+  box-shadow:0 0 14px color-mix(in srgb,var(--ok) 60%,transparent);
+  animation:fxPulse .52s var(--e-press) forwards}
+html[data-feel="rich"] .fxpulse.metal{border-radius:99px;box-shadow:0 0 14px rgba(251,191,36,.6);animation-name:fxPulseM}
+@keyframes fxPulse{0%{transform:none;opacity:.95;border-color:#fff}100%{transform:scale(var(--sx),var(--sy));opacity:0;border-color:var(--ok)}}
+@keyframes fxPulseM{0%{transform:none;opacity:.95;border-color:#fff7d6}100%{transform:scale(var(--sx),var(--sy));opacity:0;border-color:#f59e0b}}
+html[data-feel="rich"]:is([data-theme="dark"],[data-theme="dawn"],[data-theme="lamp"]) .fxpulse{mix-blend-mode:screen}
+/* 유리 스파크 — 색종이 팔레트와 구분되는 흰빛, 작고 빠르게 */
+html[data-feel="rich"] .spark.glass{width:5px;height:5px;box-shadow:0 0 6px rgba(255,255,255,.9);animation-duration:.48s}
+html[data-feel="rich"] .spark.metal{width:5px;height:5px;box-shadow:0 0 6px rgba(251,191,36,.8)}
+/* 가장자리 빛 — 피크를 5% 지점으로(소리·진동과 ±20ms) */
+html[data-feel="rich"] #glow.on{animation:glowHit .5s var(--e-press)}
+html[data-feel="rich"] body.fxq #glow.on{animation-duration:.26s}
+@keyframes glowHit{0%{opacity:0}5%{opacity:1}100%{opacity:0}}
+
+/* ④ 오답 — ★카드(지문) 흔들림 없음★. 고른 선지만 80ms 뒤 둔탁하게(±5px, 8% 피크, 감쇠만) */
+html[data-feel="rich"] .qcard.shake{animation:none}
+html[data-feel="rich"] .ch.wrong{animation:chThud .36s var(--e-thud) 80ms both;filter:grayscale(.35)}
+@keyframes chThud{0%{transform:none}8%{transform:translate(-5px,2px)}32%{transform:translate(3px,1px)}58%{transform:translate(-1px,0)}100%{transform:none}}
+html[data-feel="rich"] .dust{position:absolute;width:4px;height:4px;border-radius:50%;pointer-events:none;
+  background:color-mix(in srgb,var(--tx3) 75%,transparent);animation:dustFall .7s var(--e-thud) both}
+@keyframes dustFall{0%{transform:none;opacity:.85}100%{transform:translate(var(--x),var(--y)) scale(.6);opacity:0}}
+
+/* ⑤ 콤보 요동 — 선지만 세로 1→3px(--qa, 12콤보 포화). 지문·정답 선지는 가만히 */
+html[data-feel="rich"] .qcard.quake .ch:not(.right){animation:chQuake .34s var(--e-thud)}
+@keyframes chQuake{0%,100%{transform:none}18%{transform:translateY(calc(var(--qa,1px) * -1))}42%{transform:translateY(var(--qa,1px))}68%{transform:translateY(calc(var(--qa,1px) * -.4))}}
+
+/* ⑥ 레벨업 — XP 바가 380ms 안쪽으로 모인다(놓이는 순간 소리 임팩트·링·스파크) */
+html[data-feel="rich"] .qxp.lvgather{animation:xpGather .38s var(--e-heavy) both}
+@keyframes xpGather{0%{transform:none}100%{transform:scale(.9,.6)}}
+
+/* ⑦ 카드 뒤집기 — 사선 광택이 한 번 지나간다(0 → .18 → 0) */
+html[data-feel="rich"] .fc .fcin::after{content:'';position:absolute;inset:0;border-radius:20px;pointer-events:none;z-index:3;
+  background:linear-gradient(115deg,transparent 28%,#fff 50%,transparent 72%);opacity:0;animation:fcSheenB .34s var(--e-press)}
+html[data-feel="rich"] .fc.flip .fcin::after{animation-name:fcSheenA}
+@keyframes fcSheenA{0%,100%{opacity:0}50%{opacity:.18}}
+@keyframes fcSheenB{0%,100%{opacity:0}50%{opacity:.18}}
+
+/* 끄기 — 접근성 설정·🎬 모션 끄기. 질감·안쪽 그림자는 정적이라 남긴다 */
+@media (prefers-reduced-motion:reduce){
+  html[data-feel="rich"] .ch.right,html[data-feel="rich"] .ch.wrong,html[data-feel="rich"] .qcard.quake .ch,
+  html[data-feel="rich"] .qxp.lvgather,html[data-feel="rich"] .fc .fcin::after,html[data-feel="rich"] #glow.on{animation:none!important}
+  html[data-feel="rich"] .ch:active:not(.killed):not(:disabled){transform:none}
+}
+html[data-feel="rich"].nomotion .ch.right,html[data-feel="rich"].nomotion .ch.wrong,
+html[data-feel="rich"].nomotion .qcard.quake .ch,html[data-feel="rich"].nomotion .qxp.lvgather,
+html[data-feel="rich"].nomotion .fc .fcin::after{animation:none!important}
+html[data-feel="rich"].nomotion .ch:active:not(.killed):not(:disabled){transform:none}
 </style>
 </head>
 <body>
@@ -3367,6 +3568,7 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
       <button data-v="sheet">📋 핵심시트 <kbd>3</kbd></button>
       <button data-v="concept" id="navConcept" hidden>📖 개념정리 <kbd>4</kbd></button>
       <button data-v="quiz">🧩 퀴즈 <kbd>5</kbd></button>
+      <button data-v="past" id="navPast" hidden>📜 기출 <kbd>0</kbd></button>
       <button data-v="note">📕 오답노트 <kbd>6</kbd></button>
       <button data-v="example" id="navExample" hidden>📄 예시문제 <kbd>7</kbd></button>
       <button data-v="info">ℹ️ 시험정보 <kbd>8</kbd></button>
@@ -3727,6 +3929,7 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
     <h3>⌨ 키보드 단축키</h3>
     <div class="sub">마우스 없이 전부 조작할 수 있습니다. <kbd>?</kbd> 또는 <kbd>Esc</kbd> 로 이 창을 닫습니다.</div>
     <div class="kbsec">전역</div>
+    <div class="kbrow" id="kbPast" hidden><span class="keys"><kbd>0</kbd></span><span class="desc">📜 기출풀이 — 회차 목록(기출 자료가 있는 종목만)</span></div>
     <div class="kbrow"><span class="keys"><kbd>1</kbd>~<kbd>9</kbd></span><span class="desc">메뉴 순서대로 화면 전환 (홈 / 암기카드 / 핵심시트 / 개념정리 / 퀴즈 / 오답노트 …)<br><span style="color:var(--tx3);font-size:12.5px">단, 암기카드의 <kbd>1</kbd><kbd>2</kbd> 와 퀴즈 풀이 중 <kbd>1</kbd>~<kbd>4</kbd> 는 그 화면의 동작이 우선합니다. 자료가 없어 감춰진 메뉴의 번호는 동작하지 않습니다</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>T</kbd></span><span class="desc">테마 순환 — 🌙 다크 · ☀️ 라이트 · 🌌 새벽 · 📚 도서관 · 🕯 독서등<br><span style="color:var(--tx3);font-size:12.5px">헤더의 테마 버튼을 누르면 목록에서 고를 수 있고, 같은 창에서 <b>🎬 모션 끄기</b>도 켤 수 있습니다</span></span></div>
     <div class="kbrow"><span class="keys"><kbd>S</kbd></span><span class="desc">효과음 켜기 / 끄기</span></div>
@@ -3784,6 +3987,8 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
   <div id="weekBar" hidden></div>
   <!-- ▶ 원버튼 시작 — ★뭘 풀지 정하는 부담★ 을 없앤다. 사이트가 골라 준다. -->
   <div id="resume"></div>
+  <!-- 📜 기출풀이 진입 — meta.past 가 있는 사이트에서만 보인다 -->
+  <div class="box phome" id="pastHome" hidden></div>
   <div class="dash" id="dash" hidden></div>
   <div class="chalbar" id="chalBar" hidden></div>
   <div class="grid g3" style="margin-bottom:14px" id="stats"></div>
@@ -4049,6 +4254,13 @@ html.nomotion .qxp.near>i,html.nomotion .qxp.gain>i::after,html.nomotion .qxpgai
   <div id="noteList"></div>
 </section>
 
+<!-- ══════════ 📜 기출풀이 (meta.past 사이트 전용 · past.js 지연 로드) ══════════ -->
+<section class="view" id="v-past">
+  <h2 class="vt">📜 기출풀이</h2>
+  <p class="vd">실제 시험 회차를 원번호·보기 순서 그대로 풉니다. 연습은 한 문제씩 즉시 채점, 실전은 제한 시간 뒤 한꺼번에 채점합니다.</p>
+  <div id="pastBody"></div>
+</section>
+
 <section class="view" id="v-example">
   <h2 class="vt">📄 예시문제</h2>
   <p class="vd">실전 형식의 예시 문제입니다. 먼저 스스로 풀어 본 뒤 풀이를 펼치세요.</p>
@@ -4107,6 +4319,9 @@ const S=Object.assign(
 /* 하위 필드까지 안전하게 채운다 — Object.assign 은 최상위 키만 덮으므로
    나중에 필드를 더 추가해도 구 저장값이 깨지지 않게 여기서 한 번 보정한다. */
 const fillDef=(k,def)=>{S[k]=Object.assign({},def,S[k]||{})};
+/* 🎵 배경음악 — ★저장값이 없으면 켜짐★. 사용자가 직접 끈 경우(false)만 존중한다.
+   (실제 재생은 첫 클릭·키 입력 뒤 — 브라우저 자동재생 정책) */
+if(typeof S.bgm!=='boolean')S.bgm=true;
 fillDef('streak',{cur:0,max:0,lastDate:'',freeze:1,freezeWeek:''});
 fillDef('goal',{target:15,date:'',done:0,hit:false});
 fillDef('xp',{total:0});
@@ -4298,6 +4513,19 @@ function checkAch(){
   return got;
 }
 
+/* ✒ 사이트별 본문 서체 — meta.font:'serif' 면 명조 모드(CSS ✒ 명조 모드 참조) */
+if(CPPG.meta.font==='serif'){
+  document.documentElement.dataset.font='serif';
+  if(!document.getElementById('fontSerif')){
+    const l=document.createElement('link'); l.id='fontSerif'; l.rel='stylesheet';
+    l.href='https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap';
+    document.head.appendChild(l);
+  }
+}
+/* 🎚 감각 다양화 — meta.feel:'rich' 인 사이트만 소재감 효과음·질감·히트스톱·햅틱을 켠다.
+   ★다른 사이트는 RICH=false 라 소리·화면·동작이 기존 경로 그대로★(CSS 는 html[data-feel="rich"] 하위) */
+const RICH=CPPG.meta.feel==='rich';
+if(RICH)document.documentElement.dataset.feel='rich';
 const SUB={}; CPPG.subjects.forEach(s=>SUB[s.id]=s);
 /* 자격증마다 구분 단위가 다르다 — 필기 종목은 '과목', AWS 같은 종목은 '영역' */
 const UNIT=CPPG.meta.unit||'과목';
@@ -4372,6 +4600,194 @@ const SHUFCH = CPPG.meta.shuffleChoices === true;
 /** 이 문항의 보기 표시 순서 — 원본 인덱스 배열(섞지 않으면 0,1,2…) */
 const chOrder = q => (q._cs && q._cs.length === q.c.length) ? q._cs : q.c.map((c,i)=>i);
 const CHNO = '①②③④⑤⑥⑦⑧';
+
+/* ═══════════ 📜 기출풀이 ═══════════
+   ★실제 회차를 원형 그대로★ 푼다 — 원번호 n., 〈보기〉 상자, 그림, 보기 순서(①②③④)까지.
+   그래서 meta.shuffleChoices 를 ★무시한다★(q.pr 이 있는 문항은 섞지 않는다) — 기출은 "몇 번이 답" 을
+   해설·오답노트·다른 수험생과 같은 번호로 말해야 한다.
+   데이터 — 사이트 폴더의 past.js(CPPG.past). 11회차 × 100문항이라 무겁다 →
+   ★처음 기출을 열 때만★ <script> 를 붙인다(지연 로드). 동일 출처라 sw.js 가 런타임 캐시해 오프라인도 된다.
+   data.js 에 meta.past 가 없으면 메뉴·홈·단축키가 전부 숨는다 — ★다른 사이트 영향 0★.
+   문항 id = 'past:{회차id}:{원번호}' — 문제은행 id(m0·o0·f0·r0)와 겹치지 않아
+   오답노트(S.wrong)·정복(S.solved)·기록(S.time)에 그대로 합류한다. QBYID 에는 로드 뒤에 등록된다.
+   저장 S.past[회차id] = { n:응시 수, last:'YYYY-MM-DD', best:{pct,mode,d}|null,
+                           done:[푼 원번호…](진행률), hist:[{d,m,pct,pass,sub,per}] 최근 10회 } */
+const HASPAST=!!CPPG.meta.past;
+if(!S.past||typeof S.past!=='object'||Array.isArray(S.past))S.past={};
+const PAST=(()=>{
+  let st='idle', wait=null;            /* idle → loading → ok | fail */
+  const examMin=n=>Math.round(n*1.5);  /* 100문항 150분 — 과목만 풀면 20문항 30분 */
+  const rounds=()=>(CPPG.past||[]).slice().sort((a,b)=>String(b.id).localeCompare(String(a.id)));
+  const byId=id=>(CPPG.past||[]).find(r=>r.id===id);
+  const rec=id=>{ const o=S.past[id]||(S.past[id]={});
+    if(typeof o.n!=='number')o.n=0; if(!Array.isArray(o.done))o.done=[]; if(!Array.isArray(o.hist))o.hist=[];
+    if(!('best' in o))o.best=null; if(!o.last)o.last=''; return o };
+  /** 로드된 회차의 문항에 엔진 공용 필드를 붙인다 — 퀴즈·오답노트가 문제은행 문항과 똑같이 다룬다 */
+  function prep(){
+    (CPPG.past||[]).forEach(r=>(r.items||[]).forEach(q=>{
+      q.id=`past:${r.id}:${q.n}`; q.type='mcq'; q.pr=r.id; q.po=r.official!==false;
+      QBYID[q.id]=q;
+    }));
+    st='ok';
+  }
+  function load(){
+    if(st==='ok')return Promise.resolve(CPPG.past);
+    if(Array.isArray(CPPG.past)){ prep(); return Promise.resolve(CPPG.past) }   /* 이미 들어와 있다(테스트·인라인) */
+    if(!HASPAST)return Promise.reject(new Error('meta.past 없음'));
+    if(wait)return wait;
+    st='loading';
+    try{ LOAD.start('📜 기출 회차 불러오는 중',1) }catch(e){}
+    wait=new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src=CPPG.meta.past; s.async=true;
+      const fin=ok=>{ try{ LOAD.done() }catch(e){} wait=null;
+        if(ok&&Array.isArray(CPPG.past)){ prep(); res(CPPG.past) }
+        else{ st='fail'; s.remove(); rej(new Error('past.js 로드 실패')) } };
+      s.onload=()=>fin(true); s.onerror=()=>fin(false);
+      document.head.appendChild(s);
+    });
+    return wait;
+  }
+  /** 오답노트에 기출 문항이 있는데 아직 안 불러왔는가(실패한 뒤엔 다시 조르지 않는다) */
+  const need=ids=>HASPAST&&st!=='ok'&&st!=='fail'&&!Array.isArray(CPPG.past)&&ids.some(id=>String(id).indexOf('past:')===0);
+
+  /* ── 회차 목록 ── */
+  function render(){
+    const box=$('pastBody'); if(!box)return;
+    if(st!=='ok'&&!Array.isArray(CPPG.past)){
+      box.innerHTML=`<div class="empty"><div class="ic">📜</div>기출 회차를 불러오는 중…</div>`;
+      load().then(()=>{ if(view==='past')render() }).catch(()=>{
+        box.innerHTML=`<div class="empty"><div class="ic">⚠</div>기출 데이터를 불러오지 못했습니다.<br>
+          네트워크 연결을 확인한 뒤 다시 시도하세요.<div style="margin-top:12px"><button class="btn gh" id="pastRetry">↻ 다시 시도</button></div></div>`;
+        const b=$('pastRetry'); if(b)b.onclick=()=>{ st='idle'; render() };
+      });
+      return;
+    }
+    if(st!=='ok')prep();
+    const list=rounds();
+    box.innerHTML=list.map(r=>{
+      const it=r.items||[], o=S.past[r.id], tot=it.length, dn=o&&o.done?o.done.length:0;
+      const pc=tot?Math.round(dn/tot*100):0;
+      const bits=[];
+      if(o&&o.best)bits.push(`최고 <b>${o.best.pct}점</b>${o.best.mode==='exam'?'':' (연습)'}`);
+      if(o&&o.last)bits.push(`최근 ${esc(o.last)}`);
+      bits.push(`진행 <b>${dn}</b>/${tot}`);
+      const subs=CPPG.subjects.filter(s=>it.some(q=>q.s===s.id));
+      return `<div class="box pround" data-r="${esc(r.id)}">
+        <div class="prh"><b class="prt">${esc(r.title||r.id)}</b>${r.official===false?'<span class="pwarn">⚠ 정답 미공개 · 풀이 기준</span>':''}</div>
+        ${r.src?`<div class="prs">${esc(r.src)}</div>`:''}
+        <div class="prm">${bits.join(' · ')}</div>
+        <div class="prog"><i style="width:${pc}%"></i></div>
+        <div class="prb">
+          <button class="btn" data-pm="practice">✍ 연습 <span>즉시 채점</span></button>
+          <button class="btn gh" data-pm="exam">⏱ 실전 <span>${tot}문항 · ${examMin(tot)}분</span></button>
+        </div>
+        ${subs.length>1?`<div class="prsub">${esc(UNIT)}만${subs.map(s=>
+          `<button class="chip" data-ps="${s.id}" title="${subName(s.id)} ${it.filter(q=>q.s===s.id).length}문항 — 연습">${subChip(s.id)}</button>`).join('')}</div>`:''}
+      </div>`;
+    }).join('')||`<div class="empty"><div class="ic">📜</div>등록된 기출 회차가 없습니다.</div>`;
+    box.onclick=e=>{
+      const c=e.target.closest('.pround'); if(!c)return;
+      const m=e.target.closest('[data-pm]'), s=e.target.closest('[data-ps]');
+      if(m)start(c.dataset.r,m.dataset.pm);
+      else if(s)start(c.dataset.r,'practice',s.dataset.ps);
+    };
+  }
+  /** 회차(또는 그 안의 과목 하나)를 푼다 — ★퀴즈 엔진을 그대로 탄다★(스와이프·떠 있는 다음·연출·단축키) */
+  function start(rid,mode,sub){
+    const r=byId(rid); if(!r)return;
+    if(st!=='ok')prep();
+    let items=(r.items||[]).slice().sort((a,b)=>a.n-b.n);
+    if(sub)items=items.filter(q=>q.s===sub);
+    if(!items.length){FX.toast('출제할 문항이 없습니다','bad',1600);return}
+    if(mode==='exam'&&!confirm(`⏱ 실전 — ${items.length}문항 · ${examMin(items.length)}분\n제출할 때까지 채점하지 않습니다. 시작할까요?`))return;
+    startQuiz(items,mode==='exam'?'exam':'practice',{past:{rid:r.id,title:r.title||r.id,sub:sub||'',full:!sub,off:r.official===false}});
+  }
+  /** 문항을 한 번이라도 풀었다 — 회차 진행률 */
+  function mark(q){ const o=rec(q.pr); if(o.done.indexOf(q.n)<0)o.done.push(q.n) }
+  /** 세션 결과를 회차 기록에 남긴다 — 최고점은 ★회차 전체★ 를 푼 세션만 */
+  function record(P,res){
+    if(!P||!res.answered)return null;
+    const o=rec(P.rid), d=localDay();
+    o.n++; o.last=d;
+    const per={}; Object.keys(res.per).forEach(k=>{ const v=res.per[k]; per[k]=Math.round(v.r/v.t*100) });
+    o.hist.push({d,m:res.mode,pct:res.pct,pass:!!res.pass,sub:P.sub||'',per});
+    if(o.hist.length>10)o.hist.shift();
+    let nb=false;
+    if(P.full&&(res.mode==='exam'||res.all)){   /* 연습은 끝까지 푼 판만 — 중간에 그만둔 점수가 최고점이 되면 안 된다 */
+      const b=o.best;
+      /* 같은 점수면 실전 기록으로 갈아 끼운다 — 실전 점수가 더 믿을 만하다 */
+      if(!b||res.pct>b.pct||(res.pct===b.pct&&res.mode==='exam'&&b.mode!=='exam')){ nb=!!b&&res.pct>b.pct; o.best={pct:res.pct,mode:res.mode,d} }
+    }
+    return {nb};
+  }
+  /** 결과 화면 — 과목별 점수·평균·과락 판정 */
+  function resBlock(P,res){
+    const PR=CPPG.meta.passRule||{pct:60,per:40};
+    const subs=CPPG.subjects.filter(s=>res.per[s.id]);
+    let cuts=0;
+    const rows=subs.map(s=>{
+      const v=res.per[s.id], sc=Math.round(v.r/v.t*100), cut=sc<(PR.per||0);
+      if(cut)cuts++;
+      return `<tr><td style="color:${s.color};font-weight:800">${subShort(s.id)}</td><td>${v.r}/${v.t}</td>
+        <td><b>${sc}</b>점</td><td>${cut?'<b style="color:var(--no)">과락</b>':'<span style="color:var(--ok)">통과</span>'}</td></tr>`;
+    }).join('');
+    const avg=subs.length?Math.round(subs.reduce((a,s)=>a+res.per[s.id].r/res.per[s.id].t*100,0)/subs.length):0;
+    const pass=P.sub?cuts===0:res.pass;
+    const verdict=P.sub?(cuts?'과락':'과락 면함')
+      :res.pass?'✅ 합격':`❌ 불합격 — ${[cuts?`과락 ${cuts}${esc(UNIT)}`:'',res.pct<PR.pct?'평균 미달':''].filter(Boolean).join(' · ')}`;
+    return `<div class="pres">
+      <div class="presh">📜 ${esc(P.title)}${P.sub?' · '+subShort(P.sub):''} · ${res.mode==='exam'?'실전':'연습'}</div>
+      ${P.off?'<div class="pwarn">⚠ 정답 미공개 회차 — 풀이 기준 정답으로 채점했습니다</div>':''}
+      <div class="tw"><table><thead><tr><th>${esc(UNIT)}</th><th>정답</th><th>점수</th><th>판정</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="pverd ${pass?'p':'f'}">${P.sub?'점수':'평균'} <b>${P.sub?avg:res.pct}점</b> · ${verdict}
+        <small>합격 기준 — 평균 ${PR.pct}점 이상 · ${esc(UNIT)}별 ${PR.per||0}점 이상${res.left?` · 미응답 ${res.left}문항은 오답 처리`:''}</small></div>
+      ${res.nb?'<div class="pnb">🏅 이 회차 최고점 갱신</div>':''}
+    </div>`;
+  }
+  /** 문항 부속 — 〈보기〉 상자·그림 (퀴즈·오답노트 공용) */
+  function extra(q){
+    let h='';
+    if(q.box)h+=`<div class="pbox">${esc(q.box)}</div>`;
+    if(q.fig)h+=`<div class="pfig"><img loading="lazy" src="${esc(q.fig)}" alt="${q.n}번 문항 그림"></div>`;
+    return h;
+  }
+  const tag=q=>`📜 기출 ${esc(q.pr)} ${q.n}번`;
+  /** 실전 번호판 — 푼 문항·현재 문항을 한눈에, 눌러서 바로 이동 */
+  function pal(){
+    let el=$('pPal');
+    const on=!!(quiz&&quiz.past&&quiz.mode==='exam');
+    if(!on){ if(el)el.hidden=true; return }
+    if(!el){
+      el=document.createElement('details'); el.id='pPal'; el.className='ppal noprint';
+      const nav=$('qNav'); nav.parentNode.insertBefore(el,nav.nextSibling);
+      el.addEventListener('toggle',()=>{ if(quiz)quiz._palOpen=el.open });
+      el.addEventListener('click',e=>{ const b=e.target.closest('[data-j]'); if(!b||!quiz)return;
+        quiz.i=+b.dataset.j; renderQ(); });
+    }
+    el.hidden=false;
+    const left=quiz.ans.filter(a=>a===null).length;
+    el.open=!!quiz._palOpen;
+    el.innerHTML=`<summary>🔢 문항 번호판 — 남은 ${left}문항</summary><div class="ppg">${quiz.items.map((q,j)=>
+      `<button type="button" data-j="${j}" class="${quiz.ans[j]!==null?'a':''}${j===quiz.i?' cur':''}">${q.n}</button>`).join('')}</div>`;
+  }
+  /** 홈 진입 배너 — 로드 전에도 그릴 수 있게 ★저장 기록만★ 쓴다 */
+  function home(){
+    const el=$('pastHome'); if(!el)return;
+    if(!HASPAST){ el.hidden=true; return }
+    const ids=Object.keys(S.past).filter(k=>S.past[k]&&S.past[k].n);
+    const lastId=ids.sort((a,b)=>String(S.past[b].last).localeCompare(String(S.past[a].last)))[0];
+    const lo=lastId&&S.past[lastId];
+    el.hidden=false;
+    el.innerHTML=`<button class="btn" id="goPast">📜 기출풀이</button>
+      <span class="ptx">${lo?`최근 <b>${esc(lastId)}</b> 회차 · ${esc(lo.last)}${lo.best?` · 최고 <b>${lo.best.pct}점</b>`:''} · ${ids.length}개 회차 응시`
+        :'실제 기출 회차를 원번호 그대로 — 연습(즉시 채점) · 실전(시간 제한)'}</span>`;
+    $('goPast').onclick=()=>go('past');
+  }
+  return {load,need,render,start,mark,record,resBlock,extra,tag,pal,home,examMin,
+          ready:()=>st==='ok', rounds};
+})();
+if(HASPAST){ ['navPast','kbPast'].forEach(id=>{ const b=$(id); if(b)b.hidden=false }) }
 /* 문항이 하나도 없는 유형은 칩·표·필터에서 아예 감춘다 (예: 단답형을 쓰지 않는 종목) */
 const ALLTYPES=[{k:'mcq',n:'4지선다'},{k:'ox',n:'OX'},{k:'fill',n:'단답형'},{k:'order',n:'순서정렬'}];
 const TYPES=ALLTYPES.filter(t=>ALLQ.some(q=>q.type===t.k));
@@ -4404,6 +4820,66 @@ const FXQ={
     b.classList.toggle('inquiz',this.inQuiz()); }
 };
 window.addEventListener('resize',()=>FXQ.sync());
+/* 🎚 모션 없음 — 접근성 설정(실시간) 또는 🎬 모션 끄기. RICH 연출 전용 가드 */
+const MOTIONLESS=()=>REDUCED||document.documentElement.classList.contains('nomotion')
+  ||!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+/* ═══ 📳 햅틱(FEEL) — ★RICH 전용★. 길이·펄스 수로 세기를 만든다(Android Chrome, 최소 8ms).
+   iOS 는 navigator.vibrate 가 없어 조용히 무시된다.
+   · 같은 틱의 여러 요청은 ★우선순위 최고 1개★ 로 합친다(queueMicrotask)
+   · 피로 관리 — 60ms 쿨다운 · 1.2초 4회 초과면 길이 절반 · 1분 40회 초과면 탭 생략
+   · 오디오 출력 지연만큼 늦춰 ★소리와 같은 순간★ 에 떨게 한다(최대 120ms) ═══ */
+const FEEL=(()=>{
+  const PRI={tap:0,pick:0,right:1,wrong:1,redeem:2,combo:3,badge:3,levelup:4,pass:4,fail:4};
+  const can=()=>RICH&&typeof navigator!=='undefined'&&typeof navigator.vibrate==='function';
+  let pend=null, last=0, lastP=-1, hist=[];
+  const off=()=>!can()||S.haptic===false||MOTIONLESS()||document.hidden;
+  const k=c=>Math.max(0,Math.min(1,((c||0)-2)/12));
+  function pat(kind,x){
+    if(kind==='tap')return [10];
+    if(kind==='pick')return [8];
+    if(kind==='right')return [12,45,Math.round((x&&x.hard?26:18)+14*k(x&&x.c))];
+    if(kind==='wrong'){ const r=(x&&x.run)||0; return r>=4?null:r>=2?[22]:[36] }
+    if(kind==='combo'){ const s=(x&&x.s)||1, p=[];
+      for(let i=0;i<=s;i++){ if(i)p.push(40); p.push(14+6*s) }
+      if(s>=4)p.push(40,60); return p }
+    if(kind==='redeem')return [14,40,14,40,30];
+    if(kind==='levelup')return [8,90,10,90,12,170,50,60,18,50,18];   /* 50ms 펄스 = 소리 임팩트(+380ms) */
+    if(kind==='badge')return [30,50,16];
+    if(kind==='pass')return [40,60,20,60,20,60,60];
+    if(kind==='fail')return [24];
+    return null;
+  }
+  function flush(){
+    const r=pend; pend=null; if(!r||off())return;
+    const now=performance.now();
+    if(r.p<2&&now-last<60&&r.p<=lastP)return;                      /* 쿨다운 */
+    hist=hist.filter(t=>now-t<60000);
+    if(r.p===0&&hist.length>40)return;                               /* 1분 과다 — 탭 생략 */
+    let pt=pat(r.kind,r.x); if(!pt)return;
+    if(hist.filter(t=>now-t<1200).length>=4)pt=pt.map((v,i)=>i%2?v:Math.max(8,Math.round(v/2)));
+    hist.push(now); last=now; lastP=r.p;
+    let lat=0; try{ lat=S.sound?Math.min(120,(FX.snd.latency()||0)*1000):0 }catch(e){}
+    const go=()=>{ try{ if(!off())navigator.vibrate(pt) }catch(e){} };
+    const d=Math.round((r.delay||0)+lat);
+    if(d>0)setTimeout(go,d); else go();
+  }
+  return {
+    can,
+    /** 진동 요청 — kind(패턴) · x(콤보 등 인자) · delay(ms) */
+    buzz(kind,x,delay){
+      if(!RICH||off())return;
+      const p=PRI[kind]||0;
+      if(pend){ if(p>pend.p)pend={kind,x,p,delay}; return }
+      pend={kind,x,p,delay};
+      (window.queueMicrotask||(f=>Promise.resolve().then(f)))(flush);
+    },
+    /** 연출 + 진동을 ★같은 프레임★ 에 — rich 가 아니면 fire() 만 */
+    hit(kind,x,fire,o){
+      if(!RICH){ fire&&fire(); return }
+      (window.requestAnimationFrame||(f=>setTimeout(f,16)))(()=>{ fire&&fire(); FEEL.buzz(kind,x,o&&o.delay) });
+    }
+  };
+})();
 const FX=(()=>{
   const layer=()=>document.getElementById('fx');
   const PAL=['#5b9dff','#7c5cff','#34d399','#fbbf24','#fb7185','#22d3ee'];
@@ -4418,6 +4894,14 @@ const FX=(()=>{
          반복되면 그 순간부터 소음으로 인지된다.
        · UI 음은 아주 작게(0.03~0.06), 보상 음은 크게 — ★대비★ 가 보상감을 만든다. */
   let actx=null, master=null, verb=null, dry=null;
+  /* 🎚 RICH 전용 — 슬랩 딜레이 · 공유 노이즈 버퍼 · 보이스 예산 */
+  let slap=null, NB=null, LIVE=0, PRIO=1, SWAP=null;
+  /* 동시 소스 상한 — 모바일 28 / 데스크톱 48. prio 0=호버 1=UI 2=보상.
+     호버는 절반에서, UI 는 상한에서, 보상은 1.5배까지 — ★낮은 것부터 생략★ */
+  const CAP=(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches)?28:48;
+  const grab=p=>{ if(!RICH)return true;
+    if(LIVE>=CAP*(p>=2?1.5:p>=1?1:.5))return false; LIVE++; return true };
+  const rel=n=>{ if(RICH&&n)n.onended=()=>{LIVE=Math.max(0,LIVE-1)} };
   /* C 메이저 펜타토닉 3옥타브 — 인덱스가 올라갈수록 음이 높아진다(상승감) */
   const PENTA=[261.63,293.66,329.63,392.00,440.00,
                523.25,587.33,659.25,783.99,880.00,
@@ -4466,13 +4950,29 @@ const FX=(()=>{
       dry.connect(rumble);
       verb.connect(revHP); revHP.connect(wet); wet.connect(rumble);
       rumble.connect(comp); comp.connect(lim); lim.connect(master);
-      master.connect(actx.destination);
+      if(RICH){
+        /* 🎚 RICH — 2ms 트랜지언트가 리미터를 빠져나가지 않게 어택 1ms,
+           마스터 뒤 tanh 소프트클립(2x 오버샘플), 유리·금속 꼬리용 슬랩 딜레이 send */
+        lim.attack.value=0.001;
+        const clip=actx.createWaveShaper(), cv=new Float32Array(1024);
+        for(let i=0;i<1024;i++)cv[i]=Math.tanh(i/511.5-1);
+        clip.curve=cv; clip.oversample='2x';
+        master.connect(clip); clip.connect(actx.destination);
+        slap=actx.createDelay(0.2); slap.delayTime.value=0.072;
+        const fb=actx.createGain(); fb.gain.value=0.22;
+        const slp=actx.createBiquadFilter(); slp.type='lowpass'; slp.frequency.value=3200;
+        slap.connect(slp); slp.connect(fb); fb.connect(slap); slp.connect(rumble);
+        /* 공유 노이즈 1초 — 호출마다 createBuffer 하지 않고 ★재생 위치만★ 바꾼다 */
+        NB=actx.createBuffer(1,actx.sampleRate,actx.sampleRate);
+        const nd=NB.getChannelData(0); for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
+      }else master.connect(actx.destination);
     }catch(e){actx=null}
     return actx;
   }
   /** 음 하나 — ADSR 로 부드럽게 열고 닫는다(클릭 잡음 방지) */
   function voice(f,o={}){
     const A=ac(); if(!A)return;
+    if(!grab(o.prio==null?PRIO:o.prio))return;
     const t0=A.currentTime+(o.at||0), dur=o.dur||0.3;
     const osc=A.createOscillator(), g=A.createGain();
     osc.type=o.type||'sine';
@@ -4490,12 +4990,26 @@ const FX=(()=>{
     if(o.lp){const f2=A.createBiquadFilter();f2.type='lowpass';f2.frequency.value=o.lp;node.connect(f2);node=f2}
     node.connect(g);
     g.connect(dry); if(o.wet!==false)g.connect(verb);
-    osc.start(t0); osc.stop(t0+dur+0.03);
+    osc.start(t0); osc.stop(t0+dur+0.03); rel(osc);
   }
   /** 짧은 노이즈 — 틱·쉭 같은 질감용 */
   function noise(o={}){
     const A=ac(); if(!A)return;
     const dur=o.dur||0.06, t0=A.currentTime+(o.at||0);
+    if(RICH&&NB){
+      /* 🎚 공유 버퍼 + 랜덤 오프셋 — 감쇠(decay)는 버퍼 대신 ★게인 곡선★ 으로 */
+      if(!grab(o.prio==null?PRIO:o.prio))return;
+      const src=A.createBufferSource(); src.buffer=NB; src.loop=true;
+      const bp=A.createBiquadFilter(); bp.type=o.type||'bandpass';
+      bp.frequency.setValueAtTime(o.f||2200,t0); bp.Q.value=o.q||1.2;
+      if(o.f2)bp.frequency.exponentialRampToValueAtTime(o.f2,t0+dur);   /* 스윕 */
+      const g=A.createGain(), pk=o.gain==null?0.06:o.gain;
+      g.gain.setValueAtTime(Math.max(.0001,pk),t0);
+      g.gain.setTargetAtTime(0,t0,dur/((o.decay||3)+1));
+      src.connect(bp); bp.connect(g); g.connect(dry); if(o.wet)g.connect(verb);
+      src.start(t0,Math.random()*Math.max(0,1-dur-.01)); src.stop(t0+dur); rel(src);
+      return;
+    }
     const len=Math.floor(A.sampleRate*dur), buf=A.createBuffer(1,len,A.sampleRate);
     const d=buf.getChannelData(0);
     for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,o.decay||3);
@@ -4524,6 +5038,8 @@ const FX=(()=>{
   /** 저역 임팩트 — 킥처럼 "퍽" 하고 때린다. 몸으로 느끼는 타격감의 정체 */
   function impact(o={}){
     const A=ac(); if(!A)return;
+    if(RICH&&SWAP){ SWAP(o); return }        /* 🎚 RICH — 사건별 소재 타격(hit)으로 갈아 끼운다 */
+    if(!grab(o.prio==null?PRIO:o.prio))return;
     const t0=A.currentTime+(o.at||0), dur=o.dur||0.16;
     const osc=A.createOscillator(), g=A.createGain();
     osc.type='sine';
@@ -4533,8 +5049,82 @@ const FX=(()=>{
     g.gain.exponentialRampToValueAtTime(o.gain==null?0.22:o.gain,t0+0.006);
     g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
     osc.connect(g); g.connect(dry);
-    osc.start(t0); osc.stop(t0+dur+0.02);
+    osc.start(t0); osc.stop(t0+dur+0.02); rel(osc);
     noise({at:o.at||0,f:o.click||1400,q:1,gain:(o.gain==null?0.22:o.gain)*0.35,dur:0.03,decay:5});
+  }
+  /* ── 🎚 소재 타격 hit() — ★RICH 전용★ ───────────────────────────────
+     정수배 배음뿐인 사인·삼각파는 '무엇에 부딪혔는지' 가 없다. 4층을 쌓는다.
+       ① 트랜지언트 2~8ms(필터 노이즈) — 닿는 순간
+       ② 바디 — 피치드롭 사인 + 비대칭 포화로 ★2·3차 배음★(폰 스피커는 40~60Hz 를 못 내므로
+          무게를 배음으로 옮긴다)
+       ③ 모드 — 소재 고유의 ★비조화★ 배음비(나무 2.57 · 유리 2.32 · 금속 2.76)
+       ④ 테일 — 필터 노이즈 · 슬랩 딜레이
+     변주: 키별 라운드로빈 4변형(cents 0/-18/+12/-7 ±5) · 지터 0~6ms · 게인 ±1.3dB · 필터 ±8%.
+     w(무게 0~1, 콤보 열기) ↑ → 바디 시작음 +40% · 길이 ×1.6 · .4 넘으면 포화. */
+  const MAT={
+    paper: {tr:['highpass',4500,.003], tail:{t:'bandpass',f:1800,f2:3200,d:.06,g:.8}},
+    button:{tr:['bandpass',5000,.002], body:[900,500,.018]},
+    wood:  {tr:['bandpass',1200,.004], body:[220,160,.06], modes:[[1,.08],[2.57,.05],[4.2,.03]], wet:.05, f:440},
+    rubber:{tr:['lowpass',600,.006],   body:[150,70,.12], sat:1, tail:{t:'lowpass',f:400,d:.08,g:.5}},
+    glass: {tr:['highpass',7000,.002], body:[400,380,.03], modes:[[1,.45],[2.32,.3],[4.25,.2],[6.63,.12]], slap:.18, wet:.25, f:1046.5},
+    metal: {tr:['bandpass',3500,.003], body:[300,260,.05], modes:[[1,.9],[2.76,.6],[5.4,.35],[8.93,.2]], tail:{t:'bandpass',f:7500,d:.35,g:.25}, wet:.3, f:659.25},
+    stone: {tr:['bandpass',2000,.008], body:[160,42,.22], sat:1, tail:{t:'lowpass',f:900,d:.25,g:.4}, wet:.15}
+  };
+  const RR={}, RRC=[0,-18,12,-7];
+  let SATC=null;
+  /* 비대칭 tanh — 짝수(2차) 배음까지 만든다. 대칭이면 홀수만 나온다 */
+  const satCurve=()=>{ if(SATC)return SATC; SATC=new Float32Array(1024);
+    const n=Math.tanh(2.6+.5)-Math.tanh(.5);
+    for(let i=0;i<1024;i++){const x=i/511.5-1; SATC[i]=(Math.tanh(2.6*x+.5)-Math.tanh(.5))/n}
+    return SATC };
+  function hit(o={}){
+    const A=ac(); if(!A||!NB)return;
+    const M=MAT[o.material]||MAT.wood, p=o.prio==null?PRIO:o.prio;
+    if(!grab(p))return;                              /* 트랜지언트 자리도 없으면 통째로 생략 */
+    const w=Math.max(0,Math.min(1,o.w||0)), key=o.key||o.material;
+    RR[key]=((RR[key]||0)+1)%4;
+    const rt=Math.pow(2,(RRC[RR[key]]+Math.random()*10-5)/1200);
+    const t0=A.currentTime+(o.at||0)+Math.random()*.006;
+    const G=Math.min(.3,(o.gain==null?.1:o.gain)*Math.pow(10,(Math.random()*2-1)*1.3/20));
+    const out=A.createGain(); out.connect(dry);
+    if(M.wet){ const s=A.createGain(); s.gain.value=M.wet; out.connect(s); s.connect(verb) }
+    if(M.slap&&slap){ const s=A.createGain(); s.gain.value=M.slap; out.connect(s); s.connect(slap) }
+    const nz=(ty,f,q)=>{ const src=A.createBufferSource(); src.buffer=NB; src.loop=true;
+      const fl=A.createBiquadFilter(); fl.type=ty; fl.frequency.setValueAtTime(f,t0); fl.Q.value=q;
+      src.connect(fl); return [src,fl] };
+    { /* ① 트랜지언트 */
+      const [ty,f,d]=M.tr, [src,fl]=nz(ty,f*(1+Math.random()*.16-.08),ty==='bandpass'?1.4:.7);
+      const g=A.createGain(); g.gain.setValueAtTime(Math.max(.0001,G*.9),t0);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+d+.002);
+      fl.connect(g); g.connect(out); src.start(t0,Math.random()*.9); src.stop(t0+d+.01); rel(src); }
+    if(M.body&&grab(p)){ /* ② 바디 */
+      const [b0,b1,bd]=M.body, d=bd*(1+.6*w);
+      const osc=A.createOscillator(), g=A.createGain(); osc.type='sine';
+      osc.frequency.setValueAtTime(b0*(1+.4*w)*rt,t0);
+      osc.frequency.exponentialRampToValueAtTime(Math.max(20,b1*rt),t0+d*.85);
+      g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(Math.max(.0002,G),t0+.003);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+      let n=osc;
+      if(M.sat||w>.4){ const ws=A.createWaveShaper(); ws.curve=satCurve(); ws.oversample='2x'; osc.connect(ws); n=ws }
+      n.connect(g); g.connect(out); osc.start(t0); osc.stop(t0+d+.02); rel(osc); }
+    if(M.modes){ /* ③ 모드 — 고역일수록 작고 빨리 죽는다 */
+      const base=(o.f||M.f||440)*rt;
+      M.modes.forEach(([r,dc],j)=>{
+        const fr=base*r, d=dc*(1+.4*w); if(fr>16000||!grab(p))return;
+        const osc=A.createOscillator(), g=A.createGain(); osc.type='sine'; osc.frequency.value=fr;
+        g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(Math.max(.0002,G*.55/(1+j*.6)),t0+.002);
+        g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+        osc.connect(g); g.connect(out); osc.start(t0); osc.stop(t0+d+.02); rel(osc); });
+    }
+    if(M.tail&&grab(p)){ /* ④ 테일 */
+      const T=M.tail, d=T.d*(1+.5*w), [src,fl]=nz(T.t,T.f,T.t==='bandpass'?1.1:.7);
+      if(T.f2)fl.frequency.exponentialRampToValueAtTime(T.f2,t0+d);
+      const g=A.createGain(); g.gain.setValueAtTime(.0001,t0);
+      g.gain.exponentialRampToValueAtTime(Math.max(.0002,G*T.g),t0+.004);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+d);
+      fl.connect(g); g.connect(out); src.start(t0,Math.random()*.6); src.stop(t0+d+.02); rel(src); }
+    /* 무거운 타격 직후 BGM 이 잠깐 비켜 준다 — 이미 덕킹 중이면(마일스톤·시대 전환) 건드리지 않는다 */
+    if(w>=.45&&!(bgm&&bgm.duck<1))BGM.duck(350);
   }
   /** 상승 스윕 — ★무언가 올 것 같은★ 기대를 만든다. 콤보가 쌓일수록 길게 */
   function riser(o={}){
@@ -4591,7 +5181,7 @@ const FX=(()=>{
       /* 앞쪽에 몰렸다가 흩어지는 분포 — 일제히 터진 뒤 잦아드는 느낌 */
       const t=(o.at||0)+Math.pow(Math.random(),.6)*spread;
       noise({at:t,f:1100+Math.random()*2600,q:.7+Math.random(),
-             gain:g*(.5+Math.random()*.8),dur:.028,decay:6,wet:true});
+             gain:g*(.5+Math.random()*.8),dur:.028,decay:6,wet:true,prio:1});
     }
   }
   /** 함성 — 대역 제한 노이즈에 비브라토를 걸어 사람 목소리 무리처럼 */
@@ -4687,23 +5277,93 @@ const FX=(()=>{
     }
   }
 
-  /** 특정 요소에서 터지는 스파크 */
-  function burst(el,n){
+  /** 특정 요소에서 터지는 스파크 — kind('glass'·'metal', RICH 전용)면 소재 팔레트 */
+  const KPAL={glass:['#ffffff','#effcff','#d4f4ff'],metal:['#fbbf24','#fde68a','#f59e0b','#fff7d6']};
+  function burst(el,n,kind){
     if(REDUCED||!el)return;
     const L=layer(); if(!L)return;
     const r=el.getBoundingClientRect();
     const cx=r.left+r.width/2, cy=r.top+r.height/2;
     for(let i=0;i<(n||14);i++){
       const d=document.createElement('i');
-      d.className='spark';
+      d.className=kind?'spark '+kind:'spark';
       d.style.left=cx+'px'; d.style.top=cy+'px';
-      d.style.background=PAL[(Math.random()*PAL.length)|0];
+      const pal=(kind&&KPAL[kind])||PAL;
+      d.style.background=pal[(Math.random()*pal.length)|0];
       const a=Math.random()*Math.PI*2, dist=40+Math.random()*90;
       d.style.setProperty('--x',Math.cos(a)*dist+'px');
       d.style.setProperty('--y',Math.sin(a)*dist+'px');
       L.appendChild(d);
       setTimeout(()=>d.remove(),700);
     }
+  }
+
+  /* ── 🎚 RICH 전용 연출 ─────────────────────────────────────────── */
+  /** 링 — 요소 윤곽에서 흰빛 → 정답색(금속이면 앰버)으로 번지는 테두리. s = 퍼짐 배율 */
+  function ring(el,s,kind){
+    if(MOTIONLESS()||!el)return;
+    const L=layer(); if(!L)return;
+    const r=el.getBoundingClientRect(); if(!r.width)return;
+    const d=document.createElement('i'), e=14*(s||1);
+    d.className=kind?'fxpulse '+kind:'fxpulse';
+    d.style.left=r.left+'px'; d.style.top=r.top+'px';
+    d.style.width=r.width+'px'; d.style.height=r.height+'px';
+    d.style.setProperty('--sx',((r.width+e*2)/r.width).toFixed(3));
+    d.style.setProperty('--sy',((r.height+e*2)/Math.max(1,r.height)).toFixed(3));
+    L.appendChild(d); setTimeout(()=>d.remove(),620);
+  }
+  /** 먼지 — 오답 선지 아래로 떨어지는 무채색 입자(상한 6) */
+  function dust(el,n){
+    if(MOTIONLESS()||!el)return;
+    const L=layer(); if(!L)return;
+    const r=el.getBoundingClientRect(); if(!r.width)return;
+    for(let i=0;i<Math.min(n||6,6);i++){
+      const d=document.createElement('i'); d.className='dust';
+      d.style.left=(r.left+r.width*(.12+Math.random()*.76))+'px'; d.style.top=(r.bottom-3)+'px';
+      d.style.setProperty('--x',((Math.random()-.5)*26).toFixed(1)+'px');
+      d.style.setProperty('--y',(16+Math.random()*24).toFixed(1)+'px');
+      d.style.animationDelay=(Math.random()*60|0)+'ms';
+      L.appendChild(d); setTimeout(()=>d.remove(),820);
+    }
+  }
+  /** 모바일 감속 배율(body.fxq) — 입자 수에 곱한다 */
+  const pk=()=>document.body&&document.body.classList.contains('fxq')?Math.max(.5,FXQ.k()):1;
+  /* ★히트스톱★ — 눌린 채 60ms 멈췄다가(CSS chHit 지연) 빛·링·유리 스파크·소리·진동이
+     ★한 프레임★ 에 터진다. 색종이는 콤보 5의 배수에서만(남발하면 값이 떨어진다). */
+  const HS=60;
+  function richRight(el,combo,opt){
+    const c=combo||0, card=el&&el.closest?el.closest('.qcard'):null;
+    const st={3:1,5:2,8:3,12:4}[c];
+    setTimeout(()=>FEEL.hit(st?'combo':'right',st?{s:st}:{c,hard:!!(opt&&opt.hard)},()=>{
+      glow('color-mix(in srgb, var(--ok) 45%, transparent)');
+      ring(el,1);
+      burst(el,Math.min(20,Math.max(6,Math.round(16*pk()))),'glass');
+      SND.right(combo,opt||{});
+      if(c>=5&&c%5===0)confetti(Math.min(14+c*4,60));
+      /* 콤보 요동 — 지문은 두고 ★선지만★ 세로로 1→3px(12콤보 포화) */
+      if(card&&c>=3&&!MOTIONLESS()){
+        card.style.setProperty('--qa',(1+2*Math.min(1,(c-3)/9)).toFixed(2)+'px');
+        card.classList.remove('quake'); void card.offsetWidth; card.classList.add('quake');
+        setTimeout(()=>card.classList.remove('quake'),400);
+      }
+    }),HS);
+  }
+  /* 오답 — 카드(지문)는 흔들지 않고 고른 선지만 80ms 뒤 둔탁하게(CSS chThud), 먼지가 떨어진다 */
+  function richWrong(el){
+    let run=0; try{ run=wrongRun }catch(e){}
+    setTimeout(()=>FEEL.hit('wrong',{run},()=>{
+      glow('color-mix(in srgb, var(--no) 40%, transparent)');
+      dust(el,6); SND.wrong();
+    }),80);
+  }
+  /** 레벨업 — XP 바가 380ms 모였다가(소리 임팩트 +0.38s 와 같은 순간) 링 2겹 + 앰버 스파크 */
+  function lvup(){
+    const x=document.getElementById('qXp');
+    if(!x||MOTIONLESS()||!x.offsetParent)return;
+    x.classList.remove('lvgather'); void x.offsetWidth; x.classList.add('lvgather');
+    setTimeout(()=>{ x.classList.remove('lvgather');
+      ring(x,1,'metal'); setTimeout(()=>ring(x,1.8,'metal'),110);
+      burst(x,Math.min(18,Math.max(8,Math.round(18*pk()))),'metal') },380);
   }
 
   /** 남아 있는 코인 제거 — 착지 전에 화면이 바뀌면 유령처럼 남는다 */
@@ -4943,55 +5603,117 @@ const FX=(()=>{
     ctx(){ return actx }
   };
 
-  /* ═══ 🎵 배경음악 — 적응형 레이어 ═══════════════════════
+  /* ── 🎚 RICH 레시피 — ★기존 SND 는 한 줄도 고치지 않고★ RICH 사이트에서만 덮어쓴다.
+     impact() 를 쓰는 기존 레시피는 SWAP 으로 그 자리만 소재 타격(hit)으로 갈아 끼워
+     나머지 층(음정·스파클·환호)은 그대로 재사용한다. PRIO 2 = 보상(보이스 예산 우선). */
+  if(RICH){
+    const O=Object.assign({},SND);
+    /** 원본 레시피 name 을 부르되 impact 자리를 mk(o) 로 바꾼다 */
+    const run=(name,args,mk,p)=>{
+      if(!S.sound)return;
+      const q=PRIO, s0=SWAP; if(p!=null)PRIO=p; SWAP=mk;
+      try{ return O[name].apply(SND,args) }finally{ PRIO=q; SWAP=s0 }
+    };
+    const at=o=>(o&&o.at)||0;
+    Object.assign(SND,{
+      tap(){ if(S.sound)hit({material:'button',gain:.06,key:'tap'}) },
+      hover(){ if(S.sound)noise({f:7200,q:3.2,gain:.012,dur:.012,decay:6,prio:0}) },
+      hoverPick(){ if(!S.sound)return;
+        noise({f:7200,q:3.2,gain:.012,dur:.012,decay:6,prio:0});
+        hit({material:'paper',gain:.02,prio:0,key:'hpick'}) },
+      nav(){ if(!S.sound)return; hit({material:'paper',gain:.05,key:'nav'}); O.nav.call(SND) },
+      on(){ if(!S.sound)return; hit({material:'button',gain:.05,key:'on'}); O.on.call(SND) },
+      off(){ if(S.sound)hit({material:'rubber',gain:.05,key:'off'}) },
+      /** 🃏 넘김 — 스치는 결이 위로 쓸리고(1500→3400) 종이가 착지한다 */
+      flip(){ if(!S.sound)return;
+        noise({f:1500,f2:3400,q:.9,gain:.055,dur:.11,decay:1.6});
+        hit({material:'paper',at:.07,gain:.05,key:'flip'});
+        voice(step(7),{at:.07,dur:.18,type:'triangle',gain:.06});
+        voice(step(9),{at:.1,dur:.2,type:'sine',gain:.035}) },
+      check(){ run('check',[],o=>hit({material:'wood',f:step(8),gain:.11,at:at(o),key:'chk'})) },
+      uncheck(){ run('uncheck',[],o=>hit({material:'wood',f:step(5),gain:.08,at:at(o),key:'chk'})) },
+      know(ok){ run('know',[ok],o=>hit(ok?{material:'glass',f:step(11),gain:.08,at:at(o),key:'know'}
+                                          :{material:'wood',f:step(4),gain:.08,at:at(o),key:'know'})) },
+      /** 정답 — 콤보 열기(w)가 소재를 바꾼다: 나무 → 유리 → 금속 (+8콤보부터 돌의 무게) */
+      right(combo,opt){
+        const c=Math.min(combo||1,12), i=3+Math.min(c,9), w=BGM.heatLevel(c);
+        run('right',[combo,opt||{}],o=>{
+          hit({material:w<.2?'wood':w<.45?'glass':'metal',f:step(i),w,gain:.14,at:at(o),key:'right'});
+          if(w>=.72)hit({material:'stone',w,gain:.12,at:at(o),key:'rstone'}) },2) },
+      /** 오답 — 고무의 둔탁함 + 낮은 나무 한 번. 정답 계열(음정 상승)과 ★소재부터 다르다★ */
+      wrong(){ if(!S.sound)return; const q=PRIO; PRIO=2;
+        try{ hit({material:'rubber',gain:.11,key:'wrong'});
+             hit({material:'wood',at:.05,f:196,gain:.06,key:'wrongw'});
+             voice(174.61,{at:.09,dur:.3,type:'sine',gain:.06,lp:700}) }finally{ PRIO=q } },
+      /** 콤보 끊김 — 나무 한 번 + 미끄러져 내려가는 한 음(칩 off 와 구분) */
+      comboBreak(){ if(!S.sound)return;
+        hit({material:'wood',f:step(3),gain:.05,key:'cbrk'});
+        voice(step(5),{at:.06,glide:step(2),dur:.3,type:'sine',gain:.045,lp:1100}) },
+      redeem(){ run('redeem',[],o=>hit({material:'glass',f:step(6),w:.3,gain:.13,at:at(o),key:'redeem'}),2) },
+      coin(k){ if(!S.sound)return;
+        voice(step(10+(k%4)),{dur:.1,type:'triangle',gain:.055,wet:false});
+        hit({material:'metal',f:step(10+(k%4))*.5,gain:.05,key:'coin'}) },
+      tease(){ if(!S.sound)return; O.tease.call(SND); hit({material:'glass',f:step(11),gain:.025,key:'tease'}) },
+      sub(boo){ if(!S.sound)return; hit({material:'rubber',gain:.03,key:'sub'}); O.sub.call(SND,boo) },
+      milestone(){ run('milestone',[],o=>{
+        hit({material:'stone',w:.8,gain:.24,at:at(o),key:'ms'});
+        hit({material:'metal',at:at(o)+.02,f:step(9),w:.6,gain:.12,key:'msm'}) },2) },
+      levelup(){ run('levelup',[],o=>{                     /* 임팩트 자리 = +0.38s — 햅틱 50ms 펄스와 같은 순간 */
+        hit({material:'stone',w:1,gain:.24,at:at(o),key:'lv'});
+        hit({material:'glass',at:at(o)+.02,f:step(12),gain:.12,key:'lvg'}) },2) },
+      badge(){ run('badge',[],o=>hit({material:'metal',f:step(9),w:.7,gain:.16,at:at(o),key:'badge'}),2) },
+      finish(pass){ run('finish',[pass],o=>{
+        if(pass){ hit({material:'stone',w:1,gain:.26,at:at(o),key:'fin'});
+                  hit({material:'metal',at:at(o)+.02,f:step(9),w:.6,gain:.12,key:'finm'}) }
+        else hit({material:'rubber',w:.5,gain:.12,at:at(o),key:'fin'}) },2) },
+      era(){ run('era',[],o=>{
+        hit({material:'stone',w:1,gain:.3,at:at(o),prio:2,key:'era'});
+        hit({material:'metal',at:at(o)+.03,f:step(9),w:.8,gain:.14,key:'erab'}) },2) },
+      /** 오디오 출력 지연(초) — 햅틱을 소리에 맞춰 늦추는 데 쓴다 */
+      latency(){ return actx?((actx.baseLatency||0)+(actx.outputLatency||0)):0 }
+    });
+  }
+
+  /* ═══ 🎵 배경음악 — 적응형 레이어 + 테마 레퍼토리 ═══════════
      ★외부 음원 파일을 쓰지 않는다.★ 용량·라이선스 부담 없이 WebAudio 로 합성하고,
      화면 성격에 따라 ★레이어를 켜고 끄는★ 방식으로 분위기를 바꾼다.
 
-     레이어 0 룸톤  — 아주 낮은 노이즈. 무음의 적막을 없앤다
-     레이어 1 패드  — 지속 화성. 읽기를 방해하지 않는 최소 구성
-     레이어 2 베이스 — 리듬을 가진 저음. ★그루브의 뼈대★
-     레이어 3 아르페지오 — 움직임. 문제 풀이의 속도감
-     레이어 4 드럼  — 킥·클랩. ★박이 있어야 몸이 반응한다★
-     레이어 5 하이햇 — 8분음표 + 스윙. 리듬의 결을 만든다
+     레이어 0 바이닐 — 불규칙한 톡톡(크래클)만. ★지속 노이즈(룸톤)는 없앴다★ —
+                     루프 핑크노이즈는 '바람 소리'로 들린다는 피드백.
+     레이어 1 화성  — 테마별 악기(로즈·펠트 피아노·벨·패드·플럭)
+     레이어 2 베이스 — 업라이트 / 서브(사인)
+     레이어 3 선율  — 시드 기반 모티프·아르페지오·드문 조각
+     레이어 4 드럼  — 로파이·라이드·하프타임·보사(림)
+     레이어 5 하이햇 — 8분·16분 셰이커·라이드 — 짧은 타격음(≤0.22s)이라 바람이 아니다
 
-     ★리듬 원칙★ — 앰비언트만으로는 "틀어 놨다" 는 감각이 안 온다.
-     로파이 힙합 계열(킥 1·3-and, 클랩 2·4, 스윙 하이햇)을 아주 낮은 레벨로 깐다.
-     ★읽기·휴식 장면은 리듬 레이어를 0 으로★ — 글 읽는 화면에 박이 들어가면 방해가 된다.
+     ★레퍼토리★ — 장면마다 테마 4~5개(THEMES·POOL). 장면에 들어올 때마다
+     지난번과 다른 테마를 고르고, 2~4분마다 마디 경계에서 크로스페이드로 갈아탄다.
+     선율은 테마를 고를 때 뽑은 ★시드★ 로 모티프를 만들고, 반복마다 조금씩 변주한다.
 
      ★원칙★
-      · 기본값 Off. 음악 선호는 개인차가 크다
+      · 기본값 On(저장값 없을 때). 단 AudioContext 는 ★첫 사용자 조작 후★ 에만 만든다
       · 가사 없음(합성이라 당연) — ★읽기 화면에서 언어 간섭을 만들지 않는다★
       · ★모의고사는 무음★ — 시험 시뮬레이션을 흐리지 않는다
       · 효과음이 터질 때 ★덕킹★ — 자극이 겹치면 과부하가 온다
       · 전환은 항상 긴 페이드(2~4초) */
   let bgm=null;
-  /* ★조성 이동★ — 같은 합성음도 루트가 바뀌면 매번 새 곡처럼 들린다.
-     요일로 색을 잡고(월요일은 낮게·어둡게, 금요일은 높게·밝게),
-     세션마다 0~2 도를 더 얹어 ★같은 요일에도 두 번 같지 않게★ 한다. */
-  /* 반음 단위. 월요일은 아래로, 금요일은 위로 — 요일이 곡의 색을 정한다 */
+  /* ★조성 이동★ — 요일로 색을 잡고 세션마다 0~2 도를 더 얹는다.
+     여기에 ★테마별 조성(bgm.key)★ 이 더해져 같은 날에도 곡마다 중심음이 다르다. */
   const DAYKEY=[0,-4,-2,1,3,5,2];          /* 일 월 화 수 목 금 토 */
   const SESKEY=[0,2,-3][(Math.random()*3)|0];
   const keyShift=()=>DAYKEY[new Date().getDay()]+SESKEY;
   const C3=130.8128;
-  const nf=semi=>C3*Math.pow(2,(semi+keyShift())/12);
-  /* ★재즈 보이싱★ — 펜타토닉 삼화음은 동요처럼 들린다.
-     7th·9th·11th·13th 가 들어가야 로파이 특유의 나른한 색이 나온다.
-     진행은 Imaj9 → vim9 → iim9 → V13 (ii-V 턴어라운드). */
+  const nf=semi=>C3*Math.pow(2,(semi+keyShift()+((bgm&&bgm.key)||0))/12);
+  /* ★재즈 보이싱★ — 진행은 Imaj9 → vim9 → iim9 → V13 (ii-V 턴어라운드). */
   const JAZZ=[
     {r:0, ch:[0,4,7,11,14],  mel:[14,16,19]},   /* Cmaj9  */
     {r:9, ch:[0,3,7,10,14],  mel:[12,14,17]},   /* Am9    */
     {r:2, ch:[0,3,7,10,17],  mel:[14,17,19]},   /* Dm9(11)*/
     {r:7, ch:[0,4,7,10,14],  mel:[14,16,21]}    /* G13    */
   ];
-  /* ── 🎼 곡 — 장면마다 ★진행이 다르다★ ────────────────────
-     같은 음색으로 같은 진행을 계속 돌리면, 화면을 옮겨도 "같은 곡" 이라
-     장면이 바뀐 느낌이 안 난다. 화성 진행을 바꾸는 것이 악기를 바꾸는 것보다
-     훨씬 싸고 효과가 크다.
-       quiz : ii-V 턴어라운드 — 앞으로 밀린다(긴장·전진)
-       read : I-IV 왕복 — 해결되지 않고 머문다(★머물러야 읽는다★)
-       rest : I-vi 완만 — 내려앉는다
-     ※ 읽기·휴식은 ★멜로디를 쓰지 않는다★ — 선율은 언어처럼 들려서
-       글을 읽는 동안 가장 크게 간섭한다(비관련 음향 효과). */
+  /* ── 🎼 진행 — 테마마다 ★화성이 다르다★ ──────────────────
+     ※ 읽기·휴식 진행은 ★멜로디를 쓰지 않는다★(mel:[]) — 선율은 언어처럼
+       들려서 글을 읽는 동안 가장 크게 간섭한다(비관련 음향 효과). */
   const SONG={
     quiz: JAZZ,
     read: [
@@ -5005,69 +5727,188 @@ const FX=(()=>{
       {r:9, ch:[0,3,7,10],    mel:[]},          /* vim7   */
       {r:5, ch:[0,4,7,11],    mel:[]},          /* IVmaj7 */
       {r:9, ch:[0,3,7,14],    mel:[]}           /* vim9   */
+    ],
+    /* 보사노바 — ii9 · V9 · Imaj9 · VI7(b9b13) */
+    bossa: [
+      {r:2, ch:[0,3,7,10,14], mel:[14,15,19]},
+      {r:7, ch:[0,4,7,10,14], mel:[14,16,21]},
+      {r:0, ch:[0,4,7,11,14], mel:[14,16,19]},
+      {r:9, ch:[0,4,8,10,13], mel:[13,16,20]}
+    ],
+    /* 도리안 — i9 · IV9 · i11 · bVII9 (단조인데 6도가 밝다) */
+    dorian: [
+      {r:9, ch:[0,3,7,10,14], mel:[12,14,15,19]},
+      {r:2, ch:[0,4,7,10,14], mel:[12,14,16,19]},
+      {r:9, ch:[0,3,7,10,17], mel:[14,15,17,19]},
+      {r:7, ch:[0,4,7,10,14], mel:[12,14,16,21]}
+    ],
+    /* 네오소울 — IVmaj9 · iii9 · ii9 · Imaj9(#11) 하행 */
+    soul: [
+      {r:5, ch:[0,4,7,11,14], mel:[14,16,19]},
+      {r:4, ch:[0,3,7,10,14], mel:[12,14,15,19]},
+      {r:2, ch:[0,3,7,10,14], mel:[14,15,17,19]},
+      {r:0, ch:[0,4,7,11,14], mel:[14,16,18]}
+    ],
+    /* 클래식 — I · V · vi · iii · IV · I · IV · V7 (8마디 캐논형) */
+    classic: [
+      {r:0, ch:[0,4,7,12], mel:[12,16,19]}, {r:7, ch:[0,4,7,12], mel:[12,16,19]},
+      {r:9, ch:[0,3,7,12], mel:[12,15,19]}, {r:4, ch:[0,3,7,12], mel:[12,15,19]},
+      {r:5, ch:[0,4,7,12], mel:[12,16,19]}, {r:0, ch:[0,4,7,12], mel:[12,16,19]},
+      {r:5, ch:[0,4,7,12], mel:[12,16,19]}, {r:7, ch:[0,4,7,10], mel:[12,16,17]}
+    ],
+    /* 앰비언트 — 패드 드리프트: vi9 · IVmaj9 · Imaj9 · V9sus4 */
+    drift: [
+      {r:9, ch:[0,3,7,10,14], mel:[]}, {r:5, ch:[0,4,7,11,14], mel:[]},
+      {r:0, ch:[0,4,7,11,14], mel:[]}, {r:7, ch:[0,5,7,10,14], mel:[]}
+    ],
+    /* 앰비언트 — 리디안: I(#11) · II/I 왕복 — 떠 있는 느낌 */
+    lydian: [
+      {r:0, ch:[0,4,7,11,18], mel:[]}, {r:2, ch:[0,4,7,9,14], mel:[]},
+      {r:0, ch:[0,7,11,14,18], mel:[]}, {r:2, ch:[0,4,9,14,16], mel:[]}
+    ],
+    /* 앰비언트 — 에올리안: i9 · bVImaj9 · bIIImaj9 · bVII6/9 */
+    aeolian: [
+      {r:9, ch:[0,3,7,10,14], mel:[]}, {r:5, ch:[0,4,7,11,16], mel:[]},
+      {r:0, ch:[0,4,7,11,14], mel:[]}, {r:7, ch:[0,4,7,9,14], mel:[]}
+    ],
+    /* 휴식 — 하프 분산화음용 열린 보이싱 */
+    harp: [
+      {r:0, ch:[0,7,11,14,16], mel:[]}, {r:5, ch:[0,7,9,14,16], mel:[]},
+      {r:9, ch:[0,7,10,14,15], mel:[]}, {r:7, ch:[0,5,7,10,14], mel:[]}
     ]
   };
-  /* 🔥 콤보 최고 구간 전용 진행 — 루트는 그대로 두고 ★텐션만 올린다.★
-     곡이 통째로 바뀌면 "다른 노래"가 되어 흐름이 끊긴다. 9th 가 #9 로,
-     V13 이 올터드로 바뀌는 것만으로 같은 곡이 뜨거워진다. */
+  /* 🔥 콤보 최고 구간 전용 진행 — 루트는 그대로 두고 ★텐션만 올린다.★ */
   SONG.quizHot=[
     {r:0, ch:[0,4,7,11,14],  mel:[14,16,19,23]},  /* Cmaj9    */
     {r:9, ch:[0,4,7,10,15],  mel:[12,15,19,22]},  /* A7(#9)   */
     {r:2, ch:[0,3,7,10,17],  mel:[14,17,19,24]},  /* Dm9(11)  */
     {r:7, ch:[0,4,8,10,13],  mel:[13,16,19,22]}   /* G7(b9b13)*/
   ];
-  const songOf=name=>(name==='quiz'&&bgm&&(bgm.boost||0)>=1&&SONG.quizHot)||SONG[name]||SONG.quiz;
+  SONG.dorianHot=[
+    {r:9, ch:[0,3,7,10,14], mel:[12,14,15,19,22]},
+    {r:2, ch:[0,4,7,10,21], mel:[12,14,16,21]},   /* IV13   */
+    {r:9, ch:[0,3,7,10,17], mel:[14,15,17,19,22]},
+    {r:7, ch:[0,4,6,10,14], mel:[12,14,18,21]}    /* bVII9(#11) */
+  ];
+  /* ── 🎭 테마 — 진행·악기·리듬·선율 규칙의 묶음 ──────────────
+     tm=템포 배율(장면 bpm × tm) · swing=뒷박 당김 · comp=화성 주법 · ci=화성 악기
+     bass/bi=베이스 주법·악기 · mel/li=선율 규칙·악기 · drum=드럼 패턴 */
+  const THEMES={
+    jazz:    {prog:'quiz', hot:'quizHot', key:0,  tm:1,    swing:.16, comp:'lofi',    ci:'rhodes',
+              bass:'walk',  bi:'upright', mel:'sparse', li:'rhodes', drum:'lofi'},
+    bossa:   {prog:'bossa',               key:2,  tm:1.07, swing:0,   comp:'bossa',   ci:'pluck',
+              bass:'bossa', bi:'sub',     mel:'motif',  li:'keys',   drum:'bossa', vinyl:false},
+    dorian:  {prog:'dorian', hot:'dorianHot', key:-2, tm:.92, swing:.08, comp:'hold', ci:'pad',
+              bass:'root',  bi:'sub',     mel:'arp',    li:'bell',   drum:'half'},
+    soul:    {prog:'soul',                key:1,  tm:.95,  swing:.2,  comp:'push',    ci:'rhodes',
+              bass:'walk',  bi:'upright', mel:'call',   li:'rhodes', drum:'ride'},
+    classic: {prog:'classic',             key:0,  tm:.88,  swing:0,   comp:'alberti', ci:'keys',
+              bass:'root',  bi:'sub',     mel:'motif',  li:'bell',   drum:'none', vinyl:false},
+    /* 앰비언트(읽기·휴식) — 리듬 없음 · 선율 없음 */
+    hold:    {prog:'read',   key:0,  comp:'hold', ci:'rhodes', bass:'hold', bi:'upright'},
+    restHold:{prog:'rest',   key:0,  comp:'hold', ci:'rhodes', bass:'hold', bi:'upright'},
+    drift:   {prog:'drift',  key:-3, comp:'hold', ci:'pad',    bass:'hold', bi:'sub'},
+    lydian:  {prog:'lydian', key:2,  comp:'roll', ci:'bell',   bass:'hold', bi:'sub'},
+    aeolian: {prog:'aeolian',key:0,  comp:'roll', ci:'keys',   bass:'hold', bi:'upright'},
+    harp:    {prog:'harp',   key:-1, comp:'harp', ci:'pluck',  bass:'hold', bi:'sub'}
+  };
+  /* 장면 → 고를 수 있는 테마(각 4~5개). 퀴즈는 앞으로 미는 곡 위주 */
+  const POOL={
+    home:  ['jazz','soul','bossa','classic','dorian'],
+    quiz:  ['jazz','dorian','bossa','soul'],
+    cards: ['soul','classic','bossa','jazz','dorian'],
+    read:  ['hold','drift','lydian','aeolian'],
+    rest:  ['restHold','drift','lydian','harp','aeolian']
+  };
+  const songOf=name=>{
+    const T=(bgm&&bgm.theme)||THEMES.jazz;
+    if(name==='quiz'&&bgm&&(bgm.boost||0)>=1&&T.hot&&SONG[T.hot])return SONG[T.hot];
+    return SONG[T.prog]||SONG.quiz;
+  };
   const SCENE={
-    /*        바이닐 로즈 베이스 멜로디 드럼 하이햇 */
+    /*        바이닐 화성 베이스 선율 드럼 하이햇 */
     home:    {lay:[.60, .85, .80, .55, .70, .55], bpm:84, rhythm:true},
     quiz:    {lay:[.55, .75, .95, .60, .90, .75], bpm:88, rhythm:true},
     cards:   {lay:[.60, .80, .75, .50, .65, .55], bpm:80, rhythm:true},
     /* ★읽기·휴식은 앰비언트 유지★ — 지문 읽는 동안 박자가 째깍거리면
-       은근한 시간 압박이 된다(bgm/case_analysis.txt [4] 결론). */
-    /* 자연음 베드는 제거했다 — 빗소리·파도 같은 환경음은 취향을 크게 타고,
-       읽는 화면에서 '계속 무언가 들린다'는 것 자체가 거슬린다는 판단.
-       조용한 화면은 룸톤 + 패드만 남긴다. */
-    /* 읽기 — 로즈 코드만 길게. 베이스는 아주 옅게 깔아 바닥만 잡는다 */
-    read:    {lay:[.45, .90, .32, 0,   0,   0  ], bpm:58, rhythm:false},
-    rest:    {lay:[.40, .78, .24, 0,   0,   0  ], bpm:52, rhythm:false},
+       은근한 시간 압박이 된다(bgm/case_analysis.txt [4] 결론).
+       자연음 베드·룸톤 노이즈는 제거 — 화성 + 옅은 베이스만 남긴다. */
+    read:    {lay:[0,   .90, .32, 0,   0,   0  ], bpm:58, rhythm:false},
+    rest:    {lay:[0,   .78, .24, 0,   0,   0  ], bpm:52, rhythm:false},
     exam:    {lay:[0,0,0,0,0,0],                  bpm:0,  rhythm:false}  /* 모의고사 — 무음 */
   };
+  /* ── 🎲 시드 난수 · 모티프 ─────────────────────────────── */
+  function rng32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0;
+    let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t;
+    return ((t^t>>>14)>>>0)/4294967296 } }
+  /** 2마디(32스텝) 모티프 — 음 위치·윤곽(음계 인덱스)만 정하고, 실제 음은
+      ★그 마디의 코드 음 풀★ 에서 고른다. 그래서 코드가 바뀌어도 같은 노래로 들린다. */
+  function genMotif(R){
+    const C=[0,2,3,6,8,10,11,14,16,18,19,22,24,26,27,30];
+    const n=4+((R()*3)|0), pos=[];
+    while(pos.length<n){ const p=C[(R()*C.length)|0]; if(pos.indexOf(p)<0)pos.push(p) }
+    pos.sort((a,b)=>a-b);
+    let d=1+((R()*3)|0);
+    return pos.map((p,i)=>{
+      d=Math.max(0,Math.min(5,d+[-2,-1,-1,0,1,1,2][(R()*7)|0]));
+      const nx=i+1<pos.length?pos[i+1]:32;
+      return {s:p,d,len:Math.max(1.5,Math.min(4,nx-p))};
+    });
+  }
+  const ARP=[[0,1,2,3,4,3,2,1],[0,2,1,3,2,4,3,1],[4,3,2,1,2,3,1,0],[0,2,4,2,1,3,4,3]];
+  /** 선율 음 풀 — 코드의 3도 이상 + 텐션(mel), 한 옥타브 위로 접어 정렬 */
+  function poolOf(J){
+    if(J._p)return J._p;
+    const s={}; J.ch.forEach(x=>{ if(x>=3)s[x%12+12]=1 }); (J.mel||[]).forEach(x=>{s[x]=1});
+    return (J._p=Object.keys(s).map(Number).sort((a,b)=>a-b));
+  }
+  function pickTheme(scene){
+    const L=POOL[scene]||POOL.home, last=bgm.last[scene], cur=bgm.tname;
+    let c=L.filter(x=>x!==last&&x!==cur); if(!c.length)c=L.filter(x=>x!==cur); if(!c.length)c=L;
+    const name=c[(Math.random()*c.length)|0];
+    bgm.last[scene]=name;
+    return name;
+  }
+  function setTheme(name){
+    const T=THEMES[name]||THEMES.jazz;
+    const seed=(Math.random()*4294967296)>>>0, R=rng32(seed);
+    const ks=keyShift();
+    let k=(T.key||0)+[0,0,2,-2,3][(R()*5)|0];       /* 같은 테마도 조성이 조금씩 다르다 */
+    k=Math.max(-5-ks,Math.min(7-ks,k));             /* 베이스가 30Hz 대로 꺼지지 않게 */
+    bgm.theme=T; bgm.tname=name; bgm.key=k; bgm.seed=seed; bgm.rng=R;
+    bgm.motif=genMotif(R); bgm.arp=ARP[(R()*ARP.length)|0];
+    bgm.step=0; bgm.until=Date.now()+(120+R()*120)*1000;   /* 2~4분 뒤 다음 테마 */
+  }
+  /* 동시 보이스 상한 — 모바일 22 / 데스크톱 40. 넘으면 새 음을 생략한다(킥·베이스 제외) */
+  const BV=(window.matchMedia&&window.matchMedia('(pointer:coarse)').matches)?22:40;
+  const bvOk=()=>!!bgm&&bgm.live<BV;
+  function bvHold(node){ if(!bgm)return; bgm.live++;
+    node.onended=()=>{ if(bgm)bgm.live=Math.max(0,bgm.live-1) } }
   function bgmInit(){
     const A=ac(); if(!A||bgm)return bgm;
     const out=A.createGain(); out.gain.value=0;
+    const xf=A.createGain(); xf.gain.value=1;       /* 테마 크로스페이드 전용 — 덕킹(out)과 분리 */
     /* ★로파이의 절반은 '고역을 깎는 것'★ — 테이프·라디오를 거친 듯한 질감 */
     const lp=A.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=3800; lp.Q.value=.5;
-    out.connect(lp); lp.connect(master);
-    /* ★사이드체인 버스★ — 레이어 볼륨(g)과 펌핑(sc)을 ★다른 노드★ 로 나눈다.
-       한 노드에 둘 다 자동화를 걸면 서로의 예약을 취소해 값이 어긋난다. */
+    /* BGM 전용 리미터 — 음량을 올린 만큼 겹친 화음 피크를 눌러 클리핑을 막는다 */
+    const lim=A.createDynamicsCompressor();
+    lim.threshold.value=-8; lim.knee.value=6; lim.ratio.value=12; lim.attack.value=.004; lim.release.value=.25;
+    out.connect(xf); xf.connect(lp); lp.connect(lim); lim.connect(master);
+    /* ★사이드체인 버스★ — 레이어 볼륨(g)과 펌핑(sc)을 ★다른 노드★ 로 나눈다. */
     const sc=[0,1,2,3,4,5].map(()=>{const x=A.createGain();x.gain.value=1;x.connect(out);return x});
     const g=[0,1,2,3,4,5].map((_,i)=>{const x=A.createGain();x.gain.value=0;x.connect(sc[i]);return x});
-    /* 룸톤 — 핑크에 가까운 저역 노이즈를 길게 루프 */
-    const nb=A.createBuffer(1,A.sampleRate*4,A.sampleRate), nd=nb.getChannelData(0);
-    let b0=0,b1=0;
-    for(let i=0;i<nd.length;i++){const w=Math.random()*2-1;
-      b0=.99*b0+w*.05; b1=.95*b1+w*.08; nd[i]=(b0+b1)*.5}
-    const ns=A.createBufferSource(); ns.buffer=nb; ns.loop=true;
-    /* 바이닐 표면 잡음 — 완전한 저역이 아니라 살짝 위까지 열어야 '판' 느낌이 난다 */
-    const nfl=A.createBiquadFilter(); nfl.type='lowpass'; nfl.frequency.value=1400;
-    ns.connect(nfl); nfl.connect(g[0]); ns.start();
-    /* 드럼용 화이트노이즈 — ★한 번 만들어 재생 위치만 바꿔 쓴다.★
-       스텝마다 버퍼를 새로 만들면 GC 가 튀어 박자가 흔들린다. */
+    /* ※ 룸톤(루프 핑크노이즈)은 제거 — 지속 노이즈는 바람 소리로 들린다 */
+    /* 드럼용 화이트노이즈 — ★한 번 만들어 재생 위치만 바꿔 쓴다.★ */
     const wb=A.createBuffer(1,A.sampleRate*2,A.sampleRate), wd=wb.getChannelData(0);
     for(let i=0;i<wd.length;i++)wd[i]=Math.random()*2-1;
-    bgm={out,g,sc,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb,lp,boost:0};
+    bgm={out,xf,g,sc,step:0,next:0,timer:null,scene:null,duck:1,vol:0,wb,lp,boost:0,
+         live:0,last:{},theme:null,tname:null,pend:null,until:0};
     return bgm;
   }
-  /* ── 🎷 재즈 로파이 음색 ───────────────────────────────
-     전부 ★절대 시각(t)★ 으로 예약한다. setInterval 이 부르는 시점에
-     맞춰 울리면 ±20ms 가 흔들려 그루브가 죽는다.
-
-     ★로파이의 정체는 음표가 아니라 '질감'★ 이다 — 둔탁한 킥, 쓸리는
-     브러시, 금속성이 빨리 죽는 로즈, 지판을 긁는 업라이트, 그리고
-     바닥에 깔린 바이닐 잡음. 같은 코드도 이 질감이 없으면 그냥 동요다. */
+  /* ── 🎷 음색 — 전부 ★절대 시각(t)★ 으로 예약한다 ─────────────── */
   const hz=()=>(Math.random()-.5)*.024;      /* ★휴머나이즈 ±12ms★ — 정박은 기계다 */
-  function bN(t,dur,dest,o){                 /* 노이즈 한 방 */
-    const A=ac(); if(!A||!bgm)return;
+  function bN(t,dur,dest,o){                 /* 노이즈 한 방(짧은 타격 전용) */
+    const A=ac(); if(!A||!bgm||!bvOk())return;
     const src=A.createBufferSource(); src.buffer=bgm.wb; src.loop=true;
     src.playbackRate.value=.85+Math.random()*.4;
     const f=A.createBiquadFilter(); f.type=o.type||'highpass';
@@ -5076,10 +5917,9 @@ const FX=(()=>{
     g.gain.setValueAtTime(Math.max(.0001,o.gain),t);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
     src.connect(f); f.connect(g); g.connect(dest);
-    src.start(t,Math.random()*1.5); src.stop(t+dur+.02);
+    src.start(t,Math.random()*1.5); src.stop(t+dur+.02); bvHold(src);
   }
-  /** 🥁 킥 — ★둔탁하게.★ 로파이 킥은 때리지 않고 '툭' 떨어진다.
-      피치를 낮게 시작해 천천히 떨구고, 로우패스로 어택의 날을 깎는다. */
+  /** 🥁 킥 — ★둔탁하게.★ 피치를 낮게 시작해 천천히 떨구고 어택의 날을 깎는다. */
   function bKick(t,dest,v){
     const A=ac(); if(!A)return;
     const o=A.createOscillator(), g=A.createGain(), lp=A.createBiquadFilter();
@@ -5091,41 +5931,92 @@ const FX=(()=>{
     g.gain.exponentialRampToValueAtTime(.0001,t+.34);
     o.connect(lp); lp.connect(g); g.connect(dest);
     o.start(t); o.stop(t+.36);
-    /* 룸 — 킥 뒤에 붙는 짧은 저역 잔향. 방에서 친 것처럼 들린다 */
-    bN(t+.012,.14,dest,{type:'lowpass',f:340,q:.6,gain:v*.22});
+    bN(t+.012,.14,dest,{type:'lowpass',f:340,q:.6,gain:v*.22});   /* 룸 — 0.14s 저역 꼬리 */
   }
-  /** 🧹 브러시 스네어 — 때리는 게 아니라 ★쓸어내는★ 소리.
-      짧은 타격 + 길게 번지는 스월, 두 겹이라야 브러시로 들린다. */
+  /** 🧹 브러시 스네어 — 짧은 타격 + 0.34s 이내 스월(타격음의 일부, 지속음 아님) */
   function bBrush(t,dest,v){
     bN(t,.16,dest,{type:'bandpass',f:2050,q:.7,gain:v});
     bN(t+.004,.34,dest,{type:'highpass',f:3900,q:.6,gain:v*.34});
     bN(t+.02,.26,dest,{type:'bandpass',f:5200,q:.5,gain:v*.2});
   }
-  /** 하이햇 — 로파이는 하이햇도 어둡고 짧다(6kHz대, 덜 쨍하게) */
+  /** 하이햇 — 로파이는 하이햇도 어둡고 짧다(6kHz대) */
   function bHat(t,dest,v,open){
     bN(t,open?.15:.028,dest,{type:'highpass',f:6100,q:.7,gain:v});
   }
-  /** 🎹 로즈 피아노 — ★2-오퍼레이터 FM.★ 모듈레이터를 캐리어의 약 2배로
-      두고 ★인덱스를 빠르게 떨구면★ 처음엔 금속성 '땡', 이어 둥근 지속음이
-      남는다. 이게 로즈(전기 피아노) 특유의 소리다. */
-  function bRhodes(t,dur,dest,f,v){
-    const A=ac(); if(!A)return;
+  /** 라이드 — 재즈 '딩 딩-가 딩'. 대역 노이즈 0.22s 감쇠 */
+  function bRide(t,dest,v){
+    bN(t,.22,dest,{type:'bandpass',f:5600,q:.9,gain:v});
+    bN(t,.05,dest,{type:'highpass',f:8200,q:.7,gain:v*.5});
+  }
+  /** 셰이커 — 보사 16분. 45ms 타격 */
+  function bShaker(t,dest,v){ bN(t,.045,dest,{type:'highpass',f:7000,q:.6,gain:v}) }
+  /** 림(클라베) — 노이즈가 아니라 ★짧은 음정 있는 나무 소리★ */
+  function bRim(t,dest,v){
+    const A=ac(); if(!A||!bvOk())return;
+    const o=A.createOscillator(), g=A.createGain();
+    o.type='triangle'; o.frequency.value=1850;
+    g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.0001,t+.05);
+    o.connect(g); g.connect(dest); o.start(t); o.stop(t+.06); bvHold(o);
+  }
+  /** 🎹 FM 건반 — 2-오퍼레이터. 프리셋으로 로즈·펠트 피아노·벨을 나눈다.
+      모듈레이터 인덱스를 빠르게 떨구면 처음엔 금속성 '땡', 이어 둥근 지속음. */
+  const FMP={
+    rhodes:{r:2.01, i0:2.4, i1:.10, it:.26, lp:2500},   /* 로즈 — 따뜻한 땡 */
+    keys:  {r:1.0,  i0:1.3, i1:.05, it:.16, lp:1700},   /* 펠트 피아노 — 둥글고 짧다 */
+    bell:  {r:3.51, i0:3.0, i1:.22, it:.9,  lp:4200}    /* 벨·첼레스타 — 비정수비 배음 */
+  };
+  function bFM(p,t,dur,dest,f,v){
+    const A=ac(); if(!A||!bvOk())return;
     const car=A.createOscillator(), mod=A.createOscillator();
     const mg=A.createGain(), g=A.createGain(), lp=A.createBiquadFilter();
     car.type='sine'; car.frequency.value=f;
-    mod.type='sine'; mod.frequency.value=f*2.01;   /* 살짝 어긋나게 — 미세한 울렁임 */
-    mg.gain.setValueAtTime(f*2.4,t);
-    mg.gain.exponentialRampToValueAtTime(f*.10,t+.26);
+    mod.type='sine'; mod.frequency.value=f*p.r;
+    mg.gain.setValueAtTime(f*p.i0,t);
+    mg.gain.exponentialRampToValueAtTime(f*p.i1,t+p.it);
     mod.connect(mg); mg.connect(car.frequency);
-    lp.type='lowpass'; lp.frequency.value=2500; lp.Q.value=.6;
+    lp.type='lowpass'; lp.frequency.value=p.lp; lp.Q.value=.6;
     g.gain.setValueAtTime(.0001,t);
     g.gain.exponentialRampToValueAtTime(v,t+.008);
     g.gain.exponentialRampToValueAtTime(.0001,t+dur);
     car.connect(g); g.connect(lp); lp.connect(dest);
-    car.start(t); car.stop(t+dur+.05); mod.start(t); mod.stop(t+dur+.05);
+    car.start(t); car.stop(t+dur+.05); mod.start(t); mod.stop(t+dur+.05); bvHold(car);
   }
-  /** 🎻 업라이트 베이스 — 톱니가 아니라 삼각파(둥글다) + ★지판 슬라이드★ +
-      손가락이 줄을 뜯는 짧은 클릭. 이 클릭이 없으면 그냥 신스 베이스다. */
+  function bRhodes(t,dur,dest,f,v){ bFM(FMP.rhodes,t,dur,dest,f,v) }
+  /** 🌫 패드 — 삼각파 2개를 ±7센트 어긋나게 + 느린 어택. 노이즈 없이 순수 음정만 */
+  function bPad(t,dur,dest,f,v){
+    const A=ac(); if(!A||!bvOk())return;
+    const a=A.createOscillator(), b=A.createOscillator(), lp=A.createBiquadFilter(), g=A.createGain();
+    a.type=b.type='triangle'; a.frequency.value=f; b.frequency.value=f;
+    a.detune.value=-7; b.detune.value=7;
+    lp.type='lowpass'; lp.frequency.value=1100; lp.Q.value=.5;
+    const at=Math.min(.8,dur*.3), end=t+dur+.9;
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.linearRampToValueAtTime(v,t+at);
+    g.gain.setValueAtTime(v,t+dur);
+    g.gain.exponentialRampToValueAtTime(.0001,end);
+    a.connect(lp); b.connect(lp); lp.connect(g); g.connect(dest);
+    a.start(t); b.start(t); a.stop(end+.05); b.stop(end+.05); bvHold(a);
+  }
+  /** 🪕 플럭 — 나일론 기타·하프. 필터가 빠르게 닫혀 '튕긴' 소리가 난다 */
+  function bPluck(t,dur,dest,f,v){
+    const A=ac(); if(!A||!bvOk())return;
+    const o=A.createOscillator(), lp=A.createBiquadFilter(), g=A.createGain();
+    o.type='triangle'; o.frequency.value=f;
+    lp.type='lowpass'; lp.Q.value=1.2;
+    lp.frequency.setValueAtTime(Math.min(6000,f*7),t);
+    lp.frequency.exponentialRampToValueAtTime(Math.max(200,f*1.3),t+.22);
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(v,t+.004);
+    g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(.25,dur));
+    o.connect(lp); lp.connect(g); g.connect(dest);
+    o.start(t); o.stop(t+Math.max(.25,dur)+.03); bvHold(o);
+  }
+  function play(inst,t,dur,dest,f,v){
+    if(inst==='pad')return bPad(t,dur,dest,f,v);
+    if(inst==='pluck')return bPluck(t,dur,dest,f,v);
+    bFM(FMP[inst]||FMP.rhodes,t,dur,dest,f,v);
+  }
+  /** 🎻 업라이트 베이스 — 삼각파 + ★지판 슬라이드★ + 줄 뜯는 짧은 클릭 */
   function bUpright(t,dur,dest,f,v,slide){
     const A=ac(); if(!A)return;
     const o=A.createOscillator(), lp=A.createBiquadFilter(), g=A.createGain();
@@ -5143,15 +6034,26 @@ const FX=(()=>{
     o.start(t); o.stop(t+dur+.03);
     bN(t,.028,dest,{type:'bandpass',f:920,q:1.3,gain:v*.45});   /* 줄 뜯는 소리 */
   }
-  /** 💿 바이닐 크래클 — 불규칙한 톡톡. ★규칙적이면 잡음이 아니라 리듬★ 이 된다 */
+  /** 🔈 서브 베이스 — 사인. 클릭 없이 둥글게(보사·앰비언트용) */
+  function bSub(t,dur,dest,f,v){
+    const A=ac(); if(!A)return;
+    const o=A.createOscillator(), lp=A.createBiquadFilter(), g=A.createGain();
+    o.type='sine'; o.frequency.value=f;
+    lp.type='lowpass'; lp.frequency.value=240; lp.Q.value=.5;
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(v,t+.025);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(lp); lp.connect(g); g.connect(dest);
+    o.start(t); o.stop(t+dur+.03);
+  }
+  /** 💿 바이닐 크래클 — 불규칙한 톡톡(11ms). ★지속 노이즈가 아니다★ */
   function bCrackle(t,dest,sp){
     const n=1+((Math.random()*3)|0);
     for(let i=0;i<n;i++)
       bN(t+Math.random()*sp*4,.011,dest,
          {type:'bandpass',f:1600+Math.random()*3400,q:1.5,gain:.016+Math.random()*.026});
   }
-  /** 🔊 사이드체인 — 킥이 떨어질 때 로즈·멜로디가 살짝 주저앉았다 올라온다.
-      로파이의 '숨 쉬는' 느낌은 대부분 여기서 온다. */
+  /** 🔊 사이드체인 — 킥이 떨어질 때 화성·선율이 살짝 주저앉았다 올라온다. */
   function bPump(t,dur){
     if(!bgm||!bgm.sc)return;
     [1,3].forEach(i=>{
@@ -5162,85 +6064,163 @@ const FX=(()=>{
       n.linearRampToValueAtTime(1,t+dur);
     });
   }
-  /** 한 16분음표 스텝을 ★절대 시각 t★ 에 예약한다.
-      n = 0~63 (16분음표 64개 = 4마디) · sp = 16분음표 길이(초) */
+  /* ── 🎼 파트별 규칙 ─────────────────────────────────────── */
+  function partComp(T,J,bar,b,t,sp,rhy,bo){
+    const ci=T.ci||'rhodes', d=bgm.g[1], ch=J.ch, st=T.comp||'lofi';
+    if(st==='lofi'){
+      /* 마디 앞 + 뒤늦은 박(11). ★읽기 화면에선 한 마디를 통째로★ */
+      if(!(b===0||(rhy&&b===11&&(bar%2===0||bo>=.7))))return;
+      const full=b===0, dur=rhy?(full?sp*7:sp*4):sp*15;
+      ch.forEach((semi,k)=>{ if(!full&&k===0)return;
+        play(ci,t+hz()+k*.006,dur,d,nf(J.r+semi+12),(rhy?(full?.055:.032):.042)/(1+k*.16)) });
+    }else if(st==='push'){
+      /* 네오소울 — 다음 박을 ★앞당겨★ 치는 안티시페이션(7) */
+      const len=b===0?sp*6:(rhy&&b===7)?sp*3.5:(rhy&&b===14&&bo>=.45)?sp*2:0;
+      if(!len)return;
+      ch.forEach((semi,k)=>{ if(b&&k===0)return;
+        play(ci,t+hz()+k*.008,rhy?len:sp*15,d,nf(J.r+semi+12),(b?.03:.05)/(1+k*.16)) });
+    }else if(st==='bossa'){
+      /* 보사 기타 — 싱코페이션 컴핑, 위쪽 음만 짧게 */
+      const pat=bar%2===0?[0,3,6,10,12]:[0,4,6,10,13];
+      if(rhy?pat.indexOf(b)<0:b)return;
+      ch.forEach((semi,k)=>{ if(k===0)return;
+        play(ci,t+hz()+k*.005,sp*(rhy?1.8:12),d,nf(J.r+semi+12),.04/(1+k*.12)) });
+    }else if(st==='hold'){
+      if(b)return;
+      const n=ci==='pad'?4:5;
+      ch.slice(0,n).forEach((semi,k)=>
+        play(ci,t+k*.01,sp*(ci==='pad'?16:15),d,nf(J.r+semi+12),(ci==='pad'?.032:.045)/(1+k*.16)));
+    }else if(st==='roll'){
+      /* 천천히 굴린 화음 — 아래에서 위로 0.11초 간격 */
+      if(b)return;
+      ch.forEach((semi,k)=>play(ci,t+k*.11,sp*15,d,nf(J.r+semi+12),.042/(1+k*.14)));
+    }else if(st==='alberti'){
+      /* 알베르티 베이스형 분산화음 — 근·5·3·5 */
+      if(b%2||(!rhy&&b%4))return;
+      const o=[0,2,1,2][(b>>1)%4];
+      play(ci,t+hz()*.5,sp*3,d,nf(J.r+ch[o]+12),b%8===0?.036:.026);
+    }else if(st==='harp'){
+      /* 하프 — 4스텝마다 한 음, 짝수 마디는 오르고 홀수 마디는 내린다 */
+      if(b%4)return;
+      const i=b>>2, n=ch.length, k=bar%2?n-1-(i%n):(i+1)%n;
+      play(ci,t,sp*10,d,nf(J.r+ch[k]+12),.032);
+    }
+  }
+  function partBass(T,J,NJ,bar,b,t,sp,rhy,bo){
+    const d=bgm.g[2], st=T.bass||'walk', sub=T.bi==='sub';
+    const B=(semi,dur,v,sl)=>sub?bSub(t+hz()*.5,dur,d,nf(semi)/2,v*1.05)
+                               :bUpright(t+hz(),dur,d,nf(semi)/2,v,sl);
+    if(!rhy||st==='hold'){ if(b===0)B(J.r,sp*14,.06,false); return }   /* 앰비언트: 길게 한 음 */
+    if(st==='walk'){
+      /* 근음 → 5도 → ★다음 코드로 반음 접근★. 달아오르면 한 음 더(워킹) */
+      if(b===0||b===6||b===10||(b===13&&bo>=.45)){
+        const semi=b===0?J.r:b===6?J.r+7:b===13?J.r+10:NJ.r-1;
+        B(semi,sp*(b===0?3.4:2.2),b===0?.115:.085,b===10);
+      }
+    }else if(st==='bossa'){
+      if(b===0)B(J.r,sp*5,.1); else if(b===6)B(J.r+7,sp*2,.08);
+      else if(b===8)B(J.r,sp*5,.09); else if(b===14)B(J.r+7,sp*2,.075);
+    }else if(st==='root'){
+      if(b===0)B(J.r,sp*7,.1); else if(b===10)B(J.r,sp*4,.08);
+      else if(b===14&&bo>=.45)B(NJ.r-1,sp*2,.07,true);
+    }
+  }
+  function partMel(T,J,bar,b,t,sp,bo){
+    const P=poolOf(J); if(!P.length)return;
+    const R=bgm.rng||Math.random, li=T.li||'rhodes', d=bgm.g[3], st=T.mel||'sparse';
+    if(st==='sparse'){
+      /* 드물게, 코드 위쪽 음 하나씩. 멜로디는 ★비어 있어야★ 한다 */
+      const M=J.mel||[]; if(!M.length)return;
+      if(!(b===6||b===14||(bo>=.72&&b===2)))return;
+      if(R()>=(bo>=.45?.9:.65))return;
+      const m=M[(R()*M.length)|0];
+      play(li,t+hz(),sp*3,d,nf(J.r+m+12),.034);
+      if(bo>=1&&R()<.5)play(li,t+sp*1.1+hz(),sp*2,d,nf(J.r+m+19),.026);
+    }else if(st==='motif'||st==='call'){
+      /* 시드 모티프 — 앞 2마디는 원형, 뒤 마디는 ★한두 음씩 변주★ */
+      if(st==='call'&&bar%2===1&&bo<.72)return;     /* 문답형 — 대답 마디는 비운다 */
+      const s=(bar%2)*16+b, vary=bar>=2;
+      for(const m of bgm.motif){
+        if(m.s!==s)continue;
+        if(vary&&R()<.18)return;                     /* 한 음 쉬기 */
+        let k=m.d+(vary&&R()<.3?(R()<.5?-1:1):0);
+        k=Math.max(0,Math.min(P.length-1,k));
+        play(li,t+hz(),sp*m.len,d,nf(J.r+P[k]+12),li==='bell'?.026:.032);
+        if(bo>=1&&R()<.4)
+          play(li,t+sp*1.1+hz(),sp*2,d,nf(J.r+P[Math.min(P.length-1,k+2)]+12),.022);
+      }
+    }else if(st==='arp'){
+      /* 시드 아르페지오 — 8분, 확률적으로 비워 숨을 둔다 */
+      if(b%2||R()>.42+bo*.45)return;
+      const k=bgm.arp[(b>>1)%bgm.arp.length]%P.length;
+      play(li,t+hz()*.5,sp*3,d,nf(J.r+P[k]+12),.02);
+    }
+  }
+  function partDrum(T,bar,b,t,sp,bo){
+    const d=bgm.g[4], st=T.drum||'lofi';
+    if(st==='lofi'){                                 /* 킥 1·3and(+짝수마디 2and) · 브러시 2·4 */
+      if(b===0||b===10||(b===6&&bar%2===1)||(b===14&&bo>=1)){ bKick(t+hz(),d,.30); bPump(t,sp*2.4) }
+      if(b===4||b===12)bBrush(t+hz(),d,.085);
+      /* 🔥 고스트 — 세게가 아니라 ★잘게★ */
+      if(bo>=.45&&(b===7||b===15))bBrush(t+hz(),d,.030);
+    }else if(st==='ride'){
+      if(b===0||b===10||(b===14&&bo>=1)){ bKick(t+hz(),d,.24); bPump(t,sp*2) }
+      if(b===4||b===12)bBrush(t+hz(),d,.07);
+      if(bo>=.45&&(b===7||b===15))bBrush(t+hz(),d,.026);
+    }else if(st==='half'){                           /* 하프타임 — 스네어가 3박에 한 번 */
+      if(b===0||(b===10&&bar%2===1)||(b===6&&bo>=.72)){ bKick(t+hz(),d,.28); bPump(t,sp*3) }
+      if(b===8)bBrush(t+hz(),d,.09);
+      if(bo>=.45&&b===15)bBrush(t+hz(),d,.028);
+    }else if(st==='bossa'){                          /* 보사 — 부드러운 킥 + 3-2 클라베 림 */
+      if(b===0||b===8)bKick(t+hz()*.5,d,.2);
+      else if(b===6||b===14)bKick(t+hz()*.5,d,.11);
+      if((bar%2===0?[0,6,12]:[4,8]).indexOf(b)>=0)bRim(t+hz()*.5,d,.05);
+    }
+  }
+  function partHat(T,bar,b,t,sp,bo){
+    const d=bgm.g[5], st=T.drum||'lofi';
+    if(st==='none')return;
+    if(st==='bossa'){ bShaker(t+hz()*.5,d,b%4===0?.016:b%2===0?.011:.007); return }
+    if(st==='ride'){
+      if(b%4===0||b===6||b===14)bRide(t+hz(),d,b%8===4?.03:.022);
+      else if(bo>=.7&&b%4===2)bRide(t+hz(),d,.012);
+      return;
+    }
+    /* 하이햇 — 8분, 박머리를 강하게. ★콤보가 높으면 16분으로 쪼갠다★ */
+    if(b%2===0)bHat(t+hz(),d,b%4===0?.036:.022,b===14&&bar%2===1);
+    else if(bo>=.7)bHat(t+hz(),d,.013,false);
+  }
+  /** 한 16분음표 스텝을 ★절대 시각 t★ 에 예약한다. sp = 16분음표 길이(초) */
   function bgmStep(n,t,sc,sp){
     const A=ac(); if(!A||!bgm)return;
-    const L=sc.lay, bar=n>>4, b=n&15;
-    if(b%4===2)t+=sp*.16;                       /* ★스윙★ — 박의 뒷당김 */
-    const SG=songOf(bgm.scene), J=SG[bar%4], NJ=SG[(bar+1)%4];
-    const rhy=sc.rhythm!==false;                /* 읽기·휴식은 리듬 없음 */
-
-    /* 💿 바이닐 — 리듬이 있는 장면에서만. 앰비언트 화면엔 잡음이 거슬린다 */
-    if(L[0]>0&&rhy&&b===0)bCrackle(t,bgm.g[0],sp);
-
-    /* 🎹 로즈 코드 — 마디 앞에 한 번, 뒤늦은 박(11)에 가볍게 한 번.
-       길게 깔지 않고 ★끊어 치는★ 것이 로파이 컴핑이다. */
-    if(L[1]>0&&(b===0||(rhy&&b===11&&(bar%2===0||(bgm.boost||0)>=.7)))){
-      /* ★읽기 화면에선 한 마디를 통째로 울린다★ — 끊어 치면 그 자체가 리듬이
-         되어 박자가 생기고, 박자가 생기면 시간 압박이 된다. */
-      const full=b===0, dur=rhy?(full?sp*7:sp*4):sp*15;
-      J.ch.forEach((semi,k)=>{
-        if(!full&&k===0)return;                 /* 뒷박은 위쪽만 — 가볍게 */
-        bRhodes(t+hz()+k*.006,dur,bgm.g[1],nf(J.r+semi+12),
-          (rhy?(full?.055:.032):.042)/(1+k*.16));
-      });
-    }
-    /* 🎻 업라이트 — 근음 → 5도 → ★다음 코드로 반음 접근★(워킹의 맛) */
-    if(L[2]>0&&rhy&&(b===0||b===6||b===10||(b===13&&(bgm.boost||0)>=.45))){
-      /* 🔥 달아오르면 한 음이 더 들어가 ★워킹이 걷기 시작한다★ */
-      const semi = b===0?J.r : b===6?J.r+7 : b===13?J.r+10 : NJ.r-1;
-      bUpright(t+hz(),sp*(b===0?3.4:2.2),bgm.g[2],nf(semi)/2,b===0?.115:.085,b===10);
-    }else if(L[2]>0&&!rhy&&b===0){
-      bUpright(t,sp*14,bgm.g[2],nf(J.r)/2,.06,false);   /* 앰비언트: 길게 한 음만 */
-    }
-    /* 🎹 멜로디 조각 — 드물게, 코드 위쪽 음 하나씩. 멜로디는 ★비어 있어야★ 한다 */
-    if(L[3]>0&&rhy&&J.mel.length&&(b===6||b===14||((bgm.boost||0)>=.72&&b===2))
-        &&Math.random()<((bgm.boost||0)>=.45?.9:.65)){
-      const m=J.mel[(Math.random()*J.mel.length)|0];
-      bRhodes(t+hz(),sp*3,bgm.g[3],nf(J.r+m+12),.034);
-      /* 🔥 최고 구간에서는 ★한 음 더 얹어 리프가 된다★ */
-      if((bgm.boost||0)>=1&&Math.random()<.5)
-        bRhodes(t+sp*1.1+hz(),sp*2,bgm.g[3],nf(J.r+m+19),.026);
-    }
-    if(L[4]>0&&rhy){                            /* 🥁 킥 1·3and(+짝수마디 2and) */
-      if(b===0||b===10||(b===6&&bar%2===1)||(b===14&&(bgm.boost||0)>=1)){
-        bKick(t+hz(),bgm.g[4],.30); bPump(t,sp*2.4) }
-      if(b===4||b===12)bBrush(t+hz(),bgm.g[4],.085);   /* 🧹 브러시 2·4 */
-      /* 🔥 고스트 스네이크 — 세게가 아니라 ★잘게★. 세기를 올리면 시끄럽고,
-         밀도를 올리면 빨라진 것처럼 들린다 */
-      if((bgm.boost||0)>=.45&&(b===7||b===15))bBrush(t+hz(),bgm.g[4],.030);
-    }
-    if(L[5]>0&&rhy&&b%2===0){                   /* 하이햇 — 8분, 박머리를 강하게 */
-      bHat(t+hz(),bgm.g[5],b%4===0?.036:.022,b===14&&bar%2===1);
-    }
-    /* ★콤보가 높으면 16분으로 쪼갠다★ — 레이어가 아니라 ★밀도★ 를 올린다 */
-    if(L[5]>0&&rhy&&(bgm.boost||0)>=.7&&b%2===1)bHat(t+hz(),bgm.g[5],.013,false);
+    const T=bgm.theme||THEMES.jazz, L=sc.lay, bar=n>>4, b=n&15, bo=bgm.boost||0;
+    if(b%4===2)t+=sp*(T.swing||0);               /* ★스윙★ — 박의 뒷당김 */
+    const SG=songOf(bgm.scene), J=SG[bar%SG.length], NJ=SG[(bar+1)%SG.length];
+    const rhy=sc.rhythm!==false;                 /* 읽기·휴식은 리듬 없음 */
+    /* 💿 바이닐 — 리듬이 있는 장면에서만, 테마가 허락할 때만 */
+    if(L[0]>0&&rhy&&T.vinyl!==false&&b===0)bCrackle(t,bgm.g[0],sp);
+    if(L[1]>0)partComp(T,J,bar,b,t,sp,rhy,bo);
+    if(L[2]>0)partBass(T,J,NJ,bar,b,t,sp,rhy,bo);
+    if(L[3]>0&&rhy)partMel(T,J,bar,b,t,sp,bo);
+    if(L[4]>0&&rhy&&T.drum&&T.drum!=='none')partDrum(T,bar,b,t,sp,bo);
+    if(L[5]>0&&rhy)partHat(T,bar,b,t,sp,bo);
   }
-  /* ── ⏱ 템포 요동(루바토) ────────────────────────────────
-     ★기계적으로 일정한 박은 곧 배경이 된다.★ 연주자는 저절로 조금씩
-     밀고 당기는데, 그 미세한 흔들림이 "사람이 치고 있다" 는 느낌을 만든다.
-     ±3.5% 안에서만 움직인다 — 5% 를 넘으면 '음이 늘어졌다' 고 인지되고,
-     2% 미만이면 없는 것과 같다. 목표치로 ★30~60초에 걸쳐 천천히★ 미끄러지고,
-     도착하면 다음 목표를 새로 뽑는다. 순간적으로 바뀌면 바로 들킨다. */
+  /* ── ⏱ 템포 요동(루바토) ±3.5% — 30~60초에 걸쳐 천천히 미끄러진다 ── */
   let tempo=1, tempoTo=1, tempoAt=0, tempoDur=45;
   function tempoTick(){
     const now=Date.now()/1000;
     if(!tempoAt||now>=tempoAt+tempoDur){
       tempoAt=now; tempoDur=30+Math.random()*30;
-      /* 계속 한쪽으로 흐르지 않게, 1 에서 멀수록 반대쪽을 뽑는다 */
       const bias=(1-tempo)*0.6;
       tempoTo=1+bias+(Math.random()-.5)*0.07;
       tempoTo=Math.max(.965,Math.min(1.035,tempoTo));
     }
     const k=Math.min(1,(now-tempoAt)/tempoDur);
-    const e=k*k*(3-2*k);                    /* smoothstep — 시작·끝이 부드러워야 안 들킨다 */
+    const e=k*k*(3-2*k);
     tempo=tempo+(tempoTo-tempo)*e*0.08;
   }
   function tempoNow(){ return tempo }
-  /** 레이어 볼륨 적용 — 장면 프리셋 × ★콤보 부스트★.
-      ★위쪽 레이어만 연다★ — 룸톤·패드까지 같이 키우면 그냥 시끄러워질 뿐,
-      "달아오른다" 는 느낌은 아르페지오·드럼·하이햇에서 온다. */
+  /** 레이어 볼륨 적용 — 장면 프리셋 × ★콤보 부스트★(위쪽 레이어만 연다) */
   function bgmLayers(fade){
     const A=ac(); if(!A||!bgm||!bgm.scene)return;
     const sc=SCENE[bgm.scene]||SCENE.home;
@@ -5251,9 +6231,7 @@ const FX=(()=>{
       bgm.g[i].gain.setValueAtTime(bgm.g[i].gain.value,t);
       bgm.g[i].gain.linearRampToValueAtTime(lv*(i===0?.5:1)*k,t+fade);
     });
-    /* 🔥 ★덮개가 열린다★ — 로파이는 고역을 깎아 만든 질감이라,
-       그 필터를 여는 것이 볼륨을 키우는 것보다 훨씬 또렷하게 인지된다.
-       (같은 연주가 이불 밖으로 나오는 느낌 — 음량은 거의 그대로다) */
+    /* 🔥 ★덮개가 열린다★ — 고역 필터를 여는 것이 볼륨보다 또렷하다 */
     if(bgm.lp&&sc.bpm){
       const cut=3800+bo*3100;
       bgm.lp.frequency.cancelScheduledValues(t);
@@ -5261,47 +6239,91 @@ const FX=(()=>{
       bgm.lp.frequency.linearRampToValueAtTime(cut,t+fade);
     }
   }
-  /** 룩어헤드 스케줄러 — ★0.12초 앞까지 미리 예약★ 한다.
-      setInterval 지터를 오디오 클럭이 흡수해 박자가 흔들리지 않는다. */
+  /** 크로스페이드 — xf 노드만 움직인다(덕킹·장면 페이드는 out 이 담당) */
+  function xfTo(v,t,dur){
+    const p=bgm.xf.gain;
+    p.cancelScheduledValues(t); p.setValueAtTime(p.value,t); p.linearRampToValueAtTime(v,t+dur);
+  }
+  /** 다음 테마 예약 — 지금 마디가 끝나는 순간 갈아탄다. 그 전까지 살짝 내려 둔다 */
+  function rotate(quick){
+    const A=ac(); if(!A||!bgm||!bgm.scene)return;
+    const sc=SCENE[bgm.scene]; if(!sc||!sc.bpm)return;
+    bgm.pend={name:pickTheme(bgm.scene),quick:!!quick};
+    if(!quick){
+      const sp=60/(sc.bpm*((bgm.theme&&bgm.theme.tm)||1))/4;
+      const left=(16-(bgm.step&15))%16||16;
+      xfTo(.4,A.currentTime,Math.max(.8,left*sp));
+    }
+  }
+  /** 룩어헤드 스케줄러 — ★0.15초 앞까지 미리 예약★. 40ms 주기(모바일 부담↓) */
   function bgmPump(){
     const A=ac(); if(!A||!bgm||!bgm.scene)return;
     const sc=SCENE[bgm.scene]||SCENE.home;
     if(!sc.bpm)return;
+    if(!bgm.theme)setTheme(pickTheme(bgm.scene));
     tempoTick();
-    /* 🔥 콤보가 오르면 ★박이 앞으로 밀린다★ — +5% 까지(그 이상은 재촉으로 느껴진다) */
-    const sp=60/(sc.bpm*tempoNow()*(1+(bgm.boost||0)*.05))/4;   /* 16분음표 × 루바토 × 열기 */
+    if(!bgm.pend&&Date.now()>bgm.until)rotate(false);
     if(bgm.next<A.currentTime)bgm.next=A.currentTime+.04;
     let guard=0;
-    while(bgm.next<A.currentTime+.12&&guard++<32){
+    while(bgm.next<A.currentTime+.15&&guard++<32){
+      const q=bgm.pend;
+      if(q&&(q.quick?(bgm.step&3)===0:(bgm.step&15)===0)){
+        bgm.pend=null; setTheme(q.name);
+        xfTo(1,Math.max(A.currentTime,bgm.next-.05),q.quick?1.2:3.2);
+      }
+      const T=bgm.theme;
+      /* 🔥 콤보가 오르면 ★박이 앞으로 밀린다★ — +5% 까지 */
+      const sp=60/(sc.bpm*(T.tm||1)*tempoNow()*(1+(bgm.boost||0)*.05))/4;   /* 16분음표 × 테마 × 루바토 × 열기 */
       bgmStep(bgm.step,bgm.next,sc,sp);
       bgm.next+=sp;
-      bgm.step=(bgm.step+1)%64;
+      bgm.step=(bgm.step+1)%(songOf(bgm.scene).length*16);
     }
   }
-  /* 🔥 단계 상승 신호 — ★효과음이 아니라 연주★ 로 알린다.
-     삑 소리를 넣으면 UI 알림이 되고, 연주 안에서 울리면 밴드가 달아오른 것이 된다.
-     그래서 지금 코드의 위쪽 음 두 개 + 열린 하이햇 하나로만 만든다. */
+  /* 🔥 단계 상승 신호 — ★효과음이 아니라 연주★ 로 알린다. */
   function lift(lv){
     const A=ac(); if(!A||!bgm||!bgm.scene)return;
     const sc=SCENE[bgm.scene]; if(!sc||!sc.bpm)return;
+    const T=bgm.theme||THEMES.jazz, li=T.li||'rhodes';
     const t=A.currentTime+.02;
-    const SG=songOf(bgm.scene), J=SG[(bgm.step>>4)%4];
-    const sp=60/(sc.bpm*tempoNow())/4;
+    const SG=songOf(bgm.scene), J=SG[(bgm.step>>4)%SG.length], n=J.ch.length;
+    const sp=60/(sc.bpm*(T.tm||1)*tempoNow())/4;
     bHat(t,bgm.g[5],.030,true);                                  /* 열린 하이햇 — 숨을 들이쉬는 소리 */
-    bRhodes(t+sp*.5,sp*3,bgm.g[3],nf(J.r+J.ch[3]+12),.030*lv);
-    bRhodes(t+sp*1.3,sp*4,bgm.g[3],nf(J.r+J.ch[4]+12),.034*lv);
+    play(li,t+sp*.5,sp*3,bgm.g[3],nf(J.r+J.ch[n-2]+12),.030*lv);
+    play(li,t+sp*1.3,sp*4,bgm.g[3],nf(J.r+J.ch[n-1]+12),.034*lv);
   }
+  /* 기본 음량 — 0.6 → 0.75(+25%). 전용 리미터(-8dB) + 마스터 체인이 피크를 잡는다 */
+  const BGM_VOL=.75;
+  let armed=false, want=null;
   const BGM={
+    defVol:BGM_VOL,
+    /** 첫 사용자 조작 — 여기서부터 AudioContext 를 만들어도 된다(자동재생 정책) */
+    arm(){
+      const ua=navigator.userActivation;
+      if(ua&&!ua.hasBeenActive)return;               /* 활성화 안 된 터치다운 등은 무시 */
+      const first=!armed; armed=true;
+      if(S.bgm===true&&!BGM.playing())BGM.scene(want||'home',{fade:first?2.6:1.6});
+    },
     /** 장면 전환 — 레이어 볼륨을 길게 페이드해 갈아 끼운다 */
-    scene(name){
+    scene(name,opt){
       if(S.bgm!==true)return;
+      want=name;
+      if(!armed){
+        /* ★첫 조작 전에는 컨텍스트를 만들지 않는다★ — 만들면 콘솔 경고 + 정지 상태 */
+        const ua=navigator.userActivation;
+        if(ua&&ua.hasBeenActive)armed=true; else return;
+      }
       const A=ac(); if(!A)return;
-      bgmInit();
-      const sc=SCENE[name]||SCENE.home;
+      bgmInit(); if(!bgm)return;
+      const sc=SCENE[name]||SCENE.home, prev=bgm.scene;
       bgm.scene=name;
-      /* ★첫 진입은 빠르게 들리게★ — 2.4초 페이드는 "안 켜졌나?" 로 느껴진다 */
-      const t=A.currentTime, fade=bgm.scene&&bgm.vol>0?2.0:1.0;
-      const v=(S.bgmVol==null?0.6:S.bgmVol);
+      /* 🎭 테마 — 처음·재시작이면 즉시, 다른 장면에서 넘어오면 박 경계에서 갈아탄다 */
+      if(sc.bpm&&POOL[name]){
+        if(!bgm.theme||!bgm.timer){ setTheme(pickTheme(name)); bgm.pend=null; bgm.xf.gain.cancelScheduledValues(0); bgm.xf.gain.value=1 }
+        else if(prev!==name)bgm.pend={name:pickTheme(name),quick:true};
+      }
+      /* ★첫 진입은 빠르게 들리게★ — 단 첫 탭 자동 시작은 부드럽게(arm 이 fade 지정) */
+      const t=A.currentTime, fade=(opt&&opt.fade)||(bgm.vol>0?2.0:1.0);
+      const v=(S.bgmVol==null?BGM_VOL:S.bgmVol);
       /* 심야에는 스스로 조용해진다 */
       const h=new Date().getHours(), night=(h>=23||h<6)?0.6:1;
       bgm.vol=v*night;
@@ -5312,30 +6334,36 @@ const FX=(()=>{
 
       if(!bgm.timer&&sc.bpm){
         bgm.next=A.currentTime+.08;
-        bgm.timer=setInterval(bgmPump,25);      /* 스케줄러는 고정 주기. 박은 오디오 클럭이 잡는다 */
+        bgm.timer=setInterval(bgmPump,40);      /* 스케줄러는 고정 주기. 박은 오디오 클럭이 잡는다 */
       }
     },
     /** 지금 울리고 있는가 — 잠금 해제 후 다시 걸어야 할지 판단용 */
     playing(){ return !!(bgm&&bgm.timer&&bgm.scene) },
-    /** ★콤보 → 음악★ — 화면 열기(#heat)가 눈으로 하는 일을 귀로도 한다.
-        콤보가 오르면 아르페지오·드럼·하이햇이 열리고, 끊기면 도로 닫힌다. */
+    /** ★콤보 → 음악★ — 콤보가 오르면 선율·드럼·하이햇이 열리고, 끊기면 도로 닫힌다. */
     heat(c){
       if(!bgm||S.bgm!==true||!bgm.scene)return;
       const sc=SCENE[bgm.scene]; if(!sc||!sc.bpm)return;
       const lv=BGM.heatLevel(c);
       const was=bgm.boost||0;
       if(Math.abs(lv-was)<.01)return;
-      /* 끊길 땐 천천히 식는다 — 갑자기 꺼지면 벌처럼 느껴진다 */
       bgm.boost=lv; bgmLayers(lv>0?.45:1.6);
-      /* 🔥 한 단계 올라선 ★그 순간★ 에만 짧은 신호 — 올라갈 때만,
-         끊길 때는 아무 소리도 내지 않는다(실패에 소리를 붙이지 않는다) */
       if(lv>was)lift(lv);
     },
     /** 콤보 → 열기 단계(0~1). 3연속부터 열리고 12연속에서 최대 */
     heatLevel(c){ return c>=12?1:c>=8?.72:c>=5?.45:c>=3?.2:0 },
     /** 지금의 열기 상태 — 검증·디버그용 */
     state(){ return bgm?{boost:bgm.boost||0, lp:bgm.lp?Math.round(bgm.lp.frequency.value):0,
-      scene:bgm.scene, song:(bgm.boost||0)>=1&&bgm.scene==='quiz'?'quizHot':bgm.scene}:null },
+      scene:bgm.scene, theme:bgm.tname, seed:bgm.seed, voices:bgm.live,
+      song:(bgm.boost||0)>=1&&bgm.scene==='quiz'&&bgm.theme&&bgm.theme.hot?bgm.theme.hot:bgm.scene}:null },
+    /** 장면별 테마 목록 — 검증용 */
+    themes(scene){ return scene?(POOL[scene]||[]).slice():JSON.parse(JSON.stringify(POOL)) },
+    /** 다음 테마로 넘긴다(크로스페이드). 이름을 주면 그 테마로 — 검증·디버그용 */
+    next(name){
+      if(!bgm||!bgm.scene)return null;
+      if(name&&THEMES[name]){ bgm.pend={name,quick:false}; const A=ac(); if(A)xfTo(.4,A.currentTime,.8) }
+      else rotate(false);
+      return bgm.pend&&bgm.pend.name;
+    },
     /** 효과음이 터지는 순간 잠깐 비켜 준다 — ★자극이 겹치면 과부하★ */
     duck(ms){
       if(!bgm||S.bgm!==true)return;
@@ -5361,7 +6389,7 @@ const FX=(()=>{
         bgm.out.gain.cancelScheduledValues(t);
         bgm.out.gain.setValueAtTime(bgm.out.gain.value,t);
         bgm.out.gain.linearRampToValueAtTime(0,t+1.2)}
-      clearInterval(bgm.timer); bgm.timer=null; bgm.scene=null;
+      clearInterval(bgm.timer); bgm.timer=null; bgm.scene=null; bgm.pend=null;
 
     },
     /** 지금 템포 배율 — 루바토가 범위를 벗어나지 않는지 재기 위한 창구 */
@@ -5371,15 +6399,17 @@ const FX=(()=>{
   };
 
   let bigLeft=3;              /* 세션당 남은 '큰 연출' 횟수 */
-  return {
+  const API={
     bgm:BGM,
     right(el,combo,opt){
+      if(RICH)return richRight(el,combo,opt);
       glow('color-mix(in srgb, var(--ok) 45%, transparent)');
       burst(el,14);
       SND.right(combo,opt||{});
       if(combo>=3)confetti(Math.min(14+combo*4,60));
     },
-    wrong(){
+    wrong(el){
+      if(RICH)return richWrong(el);
       glow('color-mix(in srgb, var(--no) 40%, transparent)');
       SND.wrong();
     },
@@ -5401,6 +6431,20 @@ const FX=(()=>{
     card(el){ burst(el,10); SND.flip(); },
     coins, clearCoins, toast, confetti, tone, snd:SND
   };
+  /* 🎚 RICH — 보상 사건에 햅틱을 잇고, 레벨업은 시각(토스트·색종이)을 소리 임팩트(+380ms)에 맞춘다 */
+  if(RICH){
+    const _ms=API.milestone, _fin=API.finish, _lv=SND.levelup, _bd=SND.badge, _rd=SND.redeem;
+    let lvAt=-1e9;
+    API.milestone=function(msg){
+      const go=()=>FEEL.hit('badge',null,()=>_ms.call(API,msg));
+      if(performance.now()-lvAt<150)setTimeout(go,380); else go();
+    };
+    API.finish=function(pass,pct){ FEEL.buzz(pass?'pass':'fail',null,pass?480:0); return _fin.call(API,pass,pct) };
+    SND.levelup=function(){ lvAt=performance.now(); FEEL.buzz('levelup'); lvup(); return _lv.apply(SND,arguments) };
+    SND.badge=function(){ FEEL.buzz('badge'); return _bd.apply(SND,arguments) };
+    SND.redeem=function(){ FEEL.buzz('redeem'); return _rd.apply(SND,arguments) };
+  }
+  return API;
 })();
 
 /* ═══════════ 환경설정 — 테마 · 글자 크기 ═══════════ */
@@ -5461,7 +6505,12 @@ function paintThemePop(d){
      <button class="thopt ${motionOff()?'on':''}" id="thMotion">
        <span class="the">🎬</span>
        <span class="thn">${motionOff()?'모션 켜기':'모션 끄기'}<i>${motionOff()?'지금은 연출이 꺼져 있어요':'카드·연출의 움직임을 줄입니다'}</i></span>
-     </button>`;
+     </button>`
+   /* 📳 진동 — RICH 이고 기기가 진동을 지원할 때만 보인다 */
+   +(RICH&&FEEL.can()?`<button class="thopt ${S.haptic===false?'on':''}" id="thHaptic">
+       <span class="the">📳</span>
+       <span class="thn">${S.haptic===false?'진동 켜기':'진동 끄기'}<i>${S.haptic===false?'지금은 진동이 꺼져 있어요':'정답·콤보·레벨업을 손끝으로 알립니다'}</i></span>
+     </button>`:'');
 }
 /** 테마 고르기 — 이름만으로는 감이 안 오므로 ★작은 색 견본★ 을 함께 보여 준다 */
 function themePop(){
@@ -5474,6 +6523,9 @@ function themePop(){
   document.body.appendChild(d);
   d.onclick=e=>{
     if(e.target.closest('#thMotion')){ setMotion(!motionOff()); return }
+    if(e.target.closest('#thHaptic')){ S.haptic=S.haptic===false; save(); paintThemePop(d);
+      if(S.haptic)FEEL.buzz('right',{c:0});                       /* 켤 때 확인 진동 */
+      FX.toast(S.haptic?'📳 진동 켬':'📳 진동 끔','good',1100); return }
     const x=e.target.closest('[data-th]'); if(!x)return;
     setTheme(x.dataset.th); FX.snd.on&&FX.snd.on(); };
   setTimeout(()=>document.addEventListener('pointerdown',function h(e){
@@ -9278,17 +10330,20 @@ function tick(el){
   function wake(){
     const A=FX.snd.ctx&&FX.snd.ctx();
     if(A&&A.state==='suspended')A.resume().catch(()=>{});
-    if(S.bgm===true&&!FX.bgm.playing())FX.bgm.scene(BGM_SCENE[view]||'home');
+    /* 🎵 기본 켜짐 BGM — ★첫 조작에서 비로소 컨텍스트를 만들고 페이드인★ */
+    if(S.bgm===true&&!FX.bgm.playing()){ FX.bgm.arm();
+      if(!FX.bgm.playing())FX.bgm.scene(BGM_SCENE[view]||'home') }
     if(A&&A.state==='running'&&done)return;
     done=true;
   }
-  ['pointerdown','keydown','touchstart'].forEach(ev=>
+  /* touchend·pointerup — 모바일은 터치다운이 '사용자 활성화'가 아니라서 손을 뗄 때 깨운다 */
+  ['pointerdown','keydown','touchstart','pointerup','touchend'].forEach(ev=>
     document.addEventListener(ev,wake,{capture:true,passive:true}));
   /* 탭을 다시 열었을 때도 정지돼 있을 수 있다 */
   document.addEventListener('visibilitychange',()=>{ if(!document.hidden)wake() });
 })();
 
-/* 🎵 배경음악 토글 — ★기본 꺼짐.★ 음악 선호는 개인차가 가장 큰 영역이다 */
+/* 🎵 배경음악 토글 — ★기본 켜짐★(저장값 없을 때). 끈 사람은 계속 꺼진 채로 존중한다 */
 function applyBgm(){
   const b=$('bgmBtn'); if(!b)return;
   b.textContent=S.bgm===true?'🎵':'🎵';
@@ -9315,7 +10370,7 @@ function bgmVolPop(){
   const r=$('bgmBtn').getBoundingClientRect();
   const d=document.createElement('div'); d.id='bgmPop'; d.className='volpop';
   d.style.top=(r.bottom+8)+'px'; d.style.right=Math.max(8,window.innerWidth-r.right)+'px';
-  const v=Math.round((S.bgmVol==null?.5:S.bgmVol)*100);
+  const v=Math.round((S.bgmVol==null?FX.bgm.defVol:S.bgmVol)*100);   /* 엔진 기본값과 같은 값 */
   d.innerHTML=`<span>음악</span><input type="range" min="0" max="100" value="${v}" id="bgmR"><b id="bgmN">${v}</b>`;
   document.body.appendChild(d);
   const rg=$('bgmR');
@@ -9375,6 +10430,9 @@ function bgmVolPop(){
    개별 버튼마다 호출을 심으면 유지보수가 안 된다 — ★문서 레벨에서 한 번★ 잡는다.
    칩(필터 토글)은 켜짐/꺼짐 음을 달리해 상태 변화가 귀로도 들리게 한다. */
 document.addEventListener('pointerdown',e=>{
+  /* 📳 RICH — 누르는 순간의 진동(선지는 더 짧게). 소리가 꺼져 있어도 진동은 따로 켜고 끈다 */
+  if(RICH){ const h=e.target.closest&&e.target.closest('.ch,button,.chip,summary,a.tocitem,label');
+    if(h&&!h.disabled&&!h.classList.contains('killed'))FEEL.buzz(h.classList.contains('ch')?'pick':'tap') }
   if(!S.sound)return;
   const t=e.target.closest('button,.chip,summary,a.tocitem,label');
   if(!t)return;
@@ -9511,8 +10569,9 @@ $('kbHelp').onclick=e=>{ if(e.target===$('kbHelp'))toggleHelp(false) };
 let view='home';
 /* 화면 성격에 맞는 배경음악 장면 — ★읽기 화면은 리듬을 빼고 패드만★ */
 const BGM_SCENE={home:'home',concept:'read',sheet:'read',note:'read',info:'read',
-                 shortcut:'read',cards:'cards',example:'read',quiz:'quiz'};
+                 shortcut:'read',cards:'cards',example:'read',quiz:'quiz',past:'read'};
 function go(v){
+  if(typeof qFloatHide==='function')qFloatHide();          /* ⬇ 퀴즈를 떠나면 떠 있는 '다음' 도 걷는다 */
   if(view!==v){FX.snd.nav();FX.clearCoins()}
   if(FX.bgm.on())FX.bgm.scene(BGM_SCENE[v]||'home');          // 화면 전환음 — 아주 작게, 이동했다는 감각만
   view=v;
@@ -9536,6 +10595,7 @@ function go(v){
   if(v==='example')renderExample();
   if(v==='info')renderInfo();
   if(v==='shortcut')renderShortcut();
+  if(v==='past')PAST.render();                                     /* 📜 첫 진입 때 past.js 를 붙인다 */
   /* 이어보기 — 다음 방문 때 마지막으로 보던 화면으로 복귀(시험지 화면은 제외) */
   if(v!=='paper'){S.view=v;save()}
 }
@@ -9728,6 +10788,7 @@ function renderHome(){
   const m=CPPG.meta;
   updDash(); renderComeback(); renderResume(); renderAch(); chalToday(); updChal(); updEvo(); updTerrain();
   markReveal(); showReveal(); DUO.render(); PREP.render(); PENTA.render(); WEEK.render(); STORY.home();
+  PAST.home();                                         /* 📜 기출풀이 진입(meta.past 사이트만) */
   $('heroSub').textContent=`${m.full} · ${m.host} 주관 · ${m.type} · ${m.time} · 합격 ${m.pass}`;
   $('heroSlog').textContent='★ '+m.slogan+' ★';
   $('heroMeta').innerHTML=[
@@ -10104,6 +11165,8 @@ document.addEventListener('keydown',e=>{
     const hidden=(target==='example'&&!HASEX)||(target==='shortcut'&&!HASSC)||(target==='concept'&&!HASNOTE);
     if(!consumed&&!hidden){e.preventDefault();go(target);return}
   }
+  /* 📜 0 = 기출풀이(meta.past 사이트만) — 1~9 는 이미 다 찼다 */
+  if(k==='0'&&HASPAST&&!quizRunning){e.preventDefault();go('past');return}
 
   // ── 🃏 암기카드 ──
   if(view==='cards'){
@@ -11901,10 +12964,12 @@ function startQuiz(items,mode,opt){
   }});
   /* 🔀 보기 순서 — 순서정렬(_shuf)과 달리 ★캐시하지 않는다.★ 매 세션 새로 섞여야
      "위치 암기" 가 불가능해진다. 한 세션 안에서는 고정이라 앞뒤로 오가도 안 흔들린다. */
-  if(SHUFCH)items.forEach(q=>{ if(q.type==='mcq')q._cs=shuffle(q.c.map((c,i)=>i)) });
+  /* 📜 기출(q.pr)은 ★섞지 않는다★ — 원번호 ①②③④ 가 해설·정답표와 같아야 한다 */
+  if(SHUFCH)items.forEach(q=>{ if(q.type==='mcq'&&!q.pr)q._cs=shuffle(q.c.map((c,i)=>i)) });
   quiz={items,i:0,ans:new Array(items.length).fill(null),mode,
-        revenge:!!opt.revenge, quick:!!opt.quick,
-        left:mode==='exam'?Math.max(60,Math.round(items.length*1.2*60)):0};
+        revenge:!!opt.revenge, quick:!!opt.quick, past:opt.past||null,
+        /* 📜 기출 실전은 실제 시험 시간(100문항 150분)으로 잰다 */
+        left:mode==='exam'?(opt.past?PAST.examMin(items.length)*60:Math.max(60,Math.round(items.length*1.2*60))):0};
   /* ⚔ 복수전 — 오답만 모아 푸는 세션은 ★이름과 포장★ 을 따로 준다.
      같은 문제라도 "틀린 것 복습" 과 "복수전" 은 다른 일처럼 느껴진다. */
   if(opt.revenge){
@@ -11912,6 +12977,8 @@ function startQuiz(items,mode,opt){
     if(!TALK.now('revenge'))MASCOT.amb&&MASCOT.amb('revenge');
   }else if(opt.quick){
     FX.toast(`▶ 오늘의 ${items.length}문제 — 복습·오답·새 문제를 섞었습니다`,'good',2400);
+  }else if(opt.past){
+    FX.toast(`📜 ${opt.past.title}${opt.past.sub&&SUB[opt.past.sub]?' · '+SUB[opt.past.sub].name:''} — ${mode==='exam'?`실전 ${PAST.examMin(items.length)}분`:'연습'}`,'good',2400);
   }
   $('quizSetup').style.display='none'; $('quizResult').style.display='none'; $('quizRun').style.display='block';
   if(timerId)clearInterval(timerId);
@@ -11935,6 +13002,8 @@ $('startQuiz').onclick=()=>{
 };
 $('startWrong').onclick=$('reviewWrong').onclick=()=>{
   const ids=Object.keys(S.wrong).sort((a,b)=>S.wrong[b]-S.wrong[a]);
+  /* 📜 기출 오답이 섞여 있으면 past.js 부터(실패해도 문제은행 오답만으로 진행) */
+  if(PAST.need(ids)){ const again=()=>$('startWrong').click(); PAST.load().then(again,again); return }
   const items=ids.map(id=>QBYID[id]).filter(Boolean);
   if(!items.length){alert('오답노트가 비어 있습니다. 먼저 퀴즈를 풀어보세요.');return}
   go('quiz'); startQuiz(items,'practice',{revenge:true});
@@ -12664,7 +13733,11 @@ function renderQ(){
     if(best)bits.push(`최고 ${(best/1000).toFixed(1)}초`);
     duoInfo=`<span class="duotag" title="부엉과 함께하는 중">🦉 ${esc(bits.join(' · '))}</span>`;
   }
-  let h=`<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)}${HASSEC&&q.sec?' · '+secFull(q.sec):''} · ${typeName(q.type)}
+  let h=q.pr
+    /* 📜 기출 — 난이도 대신 ★출처(회차·원번호)★, 발문 앞에 원번호, 〈보기〉 상자·그림 */
+    ? `<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)} <span class="ptag">${PAST.tag(q)}</span>${duoInfo}</div>
+         <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}"><b class="pno">${q.n}.</b>${esc(q.q)}</div>${PAST.extra(q)}`
+    : `<div class="qmeta" style="color:${subColor(q.s)}">${subName(q.s)}${HASSEC&&q.sec?' · '+secFull(q.sec):''} · ${typeName(q.type)}
            <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>${duoInfo}</div>
          <div class="qtext${q.q.length>90||q.q.includes('\n')?' long':''}">${esc(q.q)}</div>`;
 
@@ -12712,7 +13785,7 @@ function renderQ(){
     /* ★방금 본 화면의 번호★ 로 말한다 — 보기를 섞었는데 원본 번호를 부르면 어긋난다 */
     let ansTxt = q.type==='mcq' ? `${CHNO[chOrder(q).indexOf(q.a)]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)')
       : q.type==='order' ? q.steps.map((t,i)=>`${i+1}. ${t}`).join('  →  ') : q.a;
-    h+=`<div class="expl ${ok?'good':'bad'}"><b>${ok?'✅ 정답':'❌ 오답'}</b> — 정답: <b>${esc(ansTxt)}</b><br>${esc(q.e||'')}</div>`;
+    h+=`<div class="expl ${ok?'good':'bad'}"><b>${ok?'✅ 정답':'❌ 오답'}</b> — 정답: <b>${esc(ansTxt)}</b>${q.sure===false?'<span class="punsure">풀이 기준 정답(공식 아님)</span>':''}<br>${esc(q.e||'')}${ceHtml(q,q.type==='mcq'?a:null)}${q.flag?`<div class="pflag">⚑ ${esc(q.flag)}</div>`:''}</div>`;
   }
   /* ✨ 선지 스태거는 ★새 문제일 때만★ — renderQ 는 채점 때도 전체를 다시 그리므로
      조건이 없으면 답을 고를 때마다 선지가 다시 등장해 정답 연출과 겹친다. */
@@ -12745,23 +13818,76 @@ function renderQ(){
     fi.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();$('fillSubmit').click()}};
   }
   renderQNav(revealed);
+  PAST.pal();                             /* 📜 기출 실전이면 번호판, 아니면 숨김 */
   /* ⬇ 방금 채점했다면 ★'다음' 을 화면 안으로★ 끌어온다.
      버튼은 예전에도 즉시 만들어졌다 — 다만 해설이 끼어들면서 아래로 밀려
      모바일(390×844 실측)에서는 ★언제나 접은 선 아래(y 1,040~1,140)★ 였다.
      "늦게 생긴다" 로 보인 것은 생성이 늦어서가 아니라 ★보이지 않아서★ 다.
      이미 보이면 건드리지 않는다 — 읽는 중에 화면이 움직이면 그게 더 방해다. */
+  /* ★스크롤은 옮기지 않는다★ — scrollIntoView 로 끌어오면 버튼이 페이지 끝이라 결국
+     맨 아래까지 내려가 방금 본 정답·해설이 화면 위로 사라졌다. 대신 현재 화면의
+     우측 하단에 '다음' 을 띄우고(#qFloat), 본문 버튼이 보이게 되면 스스로 걷힌다. */
+  qFloatHide();
   if(quiz&&quiz._scrollNav){
     quiz._scrollNav=false;
-    requestAnimationFrame(()=>{
-      const n=$('qNext'); if(!n)return;
-      const r=n.getBoundingClientRect();
-      if(r.top>=0&&r.bottom<=innerHeight)return;             /* 이미 보인다 */
-      /* ★center 로 세운다.★ end 로 붙이면 화면 맨 아래 — 거기는 캐릭터 기둥(78~311px)과
-         ⤓ 자동스크롤이 떠 있는 자리라, 정작 눌러야 할 버튼이 그 밑에 깔린다. */
-      n.scrollIntoView({block:'center',behavior:REDUCED?'auto':'smooth'});
-    });
+    requestAnimationFrame(qFloatShow);
   }
 }
+let qFloatIO=null;
+function qFloatHide(){
+  if(qFloatIO){qFloatIO.disconnect();qFloatIO=null}
+  const f=$('qFloat'); if(f)f.hidden=true;
+}
+function qFloatShow(){
+  const n=$('qNext'); if(!n||n.disabled||view!=='quiz')return;
+  const r=n.getBoundingClientRect();
+  if(r.top>=0&&r.bottom<=innerHeight)return;               /* 이미 보인다 */
+  let f=$('qFloat');
+  if(!f){
+    f=document.createElement('button');
+    f.id='qFloat'; f.type='button'; f.className='btn noprint';
+    f.onclick=()=>{ const b=$('qNext'); qFloatHide(); if(b&&!b.disabled)b.click() };
+    document.body.appendChild(f);
+  }
+  f.textContent=n.textContent.replace(/\s*Enter\s*$/,'').trim()+' →';
+  f.setAttribute('aria-label',f.textContent);
+  f.hidden=false;
+  /* 본문의 '다음' 이 화면에 들어오면 떠 있는 쪽은 걷는다 — 같은 버튼이 두 개 보이면 헷갈린다 */
+  if('IntersectionObserver' in window){
+    qFloatIO=new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting))qFloatHide() });
+    qFloatIO.observe(n);
+  }
+}
+/* 👉 모바일 스와이프 — ←(왼쪽으로 밀기)=다음 · →(오른쪽으로 밀기)=이전.
+   ★버튼을 대신 눌러 준다★ — '다음' 이 없으면(연습 모드에서 아직 안 풀었으면) 아무 일도 없다.
+   세로 스크롤·표 가로 스크롤·입력칸·텍스트 선택과 싸우지 않도록:
+     가로 이동 ≥ 60px · 세로 이동 < 가로의 0.6 · 0.7초 안 · 가로로 스크롤되는 상자 안에서 시작하면 무시. */
+(function(){
+  const card=$('qCard'); if(!card)return;
+  let sx=0, sy=0, st=0, ok=false;
+  const scroller=el=>{ for(let e=el;e&&e!==card;e=e.parentElement){
+      if(e.scrollWidth>e.clientWidth+2&&/(auto|scroll)/.test(getComputedStyle(e).overflowX))return true }
+    return false };
+  card.addEventListener('touchstart',e=>{
+    ok=false; if(e.touches.length!==1||view!=='quiz')return;
+    const t=e.target; if(t.closest('input,textarea,select')||scroller(t))return;
+    const p=e.touches[0]; sx=p.clientX; sy=p.clientY; st=Date.now(); ok=true;
+  },{passive:true});
+  card.addEventListener('touchend',e=>{
+    if(!ok)return; ok=false;
+    const p=e.changedTouches[0], dx=p.clientX-sx, dy=p.clientY-sy;
+    if(Math.abs(dx)<60||Math.abs(dy)>Math.abs(dx)*.6||Date.now()-st>700)return;
+    const sel=window.getSelection&&String(getSelection()); if(sel&&sel.length)return;   /* 글자 선택 중 */
+    /* 마지막 문제의 '다음' 은 ★채점하기·제출하기★ — 스치는 손짓으로 시험을 끝내면 안 된다(버튼으로만) */
+    if(dx<0&&typeof quiz!=='undefined'&&quiz&&quiz.i>=quiz.items.length-1)return;
+    const b=$(dx<0?'qNext':'qPrev'); if(!b||b.disabled)return;
+    b.click();
+    const c=$('qCard'); if(!c)return;
+    c.classList.remove('sw-next','sw-prev'); void c.offsetWidth;
+    c.classList.add(dx<0?'sw-next':'sw-prev');
+    setTimeout(()=>c.classList.remove('sw-next','sw-prev'),300);
+  },{passive:true});
+})();
 function renderQNav(revealed){
   const last=quiz.i===quiz.items.length-1;
   const answered=quiz.ans[quiz.i]!==null;
@@ -12821,7 +13947,7 @@ function answer(v){
   if(first&&quiz.mode==='practice'){
     if(!ok)S.wlog[q.id]={n:((lore&&lore.n)||0)+1,
                          p:(q.type==='mcq'&&typeof v==='number')?v:null, d:localDay()};
-    repTouch(q.id,ok);                         /* 🔁 다음 복습 시점을 다시 잡는다 */
+    if(!q.pr)repTouch(q.id,ok);                /* 🔁 다음 복습 시점(기출은 회차로 복습 — 간격 반복에서 뺀다) */
     /* 📖 치노 3막 완결 — ★감싸지 않는다.★ 같은 문제 세 번째면 정직하게 말한다(세션당 1회) */
     if(!ok&&arcDone('ki')&&S.wlog[q.id]&&S.wlog[q.id].n>=3&&!quiz._honest){
       quiz._honest=true;
@@ -12868,6 +13994,7 @@ function answer(v){
     /* 모의고사 중에는 배지 토스트를 띄우지 않고 결과 화면에서 몰아 보여준다 */
     if(newAch.length&&quiz.mode!=='practice'){quiz.pendAch=(quiz.pendAch||[]).concat(newAch);newAch=[]}
   }
+  if(q.pr)PAST.mark(q);                        /* 📜 회차 진행률 */
   save();
   /* 채점 결과를 처음 보는 순간에만 화면을 옮긴다(앞뒤로 다시 넘겨볼 땐 그대로 둔다) */
   if(first)quiz._scrollNav=true;
@@ -13010,10 +14137,14 @@ function celebrate(ok,gain,wasWrong,q,handled){
     else FX.toast((combo>1?`정답!  ${combo}연속 🔥`:'정답! ✨')+(gain?`  +${gain} XP`:''),'good',1000);
   }else{
     card.classList.add('flash-no');
+    /* 🎚 RICH — 카드(지문)는 고정, 고른 선지만 둔탁하게(FX.wrong 에 선지를 넘긴다) */
+    if(RICH)FX.wrong(card.querySelector('.ch.wrong'));
+    else{
     /* 흔들림은 ★짧게 한 번★ 만. 길면 질책처럼 느껴진다(0.34s) */
     card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
     setTimeout(()=>card.classList.remove('shake'),400);
-    FX.wrong(); MASCOT.wrong(wrongRun,handled);
+    FX.wrong(); }
+    MASCOT.wrong(wrongRun,handled);
     FX.toast(WRONG_MSGS[(Math.random()*WRONG_MSGS.length)|0],'bad',1400);
   }
   setTimeout(()=>card.classList.remove('flash-ok','flash-no'),800);
@@ -13249,6 +14380,9 @@ function finishQuiz(){
   const PR=CPPG.meta.passRule||{pct:60,per:40};
   const perOk=Object.entries(per).every(([,v])=>v.r/v.t>=(PR.per||0)/100);
   const pass=pct>=PR.pct&&perOk;
+  /* 📜 기출 — 회차 기록(응시 수·최근·최고점·과목별 점수)에 남긴다 */
+  const pastLeft=quiz.ans.filter(a=>a===null).length;
+  const pastRec=quiz.past?PAST.record(quiz.past,{pct,per,pass,mode:quiz.mode,answered:pastLeft<total,all:pastLeft===0}):null;
   S.quizzes.push({pct,right,total,mode:quiz.mode,pass,date:localDay()});
   if(S.quizzes.length>50)S.quizzes.shift();
   /* 모의고사는 종료 시점에 하루 학습으로 인정하고, 목표 진행도 한 번에 반영한다 */
@@ -13321,6 +14455,7 @@ function finishQuiz(){
            <div class="lb sub">${right} / ${total} 정답 · <span class="sc mini ${pass?'p':'f'}" id="scNum">0점</span></div>`
         : `<div class="sc ${pass?'p':'f'}" id="scNum">0점</div>
            <div class="lb">${right} / ${total} 정답 · ${pass?`✅ 합격선 통과 (${esc(CPPG.meta.pass)})`:'❌ 합격선 미달'}</div>`}
+      ${quiz.past?PAST.resBlock(quiz.past,{pct,per,pass,mode:quiz.mode,left:quiz.mode==='exam'?pastLeft:0,nb:!!(pastRec&&pastRec.nb)}):''}
       ${hi.length?`<div class="hilite">${hi.map(h=>`<span>${esc(h)}</span>`).join('')}</div>`:''}
       ${near.length?`<div class="nearmiss">🤏 ${near.map(esc).join(' · ')} — 한 번 더 가볼까요?</div>`:''}
       ${GH?`<div class="ghost ${GH.win?'win':'lose'}">
@@ -13362,17 +14497,18 @@ function finishQuiz(){
             <div class="k">${v.r}/${v.t}</div></div>`;
         }).join('')}
       </div>
-      <div style="font-size:12px;color:var(--tx3);margin:-8px 0 14px">난이도별 정답률</div>
+      ${CPPG.levels.some(l=>lv[l.d])?`<div style="font-size:12px;color:var(--tx3);margin:-8px 0 14px">난이도별 정답률</div>
       <div class="resgrid" style="margin-top:0">
         ${CPPG.levels.filter(l=>lv[l.d]).map(l=>{
           const v=lv[l.d], p=Math.round(v.r/v.t*100);
           return `<div><div class="k" style="color:${l.color}">${l.name}</div>
             <div class="v">${p}%</div><div class="k">${v.r}/${v.t}</div></div>`;
         }).join('')}
-      </div>
+      </div>`:''}
       <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-        ${GH?`<button class="btn" id="revengeQuiz">👻 ${GH.ghost.kind==='me'?'지난번의 나':'기준 페이스'}와 리벤지</button>`:''}
-        <button class="btn${GH?' gh':''}" id="againQuiz">🔁 새 퀴즈</button>
+        ${quiz.past?`<button class="btn" id="pastAgain">🔁 이 회차 다시</button><button class="btn gh" id="pastList">📜 회차 목록</button>`:''}
+        ${GH?`<button class="btn${quiz.past?' gh':''}" id="revengeQuiz">👻 ${GH.ghost.kind==='me'?'지난번의 나':'기준 페이스'}와 리벤지</button>`:''}
+        <button class="btn${GH||quiz.past?' gh':''}" id="againQuiz">🔁 새 퀴즈</button>
         ${wrongList.length?`<button class="btn gh" id="reviewNow">📕 틀린 ${wrongList.length}문제 다시 풀기</button>`:''}
         <button class="btn gh" id="toNote">오답노트 보기</button>
       </div>
@@ -13383,7 +14519,14 @@ function finishQuiz(){
   $('againQuiz').onclick=()=>{$('quizResult').style.display='none';$('quizSetup').style.display='block';renderQuizSetup()};
   /* 👻 리벤지 — ★같은 문제 묶음★ 을 다시 푼다(순서만 섞는다). 그래야 기록 비교가 성립한다 */
   const rv=$('revengeQuiz');
-  if(rv)rv.onclick=()=>startQuiz(shuffle(quiz.items.slice()),quiz.mode,{revenge:true});
+  /* 📜 기출 세션의 리벤지도 기출로 남긴다 — 다만 순서를 섞었으니 ★회차 최고점 후보는 아니다★ */
+  if(rv)rv.onclick=()=>startQuiz(shuffle(quiz.items.slice()),quiz.mode,
+    {revenge:true,past:quiz.past?Object.assign({},quiz.past,{full:false}):null});
+  if(quiz.past){
+    const P=quiz.past, M=quiz.mode;
+    $('pastAgain').onclick=()=>PAST.start(P.rid,M,P.sub);
+    $('pastList').onclick=()=>go('past');
+  }
   /* Step 2 — 캐릭터의 극적 반응. ★이겼을 때는 크게, 졌을 때는 승부욕만 건드린다★
      (졌다고 책망하지 않는다 — 이 화면의 원칙이다) */
   /* 기존 종료 대사(MASCOT.end)가 먼저 나온다 — 그 뒤에 와야 덮이지 않는다(실측) */
@@ -13538,6 +14681,13 @@ function finishQuiz(){
   },420);
   updCombo();
 }
+/* 📜 보기별 해설(q.ce[i]) — 화면에 보인 ★순서·번호 그대로★(섞였으면 섞인 순서) */
+function ceHtml(q,mine){
+  if(!q.ce||!q.c||q.ce.length!==q.c.length)return '';
+  const ord=typeof chOrder==='function'?chOrder(q):q.c.map((_,i)=>i);
+  return `<ul class="celist">${ord.map((oi,k)=>`<li class="${oi===q.a?'ok':''} ${oi===mine?'mine':''}">`+
+    `<span class="cn">${CHNO[k]} ${oi===q.a?'✓':'✗'}</span><span>${esc(q.ce[oi])}${oi===mine?'<span class="me">내 선택</span>':''}</span></li>`).join('')}</ul>`;
+}
 function ansText(q){
   return q.type==='mcq' ? `${'①②③④'[q.a]} ${q.c[q.a]}` : q.type==='ox' ? (q.a?'O (맞다)':'X (틀리다)')
     : q.type==='order' ? q.steps.map((t,i)=>`${i+1}. ${t}`).join('  →  ') : q.a;
@@ -13547,12 +14697,12 @@ function wrongCard(q,cnt){
   return `<div class="wrong-item">
     <div class="meta"><span class="sbadge" style="background:${subColor(q.s)}">${subShort(q.s)}</span>
       ${HASSEC&&q.sec?`<span style="font-size:11.5px;color:var(--tx3);font-weight:600">${secFull(q.sec)}</span>`:''}
-      <span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>
+      ${q.pr?`<span class="ptag">${PAST.tag(q)}</span>`:`<span class="lvl" style="background:${lvColor(q.d)}">${lvName(q.d)}</span>`}
       ${cnt?`<span class="cnt">✗ ${cnt}회 오답</span>`:''}</div>
-    <div class="q">${esc(q.q)}</div>
+    <div class="q">${q.pr?`<b class="pno">${q.n}.</b>`:''}${esc(q.q)}</div>${q.pr?PAST.extra(q):''}
     ${q.type==='mcq'?`<div style="font-size:13px;color:var(--tx3);margin-bottom:5px">${q.c.map((c,i)=>`${'①②③④'[i]} ${esc(c)}`).join(' &nbsp; ')}</div>`:''}
-    <div class="a">정답: ${esc(ansTxt)}</div>
-    <div class="e">${esc(q.e||'')}</div></div>`;
+    <div class="a">정답: ${esc(ansTxt)}${q.sure===false?'<span class="punsure">풀이 기준 정답(공식 아님)</span>':''}</div>
+    <div class="e">${esc(q.e||'')}${ceHtml(q,null)}</div></div>`;
 }
 
 /* ═══════════ 📄 예시문제 · 🖨 시험지 ═══════════ */
@@ -13760,6 +14910,12 @@ $('scSearch').oninput=e=>{scQ=e.target.value.trim().toLowerCase();renderShortcut
 function renderNote(){
   const ids=Object.keys(S.wrong).sort((a,b)=>S.wrong[b]-S.wrong[a]);
   $('noteStat').textContent=ids.length?`${ids.length}문제 누적`:'';
+  /* 📜 기출 오답(past:…)은 past.js 를 불러와야 문항을 그릴 수 있다 — 로드 뒤 다시 그린다 */
+  if(PAST.need(ids)){
+    $('noteList').innerHTML=`<div class="empty"><div class="ic">📜</div>기출 오답을 불러오는 중…</div>`;
+    PAST.load().then(()=>{ if(view==='note')renderNote() },()=>{ if(view==='note')renderNote() });
+    return;
+  }
   if(!ids.length){
     $('noteList').innerHTML=`<div class="empty"><div class="ic">📗</div>오답노트가 비어 있습니다.<br>퀴즈를 풀면 틀린 문제가 자동으로 쌓입니다.</div>`;
     return;
@@ -13781,8 +14937,8 @@ function ntEmpty(list){
 }
 function ntRows(){
   return ntItems().map(q=>({
-    유형:typeName(q.type), 과목:subShort(q.s), 난이도:lvName(q.d),
-    문제:q.q, 보기:q.type==='mcq'?q.c.map((c,i)=>`${'①②③④'[i]} ${c}`).join(' / '):'',
+    유형:typeName(q.type), 과목:subShort(q.s), 난이도:q.pr?`기출 ${q.pr} ${q.n}번`:lvName(q.d),
+    문제:q.box?q.q+'\n'+q.box:q.q, 보기:q.type==='mcq'?q.c.map((c,i)=>`${'①②③④'[i]} ${c}`).join(' / '):'',
     정답:String(ansText(q)), 해설:q.e||'', 틀린횟수:S.wrong[q.id]
   }));
 }
@@ -13791,8 +14947,9 @@ function ntExpTxt(){
   const bar=new Array(66).join('=');
   const L=[BRAND()+' — 오답노트',`추출 ${EX.stampH()}  ·  ${list.length}문제 누적`,bar];
   list.forEach((q,i)=>{
-    L.push('',`${i+1}. [${subShort(q.s)}·${typeName(q.type)}·${lvName(q.d)}] ✗ ${S.wrong[q.id]}회`);
+    L.push('',`${i+1}. [${subShort(q.s)}·${typeName(q.type)}·${q.pr?`기출 ${q.pr} ${q.n}번`:lvName(q.d)}] ✗ ${S.wrong[q.id]}회`);
     L.push('   '+q.q);
+    if(q.box)String(q.box).split('\n').forEach(t=>L.push('      │ '+t));
     if(q.type==='mcq')q.c.forEach((c,j)=>L.push(`      ${'①②③④'[j]} ${c}`));
     L.push('   ▶ 정답: '+ansText(q));
     if(q.e)L.push('   ▶ 해설: '+q.e);
@@ -13827,7 +14984,7 @@ renderQuizSetup();
 /* 이어보기 — 마지막으로 보던 화면으로 복귀(감춰진 뷰·시험지 화면은 제외) */
 (function(){
   const v=S.view;
-  if(!v||v==='home'||v==='paper'||VIEWS.indexOf(v)<0)return;
+  if(!v||v==='home'||v==='paper'||(VIEWS.indexOf(v)<0&&!(v==='past'&&HASPAST)))return;
   if((v==='example'&&!HASEX)||(v==='shortcut'&&!HASSC)||(v==='concept'&&!HASNOTE))return;
   go(v);
 })();
