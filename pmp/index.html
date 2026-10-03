@@ -2672,6 +2672,27 @@ html.nomotion #vzAura{display:none!important}
 .rig.vz-say.vz-lip .rig-mouth{animation:none;transition:none;transform:scale(1.04,var(--vz-m,.6))}
 html.nomotion .rig.vz-say .rig-mouth{animation:none}
 @media print{#vzBar,#vzAura{display:none!important}}
+/* ⑦ 리듬 확장 — JS 가 대상 요소에만 --bt(0~1)를 쓴다. ★box-shadow·filter 만★ — 크기·위치·글자 불변(layout shift 0).
+   body.vzon 은 루프가 도는 동안만 붙는다(끔·양보·숨김·모션 끔이면 규칙 자체가 꺼진다). */
+body.vzon #nav button.on{box-shadow:inset 0 -2px 0 rgba(255,255,255,calc(var(--bt,0) * .75)),
+  0 0 calc(var(--bt,0) * 16px) color-mix(in srgb,var(--ac2) 55%,transparent)}
+body.vzon #v-home .hero{box-shadow:inset 0 0 calc(var(--bt,0) * 56px) color-mix(in srgb,var(--ac) 20%,transparent)}
+body.vzon #stats .stat{box-shadow:0 0 0 calc(var(--bt,0) * 2px) color-mix(in srgb,var(--ac) 30%,transparent)}
+body.vzon #chalBar .cbar{box-shadow:0 0 calc(var(--bt,0) * 10px) color-mix(in srgb,var(--wa) 75%,transparent)}
+body.vzon .fc.flip .fcb{box-shadow:var(--sh),0 0 0 calc(var(--bt,0) * 2px) color-mix(in srgb,var(--ac) 45%,transparent),
+  0 0 calc(var(--bt,0) * 26px) color-mix(in srgb,var(--ac) 30%,transparent)}
+body.vzon #starCard.on{box-shadow:0 0 calc(var(--bt,0) * 12px) color-mix(in srgb,var(--wa) 60%,transparent)}
+body.vzon #startQuiz,
+body.vzon #qNext:not(.gh){box-shadow:0 0 0 calc(var(--bt,0) * 4px) color-mix(in srgb,var(--ac) 26%,transparent),
+  0 0 calc(var(--bt,0) * 18px) color-mix(in srgb,var(--ac2) 45%,transparent)}
+body.vzon #qFloat{box-shadow:0 8px 24px rgba(0,0,0,.3),0 0 0 calc(var(--bt,0) * 4px) color-mix(in srgb,var(--ac) 30%,transparent)}
+body.vzon #qCombo:not(.near){box-shadow:0 0 calc(var(--bt,0) * 12px) color-mix(in srgb,var(--wa) 65%,transparent)}
+body.vzon #qXp{box-shadow:0 0 calc(var(--bt,0) * 9px) color-mix(in srgb,var(--ac2) 60%,transparent)}
+body.vzon #qPt .pcoin{filter:drop-shadow(0 0 calc(var(--bt,0) * 4px) #fbbf24)}
+body.vzon #readbar.on{box-shadow:0 0 calc(10px + var(--bt,0) * 14px) calc(var(--bt,0) * 1px - 2px) var(--ac)}
+/* 선지 대기 호흡 — 풍부하게·데스크톱. 카드 위에 포인터가 있거나 포커스가 들어오면 즉시 멈춘다 */
+body.vzon.vz2 #qCard:not(:hover):not(:focus-within) .ch:not(:disabled){
+  box-shadow:0 0 calc(var(--bt,0) * 16px) color-mix(in srgb,var(--ac) 34%,transparent)}
 
 /* ═══ 🎭 대화 장면 — 몸짓·감정표현 ═══════════════════════════════════════
    여럿이 나와 ★서로에게★ 말하게 하려면 말풍선만으로는 부족하다.
@@ -4361,7 +4382,7 @@ if(typeof S.bgm!=='boolean')S.bgm=true;
 /* 🗣 음성 칭찬 — ★저장값이 없으면 켜짐★(S.sound 가 꺼지면 함께 무음) */
 if(typeof S.voice!=='boolean')S.voice=true;
 /* 🎶 음악 시각화 — ★저장값이 없으면 켜짐★ */
-if(typeof S.viz!=='boolean')S.viz=true;
+if(S.viz!==false&&S.viz!=='rich')S.viz=true;      /* 🎶 끔(false) / 은은하게(true·기본·예전 저장값) / 풍부하게('rich') */
 fillDef('streak',{cur:0,max:0,lastDate:'',freeze:1,freezeWeek:''});
 fillDef('goal',{target:15,date:'',done:0,hit:false});
 fillDef('xp',{total:0});
@@ -4867,62 +4888,117 @@ window.addEventListener('resize',()=>FXQ.sync());
 /* 🎚 모션 없음 — 접근성 설정(실시간) 또는 🎬 모션 끄기. RICH 연출 전용 가드 */
 const MOTIONLESS=()=>REDUCED||document.documentElement.classList.contains('nomotion')
   ||!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-/* ═══ 📳 햅틱(FEEL) — ★RICH 전용★. 길이·펄스 수로 세기를 만든다(Android Chrome, 최소 8ms).
-   iOS 는 navigator.vibrate 가 없어 조용히 무시된다.
-   · 같은 틱의 여러 요청은 ★우선순위 최고 1개★ 로 합친다(queueMicrotask)
-   · 피로 관리 — 60ms 쿨다운 · 1.2초 4회 초과면 길이 절반 · 1분 40회 초과면 탭 생략
-   · 오디오 출력 지연만큼 늦춰 ★소리와 같은 순간★ 에 떨게 한다(최대 120ms) ═══ */
+/* ═══ 🥁 BEAT — '지금 들리는' BGM 박까지 남은 시간(ms). 햅틱·말풍선·VIZ 가 함께 쓴다(읽기 전용) ═══
+   wait(max, lead, bar) — now+d+lead 가 정박(bar=true 면 마디 첫 박)에 오도록 하는 d.
+   BGM 꺼짐·양보·박 없는 장면이거나 max 를 넘으면 -1 → 호출자는 즉시 실행한다. */
+const BEAT={
+  wait(max,lead,bar){
+    try{
+      const B=FX.bgm; if(!B.playing()||B.yielded()||document.hidden)return -1;
+      const g=B.grid(), hn=B.heard(); if(!g||hn==null||!(g.sp>0))return -1;
+      const pos=g.step-(g.t-hn)/g.sp+((lead||0)/1000)/g.sp, U=bar?16:4;
+      const d=(Math.ceil(pos/U)*U-pos)*g.sp*1000;
+      if(d>(max==null?200:max))return -1;
+      return d<12?0:Math.round(d);
+    }catch(e){ return -1 }
+  }
+};
+/* ═══ 📳 햅틱(FEEL) — ★전 사이트★(feel:rich 와 분리). 길이·펄스 수·간격으로 ★질감★ 을 만든다(Android Chrome, 최소 8ms).
+   iOS 는 navigator.vibrate 가 없어 조용히 무시되고 토글도 숨는다.
+   · 촉감 어휘 — 틱(탭) 톡(선지) 두근(정답) 둔탁(오답) 상승 리듬(콤보) 팡파르(레벨업) 두-두(마일스톤 예고)
+     스윽(카드 뒤집기) 착(넘김) 콕(북마크) 하트비트(타이머) 쿵(제출) 부릉(길게 누르기) · 토글 켬↗/끔↘
+   · 같은 틱의 여러 요청은 ★우선순위 최고 1개★ 로 합친다(queueMicrotask). delay 가 있으면 따로 예약.
+   · 피로 관리 — 60ms 쿨다운 · 1.2초 4회 초과면 길이 절반 · 1분 40회(탭)/90회(일반) 초과 생략 · 패턴 총 1.2초 상한
+   · 음악 동기 — {beat:ms} 면 '들리는' 다음 박에 맞춰 떤다(최대 ms 대기, 넘으면 즉시).
+     박마다 떠는 상시 리듬은 없다 — '리듬 햅틱(실험)'(S.hapBeat, 기본 끔)만 콤보 10+ 마디 첫 박에 8ms.
+   · 그 밖에는 오디오 출력 지연만큼 늦춰 ★소리와 같은 순간★ 에 떨게 한다(최대 120ms) ═══ */
 const FEEL=(()=>{
-  const PRI={tap:0,pick:0,right:1,wrong:1,redeem:2,combo:3,badge:3,levelup:4,pass:4,fail:4};
-  const can=()=>RICH&&typeof navigator!=='undefined'&&typeof navigator.vibrate==='function';
+  const PRI={beat:-1,tap:0,pick:0,page:0,chipOn:0,chipOff:0,flip:0,voice:0,
+    star:1,know:1,unknown:1,toggleOn:1,toggleOff:1,purr:1,right:1,wrong:1,
+    preMile:2,heart:2,heart2:2,redeem:2,combo:3,badge:3,submit:3,levelup:4,pass:4,fail:4};
+  const can=()=>typeof navigator!=='undefined'&&typeof navigator.vibrate==='function';
   let pend=null, last=0, lastP=-1, hist=[];
   const off=()=>!can()||S.haptic===false||MOTIONLESS()||document.hidden;
   const k=c=>Math.max(0,Math.min(1,((c||0)-2)/12));
   function pat(kind,x){
-    if(kind==='tap')return [10];
-    if(kind==='pick')return [8];
-    if(kind==='right')return [12,45,Math.round((x&&x.hard?26:18)+14*k(x&&x.c))];
-    if(kind==='wrong'){ const r=(x&&x.run)||0; return r>=4?null:r>=2?[22]:[36] }
-    if(kind==='combo'){ const s=(x&&x.s)||1, p=[];
-      for(let i=0;i<=s;i++){ if(i)p.push(40); p.push(14+6*s) }
-      if(s>=4)p.push(40,60); return p }
-    if(kind==='redeem')return [14,40,14,40,30];
-    if(kind==='levelup')return [8,90,10,90,12,170,50,60,18,50,18];   /* 50ms 펄스 = 소리 임팩트(+380ms) */
-    if(kind==='badge')return [30,50,16];
-    if(kind==='pass')return [40,60,20,60,20,60,60];
-    if(kind==='fail')return [24];
+    switch(kind){
+      case 'tap':return [8];                                    /* 틱 */
+      case 'pick':return [12];                                  /* 톡 */
+      case 'page':return [8,22,18];                             /* 착 — 스치고 딱 */
+      case 'chipOn':return [8,34,16];                           /* 켬 — 약→강 */
+      case 'chipOff':return [16,34,8];                          /* 끔 — 강→약 */
+      case 'toggleOn':return [8,40,10,40,22];
+      case 'toggleOff':return [22,50,8];
+      case 'flip':return [8,12,8,12,8,12,10];                   /* 스윽 — 짧은 연타 */
+      case 'star':return [26];                                  /* 콕 */
+      case 'know':return [10,55,22];
+      case 'unknown':return [20];
+      case 'voice':return [8,130,8,130,8];                      /* 말 리듬 — 아주 가볍게 */
+      case 'purr':return [8,10,9,10,10,10,12,10,14,10,18];       /* 부릉 — 점점 굵게 */
+      case 'beat':return [8];
+      case 'right':return [14,70,Math.round((x&&x.hard?26:20)+14*k(x&&x.c))];   /* 두근 */
+      case 'wrong':{ const r=(x&&x.run)||0; return r>=4?null:r>=2?[26]:[44] }   /* 둔탁 */
+      case 'combo':{ const s=Math.max(1,Math.min(4,(x&&x.s)||1)), p=[];            /* 상승 리듬 */
+        for(let i=0;i<=s;i++){ if(i)p.push(Math.max(28,52-6*s)); p.push(10+5*i+4*s) }
+        if(s>=4)p.push(40,60); return p }
+      case 'preMile':return [16,110,16];                        /* 두-두 */
+      case 'heart':return [34,110,20];                          /* 하트비트(럽-덥) */
+      case 'heart2':return [34,110,20,380,34,110,20];
+      case 'submit':return [70,50,16];                          /* 쿵 */
+      case 'redeem':return [14,40,14,40,30];
+      case 'levelup':return [8,90,10,90,12,170,50,60,18,50,18]; /* 팡파르 — 50ms = 임팩트(+380ms) */
+      case 'badge':return [30,50,16];
+      case 'pass':return [40,60,20,60,20,60,60];
+      case 'fail':return [24];
+    }
     return null;
   }
+  const LEAD={levelup:380};                                     /* 임팩트 펄스까지의 거리 — 그 펄스를 박에 */
+  const cap=pt=>{ let s=0, o=[];                                /* 총 길이 상한 1.2초 */
+    for(const v of pt){ if(s+v>1200)break; o.push(v); s+=v } return o };
+  const vib=pt=>{ try{ if(!off())navigator.vibrate(cap(pt)) }catch(e){} };
   function flush(){
     const r=pend; pend=null; if(!r||off())return;
     const now=performance.now();
     if(r.p<2&&now-last<60&&r.p<=lastP)return;                      /* 쿨다운 */
     hist=hist.filter(t=>now-t<60000);
-    if(r.p===0&&hist.length>40)return;                               /* 1분 과다 — 탭 생략 */
+    if(r.p<=0&&hist.length>40)return;                                /* 1분 과다 — 탭·리듬 생략 */
+    if(r.p<=1&&hist.length>90)return;
+    if(r.kind==='beat'&&(now-last<500||hist.filter(t=>now-t<10000).length>10))return;   /* 리듬 틱은 다른 촉감에 양보 */
     let pt=pat(r.kind,r.x); if(!pt)return;
-    if(hist.filter(t=>now-t<1200).length>=4)pt=pt.map((v,i)=>i%2?v:Math.max(8,Math.round(v/2)));
+    if(hist.filter(t=>now-t<1200).length>=4)pt=pt.map((v,i)=>i%2?v:Math.max(8,Math.round(v/2)));   /* 연타 약화 */
     hist.push(now); last=now; lastP=r.p;
-    let lat=0; try{ lat=S.sound?Math.min(120,(FX.snd.latency()||0)*1000):0 }catch(e){}
-    const go=()=>{ try{ if(!off())navigator.vibrate(pt) }catch(e){} };
-    const d=Math.round((r.delay||0)+lat);
-    if(d>0)setTimeout(go,d); else go();
+    let d=-1;
+    const o=r.o||{};
+    if(o.beat)d=BEAT.wait(o.beat===true?200:o.beat,LEAD[r.kind]||0);   /* 🥁 다음 박에 */
+    if(d<0){ d=0; if(!o.nolat){ try{ d=S.sound?Math.min(120,(FX.snd.latency()||0)*1000):0 }catch(e){} } }
+    if(d>0)setTimeout(()=>vib(pt),Math.round(d)); else vib(pt);
   }
-  return {
-    can,
-    /** 진동 요청 — kind(패턴) · x(콤보 등 인자) · delay(ms) */
-    buzz(kind,x,delay){
-      if(!RICH||off())return;
+  const API={
+    can, pat,
+    /** 진동 요청 — kind(패턴) · x(콤보 등 인자) · delay(ms) · o{beat:최대대기ms, nolat} */
+    buzz(kind,x,delay,o){
+      if(off())return;
+      if(delay>0){ setTimeout(()=>API.buzz(kind,x,0,o),delay); return }
       const p=PRI[kind]||0;
-      if(pend){ if(p>pend.p)pend={kind,x,p,delay}; return }
-      pend={kind,x,p,delay};
+      if(pend){ if(p>pend.p)pend={kind,x,p,o}; return }
+      pend={kind,x,p,o};
       (window.queueMicrotask||(f=>Promise.resolve().then(f)))(flush);
     },
-    /** 연출 + 진동을 ★같은 프레임★ 에 — rich 가 아니면 fire() 만 */
+    /** 연출 + 진동을 ★같은 프레임★ 에 */
     hit(kind,x,fire,o){
-      if(!RICH){ fire&&fire(); return }
-      (window.requestAnimationFrame||(f=>setTimeout(f,16)))(()=>{ fire&&fire(); FEEL.buzz(kind,x,o&&o.delay) });
-    }
+      (window.requestAnimationFrame||(f=>setTimeout(f,16)))(()=>{ fire&&fire(); API.buzz(kind,x,o&&o.delay,o) });
+    },
+    /** 설정 팝업용 — 쿨다운·병합을 거치지 않고 바로(끄는 순간의 '끔' 촉감, 미리 느끼기) */
+    raw(kind,x){ const pt=pat(kind,x); if(pt&&!off()){ try{ navigator.vibrate(cap(pt)) }catch(e){} } },
+    /** 📳 미리 느끼기 — 대표 촉감 3개(톡 → 두근 → 콤보 상승) */
+    demo(){ if(off())return false;
+      [['pick'],['right',{c:6}],['combo',{s:3}]].forEach(([kd,x],i)=>setTimeout(()=>{ if(!off())API.raw(kd,x) },i*700));
+      return true },
+    /** 검증용 */
+    state(){ return {can:can(), off:off(), recent:hist.length} }
   };
+  return API;
 })();
 const FX=(()=>{
   const layer=()=>document.getElementById('fx');
@@ -5390,7 +5466,7 @@ const FX=(()=>{
         card.classList.remove('quake'); void card.offsetWidth; card.classList.add('quake');
         setTimeout(()=>card.classList.remove('quake'),400);
       }
-    }),HS);
+    },c>=8?{beat:120}:null),HS);                   /* 🥁 콤보 8+ — 진동은 들리는 박에(≤120ms) */
   }
   /* 오답 — 카드(지문)는 흔들지 않고 고른 선지만 80ms 뒤 둔탁하게(CSS chThud), 먼지가 떨어진다 */
   function richWrong(el){
@@ -6248,6 +6324,11 @@ const FX=(()=>{
     if(L[3]>0&&rhy)partMel(T,J,bar,b,t,sp,bo);
     if(L[4]>0&&rhy&&T.drum&&T.drum!=='none')partDrum(T,bar,b,t,sp,bo);
     if(L[5]>0&&rhy)partHat(T,bar,b,t,sp,bo);
+    /* 📳 리듬 햅틱(실험·기본 끔) — 퀴즈 콤보 10+ 구간에서만 ★마디 첫 박★ 에 8ms. 박마다 떨지 않는다 */
+    if(b===0&&rhy&&S.hapBeat===true&&bgm.scene==='quiz'){
+      let c=0; try{ c=combo }catch(e){}
+      if(c>=10)FEEL.buzz('beat',null,Math.max(0,(t-A.currentTime+(A.outputLatency||A.baseLatency||0))*1000),{nolat:1});
+    }
   }
   /* ── ⏱ 템포 요동(루바토) ±3.5% — 30~60초에 걸쳐 천천히 미끄러진다 ── */
   let tempo=1, tempoTo=1, tempoAt=0, tempoDur=45;
@@ -6476,6 +6557,8 @@ const FX=(()=>{
     bgm:BGM,
     right(el,combo,opt){
       if(RICH)return richRight(el,combo,opt);
+      { const c=combo||0, st={3:1,5:2,8:3,12:4}[c];             /* 📳 전 사이트 — 두근 / 콤보 상승 리듬 */
+        FEEL.buzz(st?'combo':'right',st?{s:st}:{c,hard:!!(opt&&opt.hard)},0,c>=8?{beat:120}:null) }
       glow('color-mix(in srgb, var(--ok) 45%, transparent)');
       burst(el,14);
       SND.right(combo,opt||{});
@@ -6483,6 +6566,7 @@ const FX=(()=>{
     },
     wrong(el){
       if(RICH)return richWrong(el);
+      { let run=0; try{ run=wrongRun }catch(e){} FEEL.buzz('wrong',{run}) }   /* 📳 둔탁 */
       glow('color-mix(in srgb, var(--no) 40%, transparent)');
       SND.wrong();
     },
@@ -6504,18 +6588,21 @@ const FX=(()=>{
     card(el){ burst(el,10); SND.flip(); },
     coins, clearCoins, toast, confetti, tone, snd:SND
   };
-  /* 🎚 RICH — 보상 사건에 햅틱을 잇고, 레벨업은 시각(토스트·색종이)을 소리 임팩트(+380ms)에 맞춘다 */
-  if(RICH){
-    const _ms=API.milestone, _fin=API.finish, _lv=SND.levelup, _bd=SND.badge, _rd=SND.redeem;
+  /* 📳 보상 사건 → 햅틱(★전 사이트★). 마일스톤·레벨업은 '들리는' 다음 박에 양자화(≤200ms).
+     🎚 RICH — 레벨업은 시각(토스트·색종이)을 소리 임팩트(+380ms)에 맞춘다 */
+  {
+    const _ms=API.milestone, _fin=API.finish, _lv=SND.levelup, _bd=SND.badge, _rd=SND.redeem, _te=SND.tease;
     let lvAt=-1e9;
     API.milestone=function(msg){
-      const go=()=>FEEL.hit('badge',null,()=>_ms.call(API,msg));
+      if(!RICH){ FEEL.buzz('badge',null,0,{beat:200}); return _ms.call(API,msg) }
+      const go=()=>FEEL.hit('badge',null,()=>_ms.call(API,msg),{beat:200});
       if(performance.now()-lvAt<150)setTimeout(go,380); else go();
     };
-    API.finish=function(pass,pct){ FEEL.buzz(pass?'pass':'fail',null,pass?480:0); return _fin.call(API,pass,pct) };
-    SND.levelup=function(){ lvAt=performance.now(); FEEL.buzz('levelup'); lvup(); return _lv.apply(SND,arguments) };
+    API.finish=function(pass,pct){ FEEL.buzz(pass?'pass':'fail',null,pass?480:260); return _fin.call(API,pass,pct) };
+    SND.levelup=function(){ lvAt=performance.now(); FEEL.buzz('levelup',null,0,{beat:200}); if(RICH)lvup(); return _lv.apply(SND,arguments) };
     SND.badge=function(){ FEEL.buzz('badge'); return _bd.apply(SND,arguments) };
     SND.redeem=function(){ FEEL.buzz('redeem'); return _rd.apply(SND,arguments) };
+    if(_te)SND.tease=function(){ FEEL.buzz('preMile',null,260); return _te.apply(SND,arguments) };   /* 두-두 — 마일스톤 직전 예고(정답 '두근' 뒤에 따로) */
   }
   return API;
 })();
@@ -6713,6 +6800,7 @@ const VOICE=(()=>{
       const dms=Math.max(0,(t0-A.currentTime)*1000);
       setTimeout(()=>{ try{ FX.bgm.duck((it.dur||900)+250) }catch(e){} },Math.max(0,dms-80));
       try{ VIZ.voice(dms,it.dur||900,g) }catch(e){}    /* 🎶 캐릭터 입·파형 — 말하는 시각 신호 */
+      try{ FEEL.buzz('voice',null,dms) }catch(e){}     /* 📳 말 리듬 — 아주 가볍게 */
       lastSay=now()+dms;
       commit(sel); lastHead=it.head||'';
       if(tier!=='common'){ ses.seen[it.f]=1; const M=mem(); M.recent.push(it.f); if(M.recent.length>30)M.recent.shift();
@@ -6930,6 +7018,14 @@ const VOICE=(()=>{
      · 요소: ① 하단 스펙트럼 바(#vzBar, 7px·반투명·테마색) ② 하단 오로라(#vzAura, 데스크톱만)
              ③ 🎵 버튼 안쪽 링 ④ 퀴즈 진행바 광택 ⑤ 캐릭터 고개 까딱(--vz-nod)
              ⑥ 음성 칭찬 중 캐릭터 입 = 음성 진폭(vz-say/vz-lip)
+             ⑦ ★리듬 확장★ — CSS 변수 하나(--bt, 0~1)를 화면별 대상에만 쓴다. 요소는 그 값으로
+                테두리·그림자·광택(box-shadow/filter/opacity)만 맥동 → ★layout shift 0, 글자·클릭 대상 고정★.
+                내비 활성 탭 광택 · 히어로 안쪽 빛 · 통계 카드 링 · 오늘의 도전 바 · 콤보/XP/코인 칩 ·
+                암기카드 뒷면 테두리 · 정답 후 '다음'(#qNext/#qFloat) · 읽기 진행바 · 선지 대기 호흡(풍부하게·데스크톱) ·
+                서브·조연단 고개(메인과 반 박 위상차)
+             · 맥락별 강도 — 홈·결과·카드 1 / 정답 후 .9 / 문제 읽는 중 .55 / 개념·시트 읽기 = 바·오로라만.
+               타이핑·드래그·스크롤 중엔 즉시 잦아들고(≈0.1s) 멈춘 뒤 0.6s 지나 천천히 돌아온다.
+             · 단계 — S.viz: false 끔 / true 은은하게(기본, ×.65) / 'rich' 풍부하게(×1, 대상 추가). 모바일(FXQ)은 대상 축소.
      · 사건(정답·마일스톤·완료)은 ★다음 박★ 에 맞춰 한 번 더 차오른다(kick) — 기존 연출 위에 얇게.
      · 콤보 열기(BGM.boost 0~1)와 같은 축 — 진폭·색 온도(data-h)·고역 밀도가 함께 오르고, 끊기면 천천히 잦아든다.
      · rAF 하나 · transform/opacity(와 그것을 읽는 CSS 변수)만 · 값이 변할 때만 쓴다.
@@ -6942,6 +7038,65 @@ const VIZ=(()=>{
   let sayFrom=0, sayTo=0, sayAn=null, sayRig=null, sayT1=0, sayT2=0;
   const W={};                                         /* 마지막으로 쓴 값 — 같으면 건너뛴다 */
   const on=()=>S.viz!==false;
+  const lvl=()=>S.viz==='rich'?2:S.viz===false?0:1;
+  /* ⑦ 입력 중 잦아들기 — 타이핑(입력칸)·드래그·스크롤·휠·터치 이동 */
+  let actAt=-1e9, calm=1;
+  const act=()=>{ actAt=performance.now() };
+  try{
+    document.addEventListener('keydown',e=>{ const t=e.target; if(t&&(t.isContentEditable||/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)))act() },true);
+    window.addEventListener('scroll',act,{passive:true,capture:true});
+    window.addEventListener('wheel',act,{passive:true});
+    window.addEventListener('touchmove',act,{passive:true});
+    document.addEventListener('pointermove',e=>{ if(e.buttons)act() },{passive:true});
+  }catch(e){}
+  /* ⑦ 대상 — [선택자, 세기, 최소 단계, 데스크톱 전용] 를 맥락별로. 250ms 마다 다시 고른다(매 프레임 DOM 탐색 없음) */
+  const TG={
+    home:  [['#nav button.on',.7,1],['#v-home .hero',.8,1],['#chalBar:not([hidden]) .cbar',.9,1],['#stats .stat',.6,2,1]],
+    cards: [['#nav button.on',.6,1],['.fc.flip .fcb',.9,1],['#starCard.on',.6,2]],
+    result:[['#nav button.on',.7,1]],
+    setup: [['#nav button.on',.6,1],['#startQuiz',.6,2]],
+    quizQ: [['#qCombo',.6,1],['#qXp',.5,1],['#qPt',.6,2],['#qCard .ch:not(:disabled)',.7,2,1]],
+    quizA: [['#qNext:not(.gh):not(:disabled)',1,1],['#qFloat:not([hidden])',1,1],['#qCombo',.8,1],['#qXp',.6,1],['#qPt',.7,1]],
+    read:  [['#readbar.on',.6,2]]
+  };
+  const CTXG={home:1,cards:1,result:1,setup:.75,quizA:.9,quizQ:.55,read:.5};
+  let tgAt=0, tgs=[], ctx='home', subs=[];
+  const live2=new Set();                              /* --bt 를 써 둔 요소 — 멈출 때 지운다 */
+  function context(){
+    let v='home'; try{ v=view }catch(e){}
+    if(v==='quiz'){
+      const run=$('quizRun'), res=$('quizResult');
+      if(res&&res.style.display!=='none')return 'result';
+      if(!run||run.style.display==='none')return 'setup';
+      const n=$('qNext'); return n&&!n.disabled&&!n.classList.contains('gh')?'quizA':'quizQ';
+    }
+    if(v==='home'||v==='cards')return v;
+    return 'read';
+  }
+  function retarget(now){
+    tgAt=now; ctx=context();
+    const L=lvl(), out=[];
+    for(const [sel,g,minL,desk] of (TG[ctx]||[])){
+      if(L<minL||(desk&&mobile))continue;
+      document.querySelectorAll(sel).forEach(el=>out.push([el,g]));
+    }
+    for(const el of live2)if(!out.some(o=>o[0]===el)){ el.style.removeProperty('--bt'); delete el.__bt; live2.delete(el) }
+    tgs=out;
+    /* 서브·조연단 — 보이는 것만, 데스크톱만 */
+    const ns=[];
+    if(!mobile&&ctx!=='read'){
+      const sb=document.querySelector('#sbody:not([hidden]) .rig'); if(sb&&sb.getBoundingClientRect().width)ns.push(sb);
+      document.querySelectorAll('#crowd .cw .rig').forEach(r=>{ if(r.getBoundingClientRect().width)ns.push(r) });
+    }
+    subs.forEach(r=>{ if(ns.indexOf(r)<0){ r.style.removeProperty('--vz-nod'); delete r.__nod } });
+    subs=ns;
+  }
+  function unrhythm(){
+    for(const el of live2){ el.style.removeProperty('--bt'); delete el.__bt }
+    live2.clear(); tgs=[];
+    subs.forEach(r=>{ r.style.removeProperty('--vz-nod'); delete r.__nod }); subs=[];
+    if(document.body)document.body.classList.remove('vzon','vz2');
+  }
   const live=()=>on()&&!document.hidden&&FX.bgm.playing()&&!FX.bgm.yielded();
   const q=v=>Math.round(v*50)/50;
   function put(el,k,prop,v){ if(!el)return; const key=k; if(W[key]===v)return; W[key]=v;
@@ -6965,9 +7120,10 @@ const VIZ=(()=>{
     put($('bgmBtn'),'btn','--vzp','0'); put($('qBarWrap'),'qb','--vzp','0');
     put(aura,'au','opacity','0'); const r=rigEl(); if(r){ r.style.removeProperty('--vz-nod'); delete W.nod }
     bars.forEach((b,i)=>{ b.style.transform=''; delete W['b'+i] });
+    unrhythm();
     lastE=0; lastP=0;
   }
-  function stop(){ if(run)CAF(run); run=0; reset(); lipOff() }
+  function stop(){ if(run)CAF(run); run=0; reset(); lipOff(); W.vzon=0; W.vz2=-1; tgAt=0 }
   /** 상태 재평가 — BGM 시작·탭 복귀·설정 변경 때 부른다(폴링 없음) */
   function wake(){
     build(); if(!bar)return;
@@ -6985,12 +7141,13 @@ const VIZ=(()=>{
     const ht=B.boost(); heat+=(ht-heat)*(ht>heat?.09:.022); if(Math.abs(ht-heat)<.002)heat=ht;
     /* 🥁 박 위상 — 예약된 다음 16분음표(g.t)에서 '지금 들리는' 시각까지 거꾸로 센다 */
     const g=B.grid(), hn=B.heard();
-    let pulse=0;
+    let pulse=0, off=0;
     if(g&&hn!=null&&g.sp>0){
       const pos=g.step-(g.t-hn)/g.sp;
       const ph=((pos%4)+4)%4, tb=ph*g.sp;               /* 마지막 정박 이후 경과(초) */
       const down=(((pos%16)+16)%16)<4;
       pulse=Math.exp(-tb/.11)*(down?1:.72);
+      off=Math.exp(-((((pos-2)%4)+4)%4)*g.sp/.12)*.8;   /* 뒷박 — 서브·조연단(메인과 위상차) */
       smp={pos:+pos.toFixed(3), tb:+tb.toFixed(4), beatAt:hn-tb, sp:g.sp, heard:hn};
     }else smp=null;
     /* 🔊 저역 에너지 — 보조(±25%). 박 없는 장면(read 등)에서는 이것만 아주 약하게 */
@@ -7005,8 +7162,23 @@ const VIZ=(()=>{
     /* ③ 🎵 링 ④ 진행바 광택 ② 오로라 ⑤ 고개 */
     put($('bgmBtn'),'btn','--vzp',q(e*.9));
     put($('qBarWrap'),'qb','--vzp',q(e*.5));
-    if(!mobile)put(aura,'au','opacity',q((.25+.75*e)*(.05+.13*heat)+kick*.08));
+    if(!mobile)put(aura,'au','opacity',q(((.25+.75*e)*(.05+.13*heat)+kick*.08)*(.5+.5*calm)));
     const r=rigEl(); if(r)put(r,'nod','--vz-nod',(q(e*(1.4+1.8*heat))*-1)+'deg');
+    /* ⑦ 리듬 확장 — 맥락·단계·입력 잦아들기를 곱한 값 하나(--bt)를 대상에만 */
+    const idle=now-actAt;
+    const ct=idle<600?0:Math.min(1,(idle-600)/1200);
+    calm+=(ct-calm)*(ct<calm?.45:.08); if(calm<.01)calm=0;
+    if(now-tgAt>250)retarget(now);
+    const L=lvl(), K=(CTXG[ctx]||.5)*(L>=2?1:.65)*calm;
+    const b=document.body;
+    if(b&&!W.vzon){ W.vzon=1; b.classList.add('vzon') }
+    if(b&&W.vz2!==L){ W.vz2=L; b.classList.toggle('vz2',L>=2) }
+    for(const [el,gn] of tgs){
+      const v=q(Math.min(1,e*K*gn));
+      if(el.__bt!==v){ el.__bt=v; el.style.setProperty('--bt',v); live2.add(el) }
+    }
+    const sn=q(Math.min(1,(g?off:lo*.3)*(.4+.6*amp)*calm*(L>=2?1:.7)));
+    for(const sr of subs){ const v=(sn*-(1.2+1.4*heat)).toFixed(2)+'deg'; if(sr.__nod!==v){ sr.__nod=v; sr.style.setProperty('--vz-nod',v) } }
     /* ① 스펙트럼 — 왼쪽 저역 → 오른쪽 고역. 열기가 오를수록 고역 막대가 살아난다(밀도) */
     const H=heat>.6?'2':heat>.15?'1':'0';
     if(W.h!==H){ W.h=H; bar.dataset.h=H }
@@ -7063,12 +7235,14 @@ const VIZ=(()=>{
       sayT2=setTimeout(()=>{ if(sayRig===r)lipOff() },dms+dur+60);
       VIZ.kick(.5);
     },
-    toggle(){ S.viz=S.viz===false; save(); if(!S.viz)stop(); wake(); return S.viz },
-    on,
+    /** 3단계 순환 — 은은하게 → 풍부하게 → 끔 → 은은하게 */
+    toggle(){ S.viz=S.viz===false?true:S.viz==='rich'?false:'rich'; save(); stop(); W.vzon=0; W.vz2=-1; tgAt=0; wake(); return S.viz },
+    on, level:lvl,
     /** 검증·디버그용 — 지금 프레임의 값 */
     sample(){ return {run:!!run, e:+lastE.toFixed(3), pulse:+lastP.toFixed(3), heat:+heat.toFixed(3),
       smp:smp&&Object.assign({},smp), bars:nb, kickK:+kickK.toFixed(2),
-      say:!!sayRig, lip:!!(sayRig&&sayRig.classList.contains('vz-lip'))} }
+      say:!!sayRig, lip:!!(sayRig&&sayRig.classList.contains('vz-lip')),
+      ctx, level:lvl(), calm:+calm.toFixed(2), targets:tgs.map(t=>t[0].id||t[0].className.split(' ')[0]), subs:subs.length} }
   };
 })();
 window.__vizWake=()=>VIZ.wake();
@@ -7142,20 +7316,27 @@ function paintThemePop(d){
        <span class="the">🎬</span>
        <span class="thn">${motionOff()?'모션 켜기':'모션 끄기'}<i>${motionOff()?'지금은 연출이 꺼져 있어요':'카드·연출의 움직임을 줄입니다'}</i></span>
      </button>`
-   /* 📳 진동 — RICH 이고 기기가 진동을 지원할 때만 보인다 */
-   +(RICH&&FEEL.can()?`<button class="thopt ${S.haptic===false?'on':''}" id="thHaptic">
+   /* 📳 진동 — 기기가 진동을 지원할 때만 보인다(전 사이트). 켜져 있으면 리듬 햅틱(실험)·미리 느끼기도 */
+   +(FEEL.can()?`<button class="thopt ${S.haptic===false?'on':''}" id="thHaptic">
        <span class="the">📳</span>
-       <span class="thn">${S.haptic===false?'진동 켜기':'진동 끄기'}<i>${S.haptic===false?'지금은 진동이 꺼져 있어요':'정답·콤보·레벨업을 손끝으로 알립니다'}</i></span>
-     </button>`:'')
+       <span class="thn">${S.haptic===false?'진동 켜기':'진동 끄기'}<i>${S.haptic===false?'지금은 진동이 꺼져 있어요':'탭 틱 · 정답 두근 · 콤보 상승 · 레벨업 팡파르를 손끝으로'}</i></span>
+     </button>`+(S.haptic===false?'':`<button class="thopt ${S.hapBeat===true?'':'on'}" id="thHapBeat">
+       <span class="the">🥁</span>
+       <span class="thn">${S.hapBeat===true?'리듬 햅틱 끄기':'리듬 햅틱 켜기 (실험)'}<i>${S.hapBeat===true?'콤보 10+ 동안 마디 첫 박에 아주 짧은 틱':'콤보 10+ 구간에서만 배경음악 마디 첫 박에 틱'}</i></span>
+     </button>
+     <button class="thopt" id="thHapDemo">
+       <span class="the">👆</span>
+       <span class="thn">진동 미리 느끼기<i>톡 → 두근 → 콤보 상승, 대표 촉감 3개</i></span>
+     </button>`):'')
    /* 🗣 음성 칭찬 — 기계 생성 음성 표기(OpenRAIL-M) */
    +`<button class="thopt ${S.voice===false?'on':''}" id="thVoice">
        <span class="the">🗣</span>
        <span class="thn">${S.voice===false?'음성 칭찬 켜기':'음성 칭찬 끄기'}<i>${S.voice===false?'지금은 음성이 꺼져 있어요':'정답에 짧게 칭찬 · 기계 생성 음성(Supertonic 3, OpenRAIL-M)'}</i></span>
      </button>`
-   /* 🎶 음악 시각화 — 박자 펄스·하단 스펙트럼(배경음악이 켜져 있을 때만 움직인다) */
+   /* 🎶 음악 시각화 3단계 — 은은하게(기본) → 풍부하게 → 끔(배경음악이 켜져 있을 때만 움직인다) */
    +`<button class="thopt ${S.viz===false?'on':''}" id="thViz">
        <span class="the">🎶</span>
-       <span class="thn">${S.viz===false?'음악 시각화 켜기':'음악 시각화 끄기'}<i>${S.viz===false?'지금은 시각화가 꺼져 있어요':'배경음악 박자에 맞춰 가장자리가 숨쉽니다 · 글자는 움직이지 않음'}</i></span>
+       <span class="thn">음악 시각화 · ${S.viz===false?'끔':S.viz==='rich'?'풍부하게':'은은하게'}<i>${S.viz===false?'눌러서 은은하게 켜기':S.viz==='rich'?'버튼·칩·카드 테두리도 박에 빛남 · 눌러서 끄기':'가장자리·진행바·칩이 박자에 숨쉼 · 눌러서 풍부하게'} · 글자는 움직이지 않음</i></span>
      </button>`;
 }
 /** 테마 고르기 — 이름만으로는 감이 안 오므로 ★작은 색 견본★ 을 함께 보여 준다 */
@@ -7169,13 +7350,20 @@ function themePop(){
   document.body.appendChild(d);
   d.onclick=e=>{
     if(e.target.closest('#thMotion')){ setMotion(!motionOff()); return }
-    if(e.target.closest('#thVoice')){ const on=VOICE.toggle(); paintThemePop(d);
+    if(e.target.closest('#thVoice')){ const on=VOICE.toggle(); paintThemePop(d); FEEL.raw(on?'toggleOn':'toggleOff');
       FX.toast(on?'🗣 음성 칭찬 켬':'🗣 음성 칭찬 끔','good',1100); return }
-    if(e.target.closest('#thViz')){ const on=VIZ.toggle(); paintThemePop(d);
-      FX.toast(on?'🎶 음악 시각화 켬':'🎶 음악 시각화 끔','good',1100); return }
-    if(e.target.closest('#thHaptic')){ S.haptic=S.haptic===false; save(); paintThemePop(d);
-      if(S.haptic)FEEL.buzz('right',{c:0});                       /* 켤 때 확인 진동 */
+    if(e.target.closest('#thViz')){ const v=VIZ.toggle(); paintThemePop(d);
+      FEEL.raw(v===false?'toggleOff':'toggleOn');
+      FX.toast(v===false?'🎶 음악 시각화 끔':v==='rich'?'🎶 음악 시각화 — 풍부하게':'🎶 음악 시각화 — 은은하게','good',1100); return }
+    if(e.target.closest('#thHaptic')){ const was=S.haptic!==false;
+      if(was)FEEL.raw('toggleOff');                              /* 끄는 순간의 '끔' 촉감(끈 뒤엔 떨 수 없다) */
+      S.haptic=!was; save(); paintThemePop(d);
+      if(S.haptic)FEEL.raw('toggleOn');                          /* 켤 때 확인 진동 */
       FX.toast(S.haptic?'📳 진동 켬':'📳 진동 끔','good',1100); return }
+    if(e.target.closest('#thHapBeat')){ S.hapBeat=S.hapBeat!==true; save(); paintThemePop(d);
+      FEEL.raw(S.hapBeat?'toggleOn':'toggleOff');
+      FX.toast(S.hapBeat?'🥁 리듬 햅틱 켬 — 콤보 10+ 마디 첫 박':'🥁 리듬 햅틱 끔','good',1400); return }
+    if(e.target.closest('#thHapDemo')){ if(!FEEL.demo())FX.toast('📳 지금은 진동을 쓸 수 없어요(모션 끔·진동 끔)','good',1600); return }
     const x=e.target.closest('[data-th]'); if(!x)return;
     setTheme(x.dataset.th); FX.snd.on&&FX.snd.on(); };
   setTimeout(()=>document.addEventListener('pointerdown',function h(e){
@@ -8038,7 +8226,11 @@ const MASCOT=(()=>{
   }
   function say(msg,cls,hold){
     const b=box(), t=talk(); if(!b||!t||S.mascot===false)return;
-    t.textContent=msg; t.hidden=false;
+    t.textContent=msg;
+    /* 🥁 숨어 있던 말풍선은 ★들리는 다음 박★ 에 뜬다(≤150ms · 시각화 켬·모션 켬일 때만) */
+    const bw=t.hidden&&S.viz!==false&&!MOTIONLESS()?BEAT.wait(150):-1;
+    clearTimeout(t._bq);
+    if(bw>0)t._bq=setTimeout(()=>{ if(t.textContent===msg)t.hidden=false },bw); else t.hidden=false;
     /* 말풍선은 화면 오른쪽 아래 — 모바일 퀴즈에서는 보기 위다. 짧게 끊는다 */
     hold=FXQ.ms(hold||2600,900);
     if(cls)face(cls,hold);
@@ -11024,7 +11216,7 @@ function toggleBgm(){
   const b=$('bgmBtn'); if(!b)return;
   let t=null, fired=false;
   b.onclick=()=>{ if(fired){fired=false;return} toggleBgm() };
-  b.addEventListener('pointerdown',()=>{fired=false;t=setTimeout(()=>{t=null;fired=true;bgmVolPop()},450)});
+  b.addEventListener('pointerdown',()=>{fired=false;t=setTimeout(()=>{t=null;fired=true;FEEL.buzz('purr');bgmVolPop()},450)});
   ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{if(t){clearTimeout(t);t=null}}));
   b.addEventListener('contextmenu',e=>{e.preventDefault();fired=true;bgmVolPop()});
   applyBgm();
@@ -11094,9 +11286,11 @@ function bgmVolPop(){
    개별 버튼마다 호출을 심으면 유지보수가 안 된다 — ★문서 레벨에서 한 번★ 잡는다.
    칩(필터 토글)은 켜짐/꺼짐 음을 달리해 상태 변화가 귀로도 들리게 한다. */
 document.addEventListener('pointerdown',e=>{
-  /* 📳 RICH — 누르는 순간의 진동(선지는 더 짧게). 소리가 꺼져 있어도 진동은 따로 켜고 끈다 */
-  if(RICH){ const h=e.target.closest&&e.target.closest('.ch,button,.chip,summary,a.tocitem,label');
-    if(h&&!h.disabled&&!h.classList.contains('killed'))FEEL.buzz(h.classList.contains('ch')?'pick':'tap') }
+  /* 📳 누르는 순간의 촉감(전 사이트) — 선지 '톡' · 칩 켬↗/끔↘(누른 뒤 상태의 반대 감촉) · 그 밖 '틱'.
+     소리가 꺼져 있어도 진동은 따로 켜고 끈다 */
+  { const h=e.target.closest&&e.target.closest('.ch,button,.chip,summary,a.tocitem,label');
+    if(h&&!h.disabled&&!h.classList.contains('killed'))
+      FEEL.buzz(h.classList.contains('ch')?'pick':h.classList.contains('chip')?(h.classList.contains('on')?'chipOff':'chipOn'):'tap') }
   if(!S.sound)return;
   const t=e.target.closest('button,.chip,summary,a.tocitem,label');
   if(!t)return;
@@ -11138,7 +11332,7 @@ let _volT=null, _volFired=false;
 /* 길게 누르면 음량, 짧게 누르면 켜기/끄기.
    롱프레스가 발동한 뒤에는 뒤따라오는 click 을 삼켜야 토글까지 같이 되지 않는다. */
 $('sound').onclick=()=>{ if(_volFired){_volFired=false;return} toggleSound() };
-$('sound').addEventListener('pointerdown',()=>{_volFired=false;_volT=setTimeout(()=>{_volT=null;_volFired=true;volPop()},450)});
+$('sound').addEventListener('pointerdown',()=>{_volFired=false;_volT=setTimeout(()=>{_volT=null;_volFired=true;FEEL.buzz('purr');volPop()},450)});
 ['pointerup','pointerleave','pointercancel'].forEach(ev=>
   $('sound').addEventListener(ev,()=>{if(_volT){clearTimeout(_volT);_volT=null}}));
 $('sound').addEventListener('contextmenu',e=>{e.preventDefault();_volFired=true;volPop()});
@@ -11203,7 +11397,7 @@ FXQ.sync();
     let t=null, long=false;
     m.addEventListener('pointerdown',()=>{
       long=false; clearTimeout(t);
-      t=setTimeout(()=>{t=null;long=true;MASCOT.pet()},430);
+      t=setTimeout(()=>{t=null;long=true;FEEL.buzz('purr');MASCOT.pet()},430);
     });
     ['pointerup','pointerleave','pointercancel'].forEach(ev=>
       m.addEventListener(ev,()=>{ if(t){clearTimeout(t);t=null} }));
@@ -11630,6 +11824,7 @@ function toggleStar(){
   const k='c'+deck[di];
   if(S.mark[k])delete S.mark[k]; else S.mark[k]=1;
   save(); renderStar(); renderCardProg();
+  FEEL.buzz(S.mark[k]?'star':'chipOff');                   /* 📳 콕 / 해제 */
   FX.toast(S.mark[k]?'★ 북마크에 담았습니다':'북마크 해제','good',900);
   if(cProg==='mark'&&!S.mark[k])buildDeck(true);
 }
@@ -11660,14 +11855,15 @@ function renderCard(){
   $('fcIdx').textContent=`${di+1} / ${deck.length}`;
   if(typeof AMBIENT!=='undefined')AMBIENT.card();   /* 🗣 카드를 넘긴 시각 — 오래 머물면 다른 말을 한다 */
 }
-const flip=()=>$('fc').classList.toggle('flip');
+const flip=()=>{ $('fc').classList.toggle('flip'); FEEL.buzz('flip') };   /* 📳 스윽 */
 $('fc').onclick=flip;
-$('prev').onclick=()=>{if(deck.length){di=(di-1+deck.length)%deck.length;renderCard()}};
-$('next').onclick=()=>{if(deck.length){di=(di+1)%deck.length;renderCard()}};
+$('prev').onclick=()=>{if(deck.length){di=(di-1+deck.length)%deck.length;renderCard();FEEL.buzz('page')}};   /* 📳 착 */
+$('next').onclick=()=>{if(deck.length){di=(di+1)%deck.length;renderCard();FEEL.buzz('page')}};
 function mark(v){
   if(!deck.length)return;
   const wasNew=S.cards['c'+deck[di]]!=='ok';
   S.cards['c'+deck[di]]=v; save(); FX.snd.know(v==='ok'||v===1||v===true);
+  FEEL.buzz(v==='ok'?'know':'unknown');
   try{ WEEK.card() }catch(e){}                           /* 📅 🃏 칸 — 하루 20장 */
   if(v==='ok'){
     const el=$('fc');
@@ -13652,6 +13848,8 @@ function startQuiz(items,mode,opt){
   if(mode==='exam'){
     timerId=setInterval(()=>{
       quiz.left--; updTimer();
+      if(quiz.left===300||quiz.left===60)FEEL.buzz('heart');      /* 📳 하트비트 — 5분·1분 전 */
+      else if(quiz.left===10)FEEL.buzz('heart2');
       if(quiz.left<=0){clearInterval(timerId);finishQuiz()}
     },1000);
   }
@@ -14548,7 +14746,7 @@ function qFloatShow(){
     /* 마지막 문제의 '다음' 은 ★채점하기·제출하기★ — 스치는 손짓으로 시험을 끝내면 안 된다(버튼으로만) */
     if(dx<0&&typeof quiz!=='undefined'&&quiz&&quiz.i>=quiz.items.length-1)return;
     const b=$(dx<0?'qNext':'qPrev'); if(!b||b.disabled)return;
-    b.click();
+    b.click(); FEEL.buzz('page');                          /* 📳 착 */
     const c=$('qCard'); if(!c)return;
     c.classList.remove('sw-next','sw-prev'); void c.offsetWidth;
     c.classList.add(dx<0?'sw-next':'sw-prev');
@@ -15037,6 +15235,7 @@ function updCombo(){
 }
 function finishQuiz(){
   if(timerId)clearInterval(timerId);
+  if(quiz&&quiz.mode==='exam')FEEL.buzz('submit');           /* 📳 쿵 — 모의고사 제출 */
   const total=quiz.items.length;
   const right=quiz.items.filter((q,i)=>isRight(q,quiz.ans[i])).length;
   const pct=Math.round(right/total*100);
