@@ -2638,6 +2638,37 @@ html.nomotion .tw thead th::after{display:none}
 }
 
 
+/* ═══ 🎶 음악 시각화(VIZ) — 가장자리만 숨쉰다. 본문 텍스트는 움직이지 않는다 ═══
+   값은 JS 한 rAF 가 CSS 변수/opacity/transform 으로만 쓴다(레이아웃·페인트 유발 속성 0). */
+#vzBar{position:fixed;left:0;right:0;bottom:0;height:7px;z-index:4;pointer-events:none;
+  display:flex;align-items:flex-end;gap:2px;padding:0 2px;opacity:0;transition:opacity .8s ease;contain:strict}
+#vzBar.on{opacity:.5}
+#vzBar.static{opacity:.3}
+#vzBar i{flex:1;height:100%;border-radius:2px 2px 0 0;transform-origin:50% 100%;transform:scaleY(.08);
+  background:linear-gradient(0deg,var(--ac),var(--ac2))}
+#vzBar.static i{transform:scaleY(.22)!important}
+#vzBar[data-h="1"] i{background:linear-gradient(0deg,var(--ac2),var(--wa))}
+#vzBar[data-h="2"] i{background:linear-gradient(0deg,var(--wa),#ef4444)}
+#vzAura{position:fixed;left:0;right:0;bottom:0;height:120px;z-index:2;pointer-events:none;opacity:0;display:none;
+  background:radial-gradient(60% 100% at 50% 100%,color-mix(in srgb,var(--ac2) 42%,transparent),transparent 72%)}
+#vzAura.on{display:block}
+@media (max-width:640px){#vzBar{height:5px;gap:1px}#vzAura{display:none!important}}
+html.nomotion #vzAura{display:none!important}
+@media (prefers-reduced-motion:reduce){#vzAura{display:none!important}}
+/* 🎵 버튼 안쪽 링 · 퀴즈 진행바 광택 — opacity 하나 */
+#bgmBtn::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  box-shadow:inset 0 0 0 1.5px var(--ac),inset 0 0 9px color-mix(in srgb,var(--ac) 60%,transparent);opacity:var(--vzp,0)}
+.qbar{position:relative}
+.qbar::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,#fff 60%,transparent),transparent);opacity:var(--vzp,0)}
+/* 🗣 음성 칭찬 중 입 — vz-say(CSS 3프레임) → 루프가 돌면 vz-lip(실제 음성 진폭) */
+.rig.vz-say [data-part^="mouth-"]{display:none}
+.rig.vz-say [data-part="mouth-open"]{display:block}
+.rig.vz-say .rig-mouth{animation:rigTalk .33s steps(1,end) infinite}
+.rig.vz-say.vz-lip .rig-mouth{animation:none;transition:none;transform:scale(1.04,var(--vz-m,.6))}
+html.nomotion .rig.vz-say .rig-mouth{animation:none}
+@media print{#vzBar,#vzAura{display:none!important}}
+
 /* ═══ 🎭 대화 장면 — 몸짓·감정표현 ═══════════════════════════════════════
    여럿이 나와 ★서로에게★ 말하게 하려면 말풍선만으로는 부족하다.
    상대 쪽으로 기울고(lean), 돌아서고(turn), 끄덕이고(nod), 발끈한다(shake).
@@ -3157,7 +3188,7 @@ html[data-theme="light"]   .rig[data-who="si"] .rig-torso{
                     scaleY(var(--sq))}
 /* 고개 — yawK 로 배역별 진폭 보정(다람 1.5 · 모모 1.6) */
 .rig-head{transform-origin:var(--rig-ox) var(--rig-neck,64px);
-  transform:rotate(calc((var(--pitch) * -4deg + var(--yaw) * 2deg) * var(--rig-yawK)))}
+  transform:rotate(calc((var(--pitch) * -4deg + var(--yaw) * 2deg) * var(--rig-yawK) + var(--vz-nod,0deg)))}
 .rig-face{transform:translate(calc(var(--yaw) * 3.2px * var(--rig-yawK)),
                               calc(var(--pitch) * 2.2px))}
 /* 시선 — eyeR 이 0 인 배역(da·mo)은 자동으로 이동량 0 이 된다 */
@@ -4325,6 +4356,8 @@ const fillDef=(k,def)=>{S[k]=Object.assign({},def,S[k]||{})};
 if(typeof S.bgm!=='boolean')S.bgm=true;
 /* 🗣 음성 칭찬 — ★저장값이 없으면 켜짐★(S.sound 가 꺼지면 함께 무음) */
 if(typeof S.voice!=='boolean')S.voice=true;
+/* 🎶 음악 시각화 — ★저장값이 없으면 켜짐★ */
+if(typeof S.viz!=='boolean')S.viz=true;
 fillDef('streak',{cur:0,max:0,lastDate:'',freeze:1,freezeWeek:''});
 fillDef('goal',{target:15,date:'',done:0,hit:false});
 fillDef('xp',{total:0});
@@ -6301,6 +6334,7 @@ const FX=(()=>{
   /* 기본 음량 — 0.6 → 0.75(+25%). 전용 리미터(-8dB) + 마스터 체인이 피크를 잡는다 */
   const BGM_VOL=.75;
   let armed=false, want=null;
+  let yielded=false;                         /* 🎵 다른 탭에 BGM 을 양보한 상태 */
   const BGM={
     defVol:BGM_VOL,
     /** 첫 사용자 조작 — 여기서부터 AudioContext 를 만들어도 된다(자동재생 정책) */
@@ -6314,6 +6348,7 @@ const FX=(()=>{
     scene(name,opt){
       if(S.bgm!==true)return;
       want=name;
+      if(yielded)return;                     /* 🎵 다른 탭이 틀고 있다 — 장면만 기억해 두고 조용히 */
       if(!armed){
         /* ★첫 조작 전에는 컨텍스트를 만들지 않는다★ — 만들면 콘솔 경고 + 정지 상태 */
         const ua=navigator.userActivation;
@@ -6343,6 +6378,7 @@ const FX=(()=>{
         bgm.next=A.currentTime+.08;
         bgm.timer=setInterval(bgmPump,40);      /* 스케줄러는 고정 주기. 박은 오디오 클럭이 잡는다 */
       }
+      try{ window.__vizWake&&window.__vizWake() }catch(e){}   /* 🎶 시각화도 함께 깨운다 */
     },
     /** 지금 울리고 있는가 — 잠금 해제 후 다시 걸어야 할지 판단용 */
     playing(){ return !!(bgm&&bgm.timer&&bgm.scene) },
@@ -6411,7 +6447,24 @@ const FX=(()=>{
     /** 지금 템포 배율 — 루바토가 범위를 벗어나지 않는지 재기 위한 창구 */
     tempo(){ return tempoNow() },
     setVol(v){ if(bgm&&S.bgm===true){bgm.vol=v;bgm.out.gain.value=v*bgm.duck} },
-    on(){ return S.bgm===true }
+    on(){ return S.bgm===true },
+    /* 🎵 ★탭 하나만★ — 다른 탭이 가져가면 페이드아웃하고 양보, 이 탭이 다시 앞에 오면 되찾는다 */
+    claim(){ yielded=false },
+    yieldTo(){ if(yielded)return; yielded=true; if(BGM.playing())BGM.stop() },
+    yielded(){ return yielded },
+    /* 🎶 VIZ(음악 시각화) 창구 — ★읽기 전용★. 소리 경로는 바꾸지 않는다 */
+    /** 지금 '들리는' 오디오 시각(초) — 출력 지연만큼 뒤로. 컨텍스트가 없으면 null */
+    heard(){ if(!actx)return null; return actx.currentTime-(actx.outputLatency||actx.baseLatency||0) },
+    /** 현재 열기(0~1) — state() 보다 가볍다(매 프레임 호출용) */
+    boost(){ return bgm?(bgm.boost||0):0 },
+    /** 마스터 탭 AnalyserNode — ★BGM 이 재생 중일 때만 만든다★(효과음까지 함께 잡힌다).
+        destination 으로 이어지지 않는 곁가지라 음색·음량에 영향 0 */
+    tap(){
+      if(!actx||!master||!BGM.playing())return bgm&&bgm.an||null;
+      if(!bgm.an){ try{ const an=actx.createAnalyser(); an.fftSize=64; an.smoothingTimeConstant=.62;
+        an.minDecibels=-88; an.maxDecibels=-24; master.connect(an); bgm.an=an }catch(e){ bgm.an=null } }
+      return bgm.an;
+    }
   };
 
   let bigLeft=3;              /* 세션당 남은 '큰 연출' 횟수 */
@@ -6655,6 +6708,7 @@ const VOICE=(()=>{
       cur=src; src.onended=()=>{ if(cur===src)cur=null };
       const dms=Math.max(0,(t0-A.currentTime)*1000);
       setTimeout(()=>{ try{ FX.bgm.duck((it.dur||900)+250) }catch(e){} },Math.max(0,dms-80));
+      try{ VIZ.voice(dms,it.dur||900,g) }catch(e){}    /* 🎶 캐릭터 입·파형 — 말하는 시각 신호 */
       lastSay=now()+dms;
       commit(sel); lastHead=it.head||'';
       if(tier!=='common'){ ses.seen[it.f]=1; const M=mem(); M.recent.push(it.f); if(M.recent.length>30)M.recent.shift();
@@ -6865,6 +6919,165 @@ const VOICE=(()=>{
   };
 })();
 
+/* ═══════════ 🎶 VIZ — 음악 시각화 (공부를 방해하지 않는 박자) ═══════════
+   ★귀로 듣는 리듬을 주변시로도★ — 본문 텍스트는 절대 움직이지 않는다. 가장자리만 숨쉰다.
+     · 박 = BGM.grid()(오디오 클럭 예약 시각) − 출력 지연 → '지금 들리는' 16분음표 위치.
+       정박에서 짧게 차오르고(감쇠 110ms) 마디 첫 박은 조금 더 크게. 저역 에너지(Analyser)는 보조만.
+     · 요소: ① 하단 스펙트럼 바(#vzBar, 7px·반투명·테마색) ② 하단 오로라(#vzAura, 데스크톱만)
+             ③ 🎵 버튼 안쪽 링 ④ 퀴즈 진행바 광택 ⑤ 캐릭터 고개 까딱(--vz-nod)
+             ⑥ 음성 칭찬 중 캐릭터 입 = 음성 진폭(vz-say/vz-lip)
+     · 사건(정답·마일스톤·완료)은 ★다음 박★ 에 맞춰 한 번 더 차오른다(kick) — 기존 연출 위에 얇게.
+     · 콤보 열기(BGM.boost 0~1)와 같은 축 — 진폭·색 온도(data-h)·고역 밀도가 함께 오르고, 끊기면 천천히 잦아든다.
+     · rAF 하나 · transform/opacity(와 그것을 읽는 CSS 변수)만 · 값이 변할 때만 쓴다.
+     · 정지 조건: S.viz 꺼짐 · BGM 미재생/다른 탭 양보 · 탭 숨김 · 모션 끔(이때는 정적 바만) */
+const VIZ=(()=>{
+  const RAF=typeof window.requestAnimationFrame==='function'?f=>window.requestAnimationFrame(f):null;
+  const CAF=id=>{ try{ window.cancelAnimationFrame&&window.cancelAnimationFrame(id) }catch(e){} };
+  let built=false, run=0, bar=null, aura=null, bars=[], nb=0, mobile=false;
+  let heat=0, lastE=0, lastP=0, smp=null, kickAt=-1e9, kickK=0, buf=null, vbuf=null;
+  let sayFrom=0, sayTo=0, sayAn=null, sayRig=null, sayT1=0, sayT2=0;
+  const W={};                                         /* 마지막으로 쓴 값 — 같으면 건너뛴다 */
+  const on=()=>S.viz!==false;
+  const live=()=>on()&&!document.hidden&&FX.bgm.playing()&&!FX.bgm.yielded();
+  const q=v=>Math.round(v*50)/50;
+  function put(el,k,prop,v){ if(!el)return; const key=k; if(W[key]===v)return; W[key]=v;
+    if(prop==='opacity')el.style.opacity=v; else el.style.setProperty(prop,v) }
+  function build(){
+    if(built||!document.body)return; built=true;
+    aura=document.createElement('div'); aura.id='vzAura'; aura.className='noprint'; aura.setAttribute('aria-hidden','true');
+    bar=document.createElement('div'); bar.id='vzBar'; bar.className='noprint'; bar.setAttribute('aria-hidden','true');
+    document.body.appendChild(aura); document.body.appendChild(bar);
+    layout();
+  }
+  function layout(){
+    if(!bar)return;
+    mobile=FXQ.narrow();
+    const n=mobile?14:28;                              /* 모바일은 막대 절반 · 오로라 없음 */
+    if(n!==nb){ bar.innerHTML='<i></i>'.repeat(n); bars=Array.prototype.slice.call(bar.children); nb=n;
+      for(const k in W)if(k[0]==='b')delete W[k] }
+  }
+  const rigEl=()=>document.querySelector('#mbody .rig');
+  function reset(){
+    put($('bgmBtn'),'btn','--vzp','0'); put($('qBarWrap'),'qb','--vzp','0');
+    put(aura,'au','opacity','0'); const r=rigEl(); if(r){ r.style.removeProperty('--vz-nod'); delete W.nod }
+    bars.forEach((b,i)=>{ b.style.transform=''; delete W['b'+i] });
+    lastE=0; lastP=0;
+  }
+  function stop(){ if(run)CAF(run); run=0; reset(); lipOff() }
+  /** 상태 재평가 — BGM 시작·탭 복귀·설정 변경 때 부른다(폴링 없음) */
+  function wake(){
+    build(); if(!bar)return;
+    const L=live(), still=MOTIONLESS();
+    bar.classList.toggle('on',L); bar.classList.toggle('static',L&&still);
+    aura.classList.toggle('on',L&&!still&&!mobile);
+    if(!L||still||!RAF){ stop(); return }
+    if(!run)run=RAF(frame);
+  }
+  function frame(){
+    run=0;
+    if(!live()||MOTIONLESS()){ wake(); return }
+    const B=FX.bgm, now=performance.now();
+    /* 🔥 열기 — 오를 땐 빠르게(≈0.3s), 끊기면 천천히(≈1.5s) 잦아든다 */
+    const ht=B.boost(); heat+=(ht-heat)*(ht>heat?.09:.022); if(Math.abs(ht-heat)<.002)heat=ht;
+    /* 🥁 박 위상 — 예약된 다음 16분음표(g.t)에서 '지금 들리는' 시각까지 거꾸로 센다 */
+    const g=B.grid(), hn=B.heard();
+    let pulse=0;
+    if(g&&hn!=null&&g.sp>0){
+      const pos=g.step-(g.t-hn)/g.sp;
+      const ph=((pos%4)+4)%4, tb=ph*g.sp;               /* 마지막 정박 이후 경과(초) */
+      const down=(((pos%16)+16)%16)<4;
+      pulse=Math.exp(-tb/.11)*(down?1:.72);
+      smp={pos:+pos.toFixed(3), tb:+tb.toFixed(4), beatAt:hn-tb, sp:g.sp, heard:hn};
+    }else smp=null;
+    /* 🔊 저역 에너지 — 보조(±25%). 박 없는 장면(read 등)에서는 이것만 아주 약하게 */
+    const an=B.tap(); let lo=0;
+    if(an){ if(!buf||buf.length!==an.frequencyBinCount)buf=new Uint8Array(an.frequencyBinCount);
+      an.getByteFrequencyData(buf); lo=(buf[1]+buf[2]+buf[3])/765 }
+    const amp=.42+.58*heat;
+    const base=g?pulse*(.75+.25*lo):lo*.35;
+    const kick=now>=kickAt?kickK*Math.exp(-(now-kickAt)/260):0;
+    const e=Math.min(1,amp*base+kick);
+    lastE=e; lastP=pulse;
+    /* ③ 🎵 링 ④ 진행바 광택 ② 오로라 ⑤ 고개 */
+    put($('bgmBtn'),'btn','--vzp',q(e*.9));
+    put($('qBarWrap'),'qb','--vzp',q(e*.5));
+    if(!mobile)put(aura,'au','opacity',q((.25+.75*e)*(.05+.13*heat)+kick*.08));
+    const r=rigEl(); if(r)put(r,'nod','--vz-nod',(q(e*(1.4+1.8*heat))*-1)+'deg');
+    /* ① 스펙트럼 — 왼쪽 저역 → 오른쪽 고역. 열기가 오를수록 고역 막대가 살아난다(밀도) */
+    const H=heat>.6?'2':heat>.15?'1':'0';
+    if(W.h!==H){ W.h=H; bar.dataset.h=H }
+    const nbin=buf?Math.min(buf.length-1,26):0;
+    for(let i=0;i<nb;i++){
+      const x=i/(nb-1);
+      let v;
+      if(buf){ const k=1+Math.floor(x*(nbin-1)); v=(buf[k]/255)*(1+x*(.4+1.4*heat)) }
+      else v=.3*Math.abs(Math.sin(i*1.7+now/900));
+      v=.08+.62*v*(.55+.45*amp)+e*(.32-.18*x);
+      v=q(Math.min(1,v));
+      if(W['b'+i]!==v){ W['b'+i]=v; bars[i].style.transform='scaleY('+v+')' }
+    }
+    lip(now);
+    run=RAF(frame);
+  }
+  /* ⑥ 🗣 말하는 입 — 루프가 돌면 음성 진폭으로(vz-lip), 아니면 CSS 3프레임(vz-say) */
+  function lip(now){
+    if(!sayRig||!sayAn)return;
+    if(now<sayFrom||now>sayTo)return;
+    if(!vbuf||vbuf.length!==sayAn.fftSize)vbuf=new Uint8Array(sayAn.fftSize);
+    sayAn.getByteTimeDomainData(vbuf);
+    let s=0; for(let i=0;i<vbuf.length;i+=2){ const d=(vbuf[i]-128)/128; s+=d*d }
+    const rms=Math.sqrt(s/(vbuf.length/2));
+    sayRig.classList.add('vz-lip');
+    put(sayRig,'m','--vz-m',q(Math.max(.35,Math.min(1.25,.35+rms*7))));
+  }
+  function lipOff(){
+    clearTimeout(sayT1); clearTimeout(sayT2);
+    if(sayRig){ sayRig.classList.remove('vz-say','vz-lip'); sayRig.style.removeProperty('--vz-m'); delete W.m }
+    sayRig=null; sayTo=0;
+  }
+  return {
+    wake,
+    layout(){ if(built){ layout(); wake() } },
+    /** 사건 한 번 — ★다음 정박★ 에 맞춰(최대 300ms 대기) 막대·링·오로라가 한 번 더 차오른다 */
+    kick(k){
+      if(!run||!on())return;
+      let d=0;
+      if(smp){ const nb2=smp.beatAt+4*smp.sp, hn=FX.bgm.heard(); if(hn!=null){ d=nb2-hn; if(d>.3||d<0)d=0 } }
+      const now=performance.now(), cur=now>=kickAt?kickK*Math.exp(-(now-kickAt)/260):0;
+      kickAt=now+d*1000; kickK=Math.min(1,Math.max(cur,k||.5));
+    },
+    /** 🗣 음성 칭찬 재생 — dms 뒤 시작, dur(ms) 동안. g = 음성 게인 노드(진폭 탭용) */
+    voice(dms,dur,g){
+      if(!on()||MOTIONLESS())return;
+      const r=rigEl(); if(!r)return;
+      lipOff();
+      sayRig=r; const now=performance.now();
+      sayFrom=now+dms; sayTo=sayFrom+dur;
+      sayAn=null;
+      if(run&&g&&g.context){ try{ const an=g.context.createAnalyser(); an.fftSize=256; g.connect(an); sayAn=an }catch(e){ sayAn=null } }
+      sayT1=setTimeout(()=>{ if(sayRig===r)r.classList.add('vz-say') },dms);
+      sayT2=setTimeout(()=>{ if(sayRig===r)lipOff() },dms+dur+60);
+      VIZ.kick(.5);
+    },
+    toggle(){ S.viz=S.viz===false; save(); if(!S.viz)stop(); wake(); return S.viz },
+    on,
+    /** 검증·디버그용 — 지금 프레임의 값 */
+    sample(){ return {run:!!run, e:+lastE.toFixed(3), pulse:+lastP.toFixed(3), heat:+heat.toFixed(3),
+      smp:smp&&Object.assign({},smp), bars:nb, kickK:+kickK.toFixed(2),
+      say:!!sayRig, lip:!!(sayRig&&sayRig.classList.contains('vz-lip'))} }
+  };
+})();
+window.__vizWake=()=>VIZ.wake();
+document.addEventListener('visibilitychange',()=>VIZ.wake());
+window.addEventListener('resize',()=>VIZ.layout());
+try{ const mq=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)');
+  mq&&mq.addEventListener&&mq.addEventListener('change',()=>VIZ.wake()) }catch(e){}
+/* 🎶 사건 → 다음 박에 한 번 더 — 정답(콤보 비례) · 마일스톤 · 완료 */
+['right','milestone','finish'].forEach(k=>{
+  const f=FX[k]; if(typeof f!=='function')return;
+  FX[k]=function(el,c){ try{ VIZ.kick(k==='right'?Math.min(.85,.35+(+c||0)*.04):.95) }catch(e){} return f.apply(this,arguments) };
+});
+
 /* ═══════════ 환경설정 — 테마 · 글자 크기 ═══════════ */
 /* 테마·글자크기는 <head> 인라인 스크립트가 먼저 읽는 별도 키에도 함께 써 둔다(FOUC 방지).
    사이트 구분은 경로 — data.js 보다 먼저 실행되므로 storeKey 를 알 수 없기 때문. */
@@ -6911,6 +7124,7 @@ function setMotion(off){
   document.documentElement.classList.toggle('nomotion',!!off);
   const p=$('themePop'); if(p)paintThemePop(p);
   FX.toast(off?'🎬 모션 끔 — 조용한 화면':'🎬 모션 켬','good',1200);
+  try{ VIZ.wake() }catch(e){}
 }
 function paintThemePop(d){
   d.innerHTML=THEMES.map(t=>
@@ -6933,6 +7147,11 @@ function paintThemePop(d){
    +`<button class="thopt ${S.voice===false?'on':''}" id="thVoice">
        <span class="the">🗣</span>
        <span class="thn">${S.voice===false?'음성 칭찬 켜기':'음성 칭찬 끄기'}<i>${S.voice===false?'지금은 음성이 꺼져 있어요':'정답에 짧게 칭찬 · 기계 생성 음성(Supertonic 3, OpenRAIL-M)'}</i></span>
+     </button>`
+   /* 🎶 음악 시각화 — 박자 펄스·하단 스펙트럼(배경음악이 켜져 있을 때만 움직인다) */
+   +`<button class="thopt ${S.viz===false?'on':''}" id="thViz">
+       <span class="the">🎶</span>
+       <span class="thn">${S.viz===false?'음악 시각화 켜기':'음악 시각화 끄기'}<i>${S.viz===false?'지금은 시각화가 꺼져 있어요':'배경음악 박자에 맞춰 가장자리가 숨쉽니다 · 글자는 움직이지 않음'}</i></span>
      </button>`;
 }
 /** 테마 고르기 — 이름만으로는 감이 안 오므로 ★작은 색 견본★ 을 함께 보여 준다 */
@@ -6948,6 +7167,8 @@ function themePop(){
     if(e.target.closest('#thMotion')){ setMotion(!motionOff()); return }
     if(e.target.closest('#thVoice')){ const on=VOICE.toggle(); paintThemePop(d);
       FX.toast(on?'🗣 음성 칭찬 켬':'🗣 음성 칭찬 끔','good',1100); return }
+    if(e.target.closest('#thViz')){ const on=VIZ.toggle(); paintThemePop(d);
+      FX.toast(on?'🎶 음악 시각화 켬':'🎶 음악 시각화 끔','good',1100); return }
     if(e.target.closest('#thHaptic')){ S.haptic=S.haptic===false; save(); paintThemePop(d);
       if(S.haptic)FEEL.buzz('right',{c:0});                       /* 켤 때 확인 진동 */
       FX.toast(S.haptic?'📳 진동 켬':'📳 진동 끔','good',1100); return }
@@ -10752,7 +10973,20 @@ function tick(el){
    첫 조작(클릭·키·터치) 때 깨우고, 필요하면 장면을 다시 건다. */
 (function(){
   let done=false;
+  /* 🎵 ★여러 탭이어도 BGM 은 한 곳에서만★ — 같은 출처(학습사이트 전부가 gisulsa-site 아래)의 탭끼리
+     BroadcastChannel 로 '내가 튼다' 를 알린다. 마지막으로 조작했거나 앞으로 나온 탭이 가져가고,
+     나머지는 페이드아웃 후 양보한다(장면 전환이 와도 다시 틀지 않음). 미지원 브라우저는 예전처럼 동작. */
+  const TAB=Math.random().toString(36).slice(2);
+  let ch=null; try{ ch=new BroadcastChannel('gs-bgm') }catch(e){}
+  if(ch)ch.onmessage=e=>{ const d=e.data||{}; if(d.t==='claim'&&d.id!==TAB)FX.bgm.yieldTo() };
+  function claim(){
+    if(document.hidden||S.bgm!==true)return;
+    FX.bgm.claim();
+    try{ ch&&ch.postMessage({t:'claim',id:TAB}) }catch(e){}
+  }
+  window.__bgmClaim=claim;
   function wake(){
+    claim();
     const A=FX.snd.ctx&&FX.snd.ctx();
     if(A&&A.state==='suspended')A.resume().catch(()=>{});
     /* 🎵 기본 켜짐 BGM — ★첫 조작에서 비로소 컨텍스트를 만들고 페이드인★ */
@@ -10778,7 +11012,7 @@ function applyBgm(){
 }
 function toggleBgm(){
   S.bgm=(S.bgm!==true); save(); applyBgm();
-  if(S.bgm===true){ FX.bgm.scene(BGM_SCENE[view]||'home');
+  if(S.bgm===true){ try{ window.__bgmClaim&&window.__bgmClaim() }catch(e){} FX.bgm.scene(BGM_SCENE[view]||'home');
     FX.toast('🎵 배경음악 켬 — 화면에 맞춰 바뀝니다','good',2000) }
   else { FX.bgm.stop(); FX.toast('🎵 배경음악 끔','good',1400) }
 }
