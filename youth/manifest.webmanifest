@@ -1,0 +1,30 @@
+{
+ "name": "청소년지도사 2급",
+ "short_name": "청소년",
+ "description": "청소년지도사 2급 = 육성제도·법령 + 지도방법 + 발달·상담 이론가 짝 + 문화 관점 + 활동·수련 + 프로그램 개발·평가 모형 + 문제 이론·보호 + 복지",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#6366f1",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
