@@ -655,6 +655,7 @@ button.cell:hover:not(:disabled){border-color:var(--ac);background:color-mix(in 
 button.cell:disabled{color:var(--tx3);cursor:default}
 
 footer{max-width:1180px;margin:0 auto;padding:20px;color:var(--tx3);font-size:12px;border-top:1px solid var(--line);line-height:1.9}
+footer .vcred{opacity:.75;font-size:11px}
 kbd{background:var(--card2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 6px;font-size:11.5px;font-family:ui-monospace,monospace}
 
 /* ═══ 🎉 보상 연출(FX) ═══ */
@@ -4322,6 +4323,8 @@ const fillDef=(k,def)=>{S[k]=Object.assign({},def,S[k]||{})};
 /* 🎵 배경음악 — ★저장값이 없으면 켜짐★. 사용자가 직접 끈 경우(false)만 존중한다.
    (실제 재생은 첫 클릭·키 입력 뒤 — 브라우저 자동재생 정책) */
 if(typeof S.bgm!=='boolean')S.bgm=true;
+/* 🗣 음성 칭찬 — ★저장값이 없으면 켜짐★(S.sound 가 꺼지면 함께 무음) */
+if(typeof S.voice!=='boolean')S.voice=true;
 fillDef('streak',{cur:0,max:0,lastDate:'',freeze:1,freezeWeek:''});
 fillDef('goal',{target:15,date:'',done:0,hit:false});
 fillDef('xp',{total:0});
@@ -4434,6 +4437,7 @@ function addXp(q,ok,wasWrong){
   const before=xpLv(S.xp.total);
   S.xp.total+=g;
   try{ XPBAR.gain(g) }catch(e){}                /* ⚡ 눈앞에서 차오른다 */
+  if(xpLv(S.xp.total)>before){ try{ VOICE.flagLevelUp() }catch(e){} }   /* 🗣 같은 답의 celebrate 보다 먼저 */
   if(xpLv(S.xp.total)>before)setTimeout(()=>{FX.snd.levelup();MASCOT.level(xpLv(S.xp.total));
     FX.milestone(`⚡ Lv.${xpLv(S.xp.total)} 달성!`);
     setTimeout(()=>TALK.now('levelup'),2400);   /* 🎭 넷이 나와 한 마디씩 */},520);
@@ -6351,6 +6355,15 @@ const FX=(()=>{
     },
     /** 콤보 → 열기 단계(0~1). 3연속부터 열리고 12연속에서 최대 */
     heatLevel(c){ return c>=12?1:c>=8?.72:c>=5?.45:c>=3?.2:0 },
+    /** 🗣 VOICE 리듬 동기 — 다음 16분음표의 오디오 시각(t)·스텝 번호(step)·간격(sp,초).
+        BGM 이 꺼졌거나 박이 없는 장면(read·rest·exam)이면 null */
+    grid(){
+      if(!bgm||!bgm.timer||!bgm.scene||S.bgm!==true)return null;
+      const sc=SCENE[bgm.scene]; if(!sc||!sc.bpm||!sc.rhythm)return null;
+      const T=bgm.theme||THEMES.jazz;
+      const sp=60/(sc.bpm*(T.tm||1)*tempoNow()*(1+(bgm.boost||0)*.05))/4;
+      return {t:bgm.next, step:bgm.step, sp};
+    },
     /** 지금의 열기 상태 — 검증·디버그용 */
     state(){ return bgm?{boost:bgm.boost||0, lp:bgm.lp?Math.round(bgm.lp.frequency.value):0,
       scene:bgm.scene, theme:bgm.tname, seed:bgm.seed, voices:bgm.live,
@@ -6447,6 +6460,159 @@ const FX=(()=>{
   return API;
 })();
 
+/* ═══════════ 🗣 VOICE — 정답 음성 칭찬 ═══════════
+   Supertonic 3(OpenRAIL-M) 로 미리 합성한 짧은 칭찬 클립을 ★BGM 박에 맞춰★ 재생한다.
+   설계 요점
+     · 파일은 전 사이트 공유(../voice/) — manifest.json 이 목록·길이·첫 강세(onset)를 준다
+     · ★FX 의 AudioContext 를 그대로 쓴다★ — BGM 과 같은 시계라야 박 양자화가 맞는다.
+       컨텍스트를 새로 만들지 않으므로 자동재생 정책·jsdom 에서 조용히 빠진다
+     · 우선순위 perfect>levelup>streak10>streak5>streak3>comeback>hard>ok, 한 번에 한 마디
+     · 일반 정답은 확률 50% + 쿨다운(피로 관리), 콤보 단계·레벨업·만점은 항상
+     · 카테고리별 셔플 백 — 같은 클립 연속 금지. ★다음에 나올 1개만★ 미리 디코드(가볍게)
+     · 효과음(타격) → 음성 순서. 음성은 타격 뒤 ≥180ms, 다음 박/반박에 onset 정렬(최대 250ms 지연)
+     · 재생 동안 BGM 덕킹(FX.bgm.duck). S.sound 꺼짐·S.voice 꺼짐·모의고사 중엔 무음 */
+const VOICE=(()=>{
+  const ORDER=['perfect','levelup','streak10','streak5','streak3','comeback','hard','ok'];
+  const BASE=(CPPG.meta&&CPPG.meta.voiceBase)||'../voice/';
+  const GAIN=.55;            /* -16 LUFS 클립 → 합성 효과음(0.1대 게인+컴프)과 체감 균형 */
+  const MAXQ=.25;            /* 박 양자화 최대 지연(초) */
+  const LEAD={hit:.18, milestone:.36, levelup:.55, finish:.85};  /* 효과음 임팩트 뒤 여유 */
+  const OK_P=.5, OK_COOL=6000, FAST_MS=1500;
+  const ok=()=>typeof window!=='undefined'&&S.voice!==false&&S.sound!==false;
+  let man=null, loading=null, EXT=null, armed=false;
+  const buf={}, bag={}, last={}, hist=[];   /* hist — 최근 재생 10건(검증용: 카테고리·클립·지연·박 정렬) */
+  let AL=null;
+  let lastSay=0, lastAnswerAt=0, prevMiss=false, okStreakSilent=0, flagLv=false, cur=null;
+
+  const ctx=()=>{ try{ return FX.snd.ctx&&FX.snd.ctx() }catch(e){ return null } };
+  function ext(){
+    if(EXT)return EXT;
+    try{ const a=document.createElement('audio');
+      EXT=a.canPlayType&&a.canPlayType('audio/ogg; codecs="opus"')?'ogg':'mp3' }catch(e){ EXT='mp3' }
+    return EXT;
+  }
+  /** manifest — 첫 사용자 조작 뒤 1회. 실패(file://·오프라인)하면 조용히 비활성 */
+  function init(){
+    if(loading||typeof fetch!=='function')return loading;
+    loading=fetch(BASE+'manifest.json',{cache:'force-cache'}).then(r=>r.ok?r.json():null)
+      .then(m=>{ man=m; if(m)ORDER.forEach(c=>{ if(m[c]&&m[c].length)warm(c) }); return m })
+      .catch(()=>null);
+    return loading;
+  }
+  /** 셔플 백 — 다 쓰면 다시 섞되, 직전에 쓴 클립이 맨 앞에 오지 않게 */
+  function peek(c){
+    const L=(man&&man[c])||[]; if(!L.length)return null;
+    if(!bag[c]||!bag[c].length){
+      const b=L.map((_,i)=>i);
+      for(let i=b.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [b[i],b[j]]=[b[j],b[i]] }
+      if(b.length>1&&b[0]===last[c])b.push(b.shift());
+      bag[c]=b;
+    }
+    return L[bag[c][0]];
+  }
+  function take(c){ const it=peek(c); if(it){ last[c]=bag[c].shift() } return it }
+  /** 다음 클립 1개만 디코드 — 카테고리 8개 × 1클립 ≈ 40KB */
+  function warm(c){
+    const it=peek(c), A=ctx(); if(!it||buf[it.f]||!A||typeof fetch!=='function')return;
+    buf[it.f]='…';
+    const get=e=>fetch(BASE+it.f+'.'+e).then(r=>{ if(!r.ok)throw 0; return r.arrayBuffer() })
+      .then(ab=>new Promise((res,rej)=>{ try{ const p=A.decodeAudioData(ab,res,rej); if(p&&p.then)p.then(res,rej) }catch(x){ rej(x) } }));
+    get(ext()).catch(()=>ext()==='ogg'?(EXT='mp3',get('mp3')):Promise.reject())   /* Opus 디코드 실패 → mp3 */
+      .then(b=>{ buf[it.f]=b }).catch(()=>{ delete buf[it.f] });
+  }
+  /** 박 양자화 — earliest(오디오 시각)에 시작하면 onset 이 want 에 온다.
+      다음 박(4스텝) → 안 되면 반박(2스텝)에 onset 을 맞추고, 둘 다 250ms 넘으면 즉시 */
+  function align(earliest,onset){
+    let g=null; try{ g=FX.bgm.grid&&FX.bgm.grid() }catch(e){}
+    AL={grid:!!g,mode:'now'};
+    if(!g||!(g.sp>0))return earliest;
+    const want=earliest+onset, k0=Math.ceil((want-g.t)/g.sp-1e-6);
+    for(const m of [4,2]){
+      let k=k0; while((((g.step+k)%m)+m)%m)k++;
+      const tt=g.t+k*g.sp;
+      if(tt-want<=MAXQ){ AL={grid:true,mode:m===4?'beat':'half',step:g.step+k,sp:+g.sp.toFixed(4),shift:+(tt-want).toFixed(3)}; return tt-onset }
+    }
+    AL.mode='late';
+    return earliest;
+  }
+  /** 실제 재생 — 준비 안 됐으면 ★기다리지 않고★ 건너뛴다(늦은 칭찬은 엇박이다) */
+  function play(c,lead){
+    const A=ctx(); if(!A||!man||A.state!=='running')return false;
+    const it=peek(c); if(!it)return false;
+    const b=buf[it.f]; if(!b||b==='…'){ warm(c); return false }
+    take(c);
+    try{
+      const on=(it.onset||0)/1000, t0=align(A.currentTime+lead,on);
+      const src=A.createBufferSource(), g=A.createGain();
+      g.gain.value=GAIN*(S.vol==null?.7:S.vol)*(S.voiceVol==null?1:S.voiceVol);
+      src.buffer=b; src.connect(g); g.connect(A.destination);
+      src.start(t0);
+      if(cur)try{ cur.stop(t0) }catch(e){}            /* 겹치면 앞 클립을 새 클립 시작 순간에 끊는다 */
+      cur=src; src.onended=()=>{ if(cur===src)cur=null };
+      const dms=Math.max(0,(t0-A.currentTime)*1000);
+      setTimeout(()=>{ try{ FX.bgm.duck((it.dur||900)+250) }catch(e){} },Math.max(0,dms-80));
+      lastSay=performance.now()+dms;
+      hist.push(Object.assign({c,f:it.f,lead,wait:+(dms/1000).toFixed(3)},AL)); if(hist.length>10)hist.shift();
+    }catch(e){ return false }
+    warm(c);                                          /* 다음 차례 미리 */
+    return true;
+  }
+  /** 일반 정답 빈도 — 50%, 6초 쿨다운, 빠른 연타(<1.5s) 생략, 두 번 연속 침묵 뒤엔 말한다 */
+  function okGate(prevAt){
+    const now=performance.now();
+    if(now-lastSay<OK_COOL)return false;
+    if(now-prevAt<FAST_MS)return false;
+    if(okStreakSilent>=2||Math.random()<OK_P){ okStreakSilent=0; return true }
+    okStreakSilent++; return false;
+  }
+  const isPractice=()=>{ try{ return !quiz||quiz.mode==='practice' }catch(e){ return true } };
+
+  return {
+    /** 첫 사용자 조작에서 1회 — manifest·첫 클립 예열 */
+    arm(){ if(armed)return; armed=true; if(ok())init() },
+    /** addXp 에서 레벨이 오른 순간 동기 호출 — 같은 답의 celebrate 보다 먼저 온다 */
+    flagLevelUp(){ flagLv=true },
+    /** celebrate(ok,…) 에서 호출 — 이번 답에 할 한 마디를 고른다 */
+    answer(o){
+      const now=performance.now(), was=lastAnswerAt; lastAnswerAt=now;
+      if(!o.ok){ prevMiss=true; flagLv=false; return null }
+      const miss=prevMiss; prevMiss=false;
+      if(!ok()||!isPractice()){ flagLv=false; return null }
+      if(!man){ init(); flagLv=false; return null }
+      ORDER.forEach(warm);                         /* 컨텍스트가 늦게 생긴 경우의 예열(이미 있으면 즉시 반환) */
+      const c=o.combo||0;
+      let cat=null, lead=LEAD.hit;
+      if(flagLv){ cat='levelup'; lead=LEAD.levelup+.52 }          /* addXp 의 520ms 지연 + 임팩트(+380ms) 뒤 */
+      else if(c>=10&&(c===10||c===12||c%5===0)){ cat='streak10'; lead=LEAD.milestone }
+      else if(c===5||c===8){ cat='streak5'; lead=LEAD.milestone }
+      else if(c===3){ cat='streak3'; lead=LEAD.milestone }
+      else if(miss||o.redeem)cat='comeback';
+      else if(o.hard)cat='hard';
+      else if(okGate(was))cat='ok';
+      flagLv=false;
+      if(!cat)return null;
+      /* comeback·hard 도 쿨다운 절반은 지킨다(연속 대사 피로) — 콤보 단계·레벨업은 항상 */
+      if((cat==='comeback'||cat==='hard')&&performance.now()-lastSay<OK_COOL/2)return null;
+      return play(cat,lead)?cat:null;
+    },
+    /** finishQuiz → FX.finish 직후 — 만점(또는 5문항+ 90점+)이면 perfect */
+    finish(pct,total){
+      if(!ok()||!man)return null;
+      if(!(pct===100||(pct>=90&&total>=5)))return null;
+      return play('perfect',LEAD.finish)?'perfect':null;
+    },
+    /** 설정 토글 — 켤 때 확인용으로 짧은 한 마디 */
+    toggle(){
+      S.voice=S.voice===false; save();
+      if(S.voice){ init(); setTimeout(()=>{ const A=ctx(); if(A&&A.state==='suspended')A.resume().catch(()=>{}); play('ok',.05) },120) }
+      else if(cur){ try{ cur.stop() }catch(e){} cur=null }
+      return S.voice;
+    },
+    /** 검증·디버그용 */
+    state(){ return {loaded:!!man, ext:EXT, ready:Object.keys(buf).filter(k=>buf[k]!=='…'), lastSay, hist:hist.slice()} }
+  };
+})();
+
 /* ═══════════ 환경설정 — 테마 · 글자 크기 ═══════════ */
 /* 테마·글자크기는 <head> 인라인 스크립트가 먼저 읽는 별도 키에도 함께 써 둔다(FOUC 방지).
    사이트 구분은 경로 — data.js 보다 먼저 실행되므로 storeKey 를 알 수 없기 때문. */
@@ -6510,7 +6676,12 @@ function paintThemePop(d){
    +(RICH&&FEEL.can()?`<button class="thopt ${S.haptic===false?'on':''}" id="thHaptic">
        <span class="the">📳</span>
        <span class="thn">${S.haptic===false?'진동 켜기':'진동 끄기'}<i>${S.haptic===false?'지금은 진동이 꺼져 있어요':'정답·콤보·레벨업을 손끝으로 알립니다'}</i></span>
-     </button>`:'');
+     </button>`:'')
+   /* 🗣 음성 칭찬 — 기계 생성 음성 표기(OpenRAIL-M) */
+   +`<button class="thopt ${S.voice===false?'on':''}" id="thVoice">
+       <span class="the">🗣</span>
+       <span class="thn">${S.voice===false?'음성 칭찬 켜기':'음성 칭찬 끄기'}<i>${S.voice===false?'지금은 음성이 꺼져 있어요':'정답에 짧게 칭찬 · 기계 생성 음성(Supertonic 3, OpenRAIL-M)'}</i></span>
+     </button>`;
 }
 /** 테마 고르기 — 이름만으로는 감이 안 오므로 ★작은 색 견본★ 을 함께 보여 준다 */
 function themePop(){
@@ -6523,6 +6694,8 @@ function themePop(){
   document.body.appendChild(d);
   d.onclick=e=>{
     if(e.target.closest('#thMotion')){ setMotion(!motionOff()); return }
+    if(e.target.closest('#thVoice')){ const on=VOICE.toggle(); paintThemePop(d);
+      FX.toast(on?'🗣 음성 칭찬 켬':'🗣 음성 칭찬 끔','good',1100); return }
     if(e.target.closest('#thHaptic')){ S.haptic=S.haptic===false; save(); paintThemePop(d);
       if(S.haptic)FEEL.buzz('right',{c:0});                       /* 켤 때 확인 진동 */
       FX.toast(S.haptic?'📳 진동 켬':'📳 진동 끔','good',1100); return }
@@ -10333,6 +10506,7 @@ function tick(el){
     /* 🎵 기본 켜짐 BGM — ★첫 조작에서 비로소 컨텍스트를 만들고 페이드인★ */
     if(S.bgm===true&&!FX.bgm.playing()){ FX.bgm.arm();
       if(!FX.bgm.playing())FX.bgm.scene(BGM_SCENE[view]||'home') }
+    try{ VOICE.arm() }catch(e){}                 /* 🗣 manifest·첫 클립 예열(1회) */
     if(A&&A.state==='running'&&done)return;
     done=true;
   }
@@ -10614,7 +10788,9 @@ function applyBrand(){
   $('brand').textContent=m.brand||m.name;
   $('brandTag').textContent=m.tag||'';
   $('heroH1').textContent=m.h1||m.name;
-  $('foot').innerHTML=(m.footer||[]).map(l=>`<div>${l}</div>`).join('');
+  $('foot').innerHTML=(m.footer||[]).map(l=>`<div>${l}</div>`).join('')
+    /* 🗣 OpenRAIL-M — 공개 배포 시 기계 생성 음성임을 밝힌다 */
+    +`<div class="vcred">🗣 음성 칭찬: 기계 생성 음성(Supertonic 3, OpenRAIL-M)</div>`;
   /* 구분 단위(과목·영역) 라벨도 meta 를 따른다 */
   $('lblSubList').textContent=`${UNIT}별 출제 비중 · 암기 진도`;
   $('lblQuizSubj').textContent=UNIT;
@@ -14102,6 +14278,8 @@ const WRONG_MSGS=['오답노트에 담았습니다 — 해설을 확인하세요
   '헷갈리는 지점을 찾았습니다 — 해설의 오답 이유를 보세요','오답노트에서 다시 만나면 그때 되찾으면 됩니다'];
 /** 정답/오답 순간의 보상 연출 */
 function celebrate(ok,gain,wasWrong,q,handled){
+  /* 🗣 음성 칭찬 — 카테고리 선택·박 정렬은 VOICE 가 한다(모의고사 중엔 스스로 침묵) */
+  try{ VOICE.answer({ok,combo,hard:!!(q&&q.d===3),redeem:!!(ok&&wasWrong)}) }catch(e){}
   const card=$('qCard');
   card.classList.remove('flash-ok','flash-no'); void card.offsetWidth;
   if(ok){
@@ -14676,6 +14854,7 @@ function finishQuiz(){
   })();
   setTimeout(()=>{
     FX.finish(pass,pct); MASCOT.end(pass);
+    try{ VOICE.finish(pct,total) }catch(e){}       /* 🗣 만점·90점+ 마무리 한 마디 */
     if(pass)FX.toast(pct>=90?`🏆 ${pct}점 — 최상위권!`:`🎉 합격선 통과 ${pct}점`,'hype',2400);
     else FX.toast(`${pct}점 — 오답노트로 보강하세요`,'bad',2000);
   },420);
