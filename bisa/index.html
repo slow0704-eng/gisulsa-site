@@ -4400,6 +4400,7 @@ function touchStreak(){
   }else S.streak.cur=1;
   S.streak.max=Math.max(S.streak.max,S.streak.cur);
   S.streak.lastDate=today;
+  try{ VOICE.flag('day',S.streak.cur) }catch(e){}   /* 🗣 오늘 첫 정답까지 VOICE 가 보관 */
   const wk=weekKey();
   if(S.streak.freezeWeek!==wk){S.streak.freeze=Math.max(S.streak.freeze,Math.min(1,S.streak.freeze+1));S.streak.freezeWeek=wk}
   save(); updDash();
@@ -4421,12 +4422,14 @@ function touchGoal(n){
   if(S.goal.done>=10)try{ WEEK.hit('q') }catch(e){}     /* 📅 🧩 칸 — 하루 10문항 */
   if(!S.goal.hit&&S.goal.done>=S.goal.target){
     S.goal.hit=true;
+    try{ VOICE.flag('goal') }catch(e){}            /* 🗣 같은 답의 VOICE.answer 보다 먼저 */
     /* ★오늘치를 끝낸 순간★ 은 하루의 분기점이다 — 시대 전환급으로 울린다 */
     FX.snd.era(); FX.confetti(120);
     FX.toast(`🎯 오늘 목표 ${S.goal.target}문제 달성!`,'hype',3400);
     MASCOT.era(`오늘 목표 ${S.goal.target}문제 끝냈어요!`);
     setTimeout(()=>TALK.now('goal'),2600);        /* 🎭 넷이 나와 한 마디씩 주고받는다 */
   }
+  if(S.goal.hit&&S.goal.done===S.goal.target*2){ try{ VOICE.flag('goal2') }catch(e){} }   /* 🗣 목표의 두 배 */
   save(); updDash();
 }
 /** XP — 정답만 적립하고, 틀렸던 문제를 다시 맞히면 더 준다(복습 유도) */
@@ -6460,29 +6463,68 @@ const FX=(()=>{
   return API;
 })();
 
-/* ═══════════ 🗣 VOICE — 정답 음성 칭찬 ═══════════
-   Supertonic 3(OpenRAIL-M) 로 미리 합성한 짧은 칭찬 클립을 ★BGM 박에 맞춰★ 재생한다.
-   설계 요점
-     · 파일은 전 사이트 공유(../voice/) — manifest.json 이 목록·길이·첫 강세(onset)를 준다
+/* ═══════════ 🗣 VOICE v2 — 정답 음성 칭찬 ═══════════
+   Supertonic 3(OpenRAIL-M) 로 미리 합성한 216개 클립을 ★상황 판별 → 한 마디 → BGM 박 정렬★ 로 재생한다.
+   설계: _공용음성/DESIGN.md (트리거 39 · 우선순위 · 빈도 · 에스컬레이션 · 예고 · 레어/초레어 · 피로 관리)
+     · 레인 M(마일스톤 — 쿨다운 면제·항상) / S(상황 — 3초 쿨다운) / B(일반 — 6초·확률 .35)
+     · 한 답 = 한 마디. 탈락한 M 이벤트 1개만 다음 정답으로 이월(20초, 연쇄 금지)
+     · 마일스톤 직후 1문항은 일부러 침묵(hush) — 대비가 있어야 터지는 순간이 산다
+     · 연속 2회 말했으면 3번째 상황·일반 대사는 쉰다(consecVoiced)
+     · 등급 추첨: 초레어 3%(세션 1회·8번째 답 이후) · 레어 9%(세션 3회) · 25발화 무레어면 레어 2배
+       ★랜덤은 말에만★ — 점수·XP 는 결정적(엔진 lucky 원칙과 같다)
+     · 셔플 백(트리거|등급|조건) · 직전과 같은 첫 어절 금지 · 레어는 세션·최근 30개 미중복
      · ★FX 의 AudioContext 를 그대로 쓴다★ — BGM 과 같은 시계라야 박 양자화가 맞는다.
        컨텍스트를 새로 만들지 않으므로 자동재생 정책·jsdom 에서 조용히 빠진다
-     · 우선순위 perfect>levelup>streak10>streak5>streak3>comeback>hard>ok, 한 번에 한 마디
-     · 일반 정답은 확률 50% + 쿨다운(피로 관리), 콤보 단계·레벨업·만점은 항상
-     · 카테고리별 셔플 백 — 같은 클립 연속 금지. ★다음에 나올 1개만★ 미리 디코드(가볍게)
-     · 효과음(타격) → 음성 순서. 음성은 타격 뒤 ≥180ms, 다음 박/반박에 onset 정렬(최대 250ms 지연)
-     · 재생 동안 BGM 덕킹(FX.bgm.duck). S.sound 꺼짐·S.voice 꺼짐·모의고사 중엔 무음 */
+     · 효과음(타격) → +lead → 다음 박/반박에 onset 정렬(최대 250ms) · 재생 동안 BGM 덕킹
+     · S.sound 꺼짐·S.voice 꺼짐·모의고사 진행 중엔 무음(종료 대사는 모드 무관) */
 const VOICE=(()=>{
-  const ORDER=['perfect','levelup','streak10','streak5','streak3','comeback','hard','ok'];
   const BASE=(CPPG.meta&&CPPG.meta.voiceBase)||'../voice/';
   const GAIN=.55;            /* -16 LUFS 클립 → 합성 효과음(0.1대 게인+컴프)과 체감 균형 */
   const MAXQ=.25;            /* 박 양자화 최대 지연(초) */
-  const LEAD={hit:.18, milestone:.36, levelup:.55, finish:.85};  /* 효과음 임팩트 뒤 여유 */
-  const OK_P=.5, OK_COOL=6000, FAST_MS=1500;
-  const ok=()=>typeof window!=='undefined'&&S.voice!==false&&S.sound!==false;
-  let man=null, loading=null, EXT=null, armed=false;
-  const buf={}, bag={}, last={}, hist=[];   /* hist — 최근 재생 10건(검증용: 카테고리·클립·지연·박 정렬) */
-  let AL=null;
-  let lastSay=0, lastAnswerAt=0, prevMiss=false, okStreakSilent=0, flagLv=false, cur=null;
+  /* ── 조정 손잡이(DESIGN §3.4) ── */
+  const OK_P=.35, OK_P_LONG=.25, OK_P_NIGHT=.3, B_COOL=6000, S_COOL=3000, FAST_MS=1500;
+  const P_SUPER=.03, P_RARE=.09, CARRY_MS=20000, SUPER_AFTER=8, RARE_CAP=3, SUPER_CAP=1;
+  const LONG_MS=40*60000, WS_COOL=90000;
+  /* 트리거 표 — P(작을수록 우선) · lane · lead(효과음 임팩트 뒤 여유, 초) */
+  const T={
+    goal_hit:{P:1,L:'M',lead:.55}, goal_double:{P:1.5,L:'M',lead:.55}, levelup:{P:2,L:'M',lead:1.07},
+    combo10:{P:3,L:'M',lead:.36}, combo15:{P:3,L:'M',lead:.36}, combo20:{P:3,L:'M',lead:.36}, combo25:{P:3,L:'M',lead:.36},
+    day_streak:{P:4,L:'M',lead:.36}, unit:{P:5,L:'M',lead:.7}, ach:{P:5,L:'M',lead:.6},
+    combo3:{P:6,L:'M',lead:.36}, combo5:{P:6,L:'M',lead:.36}, combo8:{P:6,L:'M',lead:.36},
+    combo_best:{P:7,L:'M',lead:.36}, 'return':{P:8,L:'M',lead:.18},
+    day_first:{P:9,L:'S',lead:.18}, goal_near:{P:10,L:'S',lead:.18}, tease:{P:11,L:'S',lead:.18},
+    redeem_long:{P:12,L:'S',lead:.18}, reversal:{P:13,L:'S',lead:.18}, redeem:{P:14,L:'S',lead:.18},
+    comeback:{P:15,L:'S',lead:.18}, hard:{P:16,L:'S',lead:.18}, pb:{P:17,L:'S',lead:.18},
+    long_session:{P:18,L:'S',lead:.18}, slow:{P:19,L:'S',lead:.18}, fast:{P:20,L:'S',lead:.18},
+    session_first:{P:21,L:'S',lead:.18}, ok:{P:22,L:'B',lead:.18}, ok_night:{P:22,L:'B',lead:.18},
+    combo_break:{L:'W',lead:.6}, wrong_soft:{L:'W',lead:.18}, toggle:{L:'X',lead:.05},
+    fin_perfect:{L:'F',lead:.85}, fin_exam_pass:{L:'F',lead:.85}, fin_high:{L:'F',lead:.85},
+    fin_pass:{L:'F',lead:.85}, fin_near:{L:'F',lead:.85}, fin_grow:{L:'F',lead:.85}
+  };
+  const MILE=c=>c===3||c===5||c===8||c===10||c===12||c===15||c===20||(c>=25&&c%5===0);
+  const STREAK_D={3:'d3',7:'d7',14:'d14',30:'d30',50:'d50',100:'d100'};
+  const TEASE={4:['to5',.35],9:['to10',.8],14:['to15',.6],19:['to20',1]};
+  const on=()=>typeof window!=='undefined'&&S.voice!==false&&S.sound!==false;
+  const rnd=()=>Math.random();
+  const now=()=>(typeof performance!=='undefined'&&performance.now)?performance.now():Date.now();
+  const today=()=>{ try{ return localDay() }catch(e){ return '' } };
+  const hour=()=>new Date().getHours();
+  const night=()=>{ const h=hour(); return h>=23||h<5 };
+  const tod=()=>{ const h=hour(); return h>=5&&h<7?'dawn':h>=7&&h<12?'morning':h>=12&&h<18?'afternoon':h>=18&&h<23?'evening':'late' };
+
+  let man=null, loading=null, EXT=null, armed=false, cur=null, AL=null;
+  const buf={}, bag={}, hist=[];
+  /* ── 상태 ── */
+  let lastSay=-1e9, lastAnswerAt=0, missRun=0, consecVoiced=0, hush=false, lastHead='', okSilent=0;
+  let carry=null, why='', sinceRare=0, visitFirst=true;
+  const flags={}; let flagsAt=0;   /* 엔진 이벤트 — 60초 안의 정답에만 쓴다(모의고사 종료 등에서 생긴 낡은 플래그 방지) */
+  const newSes=()=>({n:0,ok:0,c3:0,rare:0,sup:0,ach:0,wrongSoft:0,wsAt:-1e9,comboBreak:0,best:0,long:0,first:true,seen:{}});
+  let ses=newSes();
+  /* 방문 간격 — renderComeback 이 부팅 때 lastSeen 을 오늘로 덮기 전에 붙잡는다 */
+  let visitGap=0;
+  try{ visitGap=S.visit&&S.visit.lastSeen?dayDiff(S.visit.lastSeen,today()):0 }catch(e){}
+  const mem=()=>{ if(!S.voiceMem||typeof S.voiceMem!=='object')S.voiceMem={vday:'',gnear:'',gdbl:'',recent:[]};
+    if(!Array.isArray(S.voiceMem.recent))S.voiceMem.recent=[]; return S.voiceMem };
 
   const ctx=()=>{ try{ return FX.snd.ctx&&FX.snd.ctx() }catch(e){ return null } };
   function ext(){
@@ -6491,37 +6533,86 @@ const VOICE=(()=>{
       EXT=a.canPlayType&&a.canPlayType('audio/ogg; codecs="opus"')?'ogg':'mp3' }catch(e){ EXT='mp3' }
     return EXT;
   }
-  /** manifest — 첫 사용자 조작 뒤 1회. 실패(file://·오프라인)하면 조용히 비활성 */
+  /** manifest — 첫 사용자 조작 뒤 1회. 실패(file://·오프라인·404)하면 조용히 비활성 */
   function init(){
     if(loading||typeof fetch!=='function')return loading;
-    loading=fetch(BASE+'manifest.json',{cache:'force-cache'}).then(r=>r.ok?r.json():null)
-      .then(m=>{ man=m; if(m)ORDER.forEach(c=>{ if(m[c]&&m[c].length)warm(c) }); return m })
+    loading=fetch(BASE+'manifest.json',{cache:'no-cache'}).then(r=>r.ok?r.json():null)
+      .then(m=>{ man=(m&&typeof m==='object')?m:null; if(man)warmLikely(null); return man })
       .catch(()=>null);
     return loading;
   }
-  /** 셔플 백 — 다 쓰면 다시 섞되, 직전에 쓴 클립이 맨 앞에 오지 않게 */
-  function peek(c){
-    const L=(man&&man[c])||[]; if(!L.length)return null;
-    if(!bag[c]||!bag[c].length){
-      const b=L.map((_,i)=>i);
-      for(let i=b.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [b[i],b[j]]=[b[j],b[i]] }
-      if(b.length>1&&b[0]===last[c])b.push(b.shift());
-      bag[c]=b;
+  /* ── 풀·셔플 백 ── */
+  const tierOf=it=>it.tier||'common';
+  /** 트리거 풀에서 등급·조건에 맞는 줄. cond 가 있는 트리거는 일치 → 없으면 any(또는 무조건) */
+  function pool(trig,tier,cond){
+    const L=(man&&Array.isArray(man[trig]))?man[trig]:[];
+    let P=L.filter(it=>tierOf(it)===tier);
+    if(cond!==undefined){
+      const hit=P.filter(it=>it.cond===cond);
+      P=hit.length?hit:P.filter(it=>!it.cond||it.cond==='any');
+    }else P=P.filter(it=>!it.cond||it.cond==='any');
+    return P;
+  }
+  function bagOf(trig,tier,cond){
+    const k=trig+'|'+tier+'|'+(cond||''), P=pool(trig,tier,cond);
+    if(!P.length)return null;
+    if(!bag[k]||!bag[k].q.length||bag[k].n!==P.length){
+      const q=P.map(it=>it.f);
+      for(let i=q.length-1;i>0;i--){ const j=(rnd()*(i+1))|0; [q[i],q[j]]=[q[j],q[i]] }
+      if(q.length>1&&bag[k]&&q[0]===bag[k].last)q.push(q.shift());
+      bag[k]={q,n:P.length,last:bag[k]&&bag[k].last};
     }
-    return L[bag[c][0]];
+    return {k,P,b:bag[k]};
   }
-  function take(c){ const it=peek(c); if(it){ last[c]=bag[c].shift() } return it }
-  /** 다음 클립 1개만 디코드 — 카테고리 8개 × 1클립 ≈ 40KB */
-  function warm(c){
-    const it=peek(c), A=ctx(); if(!it||buf[it.f]||!A||typeof fetch!=='function')return;
-    buf[it.f]='…';
-    const get=e=>fetch(BASE+it.f+'.'+e).then(r=>{ if(!r.ok)throw 0; return r.arrayBuffer() })
+  const byF=(P,f)=>P.find(it=>it.f===f);
+  /** 다음 클립 고르기 — head 중복·레어 중복을 피해 최대 3번 다시 뽑는다. ready=디코드된 것만 */
+  function choose(trig,tier,cond,needReady){
+    const B=bagOf(trig,tier,cond); if(!B)return null;
+    const M=mem(), q=B.b.q;
+    /* 1차: 최근 30개 레어 제외 · 2차: 풀이 작아 전부 걸리면 최근 목록은 풀어 준다(세션 내 중복 금지는 유지) */
+    for(const strict of (tier==='common'?[false]:[true,false])){
+      for(let t=0;t<Math.min(q.length,4);t++){
+        const it=byF(B.P,q[t]); if(!it)continue;
+        if(t<3&&it.head&&it.head===lastHead&&q.length>1)continue;
+        if(tier!=='common'&&(ses.seen[it.f]||(strict&&M.recent.indexOf(it.f)>=0)))continue;
+        if(needReady&&!(buf[it.f]&&buf[it.f]!=='…')){ warmF(it.f); continue }
+        return {it,B,idx:t};
+      }
+    }
+    return null;
+  }
+  function commit(sel){ const q=sel.B.b.q; q.splice(sel.idx,1); sel.B.b.last=sel.it.f }
+  /** 디코드 1개 — Opus 실패 시 mp3 로 */
+  function warmF(f){
+    const A=ctx(); if(!f||buf[f]||!A||typeof fetch!=='function')return;
+    buf[f]='…';
+    const get=e=>fetch(BASE+f+'.'+e).then(r=>{ if(!r.ok)throw 0; return r.arrayBuffer() })
       .then(ab=>new Promise((res,rej)=>{ try{ const p=A.decodeAudioData(ab,res,rej); if(p&&p.then)p.then(res,rej) }catch(x){ rej(x) } }));
-    get(ext()).catch(()=>ext()==='ogg'?(EXT='mp3',get('mp3')):Promise.reject())   /* Opus 디코드 실패 → mp3 */
-      .then(b=>{ buf[it.f]=b }).catch(()=>{ delete buf[it.f] });
+    get(ext()).catch(()=>ext()==='ogg'?(EXT='mp3',get('mp3')):Promise.reject())
+      .then(b=>{ buf[f]=b }).catch(()=>{ delete buf[f] });
   }
-  /** 박 양자화 — earliest(오디오 시각)에 시작하면 onset 이 want 에 온다.
-      다음 박(4스텝) → 안 되면 반박(2스텝)에 onset 을 맞추고, 둘 다 250ms 넘으면 즉시 */
+  /** 트리거의 다음 차례(등급별) 미리 디코드 */
+  function warm(trig,cond){
+    if(!man||!man[trig])return;
+    ['common','rare','super'].forEach(tier=>{ const s=choose(trig,tier,cond,false); if(s)warmF(s.it.f) });
+  }
+  /** 다음에 나올 법한 것만 예열(DESIGN §7.2-6) — 세션당 실제 로드는 수십 개 */
+  function warmLikely(cx){
+    const c=(cx&&cx.combo)||0;
+    ['ok','comeback','hard','reversal','session_first','slow','fast','pb','redeem','wrong_soft'].forEach(t=>warm(t));
+    if(night())warm('ok_night');
+    if(mem().vday!==today())warm('day_first',tod());
+    if(flags.day)warm('day_streak',STREAK_D[flags.day]||'any');
+    if(visitGap>=3&&visitFirst)warm('return');
+    const nx=c<3?['combo3']:c<5?['combo5','tease']:c<8?['combo8','combo_best']:c<10?['combo10','tease','combo_best']
+      :c<15?['combo15','tease']:c<20?['combo20','tease']:['combo25'];
+    nx.forEach(t=>warm(t, t==='tease'?(TEASE[c+1]||TEASE[c+2]||['any'])[0]:undefined));
+    if(c>=4)warm('combo_break');
+    try{ if(cx&&cx.goalLeft<=2&&!S.goal.hit){ warm('goal_near'); warm('goal_hit') } }catch(e){}
+    try{ const x=S.xp.total, l=xpLv(x), a=lvFloor(l), b=lvNext(l); if((x-a)/(b-a)>=.85)warm('levelup') }catch(e){}
+    try{ if(quiz&&quiz.items&&quiz.i>=quiz.items.length-3)['fin_perfect','fin_high','fin_pass','fin_near','fin_grow','fin_exam_pass'].forEach(t=>warm(t)) }catch(e){}
+  }
+  /** 박 양자화 — 다음 박(4스텝) → 안 되면 반박(2스텝)에 onset 을 맞춘다. 둘 다 250ms 넘으면 즉시 */
   function align(earliest,onset){
     let g=null; try{ g=FX.bgm.grid&&FX.bgm.grid() }catch(e){}
     AL={grid:!!g,mode:'now'};
@@ -6535,81 +6626,242 @@ const VOICE=(()=>{
     AL.mode='late';
     return earliest;
   }
+  /** 등급 추첨 — 풀이 비면 한 단계 아래로 */
+  function rollTier(trig,force){
+    if(force)return force;
+    const r=rnd(), pity=sinceRare>=25?2:1;
+    let t='common';
+    if(r<P_SUPER&&ses.sup<SUPER_CAP&&ses.n>=SUPER_AFTER)t='super';
+    else if(r<P_SUPER+P_RARE*pity&&ses.rare<RARE_CAP)t='rare';
+    return t;
+  }
   /** 실제 재생 — 준비 안 됐으면 ★기다리지 않고★ 건너뛴다(늦은 칭찬은 엇박이다) */
-  function play(c,lead){
-    const A=ctx(); if(!A||!man||A.state!=='running')return false;
-    const it=peek(c); if(!it)return false;
-    const b=buf[it.f]; if(!b||b==='…'){ warm(c); return false }
-    take(c);
+  function play(trig,o){
+    o=o||{};
+    const A=ctx(); if(!A||!man||A.state!=='running'){ why='noctx'; return false }
+    const lead=o.lead!=null?o.lead:((T[trig]&&T[trig].lead)||.18);
+    let tier=rollTier(trig,o.tier), sel=null;
+    const order=tier==='super'?['super','rare','common']:tier==='rare'?['rare','common']:['common'];
+    for(const t of order){ sel=choose(trig,t,o.cond,true); if(sel){ tier=t; break } }
+    if(!sel){ warm(trig,o.cond); why='notready:'+trig; return false }
+    const it=sel.it;
     try{
       const on=(it.onset||0)/1000, t0=align(A.currentTime+lead,on);
       const src=A.createBufferSource(), g=A.createGain();
       g.gain.value=GAIN*(S.vol==null?.7:S.vol)*(S.voiceVol==null?1:S.voiceVol);
-      src.buffer=b; src.connect(g); g.connect(A.destination);
+      src.buffer=buf[it.f]; src.connect(g); g.connect(A.destination);
       src.start(t0);
       if(cur)try{ cur.stop(t0) }catch(e){}            /* 겹치면 앞 클립을 새 클립 시작 순간에 끊는다 */
       cur=src; src.onended=()=>{ if(cur===src)cur=null };
       const dms=Math.max(0,(t0-A.currentTime)*1000);
       setTimeout(()=>{ try{ FX.bgm.duck((it.dur||900)+250) }catch(e){} },Math.max(0,dms-80));
-      lastSay=performance.now()+dms;
-      hist.push(Object.assign({c,f:it.f,lead,wait:+(dms/1000).toFixed(3)},AL)); if(hist.length>10)hist.shift();
-    }catch(e){ return false }
-    warm(c);                                          /* 다음 차례 미리 */
+      lastSay=now()+dms;
+      commit(sel); lastHead=it.head||'';
+      if(tier!=='common'){ ses.seen[it.f]=1; const M=mem(); M.recent.push(it.f); if(M.recent.length>30)M.recent.shift();
+        if(tier==='super')ses.sup++; else ses.rare++; sinceRare=0 } else sinceRare++;
+      hist.push(Object.assign({c:trig,f:it.f,tier,text:it.text,why:o.why||'',lead,wait:+(dms/1000).toFixed(3),n:ses.n,combo:o.combo},AL));
+      if(hist.length>40)hist.shift();
+    }catch(e){ why='err'; return false }
+    warm(trig,o.cond);                                /* 다음 차례 미리 */
     return true;
   }
-  /** 일반 정답 빈도 — 50%, 6초 쿨다운, 빠른 연타(<1.5s) 생략, 두 번 연속 침묵 뒤엔 말한다 */
+  /* ── 정답 판별 ── */
+  function collect(cx){
+    const c=cx.combo||0, E=[];
+    const add=(trig,p,extra)=>E.push(Object.assign({trig,p,P:T[trig].P,L:T[trig].L},extra||{}));
+    if(flags.goal)add('goal_hit',1);
+    if(flags.goal2)add('goal_double',1);
+    if(flags.lv)add('levelup',1);
+    if(c===10)add('combo10',1); else if(c===12||c===15)add('combo15',1);
+    else if(c===20)add('combo20',1); else if(c>=25&&c%5===0)add('combo25',1);
+    if(flags.day){ const d=STREAK_D[flags.day]; if(d)add('day_streak',1,{cond:d}); else if(flags.day>=2)add('day_streak',.5,{cond:'any'}); }
+    if(flags.unit)add('unit',1);
+    if(flags.ach&&ses.ach<2)add('ach',1,flags.ach.hidden?{tier:'rare',cond:'hidden'}:{});
+    if(c===3)add('combo3',ses.c3<2?1:.5); else if(c===5)add('combo5',1); else if(c===8)add('combo8',1);
+    if(c>=5&&c>(cx.bestBefore||0)&&!MILE(c)&&!ses.best)add('combo_best',1);
+    if(visitGap>=3&&visitFirst)add('return',1);
+    const M=mem(), td=today();
+    if(M.vday!==td)add('day_first',.8,{cond:tod()});
+    if(cx.goalLeft===1&&!(S.goal&&S.goal.hit)&&M.gnear!==td)add('goal_near',1);
+    const ts=TEASE[c]; if(ts)add('tease',ts[1],{cond:rnd()<.5?ts[0]:'any',noCool:true});
+    if(cx.wasWrong&&(cx.loreN||0)>=2)add('redeem_long',.9);
+    if(cx.missBefore>=2)add('reversal',.8);
+    if(cx.wasWrong)add('redeem',.7);
+    if(cx.missBefore===1)add('comeback',.45);
+    if(cx.q&&cx.q.d===3&&!cx.hinted)add('hard',.5);
+    if(cx.pb)add('pb',.7);
+    if((cx.sesMs||0)>=LONG_MS&&!ses.long)add('long_session',1);
+    const ms=cx.ms||0;
+    if(ms>=20000&&ms<=180000)add('slow',.5);
+    if(ms>=1500&&ms<=4000&&cx.q&&cx.q.d>=2&&(cx.fastRun||0)<3&&!cx.hinted)add('fast',.4);
+    if(ses.first)add('session_first',1);
+    E.sort((a,b)=>a.P-b.P);
+    return E;
+  }
+  /** 일반 정답 게이트 — .35(30문항 뒤 .25 · 밤 .3), 6초 쿨다운, <1.5s 연타 생략, 두 번 침묵 뒤엔 말한다 */
   function okGate(prevAt){
-    const now=performance.now();
-    if(now-lastSay<OK_COOL)return false;
-    if(now-prevAt<FAST_MS)return false;
-    if(okStreakSilent>=2||Math.random()<OK_P){ okStreakSilent=0; return true }
-    okStreakSilent++; return false;
+    const t=now();
+    if(hush||consecVoiced>=2)return false;
+    if(t-lastSay<B_COOL)return false;
+    if(t-prevAt<FAST_MS)return false;
+    const p=night()?OK_P_NIGHT:ses.n>=30?OK_P_LONG:OK_P;
+    if(okSilent>=2||rnd()<p){ okSilent=0; return true }
+    okSilent++; return false;
+  }
+  /** 밤 일반 대사 — ok_night 60%, 나머지는 ok 중 차분·따뜻·밝음만 */
+  function okTrig(){ return night()&&rnd()<.6?'ok_night':'ok' }
+  function playOk(cx){
+    const tr=okTrig();
+    if(tr==='ok'&&night()){
+      /* 밤: 장난·흥분 일반 대사 제외 — 허용 톤에서만 고른다 */
+      const keep=['차분','따뜻','밝음'];
+      const B=bagOf('ok','common'); if(B){ const i=B.b.q.findIndex(f=>{ const it=byF(B.P,f); return it&&keep.indexOf(it.tone)>=0 });
+        if(i>0){ const f=B.b.q.splice(i,1)[0]; B.b.q.unshift(f) } }
+      return play('ok',{tier:'common',why:'ok-night',combo:cx.combo});
+    }
+    return play(tr,{why:'ok',combo:cx.combo});
   }
   const isPractice=()=>{ try{ return !quiz||quiz.mode==='practice' }catch(e){ return true } };
+  const talkBusy=cx=>{ try{ if(TALK.busy&&TALK.busy())return true }catch(e){}
+    /* 엔진이 1.2초 안에 열 수 있는 대화 장면(answer 끝부분과 같은 조건) */
+    const c=cx.combo||0;
+    return (cx.pace>0&&cx.pace<7000&&cx.n>=12&&cx.n%12===0)||cx.ms>28000||(cx.ok&&S.streak&&S.streak.cur>=3&&cx.n===6)
+      ||(cx.ok&&c===8)||(!cx.ok&&(cx.wrongRun||0)>=3) };
+  function clearFlags(){ for(const k in flags)delete flags[k] }
+
+  function onRight(cx){
+    const prevAt=lastAnswerAt;
+    ses.n++; ses.ok++;
+    cx.missBefore=missRun; missRun=0;
+    const E=collect(cx), td=today(), M=mem();
+    const wasHush=hush; hush=false;
+    const busy=talkBusy(cx);
+    /* 1) 확률 통과한 후보들 */
+    const pass=E.filter(e=>rnd()<e.p);
+    const Ms=pass.filter(e=>e.L==='M');
+    let pick=Ms[0]||null;
+    /* 2) 이월분 — 이번 답의 M 후보보다 후순위, S·B 보다 우선 */
+    if(!pick&&carry&&now()<carry.until){ pick=Object.assign({},carry.e,{carried:true}) }
+    const usedCarry=pick&&pick.carried;
+    if(usedCarry||(carry&&now()>=carry.until))carry=null;
+    /* 탈락한 M 이벤트 1개 → 다음 정답으로(연쇄 금지) */
+    if(Ms.length>1&&!usedCarry)carry={e:Object.assign({},Ms[1]),until:now()+CARRY_MS};
+    /* 3) 상황 레인 */
+    const pickS=()=>{ if(busy)return null;
+      for(const e of pass){ if(e.L!=='S')continue;
+        if(!e.noCool&&now()-lastSay<S_COOL){ why='s-cool'; return null }
+        if(wasHush){ why='hush'; return null }
+        if(consecVoiced>=2){ why='consec'; return null }
+        return e }
+      return null };
+    if(!pick)pick=pickS();
+    /* 날짜·방문 단위 플래그 — 판정에 쓰였든 아니든 '오늘 첫 정답' 은 지나갔다 */
+    M.vday=td; visitFirst=false;
+    if(E.some(e=>e.trig==='goal_near'))M.gnear=td;
+    if(E.some(e=>e.trig==='long_session'))ses.long=1;
+    ses.first=false;
+    let said=false;
+    const say=e=>play(e.trig,{tier:e.tier,cond:e.cond,why:(e.carried?'carry:':'')+e.trig,combo:cx.combo,lead:e.carried?.36:undefined});
+    if(pick){
+      said=say(pick);
+      /* 마일스톤 클립이 아직 디코드 전(예: 같은 답에서 막 생긴 배지·목표)이면 ★다음 정답으로 이월★ 하고
+         이번 답은 상황·일반 대사로 넘어간다 — 큰 순간을 버리지 않는다 */
+      if(!said&&pick.L==='M'&&!pick.carried&&/^notready/.test(why)){
+        carry={e:Object.assign({},pick),until:now()+CARRY_MS};
+        /* 다음 M 후보 → 그래도 없으면 상황 레인 */
+        for(const e of Ms.slice(1)){ pick=e; said=say(e); if(said)break }
+        if(!said){ pick=pickS(); if(pick)said=say(pick) }
+      }
+      if(said){
+        if(pick.trig==='combo_best')ses.best=1;
+        if(pick.trig==='ach')ses.ach++;
+        if(pick.trig==='combo3')ses.c3++;
+        if(pick.L==='M')hush=true;
+      }
+    }
+    if(!said&&!pick&&!busy){
+      hush=wasHush;
+      if(okGate(prevAt))said=playOk(cx);
+      hush=false;
+    }
+    if(!pick&&!said&&!why)why=busy?'talk':'gate';
+    consecVoiced=said?consecVoiced+1:0;
+    clearFlags();
+    warmLikely(cx);
+    return said?hist[hist.length-1].c:null;
+  }
+  function onWrong(cx){
+    ses.n++; missRun++; consecVoiced=0; hush=false;   /* 침묵(대비)은 다음 1문항 — 오답도 1문항이다 */
+    if(carry&&/^(combo|tease)/.test(carry.e.trig))carry=null;   /* 끊긴 콤보 칭찬을 뒤늦게 하지 않는다 */
+    let said=false;
+    const had=cx.had||0;
+    if(had>=5&&!ses.comboBreak&&rnd()<.5){
+      said=play('combo_break',{why:'combo_break',combo:0}); if(said)ses.comboBreak=1;
+    }else if((missRun===2||missRun===3)&&ses.n>3&&ses.wrongSoft<2&&now()-ses.wsAt>=WS_COOL
+             &&rnd()<(missRun===2?.35:.5)&&!talkBusy(cx)){
+      said=play('wrong_soft',{why:'wrong_soft:'+missRun,combo:0}); if(said){ ses.wrongSoft++; ses.wsAt=now() }
+    }
+    /* 오답 답에서 생긴 이벤트(목표 달성·연속일·배지 — 오답도 1문항으로 센다)는 다음 정답까지 들고 간다 */
+    warmLikely(cx);
+    return said?'wrong':null;
+  }
 
   return {
     /** 첫 사용자 조작에서 1회 — manifest·첫 클립 예열 */
-    arm(){ if(armed)return; armed=true; if(ok())init() },
-    /** addXp 에서 레벨이 오른 순간 동기 호출 — 같은 답의 celebrate 보다 먼저 온다 */
-    flagLevelUp(){ flagLv=true },
-    /** celebrate(ok,…) 에서 호출 — 이번 답에 할 한 마디를 고른다 */
-    answer(o){
-      const now=performance.now(), was=lastAnswerAt; lastAnswerAt=now;
-      if(!o.ok){ prevMiss=true; flagLv=false; return null }
-      const miss=prevMiss; prevMiss=false;
-      if(!ok()||!isPractice()){ flagLv=false; return null }
-      if(!man){ init(); flagLv=false; return null }
-      ORDER.forEach(warm);                         /* 컨텍스트가 늦게 생긴 경우의 예열(이미 있으면 즉시 반환) */
-      const c=o.combo||0;
-      let cat=null, lead=LEAD.hit;
-      if(flagLv){ cat='levelup'; lead=LEAD.levelup+.52 }          /* addXp 의 520ms 지연 + 임팩트(+380ms) 뒤 */
-      else if(c>=10&&(c===10||c===12||c%5===0)){ cat='streak10'; lead=LEAD.milestone }
-      else if(c===5||c===8){ cat='streak5'; lead=LEAD.milestone }
-      else if(c===3){ cat='streak3'; lead=LEAD.milestone }
-      else if(miss||o.redeem)cat='comeback';
-      else if(o.hard)cat='hard';
-      else if(okGate(was))cat='ok';
-      flagLv=false;
-      if(!cat)return null;
-      /* comeback·hard 도 쿨다운 절반은 지킨다(연속 대사 피로) — 콤보 단계·레벨업은 항상 */
-      if((cat==='comeback'||cat==='hard')&&performance.now()-lastSay<OK_COOL/2)return null;
-      return play(cat,lead)?cat:null;
+    arm(){ if(armed){ if(man)warmLikely(null); return } armed=true; if(on())init() },
+    /** 엔진 이벤트 — 같은 답의 VOICE.answer 보다 먼저 온다(levelup·goal·goal2·unit·ach·day) */
+    flag(kind,val){
+      flagsAt=now();
+      if(kind==='day'){ flags.day=val||1; return }
+      if(kind==='ach'){ flags.ach={hidden:!!(val&&val.hidden)}; return }
+      if(kind==='goal2'){ const M=mem(), td=today(); if(M.gdbl===td)return; M.gdbl=td; flags.goal2=true; return }
+      if(kind==='levelup')kind='lv';
+      flags[kind]=true;
     },
-    /** finishQuiz → FX.finish 직후 — 만점(또는 5문항+ 90점+)이면 perfect */
-    finish(pct,total){
-      if(!ok()||!man)return null;
-      if(!(pct===100||(pct>=90&&total>=5)))return null;
-      return play('perfect',LEAD.finish)?'perfect':null;
+    /** 구 호출부 호환 */
+    flagLevelUp(){ flagsAt=now(); flags.lv=true },
+    /** 세션 시작(startQuiz) — 세션 캡·첫 정답·레어 상한 리셋 */
+    session(){ ses=newSes(); missRun=0; consecVoiced=0; hush=false; carry=null; okSilent=0; if(man)warmLikely(null) },
+    /** answer() 에서 celebrate 직전에 호출 — cx(엔진 맥락) + bestBefore·had·loreN·wasWrong */
+    answer(cx){
+      cx=cx||{}; const prevAt=lastAnswerAt; why='';
+      if(now()-flagsAt>60000)clearFlags();
+      if(!on()||!isPractice()){ if(!cx.ok)missRun++; else missRun=0; clearFlags(); lastAnswerAt=now(); return null }
+      if(!man){ init(); if(!cx.ok)missRun++; else missRun=0; clearFlags(); lastAnswerAt=now(); return null }
+      let r;
+      lastAnswerAt=prevAt;
+      if(cx.ok)r=onRight(cx); else r=onWrong(cx);
+      lastAnswerAt=now();
+      return r;
+    },
+    /** finishQuiz — {pct,total,pass,mode,cut,low} (구 호출 (pct,total) 도 받는다) */
+    finish(o,total){
+      if(typeof o==='number')o={pct:o,total:total,pass:o>=60,mode:'practice',cut:60,low:false};
+      o=o||{};
+      if(!on()||!man)return null;
+      const pct=o.pct||0, n=o.total||0, cut=o.cut==null?60:o.cut;
+      let tr=null;
+      if(pct===100&&n>=5)tr='fin_perfect';
+      else if(o.mode==='exam'&&o.pass)tr='fin_exam_pass';
+      else if(pct>=90&&n>=5)tr='fin_high';
+      else if(o.pass&&o.mode!=='exam'&&rnd()<.8)tr='fin_pass';
+      else if(!o.pass&&pct>=cut-5&&rnd()<.7)tr='fin_near';
+      else if(o.low&&rnd()<.6)tr='fin_grow';
+      if(!tr)return null;
+      return play(tr,{why:tr})?tr:null;
     },
     /** 설정 토글 — 켤 때 확인용으로 짧은 한 마디 */
     toggle(){
       S.voice=S.voice===false; save();
-      if(S.voice){ init(); setTimeout(()=>{ const A=ctx(); if(A&&A.state==='suspended')A.resume().catch(()=>{}); play('ok',.05) },120) }
+      if(S.voice){ init(); setTimeout(()=>{ const A=ctx(); if(A&&A.state==='suspended')A.resume().catch(()=>{});
+        if(man){ warm('toggle'); setTimeout(()=>play('toggle',{tier:'common',why:'toggle'})||play('ok',{tier:'common',why:'toggle'}),250) } },120) }
       else if(cur){ try{ cur.stop() }catch(e){} cur=null }
       return S.voice;
     },
     /** 검증·디버그용 */
-    state(){ return {loaded:!!man, ext:EXT, ready:Object.keys(buf).filter(k=>buf[k]!=='…'), lastSay, hist:hist.slice()} }
+    state(){ return {loaded:!!man, v:man&&man._v||1, ext:EXT, ready:Object.keys(buf).filter(k=>buf[k]!=='…'),
+      lastSay, hist:hist.slice(), ses:Object.assign({},ses,{seen:Object.keys(ses.seen)}), carry:carry&&{trig:carry.e.trig,left:Math.round(carry.until-now())},
+      why, hush, consecVoiced, missRun, visitGap, flags:Object.assign({},flags)} }
   };
 })();
 
@@ -13127,6 +13379,7 @@ function startQuiz(items,mode,opt){
   ghostPer=[]; ghostMs=0;                        /* 👻 문항별 기록을 조용히 모은다 */
   ucN=0; ucRight=0; ucFast=0; ucPrevWrong=0; ucLastT=null; ucSameT=0;
   ucMs=0; ucPace.length=0; S.time.sessions=(S.time.sessions||0)+1;
+  try{ VOICE.session() }catch(e){}               /* 🗣 세션 캡·첫 정답·레어 상한 리셋 */
   Object.keys(ucTWrong).forEach(k=>delete ucTWrong[k]);
   Object.keys(ucSeen).forEach(k=>delete ucSeen[k]);
   /* ★이 시점엔 quiz 가 아직 이전 세션(또는 null)이다.★ 인자로 받은 mode 를 써야 한다 —
@@ -14135,9 +14388,10 @@ function answer(v){
   // 콤보·연출은 즉시 채점(연습) 모드에서만.
   // 모의고사에서 정답 여부를 티내면 시험 시뮬레이션이 깨진다.
   const react=quiz.mode==='practice'&&first;
+  const bestBefore=S.best; let had=0;          /* 🗣 VOICE — 기록 경신(갱신 전 값)·끊긴 콤보 길이 */
   if(react){
     if(ok){ combo++; comboMax=Math.max(comboMax,combo); if(combo>S.best)S.best=combo; wrongRun=0; }
-    else { const had=combo; wrongRun++;
+    else { had=combo; wrongRun++;
       if(had>=3){ setTimeout(()=>FX.snd.comboBreak(),260); setTimeout(()=>MASCOT.comboBreak(had),900) }
       combo=0; }
   }
@@ -14159,6 +14413,7 @@ function answer(v){
         const got=ALLQ.filter(x=>x.s===q.s&&x.t===q.t&&SOLVED.has(x.id)).length;
         if(tot>=8&&got/tot>=0.8){
           S.ach.got[key]=localDay();
+          try{ VOICE.flag('unit') }catch(e){}
           setTimeout(()=>{ FX.snd.era(); FX.confetti(140);
             FX.toast(`🏛 단원 정복 — ${q.t}`,'hype',3600);
             MASCOT.era(`${q.t} 단원을 정복했어요!`); },700);
@@ -14167,6 +14422,7 @@ function answer(v){
     }
     chalStep(ok,wasWrong,q);
     newAch=checkAch();
+    if(newAch.length&&quiz.mode==='practice'){ try{ VOICE.flag('ach',{hidden:newAch.some(a=>a.hide)}) }catch(e){} }
     /* 모의고사 중에는 배지 토스트를 띄우지 않고 결과 화면에서 몰아 보여준다 */
     if(newAch.length&&quiz.mode!=='practice'){quiz.pendAch=(quiz.pendAch||[]).concat(newAch);newAch=[]}
   }
@@ -14235,6 +14491,8 @@ function answer(v){
       if(cx.pb)BOND.add(_duo,0.6,true);
     }
     const handled = CAST.scene(cx);
+    /* 🗣 음성 칭찬 — 상황 판별·우선순위·박 정렬은 VOICE 가 한다(모의고사 중엔 스스로 침묵) */
+    try{ VOICE.answer(Object.assign({},cx,{bestBefore,had:ok?0:had,loreN:lore?lore.n:0,wasWrong})) }catch(e){}
     celebrate(ok,gain,wasWrong,q,handled);
     /* 📌 오답 계보 — ★"3번째 만남입니다. 지난번엔 2번을 골랐어요"★
        자기 오답 패턴을 보는 것 자체가 학습이고 서사다. 다른 알림과 겹치지 않게 늦게 띄운다. */
@@ -14278,8 +14536,6 @@ const WRONG_MSGS=['오답노트에 담았습니다 — 해설을 확인하세요
   '헷갈리는 지점을 찾았습니다 — 해설의 오답 이유를 보세요','오답노트에서 다시 만나면 그때 되찾으면 됩니다'];
 /** 정답/오답 순간의 보상 연출 */
 function celebrate(ok,gain,wasWrong,q,handled){
-  /* 🗣 음성 칭찬 — 카테고리 선택·박 정렬은 VOICE 가 한다(모의고사 중엔 스스로 침묵) */
-  try{ VOICE.answer({ok,combo,hard:!!(q&&q.d===3),redeem:!!(ok&&wasWrong)}) }catch(e){}
   const card=$('qCard');
   card.classList.remove('flash-ok','flash-no'); void card.offsetWidth;
   if(ok){
@@ -14854,7 +15110,7 @@ function finishQuiz(){
   })();
   setTimeout(()=>{
     FX.finish(pass,pct); MASCOT.end(pass);
-    try{ VOICE.finish(pct,total) }catch(e){}       /* 🗣 만점·90점+ 마무리 한 마디 */
+    try{ VOICE.finish({pct,total,pass,mode:quiz.mode,cut:PR.pct,low:lowScore}) }catch(e){}   /* 🗣 종료 한 마디 */
     if(pass)FX.toast(pct>=90?`🏆 ${pct}점 — 최상위권!`:`🎉 합격선 통과 ${pct}점`,'hype',2400);
     else FX.toast(`${pct}점 — 오답노트로 보강하세요`,'bad',2000);
   },420);
