@@ -15372,11 +15372,17 @@ function openNote(no){
   cnSub='all'; cnTopic='all'; cnQ=''; const si=$('conceptSearch'); if(si)si.value='';
   const back=view;
   go('concept');
-  setTimeout(()=>{ const el=document.getElementById('cn-'+no); if(!el)return;
-    el.open=true; el.scrollIntoView({block:'start',behavior:REDUCED?'auto':'smooth'});
-    el.classList.add('cnflash'); setTimeout(()=>el.classList.remove('cnflash'),1800);
+  /* 개념 목록은 화면 전환 뒤 그려진다 — 해당 노트가 생길 때까지 잠깐 기다린다(최대 2초) */
+  let tries=0;
+  (function seek(){ const el=document.getElementById('cn-'+no);
+    if(!el){ if(++tries<40)setTimeout(seek,50); return }
+    el.open=true;
+    /* go() 가 화면 전환 때 맨 위로 부드럽게 올린다 — 그 스크롤이 끝난 뒤 즉시 이동해야 덮이지 않는다 */
+    const jump=()=>{ const y=el.getBoundingClientRect().top+window.scrollY-70; window.scrollTo({top:Math.max(0,y),behavior:'instant'}) };   /* CSS scroll-behavior:smooth 를 무시하고 즉시 */
+    setTimeout(jump,450); setTimeout(jump,900); setTimeout(jump,1500);   /* 다이어그램·표가 늦게 그려져 높이가 바뀌어도 다시 맞춘다 */
+    el.classList.add('cnflash'); setTimeout(()=>el.classList.remove('cnflash'),2200);
     if(back==='quiz'||back==='past')FX.toast('📖 개념 확인 후 🧩 퀴즈 탭으로 돌아가면 이어서 풉니다','good',2600);
-  },160);
+  })();
 }
 document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('[data-note]');
   if(b){ e.preventDefault(); e.stopPropagation(); openNote(b.dataset.note) } },true);
