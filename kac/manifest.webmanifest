@@ -1,0 +1,30 @@
+{
+ "name": "KAC 코치인증 (한국코치협회)",
+ "short_name": "KAC",
+ "description": "KAC = 8역량(코치다움 4 + 코칭다움 4) + 윤리규정 + 경청·질문·인정 + 코칭실무 숫자(20h·50h·3명·28개·60점)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0d9488",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
