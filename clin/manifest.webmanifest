@@ -1,0 +1,30 @@
+{
+ "name": "임상심리사 2급 필기",
+ "short_name": "임상2급",
+ "description": "임상심리사 2급 = 심리학개론(학습·성격·발달) + 이상심리(DSM-5 진단기준) + 심리검사(MMPI-2·웩슬러) + 임상심리(평가·치료·자문) + 심리상담(이론·중독·위기)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#7c3aed",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
