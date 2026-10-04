@@ -1,0 +1,30 @@
+{
+ "name": "청소년상담사 2·3급",
+ "short_name": "상담사",
+ "description": "청소년상담사 = 상담이론(이론가·기법 짝) + 심리검사(MMPI·웩슬러·신뢰도/타당도) + 이상심리(DSM-5-TR) + 발달·학습 + 집단·가족·진로·학업상담 + 연구방법",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#ec4899",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
