@@ -1,0 +1,30 @@
+{
+ "name": "PC정비사 2급 필기",
+ "short_name": "PC정비2급",
+ "description": "PC정비사 2급 = PC운영체제(Windows·명령어·유틸리티) + PC와 주변장치(CPU·메모리·저장·입출력) + PC유지보수(조립·BIOS·고장진단·업그레이드) + PC네트워크(OSI·장비·IP·프로토콜)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0891b2",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
