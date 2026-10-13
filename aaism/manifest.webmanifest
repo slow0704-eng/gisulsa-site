@@ -1,0 +1,30 @@
+{
+ "name": "AAISM AI보안관리",
+ "short_name": "AAISM",
+ "description": "AAISM = AI 거버넌스·프로그램 관리 + AI 리스크 관리 + AI 기술·통제 (ISACA Advanced in AI Security Management)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#9333ea",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
