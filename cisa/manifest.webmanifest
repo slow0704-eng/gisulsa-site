@@ -1,0 +1,30 @@
+{
+ "name": "CISA 공인정보시스템감사사",
+ "short_name": "CISA",
+ "description": "CISA = IS 감사 프로세스 + IT 거버넌스·관리 + 획득·개발·구현 + 운영·복원력 + 정보자산 보호 (ISACA 2024 ECO)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0b6fb8",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
