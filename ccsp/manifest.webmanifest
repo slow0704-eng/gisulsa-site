@@ -1,0 +1,30 @@
+{
+ "name": "CCSP 클라우드보안전문가",
+ "short_name": "CCSP",
+ "description": "CCSP = 클라우드 개념·아키텍처 + 데이터 보안 + 플랫폼·인프라 + 애플리케이션 + 보안 운영 + 법률·리스크·컴플라이언스 (ISC2 2026-08 아웃라인)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0f766e",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
