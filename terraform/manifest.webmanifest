@@ -1,0 +1,30 @@
+{
+ "name": "Terraform Associate (004)",
+ "short_name": "Terraform",
+ "description": "Terraform Associate 004 = IaC 개념 + provider·state + init→plan→apply + 구성(변수·표현식·의존성·조건) + 모듈 + backend·잠금 + import·state CLI + HCP Terraform",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#7b42bc",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
