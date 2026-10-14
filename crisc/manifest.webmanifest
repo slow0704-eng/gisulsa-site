@@ -1,0 +1,30 @@
+{
+ "name": "CRISC 리스크·정보시스템통제",
+ "short_name": "CRISC",
+ "description": "CRISC = 거버넌스 + IT 리스크 평가 + 리스크 대응·보고 + 기술·보안 (ISACA Certified in Risk and Information Systems Control)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#b45309",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
