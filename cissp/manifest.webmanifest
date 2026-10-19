@@ -1,0 +1,30 @@
+{
+ "name": "CISSP 정보시스템보안전문가",
+ "short_name": "CISSP",
+ "description": "CISSP = 보안·리스크 관리 + 자산 + 아키텍처·엔지니어링 + 네트워크 + IAM + 평가·테스트 + 보안 운영 + SW 개발 보안 (ISC2 2024-04 아웃라인)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#1e40af",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
