@@ -36,6 +36,10 @@ CPPG.meta = {
    "n": 2
   },
   {
+   "s": "s2",
+   "n": 2
+  },
+  {
    "s": "s4",
    "n": 2
   },
@@ -47,7 +51,8 @@ CPPG.meta = {
  "footer": [
   "정보보안기사 실기 / 주관 <b>한국방송통신전파진흥원(KCA)</b> · 필답형 180분 · <b>100점 만점 60점 이상</b> (과목 구분 없음)",
   "영역: 시스템 보안 · 네트워크 보안 · 애플리케이션 보안 · 정보보안 일반 · 정보보안 관리·법규 — 사이트의 영역별 20문항은 학습 배분용이며 공식 배점이 아닙니다.",
-  "데이터 소스: <code>02_타자격증_학습자료/정보보안기사_실기</code> → <code>학습사이트/data.js</code> · 진도·오답노트는 브라우저(localStorage)에만 저장됩니다. ⚠ 문항은 학습자료를 바탕으로 새로 만든 연습 문제이며 실제 기출이 아닙니다. 실기는 필답형이므로 퀴즈의 4지선다·OX 는 개념 점검용, ★단답 입력과 📄 예시문제(서술·실무 모범답안)★ 가 실전 훈련입니다."
+  "데이터 소스: <code>02_타자격증_학습자료/정보보안기사_실기</code> → <code>학습사이트/data.js</code> · 진도·오답노트는 브라우저(localStorage)에만 저장됩니다. ⚠ 문항은 학습자료를 바탕으로 새로 만든 연습 문제이며 실제 기출이 아닙니다. 실기는 필답형이므로 퀴즈의 4지선다·OX 는 개념 점검용, ★단답 입력과 📄 예시문제(서술·실무 모범답안)★ 가 실전 훈련입니다.",
+  "⚠ <b>3과목 애플리케이션 보안은 준비 중</b>입니다 — 현재 1·2·4·5과목 수록. 3과목은 <code>공부자료/3과목_애플리케이션보안_실기.txt</code> 로 학습하세요."
  ],
  "info": [
   {
@@ -184,6 +189,15 @@ CPPG.subjects = [
   "out": 20,
   "color": "#3b82f6",
   "desc": "Linux 권한(chmod·SetUID·umask)·계정(/etc/passwd·shadow)·로그(secure·wtmp·btmp·lastlog)·Windows 레지스트리·이벤트로그·악성코드·버퍼 오버플로·레이스 컨디션 — ★실무형 단골★ 권한 숫자 변환·SetUID 탐색 find·로그 경로·last/lastb"
+ },
+ {
+  "id": "s2",
+  "no": 2,
+  "name": "네트워크 보안",
+  "short": "네트워크",
+  "out": 20,
+  "color": "#0ea5e9",
+  "desc": "TCP/IP·포트·3-way handshake·스캔 유형 식별(플래그 패턴)·DoS/DDoS 탐지·대응·스니핑·스푸핑 방어·tcpdump 패킷 분석·iptables·Snort 룰·VPN/IPsec·무선 보안 — ★실무형 단골★ 방화벽·IDS 룰 작성·패킷 판독"
  },
  {
   "id": "s4",
@@ -445,6 +459,246 @@ CPPG.cards = [
   "key": "lsof -i :8080 (또는 netstat -ntlp | grep 8080)",
   "back": "netstat·ss 옵션: n=숫자, t=TCP, u=UDP, l=LISTEN, p=PID/프로그램. 실행파일 실경로는 ls -l /proc/PID/exe.",
   "tip": "lsof = list open files"
+ },
+ {
+  "s": "s2",
+  "g": "TCP/IP·포트",
+  "front": "3-way Handshake 순서와 seq/ack 규칙",
+  "key": "SYN → SYN+ACK → ACK",
+  "back": "① C→S SYN(seq=x) ② S→C SYN+ACK(seq=y, ack=x+1) ③ C→S ACK(seq=x+1, ack=y+1). ★ack = 상대 seq + 1★.",
+  "tip": "②까지만 진행된 상태 = Half-Open(SYN_RECV)"
+ },
+ {
+  "s": "s2",
+  "g": "TCP/IP·포트",
+  "front": "4-way 종료 후 능동 종료 측이 머무는 상태",
+  "key": "TIME_WAIT (2MSL)",
+  "back": "FIN→ACK→FIN→ACK. 마지막 ACK를 보낸 쪽이 ★TIME_WAIT★로 2MSL 대기 — 지연 패킷 소멸·마지막 ACK 재전송 보장.",
+  "tip": "수동 종료 측은 CLOSE_WAIT"
+ },
+ {
+  "s": "s2",
+  "g": "TCP/IP·포트",
+  "front": "TCP 플래그 6종",
+  "key": "SYN·ACK·FIN·RST·PSH·URG",
+  "back": "SYN=연결 동기화, ACK=확인, FIN=정상 종료, RST=강제 종료·거부, PSH=즉시 전달, URG=긴급(Urgent Pointer 유효).",
+  "tip": "Closed 포트의 응답 = RST"
+ },
+ {
+  "s": "s2",
+  "g": "TCP/IP·포트",
+  "front": "tcp[13] 플래그 옥텟 비트값",
+  "key": "FIN1 SYN2 RST4 PSH8 ACK16 URG32",
+  "back": "TCP 헤더 13번째 바이트가 플래그. SYN+ACK = 2+16 = ★18★, 순수 SYN = 2.",
+  "tip": "XMAS(FIN+PSH+URG) = 1+8+32 = 41"
+ },
+ {
+  "s": "s2",
+  "g": "TCP/IP·포트",
+  "front": "ICMP Type 3 Code 3",
+  "key": "Port Unreachable",
+  "back": "목적지 포트 도달 불가. ★UDP Closed 포트의 응답★. Type 8/0 = Echo Request/Reply, Type 11 = Time Exceeded(traceroute).",
+  "tip": "Type 5 = Redirect"
+ },
+ {
+  "s": "s2",
+  "g": "TCP/IP·포트",
+  "front": "DNS 질의와 Zone Transfer 포트",
+  "key": "UDP 53 / TCP 53",
+  "back": "일반 질의는 UDP 53, ★Zone Transfer(AXFR)는 TCP 53★. AXFR 허용 IP를 보조 DNS로 제한해야 내부 호스트 목록 유출 방지.",
+  "tip": "질의·전송 포트 혼동 주의"
+ },
+ {
+  "s": "s2",
+  "g": "스캔 탐지",
+  "front": "로그에 SYN 후 즉시 RST가 반복되는 패턴",
+  "key": "SYN(Half-Open) 스캔",
+  "back": "대상이 SYN+ACK를 보내면 스캐너가 ★RST로 끊어★ 3-way가 완성되지 않음 → 애플리케이션 세션 로그가 남지 않아 '스텔스 스캔'이라 함. 방화벽·IDS의 SYN 카운트로 탐지.",
+  "tip": "Connect 스캔은 3-way 완성 → 서비스 로그 남음"
+ },
+ {
+  "s": "s2",
+  "g": "스캔 탐지",
+  "front": "FIN·NULL·XMAS 스캔의 판정 원리",
+  "key": "무응답=Open / RST=Closed",
+  "back": "RFC 793 규칙상 Closed 포트는 비정상 패킷에 RST 응답, Open 포트는 무응답. ★SYN 스캔과 반대 해석★. RFC 미준수 OS(Windows 등)에서는 부정확.",
+  "tip": "NULL=플래그 0, XMAS=FIN+PSH+URG"
+ },
+ {
+  "s": "s2",
+  "g": "스캔 탐지",
+  "front": "ACK 스캔의 목적",
+  "key": "방화벽 룰(필터링) 매핑",
+  "back": "Open/Closed 판정이 아니라 RST가 돌아오면 unfiltered, 무응답·ICMP 오류면 filtered → ★상태 추적 방화벽 존재 여부★ 파악.",
+  "tip": "포트 개방 여부 판단 용도 아님"
+ },
+ {
+  "s": "s2",
+  "g": "스캔 탐지",
+  "front": "UDP 스캔이 느린 이유",
+  "key": "무응답 시 재전송·타임아웃 대기",
+  "back": "UDP는 응답이 없으면 Open|filtered로 판단해야 해서 재전송·타임아웃을 기다림. Closed는 ICMP Type3 Code3 응답. ICMP 응답 속도 제한도 지연 원인.",
+  "tip": "ICMP 3/3 = Closed"
+ },
+ {
+  "s": "s2",
+  "g": "DoS 대응",
+  "front": "SYN Flood의 고갈 대상",
+  "key": "반연결 큐(Backlog)",
+  "back": "SYN만 대량 수신 후 ACK가 오지 않아 SYN_RECV 상태가 Backlog를 채움 → 정상 연결 거부. 탐지: ss -tan state syn-recv | wc -l 급증.",
+  "tip": "대역폭이 아니라 연결 큐 고갈"
+ },
+ {
+  "s": "s2",
+  "g": "DoS 대응",
+  "front": "SYN Cookie",
+  "key": "seq에 연결 정보 인코딩",
+  "back": "SYN 수신 시 큐에 저장하지 않고 ISN(초기 seq)에 정보를 인코딩 → 정상 ACK가 오면 복원. Linux: sysctl -w net.ipv4.tcp_syncookies=1.",
+  "tip": "Backlog 크기와 무관하게 동작"
+ },
+ {
+  "s": "s2",
+  "g": "DoS 대응",
+  "front": "Smurf vs Fraggle",
+  "key": "ICMP vs UDP 증폭",
+  "back": "둘 다 출발지를 피해자로 위조 + 브로드캐스트 주소로 전송해 응답 증폭. Smurf=ICMP Echo, Fraggle=UDP(echo·chargen). 대응: ★Directed Broadcast 차단★.",
+  "tip": "프로토콜만 다름"
+ },
+ {
+  "s": "s2",
+  "g": "DoS 대응",
+  "front": "Slowloris",
+  "key": "연결 슬롯 고갈(L7, 저대역)",
+  "back": "HTTP 헤더를 완료하지 않고 조금씩 보내 연결을 오래 유지 → 웹서버 동시 연결 슬롯 고갈. 대응: 요청 헤더 타임아웃(mod_reqtimeout), IP당 동시 연결 제한, 리버스 프록시.",
+  "tip": "대역폭 공격 아님"
+ },
+ {
+  "s": "s2",
+  "g": "DoS 대응",
+  "front": "DDoS 3분류",
+  "key": "Volume·Protocol·Application",
+  "back": "Volume(대역폭): UDP/ICMP Flood, DNS·NTP·Memcached 증폭 / Protocol(자원): SYN Flood, Ping of Death / Application(L7): HTTP Flood, Slowloris, RUDY.",
+  "tip": "증폭 공격의 전제 = 출발지 IP 위조"
+ },
+ {
+  "s": "s2",
+  "g": "DoS 대응",
+  "front": "Land 공격 대응",
+  "key": "Ingress Filtering",
+  "back": "출발지 IP = 목적지 IP인 패킷으로 자기 참조 루프 유발. 경계에서 내부 주소를 출발지로 한 외부 유입 패킷 차단(Ingress Filter)으로 대응.",
+  "tip": "출발지 위조 공격 공통 대응 = Ingress/Egress Filtering(BCP 38)"
+ },
+ {
+  "s": "s2",
+  "g": "스니핑·스푸핑 대응",
+  "front": "ARP 스푸핑 탐지 징후",
+  "key": "게이트웨이 MAC 변경·한 MAC에 여러 IP",
+  "back": "위조 ARP Reply로 캐시가 '게이트웨이 IP ↔ 공격자 MAC'으로 오염 → MITM. arp -a에서 서로 다른 IP가 같은 MAC을 가리키면 의심. 탐지 도구 arpwatch.",
+  "tip": "ARP는 무상태 — 요청 없는 Reply도 반영"
+ },
+ {
+  "s": "s2",
+  "g": "스니핑·스푸핑 대응",
+  "front": "ARP 스푸핑 대응 4가지",
+  "key": "Static ARP·DAI·DHCP Snooping·Port Security",
+  "back": "정적 ARP 등록(arp -s / ip neigh add … nud permanent), 스위치 DAI(Dynamic ARP Inspection)+DHCP Snooping 바인딩, 포트당 MAC 수 제한(Port Security), arpwatch 모니터링.",
+  "tip": "DAI는 DHCP Snooping 바인딩 테이블을 근거로 검사"
+ },
+ {
+  "s": "s2",
+  "g": "스니핑·스푸핑 대응",
+  "front": "Promiscuous Mode",
+  "key": "자기 MAC이 아닌 프레임도 수신",
+  "back": "NIC 설정. 스니핑의 전제. 탐지: ip link의 PROMISC 플래그, 로그의 'entered promiscuous mode'. Port Mirroring(SPAN)은 스위치 측 설정.",
+  "tip": "스니핑=수동 공격(기밀성 위협)"
+ },
+ {
+  "s": "s2",
+  "g": "스니핑·스푸핑 대응",
+  "front": "MAC Flooding(Switch Jamming) 대응",
+  "key": "Port Security",
+  "back": "위조 MAC 대량 유입으로 스위치 MAC 테이블(CAM)을 가득 채우면 스위치가 허브처럼 플러딩 → 스니핑 가능. 대응: 포트당 허용 MAC 수 제한·위반 시 shutdown.",
+  "tip": "CAM 테이블 고갈"
+ },
+ {
+  "s": "s2",
+  "g": "스니핑·스푸핑 대응",
+  "front": "DNS 캐시 포이즈닝 대응",
+  "key": "DNSSEC·포트 랜덤화",
+  "back": "위조 응답이 Transaction ID·출발지 포트·질의 이름을 맞추면 캐시 오염. 대응: ★DNSSEC(응답 전자서명 검증)★, Source Port Randomization, DoH/DoT, 재귀 질의 허용 범위 제한.",
+  "tip": "DoH/DoT는 암호화, DNSSEC는 무결성·출처 인증"
+ },
+ {
+  "s": "s2",
+  "g": "스니핑·스푸핑 대응",
+  "front": "세션 하이재킹 대응(웹)",
+  "key": "HTTPS·쿠키 속성·재인증",
+  "back": "HTTPS 강제, 쿠키 HttpOnly(스크립트 접근 차단)·Secure(HTTPS만)·SameSite, 세션 타임아웃, 중요 기능 재인증, 로그인 시 세션 ID 재발급.",
+  "tip": "HSTS로 SSL Strip 방어"
+ },
+ {
+  "s": "s2",
+  "g": "패킷 분석",
+  "front": "tcpdump 캡처 필터 vs Wireshark 디스플레이 필터",
+  "key": "BPF vs 디스플레이 문법",
+  "back": "tcpdump: 'tcp[13] & 2 != 0', host·port 키워드(BPF) / Wireshark: tcp.flags.syn == 1, ip.addr == x (디스플레이 필터). 문법이 서로 다름.",
+  "tip": "SYN만: tcp.flags.syn==1 && tcp.flags.ack==0"
+ },
+ {
+  "s": "s2",
+  "g": "패킷 분석",
+  "front": "덤프에서 SYN Flood 판별",
+  "key": "SYN 다수 + ACK 없음",
+  "back": "같은 목적지 포트로 다수 출발지(대개 위조)의 SYN만 반복, 서버의 SYN+ACK에 ACK가 돌아오지 않음, SYN_RECV 급증.",
+  "tip": "RST가 대량이면 스캔 의심"
+ },
+ {
+  "s": "s2",
+  "g": "방화벽·iptables",
+  "front": "DROP vs REJECT",
+  "key": "무응답 폐기 vs 거부 응답",
+  "back": "DROP은 패킷을 조용히 버림(상대는 타임아웃), REJECT는 ICMP Port Unreachable 또는 TCP RST로 거부 회신.",
+  "tip": "외부 노출 정보 최소화엔 DROP"
+ },
+ {
+  "s": "s2",
+  "g": "방화벽·iptables",
+  "front": "iptables 룰 매칭 순서",
+  "key": "위→아래, 첫 매칭 적용",
+  "back": "체인 안 룰을 순서대로 비교해 처음 일치한 룰의 타깃 적용. -A=끝에 추가, -I 체인 1=맨 앞 삽입. 허용 예외는 차단 룰보다 위에.",
+  "tip": "기본정책(-P)은 아무 룰도 안 맞을 때"
+ },
+ {
+  "s": "s2",
+  "g": "방화벽·iptables",
+  "front": "iptables 화이트리스트 기본 골격",
+  "key": "-P INPUT DROP + ESTABLISHED 허용",
+  "back": "iptables -P INPUT DROP / -A INPUT -i lo -j ACCEPT / -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT / 필요한 서비스 포트만 ACCEPT.",
+  "tip": "원격 작업 중 DROP 정책 먼저 걸면 접속 끊김"
+ },
+ {
+  "s": "s2",
+  "g": "IDS·Snort 룰",
+  "front": "IDS vs IPS",
+  "key": "out-of-band 탐지 vs inline 차단",
+  "back": "IDS는 미러 트래픽을 받아 탐지·경보만, IPS는 트래픽 경로에 inline 배치되어 실시간 차단. 탐지 방식: Signature(알려진 패턴) / Anomaly(정상 기준 이탈, Zero-Day 탐지 가능·오탐 많음).",
+  "tip": "IPS 장애 시 서비스 영향 → fail-open/close 정책"
+ },
+ {
+  "s": "s2",
+  "g": "IDS·Snort 룰",
+  "front": "Snort 룰 헤더 구성",
+  "key": "action proto src sport -> dst dport",
+  "back": "예: alert tcp $EXTERNAL_NET any -> $HOME_NET 80 (msg:\"…\"; content:\"…\"; sid:1000001; rev:1;). 방향 -> 단방향, <> 양방향.",
+  "tip": "로컬 룰 sid는 1,000,000 이상"
+ },
+ {
+  "s": "s2",
+  "g": "VPN·무선",
+  "front": "IPSec AH vs ESP",
+  "key": "ESP만 암호화",
+  "back": "AH: 무결성·출처 인증(암호화 없음, NAT 통과 불가) / ESP: 무결성·인증·★기밀성★. Transport 모드=원본 IP 헤더 유지, Tunnel 모드=새 IP 헤더로 전체 캡슐화.",
+  "tip": "NAT 환경은 NAT-T(UDP 4500)"
  },
  {
   "s": "s4",
@@ -1168,6 +1422,202 @@ CPPG.sheets = [
   ]
  },
  {
+  "s": "s2",
+  "title": "★ 관찰 패턴 → 공격 판별 → 대응",
+  "type": "table",
+  "head": [
+   "관찰 패턴",
+   "판별",
+   "대응"
+  ],
+  "rows": [
+   [
+    "SYN 다수, ACK 미회신, SYN_RECV 급증",
+    "SYN Flood",
+    "tcp_syncookies=1·Backlog 증대·SYN Proxy"
+   ],
+   [
+    "SYN → SYN+ACK → RST 반복, 여러 포트",
+    "SYN(Half-Open) 스캔",
+    "임계치 탐지·출발지 차단"
+   ],
+   [
+    "플래그 0 또는 FIN+PSH+URG 패킷",
+    "NULL·XMAS 스캔",
+    "비정상 플래그 조합 DROP"
+   ],
+   [
+    "포트별 ICMP Type3 Code3 다수 회신",
+    "UDP 스캔",
+    "ICMP 오류 응답 속도 제한"
+   ],
+   [
+    "브로드캐스트 목적지 ICMP Echo, 출발지 위조",
+    "Smurf",
+    "Directed Broadcast 차단"
+   ],
+   [
+    "작은 DNS ANY 질의 → 큰 응답이 한 IP로 집중",
+    "DNS 증폭",
+    "Open Resolver 차단·응답 속도 제한"
+   ],
+   [
+    "출발지 IP = 목적지 IP",
+    "Land",
+    "Ingress Filtering"
+   ],
+   [
+    "게이트웨이 MAC 변경, 한 MAC에 여러 IP",
+    "ARP 스푸핑",
+    "Static ARP·DAI·arpwatch"
+   ],
+   [
+    "HTTP 연결 다수가 헤더 미완성 상태로 장시간 유지",
+    "Slowloris",
+    "헤더 타임아웃·IP당 연결 제한"
+   ],
+   [
+    "외부에서 AXFR(TCP 53) 요청",
+    "Zone Transfer 정보 수집",
+    "allow-transfer 로 보조 DNS만 허용"
+   ]
+  ]
+ },
+ {
+  "s": "s2",
+  "title": "★ 방어·탐지 명령 모음",
+  "type": "table",
+  "head": [
+   "목적",
+   "명령/룰",
+   "포인트"
+  ],
+  "rows": [
+   [
+    "SYN Cookie 활성화",
+    "sysctl -w net.ipv4.tcp_syncookies=1",
+    "영구는 /etc/sysctl.conf"
+   ],
+   [
+    "반연결 수 확인",
+    "ss -tan state syn-recv | wc -l",
+    "netstat -an | grep SYN_RECV"
+   ],
+   [
+    "특정 IP 차단",
+    "iptables -A INPUT -s 203.0.113.7 -j DROP",
+    "급할 땐 -I INPUT 1"
+   ],
+   [
+    "SSH 특정 IP만 허용",
+    "-A INPUT -p tcp -s 10.0.0.5 --dport 22 -j ACCEPT 후 --dport 22 -j DROP",
+    "허용을 위에"
+   ],
+   [
+    "SYN 속도 제한",
+    "iptables -A INPUT -p tcp --syn -m limit --limit 10/s -j ACCEPT",
+    "초과분은 다음 룰 DROP"
+   ],
+   [
+    "IP당 동시 연결 제한",
+    "-p tcp --dport 80 -m connlimit --connlimit-above 20 -j DROP",
+    "Slowloris 완화"
+   ],
+   [
+    "NULL·XMAS 차단",
+    "-p tcp --tcp-flags ALL NONE -j DROP / --tcp-flags ALL FIN,PSH,URG -j DROP",
+    "비정상 플래그"
+   ],
+   [
+    "룰 영구 저장",
+    "iptables-save > /etc/sysconfig/iptables",
+    "재부팅 후 소실 방지"
+   ],
+   [
+    "firewalld 영구 반영",
+    "firewall-cmd --permanent --add-service=https ; firewall-cmd --reload",
+    "--reload 필수"
+   ],
+   [
+    "정적 ARP",
+    "ip neigh replace 192.168.0.1 lladdr 00:11:22:33:44:55 dev eth0 nud permanent",
+    "Windows: arp -s"
+   ],
+   [
+    "SYN만 캡처",
+    "tcpdump -nn 'tcp[13] & 2 != 0'",
+    "SYN+ACK만 = 'tcp[13]==18'"
+   ],
+   [
+    "캡처 저장·재분석",
+    "tcpdump -i eth0 -w dump.pcap / tcpdump -r dump.pcap",
+    "-c 개수, -X 페이로드"
+   ]
+  ]
+ },
+ {
+  "s": "s2",
+  "title": "★ Snort 룰 옵션 정리",
+  "type": "table",
+  "head": [
+   "옵션",
+   "의미",
+   "예"
+  ],
+  "rows": [
+   [
+    "msg",
+    "경보 메시지",
+    "msg:\"Telnet access\";"
+   ],
+   [
+    "content",
+    "페이로드 문자열 매칭",
+    "content:\"union select\";"
+   ],
+   [
+    "nocase",
+    "대소문자 무시",
+    "content 바로 뒤"
+   ],
+   [
+    "offset / depth",
+    "매칭 시작 위치 / 검사 범위",
+    "offset:0; depth:4;"
+   ],
+   [
+    "flags",
+    "TCP 플래그",
+    "flags:S; (SYN), flags:0; (NULL)"
+   ],
+   [
+    "flow",
+    "세션 방향·상태",
+    "flow:to_server,established;"
+   ],
+   [
+    "itype / icode",
+    "ICMP Type / Code",
+    "itype:8;"
+   ],
+   [
+    "detection_filter / threshold",
+    "임계치 기반 경보",
+    "track by_src, count 5, seconds 60"
+   ],
+   [
+    "sid / rev",
+    "룰 ID / 개정 번호",
+    "sid:1000001; rev:1;"
+   ],
+   [
+    "pcre",
+    "정규표현식 매칭",
+    "pcre:\"/…/i\";"
+   ]
+  ]
+ },
+ {
   "s": "s4",
   "title": "★ 암호 알고리즘 총정리",
   "type": "table",
@@ -1720,6 +2170,86 @@ CPPG.traps = [
  {
   "s": "s1",
   "t": "무결성 기준선 DB는 침해가 의심될 때 생성한다 — 도입 직후(신뢰 가능한 상태)에 생성해야 의미"
+ },
+ {
+  "s": "s2",
+  "t": "Stealth Scan은 TCP Connect 스캔(-sT)이다 — SYN(Half-Open) 스캔(-sS). Connect는 3-way를 완성해 로그가 남는다"
+ },
+ {
+  "s": "s2",
+  "t": "FIN·NULL·XMAS 스캔에서 RST 응답은 Open을 뜻한다 — RST는 Closed, 무응답이 Open|filtered"
+ },
+ {
+  "s": "s2",
+  "t": "XMAS 패킷은 모든 플래그가 켜진 패킷이다 — FIN+PSH+URG 세 개만 켠다"
+ },
+ {
+  "s": "s2",
+  "t": "AH도 페이로드를 암호화한다 — 암호화(기밀성)는 ESP만 제공, AH는 무결성·인증"
+ },
+ {
+  "s": "s2",
+  "t": "AH는 NAT 환경에서도 문제없이 동작한다 — IP 헤더 무결성 검증 때문에 NAT 통과 불가, NAT-T는 ESP를 UDP 4500으로 캡슐화"
+ },
+ {
+  "s": "s2",
+  "t": "DROP과 REJECT는 상대에게 같은 결과를 준다 — DROP은 무응답, REJECT는 거부 패킷 회신"
+ },
+ {
+  "s": "s2",
+  "t": "iptables -A로 허용 룰을 추가하면 기존 차단 룰보다 먼저 적용된다 — -A는 맨 끝, 앞서 차단 룰이 있으면 허용이 적용되지 않음(-I 사용)"
+ },
+ {
+  "s": "s2",
+  "t": "firewall-cmd --permanent만 실행하면 즉시 반영된다 — --reload 해야 런타임에 반영"
+ },
+ {
+  "s": "s2",
+  "t": "Snort 로컬 룰 sid는 아무 번호나 써도 된다 — 1,000,000 이상(공식 룰과 충돌 방지)"
+ },
+ {
+  "s": "s2",
+  "t": "DNS Zone Transfer는 UDP 53을 사용한다 — TCP 53, 일반 질의는 UDP 53"
+ },
+ {
+  "s": "s2",
+  "t": "Smurf와 Fraggle은 같은 프로토콜을 쓴다 — Smurf=ICMP, Fraggle=UDP"
+ },
+ {
+  "s": "s2",
+  "t": "Slowloris는 대역폭을 고갈시키는 공격이다 — 저대역으로 연결 슬롯을 고갈"
+ },
+ {
+  "s": "s2",
+  "t": "SYN Cookie는 Backlog 큐를 늘리는 기법이다 — 큐에 저장하지 않고 ISN에 정보를 인코딩"
+ },
+ {
+  "s": "s2",
+  "t": "Promiscuous Mode는 스위치에서 설정한다 — NIC 설정, 스위치 쪽은 Port Mirroring(SPAN)"
+ },
+ {
+  "s": "s2",
+  "t": "tcp[13]에서 SYN+ACK 값은 3이다 — SYN 2 + ACK 16 = 18"
+ },
+ {
+  "s": "s2",
+  "t": "스니핑은 데이터를 변조하는 능동 공격이다 — 수동 공격(기밀성 위협), 스푸핑·하이재킹이 능동"
+ },
+ {
+  "s": "s2",
+  "t": "DNSSEC은 DNS 질의를 암호화한다 — 응답의 전자서명으로 무결성·출처를 검증, 암호화는 DoH/DoT"
+ },
+ {
+  "s": "s2",
+  "t": "ACK 스캔으로 포트 Open 여부를 판단한다 — 방화벽 필터링 여부(filtered/unfiltered) 파악용"
+ },
+ {
+  "s": "s2",
+  "t": "IDS는 inline으로 배치되어 공격을 차단한다 — IDS는 out-of-band 탐지·경보, 차단은 IPS"
+ },
+ {
+  "s": "s2",
+  "t": "WPA2는 SAE 핸드셰이크로 오프라인 사전 공격을 막는다 — SAE(Dragonfly)는 WPA3, WPA2-PSK는 4-way handshake"
  },
  {
   "s": "s4",
@@ -2441,6 +2971,442 @@ CPPG.notes = [
     "li": [
      "LISTEN 포트 목록 → 미상 포트 PID 확인 → /proc/PID/exe 실경로 → 해시·무결성 확인",
      "대응: 방화벽 차단(iptables/firewalld), 프로세스 격리·종료"
+    ]
+   }
+  ]
+ },
+ {
+  "s": "s2",
+  "no": "2-1",
+  "t": "TCP/IP·포트",
+  "title": "TCP/IP 핵심 — 연결·플래그·ICMP·ARP·DNS",
+  "ref": "공부자료 2과목 §1 · RFC 793·792·826",
+  "body": [
+   {
+    "h": "TCP 연결 수립·종료",
+    "li": [
+     "3-way: SYN(seq=x) → SYN+ACK(seq=y, ack=x+1) → ACK(ack=y+1) — ack는 상대 seq+1",
+     "4-way: FIN → ACK → FIN → ACK, 마지막 ACK 측 TIME_WAIT(2MSL) — 지연 패킷 소멸·ACK 재전송 보장",
+     "Half-Open(SYN_RECV): SYN+ACK까지만 진행된 상태 → 대량이면 SYN Flood 징후"
+    ]
+   },
+   {
+    "h": "포트 상태별 응답",
+    "tb": {
+     "head": [
+      "보낸 패킷",
+      "Open 포트",
+      "Closed 포트"
+     ],
+     "rows": [
+      [
+       "SYN",
+       "SYN+ACK",
+       "RST"
+      ],
+      [
+       "FIN·NULL·XMAS",
+       "무응답",
+       "RST"
+      ],
+      [
+       "UDP",
+       "무응답(또는 응답)",
+       "ICMP Type3 Code3"
+      ]
+     ]
+    }
+   },
+   {
+    "h": "ICMP·ARP·DNS 요점",
+    "li": [
+     "ICMP Type 8/0 Echo, Type 3 Unreachable(Code 3 Port), Type 11 Time Exceeded(traceroute), Type 5 Redirect",
+     "ARP: IP→MAC, Request 브로드캐스트·Reply 유니캐스트, 무상태라 위조 Reply가 캐시에 반영됨",
+     "DNS: 질의 UDP 53, Zone Transfer TCP 53 — allow-transfer로 보조 DNS만 허용"
+    ]
+   }
+  ]
+ },
+ {
+  "s": "s2",
+  "no": "2-2",
+  "t": "스캔 탐지",
+  "title": "포트 스캔 식별과 대응 — 패킷 패턴으로 판별",
+  "ref": "공부자료 2과목 §2 · Nmap Reference Guide",
+  "body": [
+   {
+    "h": "스캔 유형별 관찰 패턴",
+    "tb": {
+     "head": [
+      "유형(nmap 옵션)",
+      "관찰 패턴",
+      "특징"
+     ],
+     "rows": [
+      [
+       "SYN(-sS)",
+       "SYN → SYN+ACK → 스캐너 RST",
+       "3-way 미완성, 스텔스"
+      ],
+      [
+       "Connect(-sT)",
+       "3-way 완성 후 즉시 종료",
+       "서비스 로그에 남음"
+      ],
+      [
+       "FIN/NULL/XMAS(-sF/-sN/-sX)",
+       "비정상 플래그 단독 패킷",
+       "무응답=Open, RST=Closed"
+      ],
+      [
+       "ACK(-sA)",
+       "ACK 단독",
+       "방화벽 필터링 매핑"
+      ],
+      [
+       "UDP(-sU)",
+       "UDP + ICMP 3/3 회신",
+       "느림"
+      ],
+      [
+       "Idle(-sI)",
+       "제3 호스트(좀비) IPID 이용",
+       "실제 출발지 은닉"
+      ]
+     ]
+    }
+   },
+   {
+    "h": "탐지·대응",
+    "li": [
+     "짧은 시간 한 출발지에서 다수 포트로 SYN·RST가 반복되면 스캔 — IDS 임계치(detection_filter) 경보",
+     "비정상 플래그 조합(NULL·XMAS·SYN+FIN) DROP: iptables --tcp-flags ALL NONE / ALL FIN,PSH,URG",
+     "불필요 포트 닫기·배너 최소화(-sV 버전 탐지 노출 감소)",
+     "기본정책 DROP으로 Closed 포트도 RST 대신 무응답 → 정보 노출 감소"
+    ]
+   }
+  ]
+ },
+ {
+  "s": "s2",
+  "no": "2-3",
+  "t": "DoS 대응",
+  "title": "DoS·DDoS 원리와 대응",
+  "ref": "공부자료 2과목 §3.1",
+  "body": [
+   {
+    "h": "공격 유형별 원리·대응",
+    "tb": {
+     "head": [
+      "공격",
+      "원리",
+      "대응"
+     ],
+     "rows": [
+      [
+       "SYN Flood",
+       "반연결 큐(Backlog) 고갈",
+       "SYN Cookie·Backlog 증대·SYN Proxy"
+      ],
+      [
+       "Smurf / Fraggle",
+       "출발지 위조 + 브로드캐스트 증폭(ICMP/UDP)",
+       "Directed Broadcast 차단"
+      ],
+      [
+       "UDP Flood",
+       "임의 포트 UDP 대량 → ICMP 오류 폭증",
+       "속도 제한·필터"
+      ],
+      [
+       "Land",
+       "출발지=목적지",
+       "Ingress Filtering"
+      ],
+      [
+       "Teardrop",
+       "Fragment Offset 중첩",
+       "패치·재조립 검증"
+      ],
+      [
+       "Ping of Death",
+       "65,535바이트 초과 ICMP",
+       "패치·크기 제한"
+      ],
+      [
+       "Slowloris",
+       "헤더 미완성 연결 유지 → 슬롯 고갈",
+       "헤더 타임아웃·연결 수 제한"
+      ]
+     ]
+    }
+   },
+   {
+    "h": "DDoS 3분류",
+    "li": [
+     "Volume(대역폭): UDP/ICMP Flood, DNS·NTP·Memcached 증폭 — ISP·클린존(스크러빙)·CDN",
+     "Protocol(자원): SYN Flood, Ping of Death — SYN Cookie·방화벽 상태 테이블 관리",
+     "Application(L7): HTTP Flood, Slowloris, RUDY — WAF·속도 제한·캡차·타임아웃"
+    ]
+   },
+   {
+    "h": "탐지 명령",
+    "li": [
+     "ss -tan state syn-recv | wc -l — 반연결 수 급증 확인",
+     "netstat -an | grep SYN_RECV | awk '{print $5}' | sort | uniq -c — 출발지 분포",
+     "sysctl net.ipv4.tcp_max_syn_backlog — Backlog 크기 확인"
+    ]
+   }
+  ]
+ },
+ {
+  "s": "s2",
+  "no": "2-4",
+  "t": "스니핑·스푸핑 대응",
+  "title": "스니핑·스푸핑·MITM 탐지와 대응",
+  "ref": "공부자료 2과목 §1.4·§1.5·§3.2",
+  "body": [
+   {
+    "h": "유형 비교",
+    "tb": {
+     "head": [
+      "구분",
+      "성격",
+      "대응"
+     ],
+     "rows": [
+      [
+       "스니핑",
+       "수동, 기밀성 위협",
+       "암호화(TLS·SSH·IPSec)·VLAN"
+      ],
+      [
+       "ARP 스푸핑",
+       "능동, MITM 진입",
+       "Static ARP·DAI·Port Security"
+      ],
+      [
+       "MAC Flooding",
+       "CAM 테이블 고갈 → 플러딩",
+       "Port Security"
+      ],
+      [
+       "DNS 스푸핑",
+       "위조 응답으로 피싱 유도",
+       "DNSSEC·포트 랜덤화"
+      ],
+      [
+       "세션 하이재킹",
+       "세션 쿠키·seq 탈취",
+       "HTTPS·HttpOnly·Secure·재인증"
+      ]
+     ]
+    }
+   },
+   {
+    "h": "ARP 스푸핑 탐지 포인트",
+    "li": [
+     "arp -a / ip neigh 에서 게이트웨이 MAC이 평소와 다름",
+     "서로 다른 IP가 같은 MAC으로 매핑",
+     "arpwatch 'changed ethernet address' 경보",
+     "Wireshark arp 필터에서 요청 없는 Reply 반복(duplicate use of IP 경고)"
+    ]
+   },
+   {
+    "h": "MITM 방어",
+    "li": [
+     "상호 인증(mTLS)·인증서 검증 경고 무시 금지",
+     "HSTS로 HTTPS 강제(SSL Strip 차단)",
+     "Rogue AP 탐지(WIPS)·802.1X"
+    ]
+   }
+  ]
+ },
+ {
+  "s": "s2",
+  "no": "2-5",
+  "t": "패킷 분석",
+  "title": "패킷 분석 — tcpdump·Wireshark 필터",
+  "ref": "공부자료 2과목 §4",
+  "body": [
+   {
+    "h": "tcpdump(BPF 캡처 필터)",
+    "tb": {
+     "head": [
+      "목적",
+      "표현",
+      "비고"
+     ],
+     "rows": [
+      [
+       "호스트",
+       "host 10.0.0.5",
+       "src host / dst host"
+      ],
+      [
+       "포트",
+       "port 80",
+       "tcp port 443"
+      ],
+      [
+       "SYN만",
+       "'tcp[13] & 2 != 0'",
+       "tcp[tcpflags] & tcp-syn != 0"
+      ],
+      [
+       "SYN+ACK만",
+       "'tcp[13] == 18'",
+       "2+16"
+      ],
+      [
+       "저장·읽기",
+       "-w dump.pcap / -r dump.pcap",
+       "-nn 이름 변환 끔"
+      ]
+     ]
+    }
+   },
+   {
+    "h": "Wireshark(디스플레이 필터)",
+    "li": [
+     "ip.addr == 10.0.0.5 / ip.src == … && ip.dst == …",
+     "tcp.flags.syn == 1 && tcp.flags.ack == 0 — 순수 SYN",
+     "tcp.flags.reset == 1 — RST(닫힌 포트·강제 종료)",
+     "tcp.analysis.retransmission — 재전송",
+     "http.request.method == \"POST\" / dns / arp"
+    ]
+   },
+   {
+    "h": "덤프 해석 요령",
+    "li": [
+     "SYN 다수 + ACK 없음 = SYN Flood",
+     "한 출발지 → 여러 포트 SYN + RST 회신 다수 = 포트 스캔",
+     "ICMP 3/3 다수 = UDP 스캔 또는 UDP Flood 부작용",
+     "같은 IP에 서로 다른 MAC의 ARP Reply = ARP 스푸핑"
+    ]
+   }
+  ]
+ },
+ {
+  "s": "s2",
+  "no": "2-6",
+  "t": "방화벽·iptables",
+  "title": "iptables·firewalld 방화벽 룰",
+  "ref": "공부자료 2과목 §5.1·§5.2 · iptables man",
+  "body": [
+   {
+    "h": "구조와 옵션",
+    "tb": {
+     "head": [
+      "항목",
+      "내용",
+      "비고"
+     ],
+     "rows": [
+      [
+       "테이블",
+       "filter(기본)·nat·mangle",
+       "-t 지정"
+      ],
+      [
+       "체인",
+       "INPUT·OUTPUT·FORWARD",
+       "nat: PREROUTING·POSTROUTING"
+      ],
+      [
+       "추가/삽입",
+       "-A 끝 / -I 체인 번호",
+       "-D 삭제, -F 초기화"
+      ],
+      [
+       "매칭",
+       "-p -s -d --sport --dport -i -o",
+       "-m multiport --dports"
+      ],
+      [
+       "상태",
+       "-m state --state NEW,ESTABLISHED,RELATED",
+       "conntrack 동일"
+      ],
+      [
+       "타깃",
+       "ACCEPT·DROP·REJECT·LOG",
+       "-j"
+      ]
+     ]
+    }
+   },
+   {
+    "h": "실무 룰 예",
+    "li": [
+     "iptables -A INPUT -s 203.0.113.77 -j DROP — 공격 IP 차단",
+     "iptables -A INPUT -p tcp -m multiport --dports 80,443 -j ACCEPT — 웹 허용",
+     "iptables -A INPUT -p icmp --icmp-type echo-request -j DROP — ping 차단",
+     "iptables -A INPUT -p tcp --dport 22 -m state --state NEW -m recent --update --seconds 60 --hitcount 5 -j DROP — SSH 무차별 대입 완화",
+     "iptables-save > /etc/sysconfig/iptables — 영구 저장"
+    ]
+   },
+   {
+    "h": "firewalld",
+    "li": [
+     "zone(신뢰 수준) 기반, firewall-cmd --get-active-zones",
+     "--permanent 변경 후 --reload 해야 반영",
+     "--add-service=https / --add-port=8080/tcp / --remove-service=ssh",
+     "--list-all 로 확인"
+    ]
+   }
+  ]
+ },
+ {
+  "s": "s2",
+  "no": "2-7",
+  "t": "IDS·Snort 룰",
+  "title": "IDS·IPS와 Snort 룰 작성",
+  "ref": "공부자료 2과목 §5.3·§5.4 · Snort Users Manual",
+  "body": [
+   {
+    "h": "IDS vs IPS",
+    "tb": {
+     "head": [
+      "구분",
+      "IDS",
+      "IPS"
+     ],
+     "rows": [
+      [
+       "배치",
+       "out-of-band(미러)",
+       "inline"
+      ],
+      [
+       "동작",
+       "탐지·경보",
+       "탐지+차단"
+      ],
+      [
+       "장애 영향",
+       "서비스 무관",
+       "서비스 경로 영향"
+      ]
+     ]
+    }
+   },
+   {
+    "h": "탐지 방식",
+    "li": [
+     "Signature(오용) — 알려진 패턴, 오탐 적음, Zero-Day 탐지 불가",
+     "Anomaly(이상) — 정상 기준 이탈, Zero-Day 탐지 가능, 오탐 많음",
+     "NIDS·HIDS·NIPS·HIPS"
+    ]
+   },
+   {
+    "h": "Snort 룰 예",
+    "li": [
+     "alert tcp any any -> $HOME_NET 23 (msg:\"Telnet access\"; sid:1000001; rev:1;)",
+     "alert tcp $EXTERNAL_NET any -> $HOME_NET 80 (msg:\"SQLi union select\"; flow:to_server,established; content:\"union select\"; nocase; sid:1000002; rev:1;)",
+     "alert icmp any any -> $HOME_NET any (msg:\"ICMP Ping\"; itype:8; sid:1000003;)",
+     "alert tcp any any -> $HOME_NET any (msg:\"SYN Flood\"; flags:S; detection_filter:track by_dst, count 100, seconds 1; sid:1000004;)",
+     "alert tcp any any -> $HOME_NET any (msg:\"NULL scan\"; flags:0; sid:1000005;)"
     ]
    }
   ]
@@ -4242,6 +5208,566 @@ CPPG.mcq = [
   "e": "lsof -i :8080 또는 netstat -ntlp | grep 8080. kill -9 8080은 PID 8080을 강제 종료하는 명령."
  },
  {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "TCP 3-way Handshake의 두 번째 패킷에 설정되는 플래그는?",
+  "c": [
+   "SYN+ACK",
+   "SYN",
+   "ACK",
+   "FIN+ACK"
+  ],
+  "a": 0,
+  "e": "SYN → SYN+ACK → ACK."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "클라이언트가 seq=1000으로 SYN을 보냈고 서버가 seq=5000으로 응답했다. 서버의 SYN+ACK와 클라이언트의 마지막 ACK에 담기는 ack 번호를 순서대로 고르면?",
+  "c": [
+   "1000, 5000",
+   "1001, 5001",
+   "1001, 5000",
+   "1000, 5001"
+  ],
+  "a": 1,
+  "e": "ack는 상대 seq+1 → 서버 ack=1001, 클라이언트 ack=5001."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "TIME_WAIT 상태에 대한 설명으로 옳은 것은?",
+  "c": [
+   "수동 종료 측이 FIN 수신 직후 들어가는 상태",
+   "SYN을 받고 ACK를 기다리는 상태",
+   "능동 종료 측이 마지막 ACK를 보낸 뒤 2MSL 동안 대기하는 상태",
+   "RST 수신 후 즉시 들어가는 상태"
+  ],
+  "a": 2,
+  "e": "능동 종료 측 TIME_WAIT(2MSL) — 지연 패킷 소멸·마지막 ACK 재전송 보장. 수동 측은 CLOSE_WAIT."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "UDP로 Closed 포트에 패킷을 보냈을 때 일반적으로 돌아오는 응답은?",
+  "c": [
+   "TCP RST",
+   "ICMP Type 0",
+   "ICMP Type 11",
+   "ICMP Type 3 Code 3"
+  ],
+  "a": 3,
+  "e": "Port Unreachable(Type 3 Code 3)."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "DNS 서버 보안 점검에서 외부 임의 호스트의 요청을 막아야 하는 것으로 가장 적절한 것은?",
+  "c": [
+   "TCP 53 Zone Transfer(AXFR)",
+   "UDP 53 일반 질의",
+   "TCP 443 DoH",
+   "UDP 123 NTP"
+  ],
+  "a": 0,
+  "e": "AXFR이 열려 있으면 내부 호스트 목록이 노출 → allow-transfer로 보조 DNS만 허용."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "방화벽 로그에서 한 외부 IP가 수백 개 포트로 SYN을 보내고, 열린 포트에서 SYN+ACK가 나가면 곧바로 그 IP가 RST를 보내는 패턴이 보였다. 해당 활동은?",
+  "c": [
+   "TCP Connect 스캔",
+   "SYN(Half-Open) 스캔",
+   "ACK 스캔",
+   "UDP 스캔"
+  ],
+  "a": 1,
+  "e": "SYN+ACK 수신 후 RST로 끊어 3-way를 완성하지 않는 스텔스 스캔."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "FIN 스캔으로 보이는 트래픽에서 특정 포트가 아무 응답도 하지 않았다. 표준(RFC 793) 동작 기준 이 포트의 해석은?",
+  "c": [
+   "Closed",
+   "unfiltered",
+   "Open 또는 filtered",
+   "판정 불가 — 항상 재전송"
+  ],
+  "a": 2,
+  "e": "FIN·NULL·XMAS는 무응답=Open|filtered, RST=Closed."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 3,
+  "q": "다음 tcpdump 출력이 가리키는 스캔 유형은?\n10:01:02 IP 198.51.100.9.41200 > 10.0.0.5.22: Flags [FPU], seq 0, win 1024\n10:01:02 IP 10.0.0.5.23 > 198.51.100.9.41200: Flags [R.], seq 0, ack 1\n① NULL 스캔 ② SYN 스캔 ③ XMAS 스캔 ④ ACK 스캔",
+  "c": [
+   "①",
+   "②",
+   "③",
+   "④"
+  ],
+  "a": 2,
+  "e": "Flags [FPU] = FIN+PSH+URG → XMAS 스캔. 응답 없는 포트는 Open|filtered, RST 회신(23번)은 Closed."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "ACK 스캔을 탐지했을 때 공격자가 얻으려는 정보로 가장 적절한 것은?",
+  "c": [
+   "서비스 버전",
+   "포트 Open 여부",
+   "운영체제 종류",
+   "방화벽의 필터링(상태 추적) 여부"
+  ],
+  "a": 3,
+  "e": "RST 회신=unfiltered, 무응답=filtered → 방화벽 룰 매핑."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 3,
+  "q": "Linux 서버에서 NULL 스캔과 XMAS 스캔 패킷을 차단하는 iptables 룰 조합으로 옳은 것은?",
+  "c": [
+   "--tcp-flags ALL NONE -j DROP / --tcp-flags ALL FIN,PSH,URG -j DROP",
+   "--tcp-flags SYN SYN -j DROP / --tcp-flags ALL ALL -j ACCEPT",
+   "--syn -j DROP / --tcp-flags FIN FIN -j ACCEPT",
+   "--tcp-flags ALL ACK -j DROP / --tcp-flags ALL RST -j DROP"
+  ],
+  "a": 0,
+  "e": "ALL NONE = 플래그 0(NULL), ALL FIN,PSH,URG = XMAS. --syn 전체 차단은 정상 연결까지 막음."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 1,
+  "q": "SYN Flood가 고갈시키는 자원은?",
+  "c": [
+   "네트워크 대역폭",
+   "반연결 큐(Backlog)",
+   "ARP 캐시",
+   "DNS 캐시"
+  ],
+  "a": 1,
+  "e": "SYN_RECV 상태가 Backlog를 채워 정상 연결 거부."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "웹서버에서 `ss -tan state syn-recv | wc -l` 결과가 평소 5에서 40,000으로 급증했다. 커널 수준의 즉각 완화책으로 가장 적절한 것은?",
+  "c": [
+   "net.ipv4.ip_forward=1",
+   "net.ipv4.icmp_echo_ignore_all=0",
+   "net.ipv4.tcp_syncookies=1",
+   "net.ipv4.tcp_timestamps=0"
+  ],
+  "a": 2,
+  "e": "SYN Cookie — 큐에 저장하지 않고 ISN에 인코딩해 Backlog 고갈 회피."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "출발지를 피해자 IP로 위조한 ICMP Echo Request를 브로드캐스트 주소로 보내 응답을 증폭시키는 공격과 그 대응이 바르게 짝지어진 것은?",
+  "c": [
+   "Fraggle — SYN Cookie",
+   "Land — 포트 랜덤화",
+   "Teardrop — DNSSEC",
+   "Smurf — Directed Broadcast 차단"
+  ],
+  "a": 3,
+  "e": "Smurf(ICMP). Fraggle은 UDP 버전."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 3,
+  "q": "웹서버 대역폭 사용량은 평소 수준인데 Apache 동시 연결 슬롯이 가득 차 신규 요청이 거부된다. 연결은 대부분 요청 헤더가 끝나지 않은 상태로 수 분간 유지된다. 가장 적절한 판단과 대응은?",
+  "c": [
+   "Slowloris — 요청 헤더 타임아웃(mod_reqtimeout)·IP당 연결 제한",
+   "UDP Flood — ISP 대역폭 증설",
+   "SYN Flood — SYN Cookie",
+   "Smurf — 브로드캐스트 차단"
+  ],
+  "a": 0,
+  "e": "저대역 L7 공격으로 연결 슬롯 고갈."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "DNS·NTP·Memcached 증폭 공격이 성립하기 위한 공통 전제는?",
+  "c": [
+   "TCP 3-way 완성",
+   "출발지 IP 위조 + 요청보다 큰 응답",
+   "피해자 측 Promiscuous Mode",
+   "IPSec 미적용"
+  ],
+  "a": 1,
+  "e": "UDP 기반 서비스의 응답 증폭과 출발지 위조 — 대응은 Open Resolver 차단·BCP 38."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "PC에서 `arp -a`를 확인하니 게이트웨이 192.168.0.1과 다른 PC 192.168.0.23이 같은 MAC 주소로 표시된다. 가장 가능성 높은 상황은?",
+  "c": [
+   "DHCP 임대 만료",
+   "DNS 캐시 포이즈닝",
+   "ARP 스푸핑에 의한 MITM",
+   "MAC Flooding"
+  ],
+  "a": 2,
+  "e": "게이트웨이 IP가 공격자 MAC으로 오염된 전형적 징후."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "스위치에서 DHCP Snooping 바인딩 테이블을 근거로 위조 ARP 패킷을 폐기하는 기능은?",
+  "c": [
+   "Port Mirroring",
+   "STP",
+   "VTP",
+   "DAI(Dynamic ARP Inspection)"
+  ],
+  "a": 3,
+  "e": "DAI는 IP–MAC 바인딩과 불일치하는 ARP를 차단."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 3,
+  "q": "Which control BEST prevents an attacker on the same switched LAN from reading captured credentials even if ARP spoofing succeeds?",
+  "c": [
+   "End-to-end encryption such as TLS/SSH",
+   "Port Security limiting MACs per port",
+   "Static ARP on the gateway only",
+   "Disabling ICMP"
+  ],
+  "a": 0,
+  "e": "ARP 대응은 진입을 막는 통제이고, 진입이 성공해도 내용 노출을 막는 것은 암호화."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "DNS 캐시 포이즈닝 대응으로 '응답의 출처와 무결성을 전자서명으로 검증'하는 기술은?",
+  "c": [
+   "DoH",
+   "DNSSEC",
+   "DoT",
+   "Split DNS"
+  ],
+  "a": 1,
+  "e": "DoH/DoT는 전송 암호화, DNSSEC은 서명 검증."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 1,
+  "q": "스니핑을 위해 NIC가 자신에게 오지 않은 프레임도 수신하도록 하는 모드는?",
+  "c": [
+   "Monitor Mode",
+   "Trunk Mode",
+   "Promiscuous Mode",
+   "Access Mode"
+  ],
+  "a": 2,
+  "e": "Promiscuous Mode — 탐지는 PROMISC 플래그 확인."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 1,
+  "q": "tcpdump에서 SYN 플래그가 설정된 패킷만 캡처하는 필터는?",
+  "c": [
+   "tcp.flags.syn == 1",
+   "'tcp[13] == 16'",
+   "syn only",
+   "'tcp[13] & 2 != 0'"
+  ],
+  "a": 3,
+  "e": "tcp[13]=플래그 옥텟, SYN 비트값 2. ①은 Wireshark 문법."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "Wireshark에서 연결 시도(순수 SYN)만 보려면?",
+  "c": [
+   "tcp.flags.syn == 1 && tcp.flags.ack == 0",
+   "tcp.flags.syn == 1",
+   "tcp.flags.ack == 1",
+   "tcp.flags.reset == 1"
+  ],
+  "a": 0,
+  "e": "SYN+ACK를 제외해야 순수 SYN."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "tcpdump 필터 'tcp[13] == 18'이 캡처하는 패킷은?",
+  "c": [
+   "SYN",
+   "SYN+ACK",
+   "FIN+ACK",
+   "RST+ACK"
+  ],
+  "a": 1,
+  "e": "SYN 2 + ACK 16 = 18."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 3,
+  "q": "다음 덤프의 판단으로 옳은 것은?\n10:00:01 IP 45.1.2.3.1111 > 10.0.0.5.80: Flags [S]\n10:00:01 IP 10.0.0.5.80 > 45.1.2.3.1111: Flags [S.]\n10:00:01 IP 77.8.9.1.2222 > 10.0.0.5.80: Flags [S]\n10:00:01 IP 10.0.0.5.80 > 77.8.9.1.2222: Flags [S.]\n(초당 수천 건, 이후 [.] ACK 없음)\n① 정상 접속 증가 ② 포트 스캔 ③ ARP 스푸핑 ④ SYN Flood",
+  "c": [
+   "①",
+   "②",
+   "③",
+   "④"
+  ],
+  "a": 3,
+  "e": "다수 출발지 SYN + 서버 SYN+ACK + ACK 없음 → 반연결 누적, SYN Flood."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "Wireshark에서 ARP 스푸핑 분석 시 우선 적용할 디스플레이 필터는?",
+  "c": [
+   "dns",
+   "icmp",
+   "arp",
+   "http"
+  ],
+  "a": 2,
+  "e": "arp 필터 후 요청 없는 Reply·duplicate IP 경고 확인."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 1,
+  "q": "iptables에서 패킷을 응답 없이 조용히 버리는 타깃은?",
+  "c": [
+   "REJECT",
+   "LOG",
+   "RETURN",
+   "DROP"
+  ],
+  "a": 3,
+  "e": "REJECT는 거부 응답 회신."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "다음 룰이 순서대로 적용될 때 10.0.0.5의 SSH 접속 결과는?\n1) iptables -A INPUT -p tcp --dport 22 -j DROP\n2) iptables -A INPUT -p tcp -s 10.0.0.5 --dport 22 -j ACCEPT",
+  "c": [
+   "차단",
+   "허용",
+   "REJECT 응답",
+   "LOG 후 허용"
+  ],
+  "a": 0,
+  "e": "첫 매칭 룰(1번 DROP) 적용. 허용 룰은 -I INPUT 1로 앞에 넣어야 함."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "기본정책을 DROP으로 바꾸기 전에 반드시 추가해야 원격 관리 세션과 응답 트래픽이 끊기지 않는 룰은?",
+  "c": [
+   "-A OUTPUT -j DROP",
+   "-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT",
+   "-A FORWARD -j ACCEPT",
+   "-F"
+  ],
+  "a": 1,
+  "e": "기존 연결·관련 트래픽 허용 + 관리 포트 허용 후 -P INPUT DROP."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "firewalld에서 https 서비스를 영구 허용하고 즉시 반영하는 올바른 절차는?",
+  "c": [
+   "--add-service=https 만 실행",
+   "--reload 후 --add-service=https",
+   "--permanent --add-service=https 후 --reload",
+   "--remove-service=https --permanent"
+  ],
+  "a": 2,
+  "e": "--permanent는 설정 파일만 변경 → --reload로 런타임 반영."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 3,
+  "q": "SSH 무차별 대입이 /var/log/secure에서 확인됐다. 서비스는 유지하면서 '60초 안에 5회 넘게 새 연결을 시도하는 IP'를 차단하는 iptables 모듈은?",
+  "c": [
+   "multiport",
+   "mac",
+   "owner",
+   "recent"
+  ],
+  "a": 3,
+  "e": "-m recent --update --seconds 60 --hitcount 5 -j DROP (사전에 --set 으로 기록)."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 1,
+  "q": "IDS와 IPS의 차이로 옳은 것은?",
+  "c": [
+   "IDS는 탐지·경보, IPS는 inline 배치로 차단까지",
+   "IDS는 inline 차단, IPS는 미러 탐지",
+   "둘 다 Anomaly 방식만 사용",
+   "IPS는 HIDS에만 존재"
+  ],
+  "a": 0,
+  "e": "IDS=out-of-band, IPS=inline."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Snort 룰 `alert tcp $EXTERNAL_NET any -> $HOME_NET 80 (msg:\"SQLi\"; content:\"union select\"; nocase; sid:1000002; rev:1;)`에서 nocase의 역할은?",
+  "c": [
+   "룰 비활성화",
+   "대소문자 구분 없이 content 매칭",
+   "패킷 차단",
+   "세션 방향 지정"
+  ],
+  "a": 1,
+  "e": "UNION SELECT 등 대소문자 변형까지 탐지."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "사용자 정의(로컬) Snort 룰의 sid 범위로 권장되는 것은?",
+  "c": [
+   "1~100",
+   "100~999",
+   "1,000,000 이상",
+   "음수"
+  ],
+  "a": 2,
+  "e": "공식 룰셋과의 충돌 방지."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 3,
+  "q": "1초에 같은 목적지로 SYN이 100개 이상 들어오면 경보하는 Snort 룰로 가장 적절한 것은?",
+  "c": [
+   "alert udp any any -> $HOME_NET any (msg:\"SYN Flood\"; flags:S; sid:1000004;)",
+   "pass tcp any any -> $HOME_NET any (flags:S; count 100;)",
+   "alert tcp any any <> any any (msg:\"SYN\"; content:\"SYN\"; sid:4;)",
+   "alert tcp any any -> $HOME_NET any (msg:\"SYN Flood\"; flags:S; detection_filter:track by_dst, count 100, seconds 1; sid:1000004;)"
+  ],
+  "a": 3,
+  "e": "flags:S + detection_filter(track by_dst) 임계치. SYN은 TCP 플래그이지 페이로드 문자열이 아님."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Signature 기반 탐지의 한계로 옳은 것은?",
+  "c": [
+   "알려지지 않은 Zero-Day 공격 탐지가 어렵다",
+   "오탐이 매우 많다",
+   "정상 기준선 학습이 필요하다",
+   "inline 배치가 불가능하다"
+  ],
+  "a": 0,
+  "e": "패턴이 있어야 탐지 — Zero-Day는 Anomaly 방식이 유리."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 1,
+  "q": "IPSec에서 기밀성(암호화)을 제공하는 프로토콜은?",
+  "c": [
+   "AH",
+   "ESP",
+   "IKE",
+   "ISAKMP"
+  ],
+  "a": 1,
+  "e": "AH는 무결성·인증만."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 2,
+  "q": "원본 IP 헤더까지 보호해야 하는 게이트웨이 간 VPN에 적합한 IPSec 모드는?",
+  "c": [
+   "Transport",
+   "Aggressive",
+   "Tunnel",
+   "Main"
+  ],
+  "a": 2,
+  "e": "Tunnel 모드는 새 IP 헤더로 원본 패킷 전체 캡슐화. Main/Aggressive는 IKE Phase1 모드."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 2,
+  "q": "WPA3가 WPA2-PSK 대비 오프라인 사전 공격을 막기 위해 도입한 방식은?",
+  "c": [
+   "TKIP",
+   "WEP 키 순환",
+   "EAP-MD5",
+   "SAE(Dragonfly)"
+  ],
+  "a": 3,
+  "e": "SAE — 전방향 비밀성 제공."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 2,
+  "q": "802.1X 구성에서 Authenticator 역할을 하는 장비는?",
+  "c": [
+   "스위치·AP",
+   "단말(노트북)",
+   "RADIUS 서버",
+   "DHCP 서버"
+  ],
+  "a": 0,
+  "e": "Supplicant(단말)–Authenticator(스위치/AP)–Authentication Server(RADIUS)."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 3,
+  "q": "Which statement about NAT and IPSec is CORRECT?",
+  "c": [
+   "AH works through NAT because it encrypts the header",
+   "ESP can traverse NAT using NAT-T (UDP 4500), while AH breaks because its integrity check covers the IP header",
+   "Tunnel mode makes AH NAT-compatible",
+   "NAT-T uses TCP 443"
+  ],
+  "a": 1,
+  "e": "AH는 IP 헤더 무결성 검증 → NAT가 주소를 바꾸면 실패."
+ },
+ {
   "s": "s4",
   "t": "대칭키·운영모드",
   "d": 1,
@@ -5605,6 +7131,246 @@ CPPG.ox = [
   "e": "kill -15(SIGTERM)=정상 종료, kill -9(SIGKILL)=강제 종료."
  },
  {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "TCP 3-way Handshake에서 서버의 응답 ack 번호는 클라이언트 seq + 1이다.",
+  "a": true,
+  "e": "±1 규칙."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "Closed TCP 포트에 SYN을 보내면 SYN+ACK가 돌아온다.",
+  "a": false,
+  "e": "Closed → RST."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "traceroute는 TTL을 1씩 늘리며 각 홉이 돌려주는 ICMP Type 11을 이용한다.",
+  "a": true,
+  "e": "Time Exceeded."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "ARP는 요청을 보내지 않았어도 수신한 Reply를 캐시에 반영할 수 있다.",
+  "a": true,
+  "e": "무상태 — 스푸핑의 원인."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 1,
+  "q": "SYN 스캔은 3-way Handshake를 완성하지 않는다.",
+  "a": true,
+  "e": "SYN+ACK 수신 후 RST."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "NULL 스캔은 SYN·ACK 두 플래그만 켠 패킷을 보낸다.",
+  "a": false,
+  "e": "모든 플래그 0."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "TCP Connect 스캔은 대상 서비스 로그에 접속 기록이 남아 탐지가 쉽다.",
+  "a": true,
+  "e": "3-way 완성."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 3,
+  "q": "Windows 계열처럼 RFC 793을 따르지 않는 스택에서는 FIN·NULL·XMAS 스캔 결과가 부정확할 수 있다.",
+  "a": true,
+  "e": "모든 포트가 RST로 응답해 Closed로 보일 수 있음."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 1,
+  "q": "SYN Cookie는 SYN 정보를 Backlog 큐에 더 많이 저장하는 방식이다.",
+  "a": false,
+  "e": "큐에 저장하지 않고 ISN에 인코딩."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "Fraggle은 ICMP 대신 UDP echo·chargen을 이용한 증폭 공격이다.",
+  "a": true,
+  "e": "Smurf의 UDP 버전."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "Slowloris는 대량의 패킷으로 대역폭을 소진시키는 Volume 공격이다.",
+  "a": false,
+  "e": "저대역 L7 — 연결 슬롯 고갈."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "Land 공격은 출발지와 목적지 IP를 같게 만든 패킷을 이용한다.",
+  "a": true,
+  "e": "Ingress Filtering으로 대응."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 3,
+  "q": "증폭 공격 대응으로 자기 네트워크에서 나가는 패킷 중 내부 대역이 아닌 출발지 주소를 차단(Egress Filtering)하는 것도 유효하다.",
+  "a": true,
+  "e": "BCP 38 — 위조 출발지 송출 방지."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 1,
+  "q": "스니핑은 기밀성을 위협하는 수동적 공격이다.",
+  "a": true,
+  "e": "변조 없음."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "스위치 환경에서는 ARP 스푸핑이나 MAC Flooding 없이도 다른 호스트의 유니캐스트를 그대로 볼 수 있다.",
+  "a": false,
+  "e": "스위치는 목적지 포트로만 전달 — 선행 공격이나 SPAN 필요."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "Port Security는 포트당 허용 MAC 수를 제한해 MAC Flooding을 완화한다.",
+  "a": true,
+  "e": "위반 시 shutdown/restrict."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "DoH·DoT는 DNS 응답에 전자서명을 붙여 위조를 검증하는 기술이다.",
+  "a": false,
+  "e": "전송 암호화. 서명 검증은 DNSSEC."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 3,
+  "q": "쿠키에 HttpOnly 속성을 주면 HTTPS가 아닌 연결에서는 쿠키가 전송되지 않는다.",
+  "a": false,
+  "e": "HTTPS 전용은 Secure, HttpOnly는 스크립트 접근 차단."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 1,
+  "q": "tcpdump의 -w 옵션은 캡처를 파일로 저장한다.",
+  "a": true,
+  "e": "-r로 읽기."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "tcp.flags.syn == 1 은 tcpdump 캡처 필터 문법이다.",
+  "a": false,
+  "e": "Wireshark 디스플레이 필터."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "tcpdump -nn 은 IP와 포트 이름 변환을 모두 끈다.",
+  "a": true,
+  "e": "-n은 IP만."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 3,
+  "q": "덤프에서 한 출발지가 여러 목적지 포트로 SYN을 보내고 대부분 RST가 돌아온다면 포트 스캔을 의심할 수 있다.",
+  "a": true,
+  "e": "Closed 포트의 RST."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 1,
+  "q": "iptables -A 는 체인의 맨 앞에 룰을 넣는다.",
+  "a": false,
+  "e": "맨 끝. 맨 앞은 -I."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "iptables 룰은 재부팅해도 자동으로 유지된다.",
+  "a": false,
+  "e": "iptables-save 등으로 영구 저장 필요."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "REJECT 타깃은 상대에게 거부 응답을 회신한다.",
+  "a": true,
+  "e": "ICMP Unreachable 또는 TCP RST."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 1,
+  "q": "IDS는 트래픽 경로에 inline으로 배치되어 공격 패킷을 차단한다.",
+  "a": false,
+  "e": "그것은 IPS."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Snort 룰에서 -> 대신 <> 를 쓰면 양방향 트래픽을 검사한다.",
+  "a": true,
+  "e": "방향 연산자."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Anomaly 탐지는 Signature 탐지보다 오탐이 적다.",
+  "a": false,
+  "e": "일반적으로 오탐이 더 많다."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 1,
+  "q": "AH는 무결성과 출처 인증을 제공하지만 암호화는 제공하지 않는다.",
+  "a": true,
+  "e": "암호화는 ESP."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 2,
+  "q": "WEP은 RC4와 짧은 24비트 IV 재사용 문제로 취약하다.",
+  "a": true,
+  "e": "WPA2(AES-CCMP)·WPA3 사용 권장."
+ },
+ {
   "s": "s4",
   "t": "대칭키·운영모드",
   "d": 1,
@@ -6695,6 +8461,675 @@ CPPG.fill = [
    "exe"
   ],
   "e": "ls -l /proc/PID/exe 로 확인."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "TCP 연결 수립 3단계의 플래그를 순서대로 쓰시오.",
+  "a": "SYN, SYN+ACK, ACK",
+  "k": [
+   "syn",
+   "syn+ack",
+   "syn/ack"
+  ],
+  "e": "ack = 상대 seq + 1."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "연결을 강제로 끊거나 Closed 포트가 응답할 때 쓰는 TCP 플래그는?",
+  "a": "RST",
+  "k": [
+   "rst",
+   "reset"
+  ],
+  "e": "Closed 포트 + SYN → RST."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "4-way 종료에서 마지막 ACK를 보낸 능동 종료 측이 2MSL 동안 머무는 상태는?",
+  "a": "TIME_WAIT",
+  "k": [
+   "time_wait",
+   "timewait",
+   "time wait"
+  ],
+  "e": "지연 패킷 소멸·ACK 재전송 보장."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "UDP Closed 포트가 회신하는 ICMP 메시지의 Type과 Code는? (예: Type x Code y)",
+  "a": "Type 3 Code 3",
+  "k": [
+   "type 3 code 3",
+   "3/3",
+   "port unreachable",
+   "type3 code3"
+  ],
+  "e": "Port Unreachable."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "IP 주소를 MAC 주소로 변환하는 프로토콜은?",
+  "a": "ARP",
+  "k": [
+   "arp"
+  ],
+  "e": "L2, 같은 브로드캐스트 도메인."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "DNS Zone Transfer가 사용하는 전송 계층 프로토콜과 포트는?",
+  "a": "TCP 53",
+  "k": [
+   "tcp 53",
+   "tcp/53",
+   "53/tcp"
+  ],
+  "e": "일반 질의는 UDP 53."
+ },
+ {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 2,
+  "q": "traceroute가 경로 추적에 이용하는 ICMP Type 번호는?",
+  "a": "11",
+  "k": [
+   "11",
+   "type 11"
+  ],
+  "e": "Time Exceeded."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 1,
+  "q": "3-way를 완성하지 않아 '스텔스 스캔'으로 불리는 스캔은?",
+  "a": "SYN 스캔",
+  "k": [
+   "syn",
+   "half-open",
+   "하프오픈",
+   "-ss"
+  ],
+  "e": "SYN+ACK 받으면 RST."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "FIN·PSH·URG 세 플래그를 켠 패킷을 이용하는 스캔은?",
+  "a": "XMAS 스캔",
+  "k": [
+   "xmas",
+   "크리스마스",
+   "-sx"
+  ],
+  "e": "무응답=Open, RST=Closed."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "모든 TCP 플래그를 0으로 둔 패킷을 이용하는 스캔은?",
+  "a": "NULL 스캔",
+  "k": [
+   "null",
+   "-sn"
+  ],
+  "e": "Snort에서는 flags:0 으로 탐지."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "포트 개방 여부가 아니라 방화벽의 필터링 여부를 파악하는 스캔은?",
+  "a": "ACK 스캔",
+  "k": [
+   "ack",
+   "-sa"
+  ],
+  "e": "RST=unfiltered."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 3,
+  "q": "제3의 유휴 호스트(좀비)의 IPID 증가를 이용해 실제 출발지를 숨기는 스캔은?",
+  "a": "Idle 스캔",
+  "k": [
+   "idle",
+   "-si",
+   "아이들"
+  ],
+  "e": "좀비 IPID 관찰."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 3,
+  "q": "iptables에서 NULL 패킷을 차단할 때 --tcp-flags 뒤에 오는 두 인자를 쓰시오.",
+  "a": "ALL NONE",
+  "k": [
+   "all none"
+  ],
+  "e": "검사 대상 ALL 중 켜진 플래그 NONE."
+ },
+ {
+  "s": "s2",
+  "t": "스캔 탐지",
+  "d": 2,
+  "q": "nmap에서 서비스 배너를 이용해 버전을 식별하는 옵션은? (방어 측은 배너 최소화로 대응)",
+  "a": "-sV",
+  "k": [
+   "-sv",
+   "sv"
+  ],
+  "e": "버전 정보 노출 줄이기."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 1,
+  "q": "SYN Flood에 대응해 Backlog에 저장하지 않고 ISN에 연결 정보를 담는 기법은?",
+  "a": "SYN Cookie",
+  "k": [
+   "syn cookie",
+   "syncookie",
+   "syn 쿠키",
+   "syncookies"
+  ],
+  "e": "Linux tcp_syncookies=1."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "SYN Cookie를 켜는 Linux 커널 파라미터 이름은?",
+  "a": "net.ipv4.tcp_syncookies",
+  "k": [
+   "tcp_syncookies",
+   "net.ipv4.tcp_syncookies"
+  ],
+  "e": "sysctl -w net.ipv4.tcp_syncookies=1."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "SYN Flood가 고갈시키는 반연결 대기 큐의 이름은?",
+  "a": "Backlog 큐",
+  "k": [
+   "backlog",
+   "백로그"
+  ],
+  "e": "SYN_RECV 상태 누적."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "ICMP Echo + 출발지 위조 + 브로드캐스트로 응답을 증폭시키는 공격은?",
+  "a": "Smurf",
+  "k": [
+   "smurf",
+   "스머프"
+  ],
+  "e": "대응: Directed Broadcast 차단."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "HTTP 헤더를 완료하지 않고 연결을 오래 유지해 웹서버 연결 슬롯을 고갈시키는 공격은?",
+  "a": "Slowloris",
+  "k": [
+   "slowloris",
+   "슬로로리스"
+  ],
+  "e": "헤더 타임아웃으로 대응."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 3,
+  "q": "Apache에서 요청 헤더·본문 수신 시간을 제한해 Slowloris를 완화하는 모듈은?",
+  "a": "mod_reqtimeout",
+  "k": [
+   "mod_reqtimeout",
+   "reqtimeout"
+  ],
+  "e": "RequestReadTimeout 지시자."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "출발지 IP와 목적지 IP를 같게 만든 패킷을 이용하는 DoS는?",
+  "a": "Land 공격",
+  "k": [
+   "land",
+   "랜드"
+  ],
+  "e": "Ingress Filtering."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 3,
+  "q": "IP Fragment Offset을 서로 겹치게 조작해 재조립 오류를 유발하는 공격은?",
+  "a": "Teardrop",
+  "k": [
+   "teardrop",
+   "티어드롭"
+  ],
+  "e": "패치·재조립 검증."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "DDoS 3분류 중 HTTP Flood·Slowloris가 속하는 계층 유형은?",
+  "a": "Application",
+  "k": [
+   "application",
+   "애플리케이션",
+   "l7",
+   "응용"
+  ],
+  "e": "Volume·Protocol·Application."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 1,
+  "q": "NIC가 자기 MAC이 아닌 프레임도 수신하도록 하는 모드는?",
+  "a": "Promiscuous Mode",
+  "k": [
+   "promiscuous",
+   "무차별",
+   "프러미스큐어스"
+  ],
+  "e": "스니핑 전제."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "위조 ARP Reply로 게이트웨이 MAC을 바꿔 트래픽을 가로채는 공격은?",
+  "a": "ARP 스푸핑",
+  "k": [
+   "arp spoofing",
+   "arp 스푸핑",
+   "arp 포이즈닝",
+   "arp poisoning"
+  ],
+  "e": "MITM 진입 수단."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "DHCP Snooping 바인딩 테이블로 위조 ARP를 차단하는 스위치 기능의 약어는?",
+  "a": "DAI",
+  "k": [
+   "dai",
+   "dynamic arp inspection"
+  ],
+  "e": "Dynamic ARP Inspection."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "ARP 변경을 감시해 MAC 주소 변경을 경보하는 Linux 도구는?",
+  "a": "arpwatch",
+  "k": [
+   "arpwatch"
+  ],
+  "e": "changed ethernet address 경보."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "위조 MAC을 대량으로 보내 스위치 CAM 테이블을 고갈시키는 공격은?",
+  "a": "MAC Flooding",
+  "k": [
+   "mac flooding",
+   "mac 플러딩",
+   "switch jamming",
+   "스위치 재밍"
+  ],
+  "e": "Port Security로 대응."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "DNS 응답에 전자서명을 붙여 위조 여부를 검증하는 기술은?",
+  "a": "DNSSEC",
+  "k": [
+   "dnssec"
+  ],
+  "e": "무결성·출처 인증."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 3,
+  "q": "브라우저가 HTTPS로만 접속하도록 강제해 SSL Strip을 막는 응답 헤더는?",
+  "a": "HSTS",
+  "k": [
+   "hsts",
+   "strict-transport-security"
+  ],
+  "e": "Strict-Transport-Security."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "쿠키가 JavaScript(document.cookie)로 읽히지 않게 하는 속성은?",
+  "a": "HttpOnly",
+  "k": [
+   "httponly"
+  ],
+  "e": "Secure는 HTTPS 전용."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 1,
+  "q": "tcpdump에서 캡처 결과를 파일로 저장하는 옵션은?",
+  "a": "-w",
+  "k": [
+   "-w"
+  ],
+  "e": "-r로 읽기."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "tcpdump에서 SYN 패킷만 잡는 필터 표현식을 쓰시오. (tcp[13] 사용)",
+  "a": "tcp[13] & 2 != 0",
+  "k": [
+   "tcp[13]&2!=0",
+   "tcp[13] & 2 != 0",
+   "tcp[13]&2 != 0"
+  ],
+  "e": "SYN 비트값 2."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "tcp[13] 옥텟에서 SYN+ACK 패킷의 값(10진수)은?",
+  "a": "18",
+  "k": [
+   "18"
+  ],
+  "e": "2+16."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "Wireshark에서 RST 패킷만 보는 디스플레이 필터는?",
+  "a": "tcp.flags.reset == 1",
+  "k": [
+   "tcp.flags.reset==1",
+   "tcp.flags.reset == 1"
+  ],
+  "e": "닫힌 포트·강제 종료."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "Wireshark에서 IP 10.0.0.5가 출발지 또는 목적지인 패킷을 보는 필터는?",
+  "a": "ip.addr == 10.0.0.5",
+  "k": [
+   "ip.addr==10.0.0.5",
+   "ip.addr == 10.0.0.5"
+  ],
+  "e": "src/dst 모두."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 3,
+  "q": "Wireshark에서 TCP 재전송만 보는 필터는?",
+  "a": "tcp.analysis.retransmission",
+  "k": [
+   "tcp.analysis.retransmission"
+  ],
+  "e": "지연·유실 진단."
+ },
+ {
+  "s": "s2",
+  "t": "패킷 분석",
+  "d": 2,
+  "q": "tcpdump에서 IP와 포트 이름 변환을 모두 끄는 옵션은?",
+  "a": "-nn",
+  "k": [
+   "-nn"
+  ],
+  "e": "-n은 IP만."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 1,
+  "q": "iptables에서 룰을 체인 맨 끝에 추가하는 옵션은?",
+  "a": "-A",
+  "k": [
+   "-a",
+   "append"
+  ],
+  "e": "맨 앞 삽입은 -I."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "iptables INPUT 체인의 기본정책을 DROP으로 설정하는 명령을 쓰시오.",
+  "a": "iptables -P INPUT DROP",
+  "k": [
+   "iptables -p input drop",
+   "-p input drop"
+  ],
+  "e": "화이트리스트 방식."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "203.0.113.77에서 오는 모든 패킷을 차단하는 iptables 룰을 쓰시오.",
+  "a": "iptables -A INPUT -s 203.0.113.77 -j DROP",
+  "k": [
+   "iptables -a input -s 203.0.113.77 -j drop",
+   "-s 203.0.113.77 -j drop"
+  ],
+  "e": "긴급 시 -I INPUT 1."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "iptables에서 이미 수립된 연결과 관련 트래픽을 허용할 때 쓰는 state 값 두 가지는? (쉼표로)",
+  "a": "ESTABLISHED, RELATED",
+  "k": [
+   "established",
+   "related"
+  ],
+  "e": "-m state --state ESTABLISHED,RELATED."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "현재 iptables 룰을 파일로 내보내 영구 저장할 때 쓰는 명령은?",
+  "a": "iptables-save",
+  "k": [
+   "iptables-save",
+   "service iptables save"
+  ],
+  "e": "iptables-restore로 복원."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "firewalld에서 --permanent 변경을 런타임에 반영하는 옵션은?",
+  "a": "--reload",
+  "k": [
+   "--reload",
+   "reload"
+  ],
+  "e": "firewall-cmd --reload."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 3,
+  "q": "iptables에서 IP당 동시 연결 수를 제한하는 매치 모듈은?",
+  "a": "connlimit",
+  "k": [
+   "connlimit",
+   "-m connlimit"
+  ],
+  "e": "--connlimit-above N."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 2,
+  "q": "iptables에서 80과 443을 한 룰로 지정할 때 쓰는 모듈은?",
+  "a": "multiport",
+  "k": [
+   "multiport",
+   "-m multiport"
+  ],
+  "e": "--dports 80,443."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 1,
+  "q": "탐지·경보만 하는 IDS와 달리 inline으로 차단까지 하는 장비는?",
+  "a": "IPS",
+  "k": [
+   "ips",
+   "침입방지시스템"
+  ],
+  "e": "Intrusion Prevention System."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Snort 룰에서 페이로드 문자열을 매칭하는 옵션은?",
+  "a": "content",
+  "k": [
+   "content"
+  ],
+  "e": "nocase와 함께 자주 사용."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Snort 룰에서 TCP SYN 플래그만 설정된 패킷을 지정하는 옵션 표기는?",
+  "a": "flags:S",
+  "k": [
+   "flags:s",
+   "flags: s"
+  ],
+  "e": "NULL은 flags:0."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Snort 룰 옵션 중 경보 메시지를 지정하는 것은?",
+  "a": "msg",
+  "k": [
+   "msg"
+  ],
+  "e": "msg와 sid는 필수."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 3,
+  "q": "Snort에서 '출발지별 60초에 5회 초과' 같은 임계치 탐지를 지정하는 옵션은?",
+  "a": "detection_filter",
+  "k": [
+   "detection_filter",
+   "threshold"
+  ],
+  "e": "track by_src, count, seconds."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 2,
+  "q": "Snort 룰에서 ICMP Echo Request(Type 8)를 지정하는 옵션 표기는?",
+  "a": "itype:8",
+  "k": [
+   "itype:8",
+   "itype: 8"
+  ],
+  "e": "icode는 Code."
+ },
+ {
+  "s": "s2",
+  "t": "IDS·Snort 룰",
+  "d": 3,
+  "q": "Snort 룰에서 서버 방향의 수립된 세션만 검사하도록 하는 옵션 표기는?",
+  "a": "flow:to_server,established",
+  "k": [
+   "flow:to_server,established",
+   "to_server,established",
+   "flow:established,to_server"
+  ],
+  "e": "세션 방향·상태 지정."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 1,
+  "q": "IPSec에서 암호화(기밀성)까지 제공하는 프로토콜은?",
+  "a": "ESP",
+  "k": [
+   "esp"
+  ],
+  "e": "AH는 인증·무결성."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 2,
+  "q": "802.1X 구성에서 RADIUS 서버의 역할 명칭은?",
+  "a": "Authentication Server",
+  "k": [
+   "authentication server",
+   "인증 서버",
+   "인증서버"
+  ],
+  "e": "Supplicant–Authenticator–Authentication Server."
  },
  {
   "s": "s4",
@@ -7986,6 +10421,74 @@ CPPG.order = [
   "e": "추출 → 집계 → 공격 IP 식별 → 차단 → 근본 대응."
  },
  {
+  "s": "s2",
+  "t": "TCP/IP·포트",
+  "d": 1,
+  "q": "TCP 4-way 종료 과정을 순서대로 배열하시오.",
+  "steps": [
+   "능동 측 FIN",
+   "수동 측 ACK (CLOSE_WAIT)",
+   "수동 측 FIN",
+   "능동 측 ACK (TIME_WAIT 2MSL)"
+  ],
+  "e": "FIN→ACK→FIN→ACK."
+ },
+ {
+  "s": "s2",
+  "t": "스니핑·스푸핑 대응",
+  "d": 2,
+  "q": "ARP 스푸핑이 MITM으로 이어지는 과정을 순서대로 배열하시오.",
+  "steps": [
+   "위조 ARP Reply 지속 전송",
+   "피해자 ARP 캐시에 게이트웨이 IP ↔ 공격자 MAC 기록",
+   "피해자 트래픽이 공격자 경유",
+   "공격자가 IP 포워딩으로 실제 게이트웨이에 중계(통신 유지)"
+  ],
+  "e": "중계를 해야 피해자가 이상을 못 느낌 → 탐지는 MAC 변경 감시."
+ },
+ {
+  "s": "s2",
+  "t": "DoS 대응",
+  "d": 2,
+  "q": "SYN Flood 발생 시 웹서버 관리자의 대응 절차를 순서대로 배열하시오.",
+  "steps": [
+   "SYN_RECV 수 급증 확인(ss·netstat)",
+   "tcpdump로 SYN 패턴·출발지 분포 분석",
+   "tcp_syncookies=1 적용·Backlog 조정",
+   "방화벽·상위 장비에서 속도 제한·차단",
+   "증거 보존·보고 및 재발 방지 점검"
+  ],
+  "e": "탐지→분석→즉시 완화→차단→사후."
+ },
+ {
+  "s": "s2",
+  "t": "방화벽·iptables",
+  "d": 3,
+  "q": "원격으로 접속한 서버에 화이트리스트 방화벽을 적용하는 안전한 순서를 배열하시오.",
+  "steps": [
+   "루프백 허용(-A INPUT -i lo -j ACCEPT)",
+   "ESTABLISHED,RELATED 허용",
+   "관리용 SSH(허용 IP) 허용",
+   "서비스 포트(80·443) 허용",
+   "기본정책 -P INPUT DROP",
+   "iptables-save로 영구 저장"
+  ],
+  "e": "DROP 정책을 마지막에 걸어야 세션이 끊기지 않음."
+ },
+ {
+  "s": "s2",
+  "t": "VPN·무선",
+  "d": 2,
+  "q": "IPSec VPN 연결 수립 순서를 배열하시오.",
+  "steps": [
+   "IKE Phase 1 — ISAKMP SA 협상(Main/Aggressive)",
+   "상호 인증(PSK·인증서)",
+   "IKE Phase 2 — IPSec SA 협상(Quick Mode)",
+   "ESP/AH로 데이터 보호 통신"
+  ],
+  "e": "Phase1에서 보호 채널을 만든 뒤 Phase2에서 IPSec SA."
+ },
+ {
   "s": "s4",
   "t": "공개키·키교환",
   "d": 2,
@@ -8154,27 +10657,51 @@ CPPG.selfcheck = [
   "t": "BOF·포맷스트링·TOCTOU의 원리와 ASLR·DEP·Canary 등 대응 기법을 서술할 수 있다"
  },
  {
-  "g": "정보보안 일반",
+  "g": "2과목 네트워크 보안",
+  "t": "TCP 3-way handshake·플래그와 주요 포트를 쓰고 tcpdump 출력에서 세션 흐름을 판독할 수 있다"
+ },
+ {
+  "g": "2과목 네트워크 보안",
+  "t": "SYN·FIN·NULL·Xmas 스캔을 응답 패턴으로 식별하고 탐지·차단 방안을 제시할 수 있다"
+ },
+ {
+  "g": "2과목 네트워크 보안",
+  "t": "SYN Flooding·Smurf·DRDoS 의 원리와 syncookies·Rate limit·Ingress 필터링 대응을 서술할 수 있다"
+ },
+ {
+  "g": "2과목 네트워크 보안",
+  "t": "ARP·DNS 스푸핑을 탐지하고 정적 ARP·DAI·DNSSEC 등 방어 대책을 쓸 수 있다"
+ },
+ {
+  "g": "2과목 네트워크 보안",
+  "t": "iptables 체인·타깃·옵션으로 요구사항에 맞는 방화벽 룰을 작성할 수 있다"
+ },
+ {
+  "g": "2과목 네트워크 보안",
+  "t": "Snort 룰 헤더·옵션(content·flags·threshold)을 해석하고 탐지 룰을 작성할 수 있다"
+ },
+ {
+  "g": "4과목 정보보안 일반",
   "t": "블록 암호 운영모드(ECB·CBC·CFB·OFB·CTR)의 IV 사용·병렬성·오류전파를 구분해 서술할 수 있다"
  },
  {
-  "g": "정보보안 일반",
+  "g": "4과목 정보보안 일반",
   "t": "RSA·DH·ECC의 수학적 기반과 DH 키 교환 절차·MITM 대응을 설명할 수 있다"
  },
  {
-  "g": "정보보안 일반",
+  "g": "4과목 정보보안 일반",
   "t": "해시 3대 안전성, HMAC 구조, 전자서명 생성·검증 흐름을 단계별로 쓸 수 있다"
  },
  {
-  "g": "정보보안 일반",
+  "g": "4과목 정보보안 일반",
   "t": "솔트·키 스트레칭으로 비밀번호 저장 코드를 개선하고 생일 공격 강도를 계산할 수 있다"
  },
  {
-  "g": "정보보안 일반",
+  "g": "4과목 정보보안 일반",
   "t": "Kerberos 6단계(AS·TGT·TGS·서비스 티켓)와 FIDO·SSO의 원리를 설명할 수 있다"
  },
  {
-  "g": "정보보안 일반",
+  "g": "4과목 정보보안 일반",
   "t": "BLP·Biba 규칙으로 읽기/쓰기 허용 여부를 판정하고 ACL·Capability를 구분할 수 있다"
  },
  {
@@ -8256,7 +10783,13 @@ CPPG.tiers = {
   "안전성 확보조치 항목",
   "민감정보·고유식별정보·주민등록번호",
   "위탁 vs 제3자 제공",
-  "정량 vs 정성 위험분석(델파이)"
+  "정량 vs 정성 위험분석(델파이)",
+  "TCP 플래그·3-way handshake",
+  "스캔 유형 식별(SYN·FIN·NULL·Xmas)",
+  "SYN Flooding·syncookies",
+  "iptables 룰 작성",
+  "Snort 룰 구조(헤더·옵션)",
+  "ARP 스푸핑 탐지·대응"
  ],
  "Tier 2 ★★ (자주 출제)": [
   "PAM 4타입·Control Flag",
@@ -8293,7 +10826,12 @@ CPPG.tiers = {
   "정보통신망법 광고(Opt-in·야간·2년)",
   "망분리(물리·논리 VDI)",
   "CSAP 상·중·하 등급",
-  "CC·EAL1~7(PP·ST·TOE)"
+  "CC·EAL1~7(PP·ST·TOE)",
+  "Smurf·DRDoS·Ingress 필터링",
+  "tcpdump 필터 표현식",
+  "IPsec AH·ESP·IKE",
+  "WPA2·WPA3",
+  "DNS 스푸핑·DNSSEC"
  ]
 };
 
@@ -8389,6 +10927,99 @@ CPPG.examples = [
    "4624=성공, 4625=실패 혼동 금지",
    "Logon Type 10=RDP, 3=네트워크",
    "1102 이후 로컬 로그 공백 — 원격 수집 로그로 보완 분석"
+  ]
+ },
+ {
+  "s": "s2",
+  "d": 3,
+  "title": "[실무형] 패킷 덤프로 SYN Flood 판별·필터·대응",
+  "problem": "웹서버(10.0.0.5) 응답이 느려졌다.\n\n$ tcpdump -nn -c 6 port 80\n10:00:01.001 IP 45.1.2.3.1111 > 10.0.0.5.80: Flags [S], seq 100\n10:00:01.001 IP 10.0.0.5.80 > 45.1.2.3.1111: Flags [S.], seq 900, ack 101\n10:00:01.002 IP 77.8.9.1.2222 > 10.0.0.5.80: Flags [S], seq 300\n10:00:01.002 IP 10.0.0.5.80 > 77.8.9.1.2222: Flags [S.], seq 700, ack 301\n(같은 패턴 초당 수천 건, 이후 ACK 없음)\n$ ss -tan state syn-recv | wc -l\n38211\n\n(1) 공격 명칭과 근거 (2) tcpdump·Wireshark에서 순수 SYN만 보는 표현식 (3) 커널 설정 1가지와 방화벽 대응 1가지",
+  "steps": [
+   "다수 출발지 SYN → 서버 SYN+ACK → ACK 미회신 확인",
+   "SYN_RECV 38,211 = 반연결 큐 고갈",
+   "tcp[13] SYN 비트 2 / Wireshark syn==1 && ack==0",
+   "SYN Cookie로 Backlog 우회",
+   "속도 제한 또는 상위 장비 차단"
+  ],
+  "answer": "(1) SYN Flood — 다수(위조) 출발지의 SYN에 서버가 SYN+ACK를 보내지만 ACK가 오지 않아 SYN_RECV 반연결이 누적, Backlog 고갈\n(2) tcpdump 'tcp[13] == 2' (SYN 포함은 'tcp[13] & 2 != 0') / Wireshark tcp.flags.syn == 1 && tcp.flags.ack == 0\n(3) sysctl -w net.ipv4.tcp_syncookies=1 (Backlog 증대 net.ipv4.tcp_max_syn_backlog 병행)\n   iptables -A INPUT -p tcp --syn -m limit --limit 20/s -j ACCEPT 후 -p tcp --syn -j DROP, 또는 ISP·DDoS 대응 장비 연계",
+  "traps": [
+   "출발지가 위조라 단일 IP 차단만으로는 효과 제한",
+   "SYN Cookie를 'Backlog 증설'로 설명하면 감점",
+   "Wireshark 문법을 tcpdump에 쓰는 혼동"
+  ]
+ },
+ {
+  "s": "s2",
+  "d": 2,
+  "title": "[실무형] iptables 룰 순서 오류 수정",
+  "problem": "관리자가 다음 순서로 룰을 입력했지만 관리 PC(10.0.0.5)에서 SSH가 되지 않는다.\n\n# iptables -L INPUT -n --line-numbers\n1  DROP    tcp  --  0.0.0.0/0   0.0.0.0/0   tcp dpt:22\n2  ACCEPT  tcp  --  10.0.0.5    0.0.0.0/0   tcp dpt:22\n\n(1) 접속이 안 되는 이유 (2) 1번 룰은 유지한 채 해결하는 명령 (3) 재부팅 후에도 유지되게 하는 방법",
+  "steps": [
+   "iptables는 위에서 아래로 첫 매칭 적용",
+   "1번 DROP이 먼저 매칭",
+   "-I INPUT 1 로 허용 룰을 맨 앞에",
+   "중복된 2번 룰 삭제",
+   "iptables-save로 저장"
+  ],
+  "answer": "(1) 룰은 위→아래 순서로 처음 일치한 룰이 적용되므로 1번 DROP이 먼저 매칭되어 2번 ACCEPT에 도달하지 못함\n(2) iptables -I INPUT 1 -p tcp -s 10.0.0.5 --dport 22 -j ACCEPT (기존 2번은 iptables -D INPUT 3 으로 정리)\n(3) iptables-save > /etc/sysconfig/iptables (Debian 계열은 netfilter-persistent save)",
+  "traps": [
+   "-A로 다시 추가하면 여전히 DROP 뒤",
+   "-I 뒤 번호 생략 시 기본 1(맨 앞)이지만 명시가 안전",
+   "저장하지 않으면 재부팅 시 룰 소실"
+  ]
+ },
+ {
+  "s": "s2",
+  "d": 3,
+  "title": "[실무형] Snort 탐지 룰 작성",
+  "problem": "다음 요구에 맞는 Snort 룰을 작성하시오. (로컬 룰 sid는 1000101부터)\n(1) 외부에서 내부 Telnet(23) 접속 시도 경보\n(2) 외부→내부 웹(80) 요청에 대소문자 무관 'union select' 문자열이 있으면 경보\n(3) 동일 출발지가 60초 안에 내부 SSH(22)로 SYN을 5회 넘게 보내면 경보",
+  "steps": [
+   "헤더: action proto src sport -> dst dport",
+   "옵션 필수 msg·sid, rev 권장",
+   "content + nocase, flow로 서버 방향 지정",
+   "flags:S + detection_filter track by_src"
+  ],
+  "answer": "(1) alert tcp $EXTERNAL_NET any -> $HOME_NET 23 (msg:\"Telnet access attempt\"; flags:S; sid:1000101; rev:1;)\n(2) alert tcp $EXTERNAL_NET any -> $HOME_NET 80 (msg:\"SQLi union select\"; flow:to_server,established; content:\"union select\"; nocase; sid:1000102; rev:1;)\n(3) alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:\"SSH brute force\"; flags:S; detection_filter:track by_src, count 5, seconds 60; sid:1000103; rev:1;)",
+  "traps": [
+   "sid를 1,000,000 미만으로 쓰면 공식 룰과 충돌",
+   "방향 연산자 누락·포트 위치 혼동",
+   "임계치를 track by_dst로 쓰면 출발지별 집계가 아님"
+  ]
+ },
+ {
+  "s": "s2",
+  "d": 2,
+  "title": "[서술형] ARP 스푸핑의 원리·탐지·대응",
+  "problem": "사내 LAN에서 일부 PC의 통신이 외부로 유출된 정황이 있다. ARP 스푸핑의 (1) 원리 (2) 탐지 방법 2가지 (3) 대응 방안 3가지를 서술하시오.",
+  "steps": [
+   "ARP 무상태 특성 → 위조 Reply 수용",
+   "게이트웨이 IP ↔ 공격자 MAC 오염 → MITM",
+   "arp -a 비교·arpwatch",
+   "단말: 정적 ARP / 스위치: DAI·DHCP Snooping·Port Security / 근본: 암호화"
+  ],
+  "answer": "(1) 원리: ARP는 요청 없이 받은 Reply도 캐시에 반영하는 무상태 프로토콜이므로, 공격자가 '게이트웨이 IP = 공격자 MAC'인 위조 Reply를 반복 전송해 피해자 캐시를 오염시키고 트래픽을 자신에게 경유시켜(MITM) 스니핑·변조함\n(2) 탐지: ① arp -a / ip neigh 로 게이트웨이 MAC이 정상값과 다른지, 서로 다른 IP가 같은 MAC을 가리키는지 확인 ② arpwatch·IDS로 MAC 변경 경보, Wireshark arp 필터로 요청 없는 Reply 반복 확인\n(3) 대응: ① 게이트웨이 정적 ARP 등록 ② 스위치 DHCP Snooping + DAI ③ Port Security, 그리고 TLS·SSH 등 암호화로 유출 내용 보호",
+  "traps": [
+   "'ARP는 L3 프로토콜' 등 계층 오기",
+   "대응을 단말 조치 하나로만 쓰면 부분점수",
+   "MAC Flooding과 원리 혼동"
+  ]
+ },
+ {
+  "s": "s2",
+  "d": 2,
+  "title": "[서술형] IPSec AH·ESP와 전송·터널 모드 비교",
+  "problem": "본사–지사 간 VPN을 설계한다. (1) AH와 ESP의 보안 서비스 차이 (2) Transport와 Tunnel 모드의 차이 (3) 지사가 NAT 뒤에 있을 때 권장 구성을 서술하시오.",
+  "steps": [
+   "AH: 무결성·출처 인증, 암호화 없음",
+   "ESP: 기밀성 + 무결성·인증",
+   "Transport: 원본 IP 헤더 유지, 종단 간",
+   "Tunnel: 새 IP 헤더, 게이트웨이 간",
+   "NAT: AH 불가 → ESP + NAT-T(UDP 4500)"
+  ],
+  "answer": "(1) AH는 무결성·데이터 출처 인증·재전송 방지를 제공하나 암호화는 없음. ESP는 이에 더해 페이로드 암호화로 기밀성을 제공\n(2) Transport 모드는 원본 IP 헤더를 유지하고 페이로드만 보호(호스트 간), Tunnel 모드는 원본 패킷 전체를 캡슐화하고 새 IP 헤더를 붙여 내부 주소까지 보호(게이트웨이 간)\n(3) 본사–지사 게이트웨이 간 ESP Tunnel 모드 + NAT-T(UDP 4500 캡슐화). AH는 IP 헤더 무결성 검증 때문에 NAT를 통과할 수 없음",
+  "traps": [
+   "AH도 암호화한다고 쓰는 오류",
+   "Main/Aggressive(IKE Phase1 모드)와 Transport/Tunnel 혼동",
+   "NAT-T 포트를 500으로 쓰는 실수(IKE는 500, NAT-T는 4500)"
   ]
  },
  {
