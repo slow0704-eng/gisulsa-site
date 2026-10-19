@@ -1,0 +1,30 @@
+{
+ "name": "정보보안기사 실기",
+ "short_name": "정보보안 실기",
+ "description": "정보보안기사 실기 합격 = 단답(약어·포트·로그 경로) + 서술(원리·절차·대응) + 실무(iptables·Snort 룰·로그·코드 분석)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#b91c1c",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
