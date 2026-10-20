@@ -1,0 +1,30 @@
+{
+ "name": "ADP 데이터분석 전문가",
+ "short_name": "ADP",
+ "description": "ADP = 데이터 이해 + 처리 기술 + 분석 기획 + 데이터 분석 + 시각화 (KDATA)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#0f766e",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
