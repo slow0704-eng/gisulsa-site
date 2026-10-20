@@ -1,0 +1,30 @@
+{
+ "name": "CKA 쿠버네티스 관리자",
+ "short_name": "CKA",
+ "description": "CKA = 클러스터 아키텍처·설치·구성 + 워크로드·스케줄링 + 서비스·네트워킹 + 스토리지 + 트러블슈팅 (CNCF 실기)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#326ce5",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
