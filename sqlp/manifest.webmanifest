@@ -1,0 +1,30 @@
+{
+ "name": "SQLP SQL 전문가",
+ "short_name": "SQLP",
+ "description": "SQLP = SQL 기본·활용 + SQL 고급 활용·튜닝 + 데이터 모델링 (KDATA)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#c2410c",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
