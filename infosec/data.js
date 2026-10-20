@@ -4104,7 +4104,7 @@ CPPG.order.push(
    {
     "h": "BitLocker·EFS·TPM",
     "li": [
-     "★BitLocker★ — ★볼륨 단위★ · Windows 7(Ultimate·Enterprise)부터 · USB 는 BitLocker To Go · ★FAT16/32·exFAT·NTFS 지원★ · 텍스트 파일 복구키 제공",
+     "★BitLocker★ — ★볼륨 단위★ · Windows Vista(Enterprise·Ultimate) 처음 도입 · ★USB 등 이동식은 BitLocker To Go(Windows 7)★ · ★FAT16/32·exFAT·NTFS 지원★ · 텍스트 파일 복구키 제공",
      "BitLocker 는 부팅에 필요한 ★시스템 파티션은 암호화하지 않는다★",
      "★EFS★ — NTFS ★파일·폴더 단위★, 사용자 단위 암호화(단일·복수 사용자) · cipher 명령",
      "★TPM★ — 암호 연산·키 보관을 ★하드웨어 칩★ 으로 → 인증된 부트·인증·암호화 · BitLocker 키 보호에 연동"
@@ -10005,6 +10005,201 @@ CPPG.fill.push(
 
 CPPG.order.push(
   { s:'s1', d:3, t:TO, q:'헤드 53, 큐 98·183·37·122·14·124·65·67 에서 SSTF 처리 순서를 나열하시오.', steps:['65','67','37','14','98','122','124','183'], e:'매 단계 남은 요청 중 가장 가까운 것을 고른다 — 총 236.' }
+);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   14. 🔏 BitLocker · EFS · 🛰 EDR · 🔑 SUID(SetUID) 상세 — 1과목
+   ※ 카드·시트·함정·개념정리는 1과목 항목 바로 뒤에 끼워 넣는다(과목 순서 유지).
+   ※ SUID 보강은 기존 개념정리 1-5 에 단락을 덧붙인다.
+   ※ 단답 k 는 ★모든 키워드가 답에 포함★ 되어야 정답 — 정답(a)에 들어 있는 키워드만 쓴다.
+   ═══════════════════════════════════════════════════════════ */
+(function () {
+const afterLast = (arr, s) => { let i = -1; arr.forEach((x, j) => { if (x.s === s) i = j; }); return i + 1; };
+const insertS1 = (arr, items) => arr.splice(afterLast(arr, 's1'), 0, ...items);
+const TW = '운영체제·Windows', TS = '보안솔루션·클라우드', TL = 'Linux 권한·계정';
+
+insertS1(CPPG.cards, [
+  { s:'s1', g:'Windows', front:'BitLocker 키 구조', key:'FVEK ← VMK ← 키 보호기', back:'볼륨 데이터는 ★FVEK(Full Volume Encryption Key)★ 로 암호화, FVEK 는 ★VMK(Volume Master Key)★ 로 암호화, VMK 는 ★키 보호기(TPM · PIN · USB 시동 키 · 암호 · 복구 키)★ 로 보호. 보호기를 바꿔도 디스크 전체를 다시 암호화할 필요가 없다.', tip:'복구 키 = 48자리 숫자 — Microsoft 계정·AD/Entra ID·파일·인쇄로 백업' },
+  { s:'s1', g:'Windows', front:'BitLocker 인증 모드', key:'TPM 단독 · TPM+PIN · TPM+USB', back:'★TPM 단독★ — 사용자 개입 없이 부팅(부팅 구성 변조 시 복구 모드) / ★TPM+PIN★ — 부팅 전 PIN 입력, 가장 일반적인 강화 구성 / TPM+USB 시동 키 / TPM 없는 PC 는 암호·USB 시동 키 사용.', tip:'TPM 단독은 편하지만 DMA·콜드 부트 공격 대비로 TPM+PIN 권장' },
+  { s:'s1', g:'Windows', front:'EFS 동작 구조', key:'FEK(대칭) + 사용자 공개키', back:'파일마다 ★FEK(File Encryption Key, 대칭키)★ 로 내용을 암호화하고, FEK 를 ★사용자 인증서의 공개키★ 로 암호화해 파일 헤더(DDF)에 저장. ★복구 에이전트(DRA)★ 공개키로 암호화한 사본(DRF)도 둔다.', tip:'인증서·개인키를 백업하지 않으면 프로필 손상 시 복구 불가' },
+  { s:'s1', g:'Windows', front:'cipher 명령', key:'EFS 명령줄 도구', back:'★cipher /e★ 암호화 · ★/d★ 해제 · /r 복구 에이전트 키·인증서 생성 · ★/w★ 사용하지 않는 디스크 공간 덮어쓰기(삭제된 데이터 흔적 제거) · 인자 없이 실행하면 암호화 상태 표시.', tip:'BitLocker 명령줄 도구는 manage-bde (-status · -on · -protectors)' },
+  { s:'s1', g:'단말 보안', front:'EDR (Endpoint Detection and Response)', key:'단말 행위 수집 → 탐지 → 조사 → 대응', back:'엔드포인트의 ★프로세스·파일·레지스트리·네트워크 행위를 지속 수집★ 해 ★행위 기반 탐지★, 위협 헌팅·조사(프로세스 트리·타임라인), ★대응(호스트 격리·프로세스 종료·파일 격리·롤백)★ 까지 수행. "침해는 일어난다(Assume Breach)" 를 전제로 한 사후 대응 중심.', tip:'백신(EPP)은 ★예방★, EDR 은 ★탐지·대응★ — 대체가 아니라 보완' },
+  { s:'s1', g:'단말 보안', front:'IoC vs IoA', key:'침해 흔적 vs 공격 행위 징후', back:'★IoC(Indicator of Compromise)★ — 이미 일어난 침해의 흔적: 악성 파일 해시·C&C IP·도메인 → 사후·시그니처 성격 / ★IoA(Indicator of Attack)★ — 진행 중인 공격의 행위·의도: 권한 상승 시도·자격 증명 덤프 행위 등 → 변종·파일리스 공격 탐지에 유리.', tip:'EDR 은 IoC 매칭 + IoA 행위 탐지를 함께 쓴다' },
+  { s:'s1', g:'Linux 권한', front:'SUID 와 RUID · EUID', key:'실행자는 그대로, 유효 권한만 소유자로', back:'SUID 파일을 실행하면 ★RUID(실제 사용자 ID)★ 는 실행자 그대로이고 ★EUID(유효 사용자 ID)★ 가 ★파일 소유자★ 로 바뀐다. 커널은 접근 권한을 EUID 로 판단하므로 root 소유 SUID 파일은 root 권한으로 동작.', tip:'passwd 실행 중 ps 로 보면 RUID=사용자, EUID=root' },
+  { s:'s1', g:'Linux 권한', front:'SUID 설정·해제·점검', key:'chmod 4755 · u+s · u-s · find -perm -4000', back:'설정 ★chmod 4755 파일★ 또는 ★chmod u+s★ / 해제 ★chmod u-s★ / 점검 ★find / -user root -perm -4000 -type f 2>/dev/null★ 결과를 ★기준 목록과 비교★ 해 새로 생긴 SUID 파일을 찾는다. -perm /6000 은 SUID 또는 SGID.', tip:'리눅스는 셸 스크립트의 SUID 를 무시 — SUID 백도어는 주로 바이너리(셸 복사본)' },
+]);
+
+insertS1(CPPG.sheets, [
+  { s:'s1', title:'★ BitLocker vs EFS', type:'table', head:['구분','BitLocker','EFS'], rows:[
+    ['암호화 단위','★볼륨(드라이브) 전체★','★파일·폴더★'],
+    ['기반','TPM 연동 · FVEK/VMK 키 계층','NTFS · 사용자 인증서(공개키) · FEK'],
+    ['보호 대상 위협','★분실·도난★ · 디스크 분리 후 오프라인 접근','같은 PC 의 ★다른 사용자★ 열람'],
+    ['사용자 구분','없음(부팅 후에는 투명)','★사용자별★ — 암호화한 사용자·DRA 만 열람'],
+    ['파일시스템','NTFS · FAT16/32 · exFAT (이동식: To Go)','★NTFS 전용★ — FAT 로 복사하면 암호 해제'],
+    ['복구','48자리 ★복구 키★','★복구 에이전트(DRA)★ · 인증서 백업'],
+    ['관리 명령','manage-bde','cipher'],
+    ['함께 사용','가능 — 볼륨 + 파일 이중 보호','NTFS 압축과는 ★동시 적용 불가★'],
+  ] },
+  { s:'s1', title:'★ EPP · EDR · XDR · MDR 비교', type:'table', head:['구분','초점','핵심 기능'], rows:[
+    ['백신(AV) · EPP','★예방★ — 알려진 위협 차단','시그니처 · 평판 · 기기 통제 · 개인 방화벽'],
+    ['★EDR★','★탐지·대응★ — 단말 행위','행위 수집 · IoA 탐지 · 위협 헌팅 · 격리·롤백'],
+    ['XDR','단말 + 네트워크 + 클라우드 + 메일 통합','교차 상관 분석 · 통합 대응'],
+    ['NDR','네트워크 트래픽','이상 트래픽 · 측면 이동 탐지'],
+    ['MDR','외부 전문 인력의 ★관리형★ 탐지·대응','24시간 관제 · 헌팅 대행'],
+  ] },
+]);
+
+insertS1(CPPG.traps, [
+  { s:'s1', t:'BitLocker 는 로그인한 뒤 실행 중인 악성코드로부터도 파일을 보호한다 — 아니다. 부팅 후엔 투명하게 복호화되므로 분실·도난(오프라인) 대비 기술' },
+  { s:'s1', t:'EFS 암호화 파일은 FAT32 USB 로 복사해도 암호화가 유지된다 — 아니다. EFS 는 NTFS 전용이라 복사본은 암호가 풀린다' },
+  { s:'s1', t:'EFS 와 NTFS 압축은 같은 파일에 함께 적용할 수 있다 — 아니다. 둘 중 하나만 적용된다' },
+  { s:'s1', t:'EDR 을 도입하면 백신(EPP)이 필요 없다 — 아니다. EPP 는 예방, EDR 은 탐지·대응으로 서로 보완' },
+  { s:'s1', t:'SUID 파일 실행 시 RUID 가 소유자로 바뀐다 — 아니다. 바뀌는 것은 EUID, RUID 는 실행자 그대로' },
+  { s:'s1', t:'리눅스에서 셸 스크립트에 SUID 를 주면 소유자 권한으로 실행된다 — 아니다. 리눅스 커널은 스크립트의 SUID 를 무시한다' },
+]);
+
+insertS1(CPPG.notes, [
+  { s:'s1', no:'1-25', t:TW, title:'BitLocker · EFS 상세 — 볼륨 암호화와 파일 암호화', body:[
+    { h:'BitLocker — 볼륨 전체 암호화', li:[
+      '목적 — 장치 ★분실·도난★ 시 디스크를 떼어 내 다른 시스템에서 읽는 ★오프라인 공격★ 방어 (Data at Rest)',
+      '알고리즘 — AES (Windows 10 1511 이후 기본 ★XTS-AES 128비트★, 정책으로 256비트)',
+      '도입 — Windows Vista(Enterprise·Ultimate) 처음 도입 · 이동식 드라이브용 ★BitLocker To Go★ 는 Windows 7 · 현재 Pro·Enterprise·Education 에디션',
+      '부팅용 ★시스템(예약) 파티션은 암호화하지 않는다★ — 부팅 관리자가 실행되어야 하므로',
+    ] },
+    { h:'BitLocker 키 계층과 보호기', tb:{ head:['요소','역할'], rows:[
+      ['★FVEK★','볼륨 데이터를 실제로 암호화하는 키'],
+      ['★VMK★','FVEK 를 암호화하는 마스터 키'],
+      ['키 보호기','VMK 를 보호 — ★TPM · TPM+PIN · TPM+USB 시동 키 · 암호 · 복구 키★'],
+      ['★복구 키★','★48자리 숫자★ — 부팅 구성 변조·TPM 초기화·PIN 분실 시 사용'],
+      ['TPM 측정 부팅','부팅 구성요소를 측정해 변조되면 키를 풀지 않음 → ★복구 모드★'],
+    ] } },
+    { h:'BitLocker 운영 포인트', li:[
+      '★TPM+PIN★ — 부팅 전 인증으로 DMA·콜드 부트 공격 위험 감소',
+      '복구 키 백업 — Microsoft 계정 · ★AD DS / Entra ID★ · 파일 · 인쇄 (조직은 중앙 보관)',
+      '명령줄 — ★manage-bde -status★ (상태) · -on (켜기) · -protectors (보호기 관리)',
+      '★부팅 후에는 투명하게 복호화★ — 로그인한 사용자·실행 중인 악성코드로부터는 보호하지 못함',
+    ] },
+    { h:'EFS — NTFS 파일·폴더 단위 암호화', li:[
+      '파일마다 ★FEK(대칭키)★ 로 암호화 → FEK 를 ★사용자 공개키★ 로 암호화해 파일에 저장(DDF) — 하이브리드 방식',
+      '★복구 에이전트(DRA)★ 공개키로 암호화한 FEK(DRF)를 함께 저장 → 사용자 키 분실 시 복구',
+      '암호화한 사용자에게는 ★투명★ — 다른 사용자는 NTFS 권한이 있어도 내용을 읽지 못함',
+      '탐색기에서 ★녹색 파일명★ 으로 표시(압축은 파란색) · ★cipher★ 명령으로 관리',
+    ] },
+    { h:'EFS 제약과 주의', li:[
+      '★NTFS 전용★ — FAT·exFAT 로 복사하거나 네트워크로 전송하면 ★복호화된 상태★',
+      '★NTFS 압축과 동시 적용 불가★ · Home 에디션은 암호화 불가',
+      '★인증서·개인키 백업 필수★ — 프로필 손상·계정 삭제 시 DRA 없으면 복구 불가',
+      'cipher /w — 사용하지 않는 공간을 덮어써 ★암호화 전 평문 흔적★ 제거',
+    ] },
+    { h:'함정', li:[
+      'EFS = ★파일 단위·사용자별★ / BitLocker = ★볼륨 단위·분실 대비★ — 단위와 목적을 바꾼 보기가 단골',
+      'BitLocker 는 FAT 계열도 지원, ★EFS 는 NTFS 만★',
+      '두 기능은 ★함께 사용 가능★ — 볼륨 암호화 위에 파일 암호화',
+    ] },
+  ] },
+  { s:'s1', no:'1-26', t:TS, title:'EDR — 엔드포인트 탐지·대응', body:[
+    { h:'정의와 등장 배경', li:[
+      '★EDR(Endpoint Detection and Response)★ — 단말의 행위를 ★지속적으로 기록·분석★ 해 위협을 탐지하고 조사·대응하는 솔루션',
+      '배경 — 시그니처 백신으로 못 막는 ★변종·파일리스·APT★ 증가 → "침해는 일어난다(Assume Breach)" 전제의 ★사후 탐지·대응★ 필요',
+      '용어는 2013년 가트너가 "Endpoint Threat Detection and Response" 로 처음 제시',
+    ] },
+    { h:'핵심 기능 4단계', tb:{ head:['단계','내용','예'], rows:[
+      ['① 수집(가시성)','단말 이벤트 지속 기록','프로세스 생성 · 파일 · 레지스트리 · 네트워크 연결 · 로그인'],
+      ['② 탐지','★IoA 행위 탐지★ + IoC 매칭 · 머신러닝','자격 증명 덤프 시도 · 비정상 부모-자식 프로세스'],
+      ['③ 조사·헌팅','프로세스 트리 · 타임라인 · MITRE ATT&CK 매핑','최초 침입 경로·확산 범위 추적'],
+      ['④ 대응','★호스트 네트워크 격리★ · 프로세스 종료 · 파일 격리 · 롤백 · 원격 셸','랜섬웨어 확산 차단'],
+    ] } },
+    { h:'EPP 와의 관계', li:[
+      '★EPP(Endpoint Protection Platform)★ — 백신·차세대 백신(NGAV)·기기 통제·개인 방화벽 등 ★예방★ 중심',
+      '★EDR★ — 예방을 뚫고 들어온 위협의 ★탐지·조사·대응★ 중심',
+      '대체가 아니라 ★보완★ — 최근 제품은 EPP+EDR 통합 에이전트가 일반적',
+    ] },
+    { h:'IoC vs IoA', tb:{ head:['구분','의미','예','특징'], rows:[
+      ['★IoC★','침해 ★흔적★(이미 발생)','파일 해시 · C&C IP · 도메인','알려진 위협에 정확 · 변종에 약함'],
+      ['★IoA★','공격 ★행위·의도★(진행 중)','권한 상승 시도 · LSASS 메모리 접근','파일리스·변종 탐지에 유리'],
+    ] } },
+    { h:'확장 개념', li:[
+      '★XDR★ — 단말 + 네트워크 + 클라우드 + 메일 데이터를 통합 상관 분석',
+      '★NDR★ — 네트워크 트래픽 기반 탐지 · ★MDR★ — 외부 전문 인력의 관리형 탐지·대응 서비스',
+      'SIEM·SOAR 와 연동해 경보 통합·대응 자동화',
+    ] },
+    { h:'함정', li:[
+      'EDR 은 ★단말(엔드포인트)★ 이 대상 — 네트워크 트래픽 중심은 NDR, 통합은 XDR',
+      '★예방만 하는 솔루션이 아니다★ — 탐지 이후 조사·대응이 핵심',
+      'EDR 에이전트도 공격 대상 — 에이전트 무력화·변조 방지(Tamper Protection) 필요',
+    ] },
+  ] },
+]);
+
+// 기존 개념정리 1-5(특수 권한)에 SUID 심화 단락 덧붙이기
+const n15 = CPPG.notes.find(n => n.no === '1-5');
+if (n15) n15.body.push(
+  { h:'(보강) SUID 심화 — RUID · EUID 와 설정·점검', tb:{ head:['항목','내용','포인트'], rows:[
+    ['★RUID / EUID★','실행 시 RUID=실행자 유지, ★EUID=파일 소유자★','커널은 ★EUID★ 로 접근 판단'],
+    ['설정','★chmod 4755 파일★ · chmod u+s 파일','8진수 맨 앞 4 = SUID'],
+    ['해제','★chmod u-s 파일★ · chmod 0755 파일','불필요한 SUID 제거'],
+    ['표기','소유자 x 자리 ★s★(실행 가능) · ★S★(실행 권한 없음)','S 는 설정 오류 의심'],
+    ['정상 예','passwd · su · sudo · mount · umount · newgrp · chsh','기준 목록으로 관리'],
+    ['점검','★find / -user root -perm -4000 -type f 2>/dev/null★','기준 목록과 diff → 신규 SUID 탐지'],
+    ['-perm 형식','★-4000★ = 해당 비트 포함 · 4000 = 정확히 일치 · /6000 = SUID 또는 SGID','하이픈 유무 함정'],
+  ] } },
+  { h:'(보강) SUID 위험과 대책', li:[
+    '★root 소유 SUID 셸·인터프리터 복사본★ = 대표적 백도어 — 숨김 경로(/tmp/.x 등)의 SUID 파일 최우선 점검',
+    '편집기·파일 검색 도구 등 ★다른 명령을 실행할 수 있는 프로그램★ 에 SUID 가 붙으면 권한 상승 경로',
+    '★쓰기 가능한 SUID 파일★ — 내용 교체로 root 권한 획득 → 권한 777 SUID 즉시 조치',
+    '리눅스 커널은 ★셸 스크립트의 SUID 를 무시★ (경쟁 조건 위험 때문)',
+    '대책 — 불필요 SUID 제거 · ★nosuid 마운트★ · 무결성 점검(AIDE·Tripwire) · ★capabilities★ 로 최소 권한 대체 (예: ping 은 SUID 대신 cap_net_raw)',
+  ] }
+);
+
+CPPG.mcq.push(
+  { s:'s1', d:2, t:TW, q:'BitLocker 에서 볼륨 데이터를 실제로 암호화하는 키는?', c:['VMK','FVEK','복구 키','TPM 저장 루트 키'], a:1, e:'FVEK(Full Volume Encryption Key)가 데이터를 암호화하고, VMK 가 FVEK 를 암호화한다. 복구 키는 VMK 를 여는 보호기 중 하나이며, TPM 저장 루트 키는 TPM 내부 키 계층의 최상위 키로 데이터 암호화 키가 아니다.' },
+  { s:'s1', d:2, t:TW, q:'BitLocker 복구 키에 대한 설명으로 옳은 것은?', c:['8자리 영숫자 PIN 이다','48자리 숫자로 구성된다','TPM 칩 안에만 저장되어 백업할 수 없다','EFS 인증서와 같은 파일이다'], a:1, e:'BitLocker 복구 키는 48자리 숫자이며 Microsoft 계정·AD/Entra ID·파일·인쇄로 백업한다. PIN 은 별도 보호기이고, TPM 안에만 있다면 TPM 고장 시 복구할 수 없으며, EFS 인증서와는 무관하다.' },
+  { s:'s1', d:3, t:TW, q:'BitLocker(TPM 단독 모드)가 적용된 노트북에 대해 BitLocker 가 막아 주는 위협으로 가장 적절한 것은?', c:['로그인한 사용자가 실행한 악성코드의 파일 열람','분실된 노트북의 디스크를 분리해 다른 PC 에서 읽는 행위','네트워크로 전송되는 파일 도청','같은 PC 의 다른 사용자 계정 파일 열람'], a:1, e:'BitLocker 는 저장 데이터를 볼륨 단위로 암호화해 분실·도난 시 오프라인 접근을 막는다. 부팅·로그인 후에는 투명하게 복호화되므로 실행 중인 악성코드나 다른 로그인 사용자 열람은 막지 못하고, 전송 구간 보호는 TLS 등의 역할이다.' },
+  { s:'s1', d:2, t:TW, q:'EFS 에서 파일 내용을 실제로 암호화하는 키와 그 키를 보호하는 방식으로 옳은 것은?', c:['사용자 공개키로 파일 전체를 직접 암호화','FEK(대칭키)로 파일을 암호화하고 FEK 를 사용자 공개키로 암호화','사용자 암호의 해시값을 그대로 키로 사용','TPM 이 파일마다 키를 생성·보관'], a:1, e:'EFS 는 파일마다 대칭키 FEK 로 암호화하고 FEK 를 사용자 인증서의 공개키로 암호화해 저장하는 하이브리드 방식이다. 공개키로 파일 전체를 암호화하면 너무 느리고, 암호 해시를 키로 쓰거나 TPM 이 파일 키를 관리하지 않는다.' },
+  { s:'s1', d:2, t:TW, q:'EFS 로 암호화된 파일에 대한 설명으로 옳지 않은 것은?', c:['FAT32 USB 로 복사하면 복호화된 상태로 저장된다','NTFS 압축과 동시에 적용할 수 있다','복구 에이전트(DRA)가 있으면 사용자 키 분실 시 복구할 수 있다','탐색기에서 녹색 파일명으로 표시된다'], a:1, e:'EFS 와 NTFS 압축은 같은 파일에 동시에 적용할 수 없다. FAT 계열로 복사하면 암호가 풀리고, DRA 로 복구할 수 있으며, 탐색기에서 녹색으로 표시되는 것은 모두 옳은 설명이다.' },
+  { s:'s1', d:1, t:TW, q:'EFS 파일 암호화·해제와 사용하지 않는 디스크 공간 덮어쓰기를 수행하는 Windows 명령은?', c:['manage-bde','cipher','icacls','diskpart'], a:1, e:'cipher 는 /e 암호화, /d 해제, /w 빈 공간 덮어쓰기를 수행하는 EFS 도구다. manage-bde 는 BitLocker 관리, icacls 는 NTFS 권한(ACL) 관리, diskpart 는 디스크·파티션 관리 도구다.' },
+  { s:'s1', d:3, t:TW, q:'같은 PC 를 여러 직원이 공유할 때, 각 직원이 자신의 폴더를 다른 직원(관리자 포함)이 열람하지 못하게 하려면 가장 적합한 기능은?', c:['BitLocker','EFS','BitLocker To Go','Windows 방화벽'], a:1, e:'EFS 는 사용자 인증서 기반 파일·폴더 단위 암호화라 다른 사용자는 NTFS 권한이 있어도 읽지 못한다. BitLocker 계열은 로그인 후 모든 사용자에게 투명하게 복호화되므로 사용자 간 분리가 안 되고, 방화벽은 네트워크 통제 기능이다.' },
+  { s:'s1', d:1, t:TS, q:'단말의 프로세스·파일·레지스트리·네트워크 행위를 지속 기록해 위협을 탐지하고 격리·대응하는 솔루션은?', c:['DLP','EDR','WAF','NAC'], a:1, e:'EDR 은 단말 행위 수집, 탐지, 조사, 대응을 수행한다. DLP 는 정보 유출 방지, WAF 는 웹 애플리케이션 방화벽, NAC 는 네트워크 접속 통제 솔루션이다.' },
+  { s:'s1', d:2, t:TS, q:'EPP 와 EDR 의 관계에 대한 설명으로 가장 적절한 것은?', c:['EDR 을 도입하면 EPP 는 필요 없다','EPP 는 예방, EDR 은 탐지·조사·대응 중심으로 서로 보완한다','EPP 는 네트워크 장비, EDR 은 서버 전용 솔루션이다','둘 다 시그니처 기반 차단만 수행한다'], a:1, e:'EPP 는 알려진 위협의 예방, EDR 은 예방을 뚫은 위협의 탐지·대응을 맡아 보완 관계다. 둘 다 단말 대상 솔루션이며, EDR 은 행위 기반 탐지가 핵심이라 시그니처만 쓰지 않는다.' },
+  { s:'s1', d:2, t:TS, q:'이미 발생한 침해의 흔적으로 악성 파일 해시·C&C 서버 IP·도메인 등을 가리키는 용어는?', c:['IoA','IoC','TTP','CVE'], a:1, e:'IoC(Indicator of Compromise)는 침해 흔적 지표다. IoA 는 진행 중인 공격 행위 징후, TTP 는 공격자의 전술·기법·절차, CVE 는 공개 취약점 식별 번호다.' },
+  { s:'s1', d:3, t:TS, q:'EDR 이 한 단말에서 랜섬웨어 행위를 탐지했을 때, 확산을 막기 위한 즉각 대응으로 가장 적절한 기능은?', c:['호스트 네트워크 격리','시그니처 DB 업데이트 예약','디스크 조각 모음','방화벽 로그 보관 기간 연장'], a:0, e:'호스트 네트워크 격리는 EDR 관리 서버와의 통신만 남기고 단말을 망에서 분리해 확산을 즉시 막는다. 나머지는 즉각적인 확산 차단 효과가 없다.' },
+  { s:'s1', d:3, t:TS, q:'파일을 디스크에 남기지 않는 파일리스(Fileless) 공격 탐지에 상대적으로 유리한 접근은?', c:['파일 해시 기반 IoC 매칭','IoA 기반 행위 탐지','파일 확장자 차단 목록','정기 전체 디스크 검사'], a:1, e:'파일리스 공격은 디스크에 파일이 없어 해시·확장자·디스크 검사로 잡기 어렵다. 프로세스 행위와 의도를 보는 IoA 기반 탐지가 유리하다.' },
+  { s:'s1', d:2, t:TL, q:'일반 사용자가 root 소유 SUID 프로그램을 실행했을 때 바뀌는 것은?', c:['RUID 가 root 로 바뀐다','EUID 가 root 로 바뀐다','파일 소유자가 실행자로 바뀐다','RUID 와 EUID 가 모두 실행자로 유지된다'], a:1, e:'SUID 실행 시 RUID(실제 사용자)는 실행자 그대로이고 EUID(유효 사용자)가 파일 소유자인 root 로 바뀐다. 파일 소유자는 바뀌지 않는다.' },
+  { s:'s1', d:1, t:TL, q:'파일에 SUID 를 설정하는 명령으로 옳은 것은?', c:['chmod 2755 파일','chmod 4755 파일','chmod 1777 파일','chmod u-s 파일'], a:1, e:'8진수 맨 앞 4 가 SUID 다(4755 = rwsr-xr-x). 2755 는 SGID, 1777 은 Sticky Bit, u-s 는 SUID 해제다.' },
+  { s:'s1', d:3, t:TL, q:'SUID 점검 결과 중 가장 먼저 조치해야 할 항목은?', c:['/usr/bin/passwd (root, 4755)','/usr/bin/sudo (root, 4111)','/tmp/.cache/sh (root, 4755)','/usr/bin/newgrp (root, 4755)'], a:2, e:'/tmp 숨김 경로에 있는 root 소유 SUID 셸 복사본은 대표적인 권한 상승 백도어다. passwd·sudo·newgrp 는 SUID 가 필요한 정상 프로그램이다.' },
+  { s:'s1', d:2, t:TL, q:'ping 처럼 일부 특권만 필요한 프로그램에서 SUID 를 대체해 최소 권한을 적용하는 리눅스 기능은?', c:['Sticky Bit','capabilities','umask','ACL 마스크'], a:1, e:'capabilities 는 root 권한을 세분화해 필요한 특권(예: cap_net_raw)만 부여한다. Sticky Bit 는 디렉터리 삭제 제한, umask 는 기본 권한 마스크, ACL 마스크는 ACL 최대 권한 제한이다.' }
+);
+
+CPPG.ox.push(
+  { s:'s1', d:1, t:TW, q:'BitLocker 는 볼륨 전체를, EFS 는 파일·폴더 단위를 암호화한다.', a:true, e:'단위가 다르고 함께 사용할 수도 있다.' },
+  { s:'s1', d:2, t:TW, q:'BitLocker 는 로그인 후 실행 중인 악성코드로부터도 파일 내용을 보호한다.', a:false, e:'부팅 후에는 투명하게 복호화된다 — 분실·도난 대비 기술.' },
+  { s:'s1', d:2, t:TW, q:'BitLocker 의 TPM+PIN 모드는 부팅 전에 PIN 입력을 요구한다.', a:true, e:'부팅 전 인증으로 보안 강화.' },
+  { s:'s1', d:2, t:TW, q:'EFS 는 FAT32 파일시스템에서도 사용할 수 있다.', a:false, e:'EFS 는 NTFS 전용.' },
+  { s:'s1', d:2, t:TW, q:'EFS 는 사용자 인증서의 공개키로 파일 암호화 키(FEK)를 보호한다.', a:true, e:'하이브리드 방식.' },
+  { s:'s1', d:1, t:TS, q:'EDR 은 단말 행위를 지속 기록해 탐지·조사·대응을 수행한다.', a:true, e:'Endpoint Detection and Response.' },
+  { s:'s1', d:2, t:TS, q:'IoA 는 이미 발생한 침해의 흔적(파일 해시·IP)을 의미한다.', a:false, e:'그것은 IoC. IoA 는 진행 중인 공격 행위.' },
+  { s:'s1', d:2, t:TS, q:'XDR 은 단말뿐 아니라 네트워크·클라우드·메일 데이터를 통합 분석한다.', a:true, e:'EDR 의 확장 개념.' },
+  { s:'s1', d:2, t:TL, q:'SUID 파일을 실행하면 RUID 가 파일 소유자로 바뀐다.', a:false, e:'바뀌는 것은 EUID.' },
+  { s:'s1', d:2, t:TL, q:'리눅스 커널은 셸 스크립트에 설정된 SUID 를 무시한다.', a:true, e:'경쟁 조건 위험 때문.' },
+  { s:'s1', d:1, t:TL, q:'chmod u-s 파일 명령은 해당 파일의 SUID 를 해제한다.', a:true, e:'설정은 u+s 또는 4755.' }
+);
+
+CPPG.fill.push(
+  { s:'s1', d:2, t:TW, q:'BitLocker 에서 볼륨 데이터를 암호화하는 키의 약어는?', a:'FVEK', k:['fvek'], e:'Full Volume Encryption Key — VMK 가 보호.' },
+  { s:'s1', d:2, t:TW, q:'BitLocker 복구 키는 몇 자리 숫자인가?', a:'48', k:['48'], e:'복구 모드 진입 시 입력.' },
+  { s:'s1', d:2, t:TW, q:'BitLocker 상태 확인·설정을 명령줄에서 수행하는 Windows 도구는?', a:'manage-bde', k:['manage-bde'], e:'-status · -on · -protectors.' },
+  { s:'s1', d:2, t:TW, q:'EFS 에서 사용자 키 분실 시 암호화 파일을 복구할 수 있도록 지정하는 계정은?', a:'복구 에이전트(DRA)', k:['복구 에이전트'], e:'Data Recovery Agent — DRF 에 FEK 사본 보관.' },
+  { s:'s1', d:1, t:TW, q:'EFS 파일을 암호화(/e)·해제(/d)하는 Windows 명령은?', a:'cipher', k:['cipher'], e:'/w 는 빈 공간 덮어쓰기.' },
+  { s:'s1', d:1, t:TS, q:'Endpoint Detection and Response 의 약어는?', a:'EDR', k:['edr'], e:'단말 탐지·대응.' },
+  { s:'s1', d:2, t:TS, q:'진행 중인 공격의 행위·의도를 나타내는 지표의 약어는?', a:'IoA', k:['ioa'], e:'Indicator of Attack — IoC 는 침해 흔적.' },
+  { s:'s1', d:2, t:TL, q:'SUID 실행 시 파일 소유자로 바뀌는 사용자 ID 의 약어는?', a:'EUID', k:['euid'], e:'Effective UID — RUID 는 실행자 유지.' },
+  { s:'s1', d:2, t:TL, q:'root 소유 SUID 파일을 모두 찾는 find 명령을 쓰시오.', a:'find / -user root -perm -4000 -type f', k:['find','-user root','-perm -4000'], e:'2>/dev/null 로 오류 출력 숨김 · 결과를 기준 목록과 비교.' }
+);
+
+CPPG.order.push(
+  { s:'s1', d:3, t:TS, q:'EDR 의 위협 처리 흐름을 순서대로 나열하시오.', steps:['단말 행위 데이터 지속 수집','행위 기반(IoA)·IoC 탐지 경보','프로세스 트리·타임라인으로 조사','호스트 격리·프로세스 종료 등 대응','롤백·복구 및 탐지 규칙 개선'], e:'수집 → 탐지 → 조사 → 대응 → 개선.' }
 );
 })();
 
