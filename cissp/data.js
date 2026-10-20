@@ -8596,12 +8596,23 @@ CPPG.fill = [
   "s": "s1",
   "t": "위험관리",
   "d": 1,
+  "q": "정보보호의 3대 목표(CIA)를 영문으로 모두 쓰시오.",
+  "a": "Confidentiality, Integrity, Availability",
+  "k": [
+   "confidentiality",
+   "integrity",
+   "availability"
+  ],
+  "e": "기밀성 · 무결성 · 가용성 — 반대 개념은 DAD(Disclosure · Alteration · Destruction)."
+ },
+ {
+  "s": "s1",
+  "t": "위험관리",
+  "d": 1,
   "q": "SLE 는 자산가치(AV)에 ____ 를 곱한 값이다. (영문 약어)",
   "a": "EF",
   "k": [
-   "ef",
-   "exposure factor",
-   "노출계수"
+   "ef"
   ],
   "e": "SLE = AV × EF."
  },
@@ -8613,9 +8624,7 @@ CPPG.fill = [
   "a": "3000",
   "k": [
    "3000",
-   "3,000",
-   "$3,000",
-   "$3000"
+   "3,000"
   ],
   "e": "30,000 × 0.1 = 3,000."
  },
@@ -8638,8 +8647,7 @@ CPPG.fill = [
   "q": "Microsoft 가 개발한 6가지 위협 분류 모델은?",
   "a": "STRIDE",
   "k": [
-   "stride",
-   "스트라이드"
+   "stride"
   ],
   "e": "Spoofing·Tampering·Repudiation·Information disclosure·DoS·Elevation of privilege."
  },
@@ -8650,8 +8658,7 @@ CPPG.fill = [
   "q": "업무 중단을 허용할 수 있는 최대 시간을 뜻하는 약어는? (MAD 와 동의어)",
   "a": "MTD",
   "k": [
-   "mtd",
-   "maximum tolerable downtime"
+   "mtd"
   ],
   "e": "MTD ≥ RTO + WRT."
  },
@@ -8674,9 +8681,7 @@ CPPG.fill = [
   "q": "GDPR 에서 개인정보 침해를 감독기관에 통지해야 하는 기한은 인지 후 몇 시간인가?",
   "a": "72",
   "k": [
-   "72",
-   "72시간",
-   "72 hours"
+   "72"
   ],
   "e": "Art.33."
  },
@@ -8687,8 +8692,7 @@ CPPG.fill = [
   "q": "미국 실용특허의 보호 기간은 출원일부터 몇 년인가?",
   "a": "20",
   "k": [
-   "20",
-   "20년"
+   "20"
   ],
   "e": "공개를 대가로 독점권."
  },
@@ -8699,8 +8703,7 @@ CPPG.fill = [
   "q": "민사 소송의 입증 기준을 영어로 'preponderance of the ____' 라 한다.",
   "a": "evidence",
   "k": [
-   "evidence",
-   "증거"
+   "evidence"
   ],
   "e": "형사는 beyond a reasonable doubt."
  },
@@ -8711,9 +8714,7 @@ CPPG.fill = [
   "q": "합리적인 사람이 했을 보호 조치를 실제로 시행하는 것을 'Due ____' 라 한다.",
   "a": "Care",
   "k": [
-   "care",
-   "due care",
-   "케어"
+   "care"
   ],
   "e": "조사·점검은 Due Diligence."
  },
@@ -8724,9 +8725,7 @@ CPPG.fill = [
   "q": "NIST CSF 2.0 에서 새로 추가된 기능의 영문 이름은?",
   "a": "Govern",
   "k": [
-   "govern",
-   "거버넌스",
-   "통치"
+   "govern"
   ],
   "e": "6개 기능 중 중심."
  },
@@ -8737,10 +8736,7 @@ CPPG.fill = [
   "q": "한 사람이 중요한 업무의 전 과정을 수행하지 못하게 나누는 원칙은? (영문 약어)",
   "a": "SoD",
   "k": [
-   "sod",
-   "separation of duties",
-   "직무분리",
-   "직무 분리"
+   "sod"
   ],
   "e": "Separation of Duties."
  },
@@ -8751,8 +8747,7 @@ CPPG.fill = [
   "q": "NIST SP 800-88 의 소거 수준 3단계 중 물리적으로 파괴하는 단계는?",
   "a": "Destroy",
   "k": [
-   "destroy",
-   "파괴"
+   "destroy"
   ],
   "e": "Clear < Purge < Destroy."
  },
@@ -8776,9 +8771,7 @@ CPPG.fill = [
   "a": "Data remanence",
   "k": [
    "remanence",
-   "data remanence",
-   "데이터 잔존",
-   "잔존"
+   "data remanence"
   ],
   "e": "삭제·포맷은 소거가 아니다."
  },
@@ -8790,9 +8783,7 @@ CPPG.fill = [
   "a": "Degaussing",
   "k": [
    "degaussing",
-   "degauss",
-   "디가우징",
-   "자기소거"
+   "degauss"
   ],
   "e": "SSD 무효."
  },
@@ -8804,10 +8795,7 @@ CPPG.fill = [
   "a": "Top Secret",
   "k": [
    "top secret",
-   "topsecret",
-   "1급",
-   "1급비밀",
-   "ts"
+   "topsecret"
   ],
   "e": "최상위 등급."
  },
@@ -8818,10 +8806,7 @@ CPPG.fill = [
   "q": "GDPR 에서 컨트롤러를 대신해 개인정보를 처리하는 주체는?",
   "a": "Processor",
   "k": [
-   "processor",
-   "data processor",
-   "처리자",
-   "수탁자"
+   "processor"
   ],
   "e": "목적 결정은 Controller."
  },
@@ -8832,9 +8817,7 @@ CPPG.fill = [
   "q": "선택한 기준 통제를 조직 환경에 맞게 수정·조정하는 것은?",
   "a": "Tailoring",
   "k": [
-   "tailoring",
-   "테일러링",
-   "맞춤화"
+   "tailoring"
   ],
   "e": "적용 대상 선택은 Scoping."
  },
@@ -8845,9 +8828,7 @@ CPPG.fill = [
   "q": "이메일·웹 등으로 민감정보가 외부로 나가는 것을 탐지·차단하는 솔루션의 약어는?",
   "a": "DLP",
   "k": [
-   "dlp",
-   "data loss prevention",
-   "data leak prevention"
+   "dlp"
   ],
   "e": "Network·Endpoint·Cloud DLP."
  },
@@ -8858,8 +8839,7 @@ CPPG.fill = [
   "q": "BLP 모델에서 Simple Security Property의 다른 표현은 'No Read ____' 이다.",
   "a": "Up",
   "k": [
-   "up",
-   "no read up"
+   "up"
   ],
   "e": "상위 등급 읽기 금지."
  },
@@ -8870,8 +8850,7 @@ CPPG.fill = [
   "q": "Clark-Wilson 모델에서 CDI의 무결성 상태를 검증하는 절차를 약어로 ____ 라 한다.",
   "a": "IVP",
   "k": [
-   "ivp",
-   "integrity verification procedure"
+   "ivp"
   ],
   "e": "Integrity Verification Procedure."
  },
@@ -8906,10 +8885,7 @@ CPPG.fill = [
   "a": "ML-DSA",
   "k": [
    "ml-dsa",
-   "mldsa",
-   "fips 204",
-   "204",
-   "dilithium"
+   "mldsa"
   ],
   "e": "FIPS 204."
  },
@@ -8920,11 +8896,7 @@ CPPG.fill = [
   "q": "한 사람이 암호키 전체를 알지 못하도록 키를 나누어 여러 사람이 보관하는 원칙은?",
   "a": "Split knowledge",
   "k": [
-   "split knowledge",
-   "분할 지식",
-   "분할지식",
-   "m of n",
-   "dual control"
+   "split knowledge"
   ],
   "e": "Dual control과 함께 쓰인다."
  },
@@ -8935,7 +8907,6 @@ CPPG.fill = [
   "q": "n비트 해시의 충돌을 약 2^(n/2) 시도로 찾는 공격은?",
   "a": "생일 공격",
   "k": [
-   "birthday",
    "생일"
   ],
   "e": "Birthday paradox."
@@ -8947,8 +8918,7 @@ CPPG.fill = [
   "q": "보안 정책을 강제하는 하드웨어·펌웨어·소프트웨어의 총합을 약어로?",
   "a": "TCB",
   "k": [
-   "tcb",
-   "trusted computing base"
+   "tcb"
   ],
   "e": "Trusted Computing Base."
  },
@@ -8960,8 +8930,7 @@ CPPG.fill = [
   "a": "TOCTOU",
   "k": [
    "toctou",
-   "toc/tou",
-   "time of check"
+   "toc/tou"
   ],
   "e": "Race condition의 대표 사례."
  },
@@ -8972,8 +8941,7 @@ CPPG.fill = [
   "q": "자연 감시·자연 접근통제·영역성 강화를 원리로 하는 환경 설계 기반 범죄 예방 기법의 약어는?",
   "a": "CPTED",
   "k": [
-   "cpted",
-   "셉테드"
+   "cpted"
   ],
   "e": "Crime Prevention Through Environmental Design."
  },
@@ -8995,8 +8963,7 @@ CPPG.fill = [
   "q": "IPv6에서 ARP를 대체하는 프로토콜의 약어는?",
   "a": "NDP",
   "k": [
-   "ndp",
-   "neighbor discovery"
+   "ndp"
   ],
   "e": "Neighbor Discovery Protocol(ICMPv6 기반)."
  },
@@ -9019,9 +8986,7 @@ CPPG.fill = [
   "q": "외부 공개 서버를 두는 내부·외부 사이의 완충 네트워크를 흔히 ____ 라 부른다.",
   "a": "DMZ",
   "k": [
-   "dmz",
-   "screened subnet",
-   "스크린드 서브넷"
+   "dmz"
   ],
   "e": "Screened subnet."
  },
@@ -9044,9 +9009,7 @@ CPPG.fill = [
   "q": "IPsec에서 SA를 협상하고 키를 교환하는 프로토콜의 약어는?",
   "a": "IKE",
   "k": [
-   "ike",
-   "ikev2",
-   "internet key exchange"
+   "ike"
   ],
   "e": "UDP 500."
  },
@@ -9058,8 +9021,7 @@ CPPG.fill = [
   "a": "802.1X",
   "k": [
    "802.1x",
-   "8021x",
-   "dot1x"
+   "8021x"
   ],
   "e": "Supplicant·Authenticator·AS."
  },
@@ -9081,10 +9043,7 @@ CPPG.fill = [
   "q": "스위치 포트당 허용 MAC 주소 수를 제한해 MAC flooding을 막는 기능은?",
   "a": "Port security",
   "k": [
-   "port security",
-   "포트 보안",
-   "포트시큐리티",
-   "포트 시큐리티"
+   "port security"
   ],
   "e": "Cisco 등 스위치 기능."
  },
@@ -9095,11 +9054,7 @@ CPPG.fill = [
   "q": "DNS 서버에 위조 응답을 주입해 사용자를 악성 사이트로 유도하는 공격은?",
   "a": "DNS 캐시 포이즈닝",
   "k": [
-   "포이즈닝",
-   "poisoning",
-   "cache poisoning",
-   "dns spoofing",
-   "스푸핑"
+   "포이즈닝"
   ],
   "e": "대응: DNSSEC·포트 무작위화."
  },
@@ -9110,9 +9065,7 @@ CPPG.fill = [
   "q": "정당한 사용자를 거부하는 생체 인식 오류율의 약어는?",
   "a": "FRR",
   "k": [
-   "frr",
-   "false rejection",
-   "오거부율"
+   "frr"
   ],
   "e": "Type I 오류."
  },
@@ -9123,9 +9076,7 @@ CPPG.fill = [
   "q": "FRR과 FAR이 같아지는 지점을 뜻하는 약어는?",
   "a": "CER",
   "k": [
-   "cer",
-   "eer",
-   "교차오류율"
+   "cer"
   ],
   "e": "Crossover Error Rate = Equal Error Rate."
  },
@@ -9136,9 +9087,7 @@ CPPG.fill = [
   "q": "Kerberos에서 AS와 TGS를 합쳐 부르는 구성 요소는?",
   "a": "KDC",
   "k": [
-   "kdc",
-   "key distribution center",
-   "키분배센터"
+   "kdc"
   ],
   "e": "Key Distribution Center."
  },
@@ -9149,8 +9098,7 @@ CPPG.fill = [
   "q": "Kerberos에서 AS가 발급하고 TGS에 제시하는 티켓의 약어는?",
   "a": "TGT",
   "k": [
-   "tgt",
-   "ticket granting ticket"
+   "tgt"
   ],
   "e": "Ticket Granting Ticket."
  },
@@ -9162,7 +9110,6 @@ CPPG.fill = [
   "a": "OpenID Connect",
   "k": [
    "openid connect",
-   "oidc",
    "openid"
   ],
   "e": "OIDC."
@@ -9185,9 +9132,7 @@ CPPG.fill = [
   "q": "시스템이 보안 레이블로 접근을 강제하는 접근통제 모델의 약어는?",
   "a": "MAC",
   "k": [
-   "mac",
-   "mandatory access control",
-   "강제적접근통제"
+   "mac"
   ],
   "e": "Mandatory Access Control."
  },
@@ -9198,9 +9143,7 @@ CPPG.fill = [
   "q": "주체·객체·환경의 속성과 정책으로 접근을 결정하는 모델의 약어는?",
   "a": "ABAC",
   "k": [
-   "abac",
-   "attribute-based",
-   "속성기반"
+   "abac"
   ],
   "e": "Attribute-Based Access Control."
  },
@@ -9211,11 +9154,7 @@ CPPG.fill = [
   "q": "직무 이동 후 이전 권한이 회수되지 않아 권한이 누적되는 현상은?",
   "a": "Privilege creep",
   "k": [
-   "privilege creep",
-   "권한 누적",
-   "권한누적",
-   "권한 크리프",
-   "authorization creep"
+   "privilege creep"
   ],
   "e": "정기 접근 검토로 방지."
  },
@@ -9226,9 +9165,7 @@ CPPG.fill = [
   "q": "특권을 필요한 시점에만 일시 부여하고 자동 회수하는 방식을 영어 약어로 쓰면?",
   "a": "JIT",
   "k": [
-   "jit",
-   "just-in-time",
-   "just in time"
+   "jit"
   ],
   "e": "Just-in-Time access."
  },
@@ -9239,9 +9176,7 @@ CPPG.fill = [
   "q": "위험 증가를 미리 알려 주는 핵심 위험 지표의 약어는?",
   "a": "KRI",
   "k": [
-   "kri",
-   "key risk indicator",
-   "핵심위험지표"
+   "kri"
   ],
   "e": "Key Risk Indicator."
  },
@@ -9252,10 +9187,7 @@ CPPG.fill = [
   "q": "침투 테스트 전 범위·허용 기법·연락체계를 정한 문서를 무엇이라 하는가?",
   "a": "Rules of Engagement",
   "k": [
-   "rules of engagement",
-   "roe",
-   "교전 규칙",
-   "교전규칙"
+   "rules of engagement"
   ],
   "e": "RoE."
  },
@@ -9277,10 +9209,7 @@ CPPG.fill = [
   "q": "테스터에게 모든 내부 정보를 제공하는 테스트 방식은 ____ box 테스트이다.",
   "a": "White",
   "k": [
-   "white",
-   "화이트",
-   "white box",
-   "화이트박스"
+   "white"
   ],
   "e": "Full knowledge."
  },
@@ -9303,9 +9232,7 @@ CPPG.fill = [
   "q": "소스코드를 실행하지 않고 분석하는 보안 테스트의 약어는?",
   "a": "SAST",
   "k": [
-   "sast",
-   "정적분석",
-   "static application security testing"
+   "sast"
   ],
   "e": "Static Application Security Testing."
  },
@@ -9317,10 +9244,7 @@ CPPG.fill = [
   "a": "Fuzzing",
   "k": [
    "fuzzing",
-   "퍼징",
-   "fuzz",
-   "퍼지 테스트",
-   "fuzz testing"
+   "fuzz"
   ],
   "e": "Mutation/Generation."
  },
@@ -9331,9 +9255,7 @@ CPPG.fill = [
   "q": "재무보고 관련 내부통제를 다루는 SOC 보고서는 SOC ____ 이다.",
   "a": "1",
   "k": [
-   "1",
-   "soc 1",
-   "soc1"
+   "1"
   ],
   "e": "ICFR."
  },
@@ -9344,10 +9266,7 @@ CPPG.fill = [
   "q": "특정 시점이 아니라 일정 기간의 통제 운영 효과성을 평가하는 SOC 보고서 유형은 Type ____ 이다.",
   "a": "II",
   "k": [
-   "ii",
-   "2",
-   "type ii",
-   "type 2"
+   "ii"
   ],
   "e": "Type II."
  },
@@ -9359,9 +9278,7 @@ CPPG.fill = [
   "a": "Chain of custody",
   "k": [
    "chain of custody",
-   "custody",
-   "보관 연속성",
-   "관리 연속성"
+   "custody"
   ],
   "e": "증거 능력의 핵심 요건."
  },
@@ -9372,9 +9289,7 @@ CPPG.fill = [
   "q": "휘발성 순서(Order of Volatility)를 제시한 IETF 문서 번호는 RFC ____ 이다.",
   "a": "3227",
   "k": [
-   "3227",
-   "rfc3227",
-   "rfc 3227"
+   "3227"
   ],
   "e": "Guidelines for Evidence Collection and Archiving."
  },
@@ -9386,9 +9301,7 @@ CPPG.fill = [
   "a": "Write blocker",
   "k": [
    "write blocker",
-   "writeblocker",
-   "쓰기 방지",
-   "쓰기방지"
+   "writeblocker"
   ],
   "e": "원본 무결성 보존."
  },
@@ -9422,10 +9335,7 @@ CPPG.fill = [
   "q": "ISC2 사고 관리 7단계 중 마지막 단계는? (영문)",
   "a": "Lessons learned",
   "k": [
-   "lessons learned",
-   "lesson learned",
-   "교훈",
-   "사후 검토"
+   "lessons learned"
   ],
   "e": "절차 개선·재발 방지."
  },
@@ -9436,9 +9346,7 @@ CPPG.fill = [
   "q": "RAID 레벨 중 미러링만 수행하는 것은 RAID ____ 이다.",
   "a": "1",
   "k": [
-   "1",
-   "raid1",
-   "raid 1"
+   "1"
   ],
   "e": "RAID 0은 스트라이핑, 1은 미러링."
  },
@@ -9449,8 +9357,7 @@ CPPG.fill = [
   "q": "허용 가능한 최대 데이터 손실량(시간)을 뜻하는 지표의 약어는?",
   "a": "RPO",
   "k": [
-   "rpo",
-   "recovery point objective"
+   "rpo"
   ],
   "e": "백업 주기를 결정."
  },
@@ -9462,9 +9369,7 @@ CPPG.fill = [
   "a": "Cold site",
   "k": [
    "cold",
-   "cold site",
-   "콜드",
-   "콜드 사이트"
+   "cold site"
   ],
   "e": "가장 저렴, 가장 느림."
  },
@@ -9475,9 +9380,7 @@ CPPG.fill = [
   "q": "승인된 표준 보안 구성 상태를 일컫는 용어는? (영문)",
   "a": "Baseline",
   "k": [
-   "baseline",
-   "기준선",
-   "베이스라인"
+   "baseline"
   ],
   "e": "드리프트 점검의 기준."
  },
@@ -9488,8 +9391,7 @@ CPPG.fill = [
   "q": "개발·보안·운영을 통합해 CI/CD에 보안 검사를 자동화하는 접근은?",
   "a": "DevSecOps",
   "k": [
-   "devsecops",
-   "데브섹옵스"
+   "devsecops"
   ],
   "e": "Shift left."
  },
@@ -9500,9 +9402,7 @@ CPPG.fill = [
   "q": "CMMI 성숙도 5단계의 명칭은? (영문)",
   "a": "Optimizing",
   "k": [
-   "optimizing",
-   "optimising",
-   "최적화"
+   "optimizing"
   ],
   "e": "지속적 프로세스 개선."
  },
@@ -9524,8 +9424,7 @@ CPPG.fill = [
   "q": "검사 시점과 사용 시점의 차이를 악용하는 경쟁 조건 취약점의 약어는?",
   "a": "TOCTOU",
   "k": [
-   "toctou",
-   "time of check to time of use"
+   "toctou"
   ],
   "e": "Race condition의 대표 형태."
  },
@@ -9536,9 +9435,7 @@ CPPG.fill = [
   "q": "OWASP Top 10 2021의 A10 항목인 서버 측 요청 위조의 약어는?",
   "a": "SSRF",
   "k": [
-   "ssrf",
-   "server side request forgery",
-   "server-side request forgery"
+   "ssrf"
   ],
   "e": "서버가 공격자가 지정한 URL로 요청."
  },
@@ -9549,8 +9446,7 @@ CPPG.fill = [
   "q": "소프트웨어 구성요소 명세서의 약어는?",
   "a": "SBOM",
   "k": [
-   "sbom",
-   "software bill of materials"
+   "sbom"
   ],
   "e": "취약점 영향 범위 파악."
  },
@@ -9561,8 +9457,7 @@ CPPG.fill = [
   "q": "오픈소스 구성요소의 취약점·라이선스를 분석하는 도구 유형의 약어는?",
   "a": "SCA",
   "k": [
-   "sca",
-   "software composition analysis"
+   "sca"
   ],
   "e": "SBOM 생성에도 활용."
  },
@@ -9573,9 +9468,7 @@ CPPG.fill = [
   "q": "같은 기본키에 대해 보안 등급별 다른 값을 두어 추론을 막는 DB 기법은? (영문)",
   "a": "Polyinstantiation",
   "k": [
-   "polyinstantiation",
-   "다중인스턴스화",
-   "다중 인스턴스화"
+   "polyinstantiation"
   ],
   "e": "추론 공격 방어."
  }
