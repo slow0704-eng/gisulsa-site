@@ -10447,6 +10447,306 @@ CPPG.order.push(
 })();
 
 /* ═══════════════════════════════════════════════════════════
+   17. 🌐 웹 취약점 4종 — XPath 인젝션 · 디렉터리 인덱싱 · 운영체제 명령 실행 · 정보 누출 (3과목)
+   ※ 개념·원인·영향·대응 중심(공격 구문 미수록). 카드·시트·함정·개념정리는 3과목 항목 바로 뒤에 넣는다.
+   ※ 단답 k 는 ★모든 키워드가 답에 포함★ 되어야 정답 — 정답(a)에 들어 있는 키워드만 쓴다.
+   ═══════════════════════════════════════════════════════════ */
+(function () {
+const afterLast = (arr, s) => { let i = -1; arr.forEach((x, j) => { if (x.s === s) i = j; }); return i + 1; };
+const insertS3 = (arr, items) => arr.splice(afterLast(arr, 's3'), 0, ...items);
+const TW = '웹 취약점·OWASP', TH = '웹·HTTP 보안';
+
+insertS3(CPPG.cards, [
+  { s:'s3', g:'웹 보안', front:'XPath 인젝션', key:'XML 조회 쿼리에 입력이 섞여 쿼리 구조 변경', back:'XML 문서를 조회하는 ★XPath 쿼리★ 에 사용자 입력을 검증 없이 이어 붙여, 입력이 ★쿼리 구조를 바꾸게★ 되는 취약점. ★인증 우회·XML 데이터 전체 노출★. XPath 에는 DB 처럼 테이블별 접근 권한 개념이 없어 ★문서 전체★ 가 위험해진다.', tip:'대응 — 파라미터화된 XPath(변수 바인딩) · 입력값 검증 · 오류 메시지 비노출' },
+  { s:'s3', g:'웹 보안', front:'디렉터리 인덱싱 (Directory Indexing)', key:'인덱스 파일 없는 디렉터리의 파일 목록 노출', back:'웹 서버의 ★디렉터리 리스팅 기능★ 이 켜져 있어, 기본 문서(index.html 등)가 없는 디렉터리를 요청하면 ★파일 목록이 그대로 노출★ 되는 취약점. 백업 파일·설정 파일·소스 코드가 드러나 ★후속 공격의 발판★ 이 된다.', tip:'Apache — Options 에서 ★Indexes 제거★(Options -Indexes) · IIS — 디렉터리 검색 비활성 · Nginx — autoindex off' },
+  { s:'s3', g:'웹 보안', front:'운영체제 명령 실행 (OS Command Injection)', key:'시스템 명령 호출에 입력이 섞여 임의 명령 실행', back:'애플리케이션이 ★system()·exec()·Runtime.exec()★ 등으로 OS 명령을 호출할 때 사용자 입력이 명령 인자로 들어가, ★명령 구분 문자를 통해 추가 명령이 실행★ 되는 취약점. 웹 서버 권한으로 ★시스템 장악★ 까지 이어질 수 있다.', tip:'대응 — OS 명령 호출 자체를 피하고 언어 내장 API 사용 · 허용 목록(화이트리스트) 검증 · 웹 서버 최소 권한' },
+  { s:'s3', g:'웹 보안', front:'정보 누출 (Information Leakage)', key:'오류 메시지·주석·배너로 내부 정보 노출', back:'★상세 오류 메시지·스택 트레이스·HTML 주석·서버 배너·디버그 페이지★ 를 통해 ★서버 종류·버전·절대 경로·DB 구조·내부 IP★ 등이 노출되는 취약점. 직접 피해보다 ★공격 정보 수집★ 에 악용된다.', tip:'대응 — 사용자 정의 오류 페이지 · ServerTokens Prod · ServerSignature Off · 주석·테스트 파일 제거 · 디버그 모드 해제' },
+]);
+
+insertS3(CPPG.sheets, [
+  { s:'s3', title:'★ 웹 취약점 4종 — 원인·영향·대응', type:'table', head:['취약점','원인','영향','대응'], rows:[
+    ['★XPath 인젝션★','XPath 쿼리에 입력을 그대로 결합','인증 우회 · XML 데이터 전체 노출','파라미터화된 XPath · 입력 검증 · 오류 비노출'],
+    ['★디렉터리 인덱싱★','웹 서버 디렉터리 리스팅 활성','파일 목록 · 백업·설정·소스 노출','Options -Indexes · IIS 디렉터리 검색 해제 · autoindex off'],
+    ['★운영체제 명령 실행★','OS 명령 호출 인자에 입력 결합','임의 명령 실행 · 시스템 장악','명령 호출 회피 · 화이트리스트 · 셸 미경유 API · 최소 권한'],
+    ['★정보 누출★','상세 오류·주석·배너·디버그 노출','버전·경로·DB 구조 등 공격 정보 제공','사용자 정의 오류 페이지 · 배너 최소화 · 주석·테스트 파일 제거'],
+  ] },
+]);
+
+insertS3(CPPG.traps, [
+  { s:'s3', t:'XPath 인젝션은 DB 접근 권한으로 피해 범위가 제한된다 — 아니다. XPath 에는 테이블별 권한 개념이 없어 XML 문서 전체가 노출될 수 있다' },
+  { s:'s3', t:'디렉터리 인덱싱은 Apache Options 에 Indexes 를 추가해서 막는다 — 아니다. Indexes 를 제거(Options -Indexes)해야 한다' },
+  { s:'s3', t:'운영체제 명령 실행은 특수문자 몇 개만 막으면 충분하다 — 아니다. 블랙리스트는 우회되기 쉽다. 명령 호출 회피와 허용 목록 검증이 근본 대책' },
+  { s:'s3', t:'정보 누출은 직접 피해가 없으니 위험도가 낮다 — 아니다. 버전·경로·DB 구조 정보가 다른 공격의 성공률을 크게 높인다' },
+]);
+
+insertS3(CPPG.notes, [
+  { s:'s3', no:'3-15', t:TW, title:'웹 취약점 4종 — XPath 인젝션 · 디렉터리 인덱싱 · 운영체제 명령 실행 · 정보 누출', body:[
+    { h:'위치 — 주요정보통신기반시설 웹 취약점 점검 항목', tb:{ head:['항목','점검 코드','분류'], rows:[
+      ['운영체제 명령 실행','OC','입력값 검증 — 인젝션 계열'],
+      ['XPath 인젝션','XI','입력값 검증 — 인젝션 계열'],
+      ['디렉터리 인덱싱','DI','서버 설정'],
+      ['정보 누출','IL','서버 설정 · 오류 처리'],
+    ] } },
+    { h:'XPath 인젝션', li:[
+      '★정의★ — XML 데이터를 조회하는 XPath 쿼리에 사용자 입력이 검증 없이 결합되어 ★쿼리 논리가 바뀌는★ 취약점',
+      '★영향★ — XML 기반 사용자 정보로 ★인증 우회★, XML 문서 ★전체 데이터 노출★ (XPath 는 SQL 과 달리 테이블·컬럼 단위 접근 권한이 없다)',
+      '★블라인드 XPath 인젝션★ — 결과가 화면에 나오지 않아도 참·거짓 응답 차이로 문서 구조를 추론',
+      '★대응★ — ★파라미터화된 XPath(변수 바인딩)★ · 입력값의 따옴표·괄호·등호 같은 XPath 메타문자 검증 · 상세 오류 메시지 비노출',
+    ] },
+    { h:'디렉터리 인덱싱', li:[
+      '★정의★ — 기본 문서가 없는 디렉터리 요청 시 웹 서버가 ★파일 목록을 자동 생성해 보여 주는★ 설정 취약점',
+      '★영향★ — 백업 파일(.bak·.old)·설정 파일·소스 코드·업로드 파일 노출 → 다른 취약점 공격의 정보원',
+      '★대응 설정★ — Apache httpd.conf 의 Options 에서 ★Indexes 제거★(Options -Indexes 또는 Options None) · IIS 관리자 ★디렉터리 검색 사용 안 함★ · Nginx ★autoindex off★(기본값 off) · Tomcat DefaultServlet 의 ★listings false★',
+      '불필요한 백업·임시 파일은 웹 루트에서 삭제',
+    ] },
+    { h:'운영체제 명령 실행 (OS Command Injection)', li:[
+      '★정의★ — 애플리케이션이 OS 명령(system·exec·popen·Runtime.exec 등)을 호출할 때 입력이 명령줄에 그대로 들어가 ★명령 구분 문자로 추가 명령이 실행★ 되는 취약점',
+      '★영향★ — 웹 서버 실행 계정 권한으로 임의 명령 실행 → 파일 열람·변조, 백도어 설치, ★시스템 장악★',
+      '★대응 1 (근본)★ — OS 명령 호출을 피하고 ★언어 내장 API★ 로 같은 기능 구현',
+      '★대응 2★ — 불가피하면 ★허용 목록(화이트리스트)★ 으로 입력 검증, ★셸을 거치지 않고 인자를 배열로 넘기는 API★ 사용, 명령 구분 문자 필터링은 보조 수단',
+      '★대응 3★ — 웹 서버·WAS 를 ★최소 권한 계정★ 으로 실행해 피해 범위 축소',
+    ] },
+    { h:'정보 누출 (Information Leakage)', tb:{ head:['누출 경로','노출 정보','대응'], rows:[
+      ['상세 오류 메시지·스택 트레이스','DB 종류·쿼리 구조·절대 경로','★사용자 정의 오류 페이지★ (Apache ErrorDocument · web.xml error-page)'],
+      ['서버 배너·응답 헤더','웹 서버·언어 종류와 버전','★ServerTokens Prod · ServerSignature Off★ · expose_php Off · server_tokens off'],
+      ['HTML·JS 주석','내부 경로·계정 힌트·개발 메모','배포 전 주석 제거'],
+      ['디버그·테스트 페이지','설정값·환경 변수','운영 환경 디버그 모드 해제 · 테스트 파일 삭제'],
+    ] } },
+    { h:'공통 원리 — 인젝션 계열', li:[
+      'SQL·LDAP·XPath·OS 명령·SSI 인젝션은 모두 ★입력값을 데이터가 아닌 코드(명령)로 해석★ 하게 만드는 같은 구조',
+      '공통 대응 — ★입력값 검증(화이트리스트)★ · ★데이터와 명령의 분리(파라미터화·바인딩)★ · 최소 권한 · 오류 메시지 비노출',
+    ] },
+    { h:'함정', li:[
+      '디렉터리 인덱싱 차단은 Indexes ★추가가 아니라 제거★',
+      'ServerTokens ★Prod★ 가 가장 적게 노출(Full 이 가장 많이 노출)',
+      '블랙리스트 필터링은 ★보조 수단★ — 근본 대책은 명령 호출 회피·파라미터화·화이트리스트',
+    ] },
+  ] },
+]);
+
+CPPG.mcq.push(
+  { s:'s3', d:1, t:TW, q:'XML 데이터를 조회하는 쿼리에 사용자 입력이 검증 없이 결합되어 인증 우회나 XML 데이터 노출이 발생하는 취약점은?', c:['SQL 인젝션','XPath 인젝션','SSI 인젝션','CSRF'], a:1, e:'XPath 인젝션은 XML 조회용 XPath 쿼리에 입력이 결합되어 쿼리 논리가 바뀌는 취약점이다. SQL 인젝션은 관계형 DB 쿼리, SSI 인젝션은 서버 사이드 인클루드 지시어, CSRF 는 사용자 권한을 도용한 요청 위조다.' },
+  { s:'s3', d:2, t:TW, q:'XPath 인젝션이 SQL 인젝션보다 노출 범위가 넓어질 수 있는 이유로 가장 적절한 것은?', c:['XPath 는 항상 암호화되지 않기 때문','XPath 에는 테이블·컬럼 단위 접근 권한 개념이 없어 문서 전체에 접근할 수 있기 때문','XML 은 웹 서버 메모리에만 존재하기 때문','XPath 쿼리는 로그에 남지 않기 때문'], a:1, e:'DB 는 계정별로 테이블·컬럼 접근을 제한할 수 있지만 XPath 는 XML 문서 전체를 대상으로 하므로 인젝션 시 문서 전체가 노출될 수 있다. 나머지는 노출 범위와 관계없는 설명이다.' },
+  { s:'s3', d:2, t:TW, q:'XPath 인젝션의 가장 근본적인 대응 방법은?', c:['XML 파일 이름을 바꾼다','파라미터화된 XPath(변수 바인딩)를 사용한다','XML 문서를 압축한다','웹 서버 포트를 변경한다'], a:1, e:'입력을 쿼리 문자열에 직접 붙이지 않고 변수로 바인딩하면 입력이 데이터로만 처리된다. 파일 이름 변경·압축·포트 변경은 쿼리 구조 변경을 막지 못한다.' },
+  { s:'s3', d:1, t:TH, q:'기본 문서가 없는 디렉터리를 요청했을 때 웹 서버가 파일 목록을 그대로 보여 주는 취약점은?', c:['디렉터리 인덱싱','디렉터리 트래버설','파일 업로드','세션 고정'], a:0, e:'디렉터리 인덱싱은 디렉터리 리스팅 설정으로 파일 목록이 노출되는 설정 취약점이다. 디렉터리 트래버설은 경로 조작으로 허용되지 않은 파일에 접근하는 것이고, 파일 업로드·세션 고정은 다른 유형이다.' },
+  { s:'s3', d:2, t:TH, q:'Apache 웹 서버에서 디렉터리 인덱싱을 차단하는 설정으로 옳은 것은?', c:['Options +Indexes','Options -Indexes','ServerTokens Full','AllowOverride All'], a:1, e:'Options 지시자에서 Indexes 를 제거(-Indexes)해야 목록 노출이 차단된다. +Indexes 는 오히려 활성화하고, ServerTokens 는 배너 노출 수준, AllowOverride 는 .htaccess 재정의 허용 범위 설정이다.' },
+  { s:'s3', d:2, t:TH, q:'웹 서버별 디렉터리 목록 노출 차단 설정의 연결로 옳지 않은 것은?', c:['Apache — Options -Indexes','Nginx — autoindex off','IIS — 디렉터리 검색 사용 안 함','Tomcat — ServerSignature Off'], a:3, e:'Tomcat 은 DefaultServlet 의 listings 를 false 로 설정한다. ServerSignature Off 는 Apache 오류 페이지 하단의 서버 정보 표시를 끄는 설정으로 디렉터리 목록과 무관하다.' },
+  { s:'s3', d:1, t:TW, q:'애플리케이션이 OS 명령을 호출할 때 사용자 입력이 명령줄에 그대로 들어가 추가 명령이 실행되는 취약점은?', c:['운영체제 명령 실행','XPath 인젝션','정보 누출','쿠키 변조'], a:0, e:'운영체제 명령 실행(OS Command Injection)은 시스템 명령 호출 인자에 입력이 결합되어 임의 명령이 실행되는 취약점이다. 나머지는 XML 쿼리 조작, 내부 정보 노출, 쿠키 값 조작으로 다른 유형이다.' },
+  { s:'s3', d:3, t:TW, q:'운영체제 명령 실행 취약점의 대응으로 가장 근본적인 것은?', c:['명령 구분 문자 몇 가지를 블랙리스트로 필터링','OS 명령 호출을 피하고 언어 내장 API 로 기능을 구현','웹 페이지에 경고 문구 표시','명령 실행 결과를 화면에 출력하지 않음'], a:1, e:'명령 호출 자체를 없애면 취약점이 생길 여지가 사라진다. 블랙리스트는 우회되기 쉬운 보조 수단이고, 경고 문구나 결과 비출력은 명령 실행 자체를 막지 못한다.' },
+  { s:'s3', d:2, t:TW, q:'운영체제 명령 실행 취약점이 악용되었을 때 피해 범위를 줄이는 운영 측면의 대책은?', c:['웹 서버를 root·관리자 권한으로 실행','웹 서버·WAS 를 최소 권한 계정으로 실행','로그 수집을 중단','오류 메시지를 상세히 출력'], a:1, e:'최소 권한 계정으로 실행하면 명령이 실행되어도 그 계정 권한 안으로 피해가 제한된다. root 실행은 피해를 키우고, 로그 중단·상세 오류 출력은 오히려 대응을 어렵게 한다.' },
+  { s:'s3', d:1, t:TH, q:'상세 오류 메시지, HTML 주석, 서버 배너 등을 통해 서버 버전·절대 경로·DB 구조가 노출되는 취약점은?', c:['정보 누출','디렉터리 인덱싱','불충분한 인가','자동화 공격'], a:0, e:'정보 누출은 오류·주석·배너·디버그 정보로 내부 정보가 드러나는 취약점이다. 디렉터리 인덱싱은 파일 목록 노출에 한정되고, 불충분한 인가·자동화 공격은 접근 통제·반복 요청 문제다.' },
+  { s:'s3', d:2, t:TH, q:'Apache 에서 응답 헤더의 서버 정보 노출을 최소화하는 설정 조합은?', c:['ServerTokens Full · ServerSignature On','ServerTokens Prod · ServerSignature Off','ServerTokens OS · ServerSignature On','ServerTokens Major · ServerSignature EMail'], a:1, e:'ServerTokens Prod 는 제품명(Apache)만 표시하고, ServerSignature Off 는 오류 페이지 하단의 서버 정보 표시를 끈다. Full 이 가장 많은 정보를 노출한다.' },
+  { s:'s3', d:3, t:TH, q:'정보 누출 대응으로 적절하지 않은 것은?', c:['사용자 정의 오류 페이지 사용','운영 환경의 디버그 모드 해제','배포 전 HTML 주석의 내부 정보 제거','오류 발생 시 스택 트레이스를 사용자에게 그대로 표시'], a:3, e:'스택 트레이스에는 코드 경로·라이브러리 버전·쿼리 구조가 담겨 있어 사용자에게 보여 주면 안 된다. 나머지는 모두 정보 누출 대응이다.' }
+);
+
+CPPG.ox.push(
+  { s:'s3', d:1, t:TW, q:'XPath 인젝션은 XML 데이터를 조회하는 쿼리에 입력이 결합되어 발생한다.', a:true, e:'인증 우회·XML 데이터 노출.' },
+  { s:'s3', d:2, t:TH, q:'Apache 에서 Options 에 Indexes 를 추가하면 디렉터리 인덱싱이 차단된다.', a:false, e:'Indexes 를 제거(Options -Indexes)해야 차단된다.' },
+  { s:'s3', d:2, t:TH, q:'Nginx 의 autoindex 기본값은 off 이다.', a:true, e:'on 으로 바꾸면 디렉터리 목록이 노출된다.' },
+  { s:'s3', d:2, t:TW, q:'운영체제 명령 실행은 명령 구분 문자를 블랙리스트로 필터링하는 것만으로 완전히 막을 수 있다.', a:false, e:'블랙리스트는 우회되기 쉽다 — 명령 호출 회피·화이트리스트가 근본 대책.' },
+  { s:'s3', d:1, t:TH, q:'상세한 오류 메시지를 사용자에게 보여 주면 정보 누출 취약점이 될 수 있다.', a:true, e:'사용자 정의 오류 페이지로 대체한다.' },
+  { s:'s3', d:2, t:TH, q:'Apache ServerTokens 설정 중 Full 이 서버 정보를 가장 적게 노출한다.', a:false, e:'Prod 가 가장 적고 Full 이 가장 많다.' }
+);
+
+CPPG.fill.push(
+  { s:'s3', d:1, t:TW, q:'XML 문서 조회 쿼리에 입력이 결합되어 쿼리 논리가 바뀌는 취약점은?', a:'XPath 인젝션', k:['xpath','인젝션'], e:'파라미터화된 XPath 로 대응.' },
+  { s:'s3', d:2, t:TH, q:'Apache 에서 디렉터리 인덱싱을 차단하려면 Options 지시자에 무엇을 지정하는가?', a:'-Indexes', k:['indexes'], e:'Options -Indexes (또는 Options None).' },
+  { s:'s3', d:2, t:TH, q:'Nginx 에서 디렉터리 목록 표시를 끄는 지시자 설정은?', a:'autoindex off', k:['autoindex','off'], e:'기본값도 off.' },
+  { s:'s3', d:2, t:TW, q:'OS 명령 호출 인자에 입력이 섞여 임의 명령이 실행되는 취약점의 한글 명칭은?', a:'운영체제 명령 실행', k:['운영체제','명령','실행'], e:'OS Command Injection — 점검 코드 OC.' },
+  { s:'s3', d:2, t:TH, q:'Apache 응답 헤더에 제품명만 표시하도록 하는 ServerTokens 설정값은?', a:'Prod', k:['prod'], e:'ServerSignature Off 와 함께 적용.' },
+  { s:'s3', d:3, t:TW, q:'운영체제 명령 실행 취약점의 근본 대책 두 가지를 쓰시오.', a:'OS 명령 호출 회피(내장 API 사용), 화이트리스트 입력 검증', k:['명령 호출 회피','화이트리스트'], e:'최소 권한 실행은 피해 축소 대책.' }
+);
+
+CPPG.order.push(
+  { s:'s3', d:2, t:TH, q:'Apache 웹 서버의 디렉터리 인덱싱 취약점 조치 절차를 순서대로 나열하시오.', steps:['httpd.conf 에서 해당 Directory 의 Options 지시자 확인','Options 에서 Indexes 제거(-Indexes)','웹 루트의 불필요한 백업·임시 파일 삭제','설정 문법 검사 후 웹 서버 재시작','기본 문서 없는 디렉터리 요청으로 목록 미노출 확인'], e:'설정 변경 → 잔존 파일 정리 → 재시작 → 검증 순.' }
+);
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   18. 🔍 Windows 포렌식 기능(터널링·Shellbags·WFP·타임스톰핑) · 🐧 Linux Capabilities · 🐷 Snort 룰 보강
+   ※ 1과목: 개념정리 1-29·1-30 신설 / 2과목: 기존 2-11(Snort)에 단락 추가 + 문항
+   ※ 단답 k 는 ★모든 키워드가 답에 포함★ 되어야 정답 — 정답(a)에 들어 있는 키워드만 쓴다.
+   ═══════════════════════════════════════════════════════════ */
+(function () {
+const afterLast = (arr, s) => { let i = -1; arr.forEach((x, j) => { if (x.s === s) i = j; }); return i + 1; };
+const ins = (s, arr, items) => arr.splice(afterLast(arr, s), 0, ...items);
+const TW = '운영체제·Windows', TL = 'Linux 권한·계정', TN = '네트워크 보안솔루션';
+
+/* ── 1과목: Windows 포렌식 기능 · Linux Capabilities ── */
+ins('s1', CPPG.cards, [
+  { s:'s1', g:'포렌식', front:'파일시스템 터널링 (File System Tunneling)', key:'삭제 후 15초 안 같은 이름 생성 → 이전 생성 시간 상속', back:'파일을 삭제·이름 변경한 뒤 ★기본 15초 안에 같은 디렉터리에 같은 이름★ 의 파일이 생기면, 새 파일이 ★이전 파일의 생성 시간(과 8.3 짧은 이름)★ 을 물려받는 Windows 기능. "삭제 후 새로 저장" 방식 프로그램의 호환성을 위한 것. NTFS·FAT 모두 적용.', tip:'포렌식 함정 — 생성 시간이 실제 생성보다 과거로 보일 수 있다 · 설정 HKLM\\SYSTEM\\CurrentControlSet\\Control\\FileSystem (MaximumTunnelEntryAgeInSeconds)' },
+  { s:'s1', g:'포렌식', front:'Shellbags', key:'탐색기 폴더 보기 설정 레지스트리 → 폴더 접근 흔적', back:'사용자가 탐색기로 연 ★폴더의 보기 설정(창 크기·위치·정렬)★ 을 저장하는 레지스트리 키(BagMRU·Bags). ★폴더가 삭제되거나 USB·네트워크 드라이브가 분리된 뒤에도 남아★ "그 폴더에 접근했다" 는 증거가 된다.', tip:'위치 — NTUSER.DAT 와 ★UsrClass.dat★ 의 ...\\Shell\\BagMRU · Bags (Windows 7 이후는 주로 UsrClass.dat)' },
+  { s:'s1', g:'포렌식', front:'WFP · WRP (Windows 파일·리소스 보호)', key:'시스템 파일 무단 교체 방지·자동 복원', back:'★WFP(Windows File Protection)★ — Windows 2000·XP 에서 보호 대상 시스템 파일이 교체되면 ★dllcache★ 의 원본으로 자동 복원. ★Vista 이후 WRP(Windows Resource Protection)★ 로 바뀌어 ★ACL(TrustedInstaller 소유)★ 로 시스템 파일·레지스트리 키 변경 자체를 막는다.', tip:'무결성 점검·복구 명령 ★sfc /scannow★' },
+  { s:'s1', g:'포렌식', front:'타임스톰핑 (Timestomping)', key:'파일 시간(MACB) 조작 안티포렌식', back:'공격자가 악성 파일의 ★MACB 시간(수정·접근·MFT 변경·생성)★ 을 정상 파일처럼 바꿔 타임라인 분석을 속이는 ★안티포렌식★ 기법. 탐지 — NTFS 의 ★$STANDARD_INFORMATION($SI)★ 과 ★$FILE_NAME($FN)★ 시간 비교($SI 가 $FN 보다 이르면 의심), 초 이하 값이 0 인 시간, $UsnJrnl·$LogFile 기록과 대조.', tip:'일반 API 로 바뀌는 것은 주로 $SI — $FN 은 커널이 관리해 조작이 어렵다' },
+  { s:'s1', g:'Linux 권한', front:'Linux Capabilities', key:'root 권한을 기능 단위로 쪼개 부여', back:'root 의 전능한 권한을 ★CAP_NET_RAW · CAP_NET_BIND_SERVICE · CAP_SYS_ADMIN · CAP_DAC_OVERRIDE★ 등 ★기능 단위로 분리★ 해, 프로그램에 ★필요한 권한만★ 부여하는 커널 기능. SUID root 를 대체해 ★최소 권한★ 을 실현.', tip:'파일 capability 는 확장 속성 security.capability 에 저장' },
+  { s:'s1', g:'Linux 권한', front:'setcap · getcap', key:'파일 capability 부여·조회·제거', back:'부여 ★setcap cap_net_raw+ep /usr/bin/ping★ (e=Effective, p=Permitted, i=Inheritable) / 조회 ★getcap 파일★ · 전체 점검 ★getcap -r / 2>/dev/null★ / 제거 ★setcap -r 파일★ / 프로세스 확인 getpcaps PID · /proc/PID/status 의 CapEff.', tip:'점검 시 SUID 목록과 함께 capability 목록도 기준선과 비교' },
+]);
+
+ins('s1', CPPG.sheets, [
+  { s:'s1', title:'★ 주요 Linux Capabilities', type:'table', head:['Capability','허용 기능','비고'], rows:[
+    ['★CAP_NET_RAW★','raw 소켓 생성','ping 의 SUID 대체'],
+    ['★CAP_NET_BIND_SERVICE★','1024 미만 포트 바인딩','웹 서버를 root 없이 80·443 에'],
+    ['CAP_NET_ADMIN','네트워크 설정(인터페이스·라우팅·방화벽)','—'],
+    ['★CAP_SYS_ADMIN★','mount 등 광범위한 관리 작업','★사실상 root 에 가까움★ — 부여 주의'],
+    ['★CAP_SYS_MODULE★','커널 모듈 적재·제거','루트킷 설치 경로'],
+    ['★CAP_DAC_OVERRIDE★','파일 rwx 권한 검사 무시','모든 파일 읽기·쓰기'],
+    ['CAP_SETUID · CAP_SETGID','UID·GID 변경','인터프리터에 부여 시 권한 상승'],
+    ['CAP_CHOWN','파일 소유자 변경','—'],
+    ['CAP_SYS_PTRACE','다른 프로세스 추적·메모리 접근','자격 증명 탈취 경로'],
+  ] },
+]);
+
+ins('s1', CPPG.traps, [
+  { s:'s1', t:'파일시스템 터널링은 수정 시간을 물려준다 — 주로 ★생성 시간★(과 짧은 이름)을 물려받는다. 기본 15초' },
+  { s:'s1', t:'Shellbags 는 폴더가 삭제되면 함께 사라진다 — 아니다. 레지스트리에 남아 삭제된 폴더·분리된 USB 접근 흔적이 된다' },
+  { s:'s1', t:'Vista 이후에도 WFP 가 dllcache 로 복원한다 — 아니다. WRP 로 바뀌어 ACL(TrustedInstaller)로 변경 자체를 막는다' },
+  { s:'s1', t:'타임스톰핑 탐지는 $SI 시간만 보면 된다 — 아니다. 조작이 쉬운 $SI 와 커널이 관리하는 $FN 을 비교해야 한다' },
+  { s:'s1', t:'CAP_SYS_ADMIN 은 작은 권한이라 부여해도 안전하다 — 아니다. mount 등 광범위한 기능을 포함해 사실상 root 에 가깝다' },
+]);
+
+ins('s1', CPPG.notes, [
+  { s:'s1', no:'1-29', t:TW, title:'Windows 포렌식 기능 — 파일시스템 터널링 · Shellbags · WFP · 타임스톰핑', body:[
+    { h:'파일시스템 터널링 (File System Tunneling)', li:[
+      '★동작★ — 파일 삭제·이름 변경 후 ★기본 15초 안에★ 같은 디렉터리에 같은 이름(긴 이름 또는 8.3 짧은 이름)으로 파일을 만들면 ★이전 파일의 생성 시간·짧은 이름을 상속★',
+      '★목적★ — 임시 파일로 저장 후 원본 삭제·이름 변경하는 프로그램이 원래 생성 시간을 유지하도록 하는 ★호환성 기능★ (NTFS·FAT 공통)',
+      '★설정★ — HKLM\\SYSTEM\\CurrentControlSet\\Control\\FileSystem 의 MaximumTunnelEntries · MaximumTunnelEntryAgeInSeconds',
+      '★포렌식 영향★ — 새로 만든 파일의 생성 시간이 실제보다 과거로 보임 → MFT 레코드·$UsnJrnl 과 교차 검증',
+    ] },
+    { h:'Shellbags', li:[
+      '★정의★ — 탐색기로 연 폴더의 보기 설정(창 크기·위치·보기 방식)을 저장하는 레지스트리 키',
+      '★위치★ — NTUSER.DAT\\Software\\Microsoft\\Windows\\Shell\\(BagMRU·Bags) · ★UsrClass.dat★\\Local Settings\\Software\\Microsoft\\Windows\\Shell\\(BagMRU·Bags)',
+      '★증거 가치★ — 폴더 경로·접근 시각 추정, ★삭제된 폴더·분리된 USB·네트워크 공유★ 의 접근 흔적까지 남음',
+      '분석 도구 — ShellBags Explorer 등 레지스트리 분석 도구',
+    ] },
+    { h:'WFP → WRP (시스템 파일 보호)', tb:{ head:['구분','WFP','WRP'], rows:[
+      ['적용','Windows 2000 · XP · Server 2003','★Vista · 7 이후★'],
+      ['방식','교체 감지 후 ★dllcache 원본으로 복원★','★ACL 로 변경 자체 차단★ (TrustedInstaller 소유)'],
+      ['보호 대상','시스템 파일','시스템 파일 + ★레지스트리 키·폴더★'],
+      ['점검 명령','sfc /scannow','sfc /scannow · DISM'],
+    ] } },
+    { h:'타임스톰핑 (Timestomping)', li:[
+      '★정의★ — 파일의 ★MACB★(Modified 수정 · Accessed 접근 · Changed MFT 변경 · Born 생성) 시간을 조작해 타임라인 분석을 방해하는 ★안티포렌식★',
+      'NTFS 는 MFT 레코드에 시간을 ★두 벌★ 저장 — ★$STANDARD_INFORMATION($SI)★: 일반 API 로 변경 가능 / ★$FILE_NAME($FN)★: 커널이 갱신, 조작 어려움',
+      '★탐지 단서★ — $SI 생성 시간이 $FN 보다 이른 경우 · 초 이하(나노초) 값이 0 · $UsnJrnl·$LogFile·프리패치·이벤트 로그 시간과 불일치',
+    ] },
+    { h:'함정', li:[
+      '터널링 = ★호환성 기능★(공격 기법 아님), 타임스톰핑 = ★공격자의 의도적 조작★',
+      '터널링이 상속하는 것은 ★생성 시간★ — 수정 시간 아님',
+      'Shellbags 는 ★파일이 아니라 폴더★ 접근 흔적',
+    ] },
+  ] },
+  { s:'s1', no:'1-30', t:TL, title:'Linux Capabilities — root 권한의 기능 단위 분리', body:[
+    { h:'개념', li:[
+      '전통 모델 — ★root(UID 0) 는 모든 권한 검사 통과★ → SUID root 프로그램 하나의 취약점이 시스템 전체 장악으로 연결',
+      '★Capabilities★ — root 권한을 ★CAP_*★ 단위로 쪼개 프로세스·실행 파일에 ★필요한 것만★ 부여 (커널 2.2 도입)',
+      '파일 capability 는 확장 속성 ★security.capability★ 에 저장',
+    ] },
+    { h:'Capability 집합', tb:{ head:['집합','의미'], rows:[
+      ['★Permitted(p)★','가질 수 있는 최대 권한 집합'],
+      ['★Effective(e)★','현재 커널이 ★실제로 검사하는★ 권한'],
+      ['Inheritable(i)','exec 시 넘겨줄 수 있는 권한'],
+      ['Bounding','획득 가능한 권한의 상한'],
+      ['Ambient','비특권 프로그램 exec 시에도 유지되는 권한(커널 4.3+)'],
+    ] } },
+    { h:'명령', tb:{ head:['명령','용도'], rows:[
+      ['★setcap cap_net_raw+ep 파일★','파일에 capability 부여 (+ep = Effective·Permitted)'],
+      ['★getcap 파일★ · getcap -r / 2>/dev/null','조회 · 시스템 전체 점검'],
+      ['★setcap -r 파일★','capability 제거'],
+      ['getpcaps PID · capsh --print','프로세스·현재 셸의 capability 확인'],
+      ['/proc/PID/status','CapPrm · CapEff 등 16진 비트마스크'],
+    ] } },
+    { h:'보안 활용과 위험', li:[
+      '★SUID 대체★ — ping 은 SUID root 대신 CAP_NET_RAW, 웹 서버는 CAP_NET_BIND_SERVICE 로 80 포트 사용',
+      '★컨테이너★ — Docker 는 기본으로 축소된 capability 집합만 부여 · --cap-drop ALL 후 필요한 것만 --cap-add',
+      '★위험★ — CAP_SYS_ADMIN(사실상 root) · CAP_SETUID·CAP_DAC_OVERRIDE 가 셸·인터프리터에 붙으면 권한 상승 경로 → ★getcap -r / 결과를 기준선과 비교★',
+    ] },
+    { h:'함정', li:[
+      'capability 는 ★SUID 비트와 별개★ — ls -l 에 표시되지 않으므로 getcap 으로 따로 점검',
+      '★Effective★ 에 있어야 실제로 쓰인다 — Permitted 만 있으면 사용 전 활성화 필요',
+      'CAP_SYS_MODULE = 커널 모듈 적재 · CAP_NET_RAW = raw 소켓 · CAP_NET_BIND_SERVICE = 1024 미만 포트',
+    ] },
+  ] },
+]);
+
+/* ── 2과목: Snort 룰 — 기존 개념정리 2-11 에 단락 추가 ── */
+const n211 = CPPG.notes.find(n => n.no === '2-11');
+if (n211) n211.body.push(
+  { h:'(보강) 비페이로드 옵션 — flags · flow · dsize', tb:{ head:['옵션','의미','예'], rows:[
+    ['★flags★','TCP 플래그 검사 — S·A·F·R·P·U, ★+(모두 포함) · *(하나라도) · !(없음)★','flags:S; = SYN 만 · flags:SA; = SYN+ACK'],
+    ['★flow★','세션 방향·상태','★flow:to_server,established;★ = 서버로 가는 연결된 세션'],
+    ['dsize','페이로드 크기','dsize:>500;'],
+    ['itype · icode','ICMP 타입·코드','itype:8; = Echo Request'],
+    ['detection_filter','일정 시간 내 횟수 초과 시에만 탐지','track by_src, count 5, seconds 60'],
+  ] } },
+  { h:'(보강) 룰 해석 연습', li:[
+    '★alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"SSH 반복 접속"; flow:to_server,established; detection_filter:track by_src, count 5, seconds 60; sid:1000001; rev:1;)★',
+    '→ 외부 → 내부 22번(SSH) TCP · 연결된 세션에서 서버 방향 · ★같은 출발지가 60초 안에 5회 초과★ 하면 경보 · 로컬 룰 ID 1000001, 개정 1',
+    '★$HOME_NET · $EXTERNAL_NET★ — 설정 파일(snort.conf)의 변수 · 방향 ★->★ 단방향 / ★<>★ 양방향(<- 는 없음)',
+    '★sid 범위★ — 100 미만 예약 · 100~999,999 Snort 배포 룰 · ★1,000,000 이상 사용자(로컬) 룰★',
+  ] }
+);
+
+ins('s2', CPPG.cards, [
+  { s:'s2', g:'IDS/IPS', front:'Snort flags 옵션', key:'TCP 플래그 검사 · + * ! 연산', back:'★S★ SYN · ★A★ ACK · ★F★ FIN · ★R★ RST · ★P★ PSH · ★U★ URG · 0 플래그 없음. 수식어 ★+★ 지정 플래그 포함 다른 플래그 허용 · ★*★ 하나라도 · ★!★ 지정 플래그 없음. 예 flags:S; = SYN 단독.', tip:'flags 는 비페이로드(헤더) 옵션' },
+  { s:'s2', g:'IDS/IPS', front:'Snort flow 옵션', key:'세션 방향·상태 지정', back:'★to_server · from_server · to_client · from_client★ 방향과 ★established · stateless★ 상태를 지정. ★flow:to_server,established;★ 는 3-way handshake 가 끝난 세션에서 서버로 가는 패킷만 검사해 오탐을 줄인다.', tip:'established 없이 쓰면 스캔·위조 패킷에도 반응' },
+  { s:'s2', g:'IDS/IPS', front:'Snort sid 범위', key:'1,000,000 이상 = 로컬 룰', back:'★100 미만★ 예약 · ★100~999,999★ Snort 배포 룰 · ★1,000,000 이상★ 사용자 정의(로컬) 룰. ★rev★ 는 같은 sid 룰의 개정 번호.', tip:'sid·rev·msg 는 탐지에 영향 없는 일반 옵션' },
+]);
+
+ins('s2', CPPG.traps, [
+  { s:'s2', t:'Snort 방향 연산자에 <- 가 있다 — 아니다. -> (단방향)와 <> (양방향)만 있다' },
+  { s:'s2', t:'사용자가 작성한 로컬 룰은 sid 100 부터 쓴다 — 아니다. 100~999,999 는 배포 룰, 로컬 룰은 1,000,000 이상' },
+]);
+
+/* ── 문항 ── */
+CPPG.mcq.push(
+  { s:'s1', d:2, t:TW, q:'파일을 삭제한 뒤 짧은 시간 안에 같은 디렉터리에 같은 이름의 파일을 만들면 새 파일이 이전 파일의 생성 시간을 물려받는 Windows 기능은?', c:['파일시스템 터널링','타임스톰핑','볼륨 섀도 복사','ADS(대체 데이터 스트림)'], a:0, e:'파일시스템 터널링은 기본 15초 안에 같은 이름으로 다시 생성된 파일에 이전 생성 시간과 짧은 이름을 넘겨주는 호환성 기능이다. 타임스톰핑은 공격자의 의도적 시간 조작, 섀도 복사는 스냅숏, ADS 는 숨은 스트림이다.' },
+  { s:'s1', d:2, t:TW, q:'Windows 파일시스템 터널링의 기본 유지 시간은?', c:['5초','15초','60초','24시간'], a:1, e:'MaximumTunnelEntryAgeInSeconds 기본값은 15초이며 레지스트리로 변경할 수 있다.' },
+  { s:'s1', d:2, t:TW, q:'탐색기로 연 폴더의 보기 설정을 저장해 삭제된 폴더나 분리된 USB 의 접근 흔적까지 남기는 레지스트리 아티팩트는?', c:['Prefetch','Shellbags','Amcache','Jump List'], a:1, e:'Shellbags(BagMRU·Bags)는 폴더 보기 설정이 저장된 레지스트리 키로 폴더 접근 증거가 된다. Prefetch 는 프로그램 실행 흔적, Amcache 는 설치·실행 프로그램 정보, Jump List 는 최근 연 파일 목록이다.' },
+  { s:'s1', d:3, t:TW, q:'Windows 7 이후 Shellbags 정보가 주로 저장되는 레지스트리 하이브 파일은?', c:['SAM','SECURITY','UsrClass.dat','SOFTWARE'], a:2, e:'Windows 7 이후 Shellbags 는 사용자 프로필의 UsrClass.dat 에 주로 저장되고 NTUSER.DAT 에도 일부 남는다. SAM 은 계정, SECURITY 는 보안 정책, SOFTWARE 는 설치 프로그램 정보다.' },
+  { s:'s1', d:2, t:TW, q:'Vista 이후 Windows 에서 시스템 파일과 레지스트리 키를 ACL(TrustedInstaller 소유)로 보호하는 기능은?', c:['WFP','WRP','UAC','DEP'], a:1, e:'WRP(Windows Resource Protection)는 WFP 의 후속으로 변경 자체를 ACL 로 막는다. WFP 는 2000·XP 시절 dllcache 복원 방식, UAC 는 권한 상승 확인, DEP 는 데이터 영역 실행 방지다.' },
+  { s:'s1', d:1, t:TW, q:'보호된 Windows 시스템 파일의 무결성을 검사하고 손상된 파일을 복구하는 명령은?', c:['chkdsk /f','sfc /scannow','cipher /w','icacls /reset'], a:1, e:'sfc /scannow 는 시스템 파일 검사기로 보호 파일을 점검·복구한다. chkdsk 는 디스크 오류, cipher /w 는 빈 공간 덮어쓰기, icacls /reset 은 ACL 초기화다.' },
+  { s:'s1', d:3, t:TW, q:'타임스톰핑이 의심되는 파일을 분석할 때 가장 유용한 비교 방법은?', c:['파일 크기와 확장자 비교','$STANDARD_INFORMATION 과 $FILE_NAME 속성의 시간 비교','파일 이름 길이 비교','바탕화면 아이콘 위치 비교'], a:1, e:'일반 API 로 바뀌는 $SI 와 커널이 관리하는 $FN 시간을 비교하면 조작 흔적($SI 가 $FN 보다 이른 경우 등)을 찾을 수 있다. 나머지는 시간 조작 탐지와 관계없다.' },
+  { s:'s1', d:2, t:TW, q:'파일시스템 터널링과 타임스톰핑에 대한 설명으로 옳은 것은?', c:['둘 다 공격자가 사용하는 안티포렌식 도구다','터널링은 OS 호환성 기능, 타임스톰핑은 의도적 시간 조작이다','터널링은 수정 시간만, 타임스톰핑은 생성 시간만 바꾼다','둘 다 리눅스 ext4 전용 기능이다'], a:1, e:'터널링은 Windows 가 호환성을 위해 생성 시간을 상속하는 정상 기능이고, 타임스톰핑은 공격자가 MACB 시간을 의도적으로 조작하는 안티포렌식이다.' },
+  { s:'s1', d:1, t:TL, q:'root 권한을 기능 단위로 나누어 실행 파일에 필요한 권한만 부여하는 리눅스 기능은?', c:['SELinux','Capabilities','Sticky Bit','umask'], a:1, e:'Capabilities 는 root 권한을 CAP_* 단위로 분리한다. SELinux 는 라벨 기반 강제적 접근통제, Sticky Bit 는 디렉터리 삭제 제한, umask 는 기본 권한 마스크다.' },
+  { s:'s1', d:2, t:TL, q:'웹 서버를 root 로 실행하지 않고 80 포트에 바인딩하도록 할 때 부여할 capability 는?', c:['CAP_NET_RAW','CAP_NET_BIND_SERVICE','CAP_SYS_MODULE','CAP_CHOWN'], a:1, e:'CAP_NET_BIND_SERVICE 는 1024 미만 포트 바인딩을 허용한다. CAP_NET_RAW 는 raw 소켓, CAP_SYS_MODULE 은 커널 모듈, CAP_CHOWN 은 소유자 변경 권한이다.' },
+  { s:'s1', d:2, t:TL, q:'/usr/bin/ping 에 raw 소켓 권한을 부여하는 명령으로 옳은 것은?', c:['chmod u+s /usr/bin/ping','setcap cap_net_raw+ep /usr/bin/ping','getcap cap_net_raw /usr/bin/ping','chown root /usr/bin/ping'], a:1, e:'setcap 으로 cap_net_raw 를 Effective·Permitted(+ep)로 부여한다. chmod u+s 는 SUID 설정(과도한 권한), getcap 은 조회, chown 은 소유자 변경이다.' },
+  { s:'s1', d:3, t:TL, q:'Capabilities 중 mount 등 광범위한 관리 작업을 포함해 "사실상 root" 로 불리는 것은?', c:['CAP_KILL','CAP_SYS_ADMIN','CAP_NET_BIND_SERVICE','CAP_AUDIT_WRITE'], a:1, e:'CAP_SYS_ADMIN 은 범위가 매우 넓어 부여를 피해야 한다. CAP_KILL 은 신호 전송, CAP_NET_BIND_SERVICE 는 낮은 포트 바인딩, CAP_AUDIT_WRITE 는 감사 로그 기록 권한이다.' },
+  { s:'s1', d:2, t:TL, q:'시스템 전체에서 capability 가 부여된 파일을 점검하는 명령은?', c:['find / -perm -4000','getcap -r / 2>/dev/null','lsattr -R /','ls -l /'], a:1, e:'getcap -r 은 재귀적으로 파일 capability 를 조회한다. find -perm -4000 은 SUID, lsattr 은 ext 속성(immutable 등) 조회이며, ls -l 에는 capability 가 표시되지 않는다.' },
+  { s:'s2', d:2, t:TN, q:'Snort 룰에서 3-way handshake 가 끝난 세션의 서버 방향 패킷만 검사하도록 하는 옵션은?', c:['flags:S;','flow:to_server,established;','dsize:>0;','ttl:64;'], a:1, e:'flow 옵션은 세션 방향과 상태를 지정한다. flags:S 는 SYN 플래그, dsize 는 페이로드 크기, ttl 은 IP TTL 값을 검사한다.' },
+  { s:'s2', d:2, t:TN, q:'Snort 룰 "alert tcp any any -> $HOME_NET 80 (flags:S; ...)" 의 flags:S 가 의미하는 것은?', c:['SYN 플래그만 설정된 패킷','모든 플래그가 설정된 패킷','플래그가 없는 패킷','RST 플래그가 설정된 패킷'], a:0, e:'flags:S 는 SYN 플래그만 설정된 패킷을 뜻한다. 플래그 없음은 0, RST 는 R 이며, 다른 플래그 포함을 허용하려면 + 를 붙인다.' },
+  { s:'s2', d:1, t:TN, q:'사용자가 직접 작성하는 Snort 로컬 룰에 권장되는 sid 범위는?', c:['1~99','100~999','100~999,999','1,000,000 이상'], a:3, e:'100 미만은 예약, 100~999,999 는 Snort 배포 룰, 1,000,000 이상이 사용자 정의 룰이다.' },
+  { s:'s2', d:3, t:TN, q:'"alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:\"SSH\"; flow:to_server,established; detection_filter:track by_src, count 5, seconds 60; sid:1000001;)" 에 대한 설명으로 옳지 않은 것은?', c:['외부에서 내부 22번 포트로 가는 TCP 를 검사한다','같은 출발지 IP 기준으로 횟수를 센다','60초 안에 5회를 넘으면 경보를 발생한다','양방향 트래픽을 모두 검사한다'], a:3, e:'방향 연산자가 -> 이므로 단방향(외부 → 내부)만 검사한다. 양방향은 <> 다. 나머지는 룰을 바르게 해석한 설명이다.' },
+  { s:'s2', d:2, t:TN, q:'Snort 룰 옵션 중 탐지 결과에 영향을 주지 않는 일반(General) 옵션으로만 묶인 것은?', c:['msg · sid · rev','content · offset · depth','flags · flow · dsize','logto · session · tag'], a:0, e:'msg·sid·rev 는 룰 정보를 제공하는 일반 옵션이다. content 계열은 페이로드, flags·flow·dsize 는 비페이로드, logto·session·tag 는 사후 처리 옵션이다.' }
+);
+
+CPPG.ox.push(
+  { s:'s1', d:2, t:TW, q:'파일시스템 터널링은 새로 만든 파일이 이전 파일의 생성 시간을 물려받게 할 수 있다.', a:true, e:'기본 15초 · 호환성 기능.' },
+  { s:'s1', d:2, t:TW, q:'Shellbags 는 해당 폴더가 삭제되면 레지스트리에서도 함께 삭제된다.', a:false, e:'남아 있어 삭제된 폴더 접근 흔적이 된다.' },
+  { s:'s1', d:2, t:TW, q:'Windows Vista 이후에는 WFP 대신 WRP 가 시스템 파일을 보호한다.', a:true, e:'ACL(TrustedInstaller) 기반.' },
+  { s:'s1', d:3, t:TW, q:'NTFS 의 $FILE_NAME 시간은 일반 API 로 $STANDARD_INFORMATION 보다 쉽게 조작된다.', a:false, e:'반대 — $SI 가 쉽게 바뀌고 $FN 은 커널이 관리.' },
+  { s:'s1', d:1, t:TL, q:'CAP_NET_RAW 는 raw 소켓 생성 권한으로 ping 의 SUID 를 대체할 수 있다.', a:true, e:'setcap cap_net_raw+ep.' },
+  { s:'s1', d:2, t:TL, q:'파일에 부여된 capability 는 ls -l 출력에 s 로 표시된다.', a:false, e:'표시되지 않는다 — getcap 으로 확인.' },
+  { s:'s2', d:1, t:TN, q:'Snort 의 방향 연산자는 -> 와 <> 두 가지다.', a:true, e:'<- 는 없다.' },
+  { s:'s2', d:2, t:TN, q:'Snort 의 flow:established 는 3-way handshake 가 끝난 세션만 검사한다.', a:true, e:'스캔·위조 패킷 오탐 감소.' }
+);
+
+CPPG.fill.push(
+  { s:'s1', d:2, t:TW, q:'삭제 후 15초 안에 같은 이름으로 만든 파일이 이전 생성 시간을 상속하는 Windows 기능은?', a:'파일시스템 터널링', k:['터널링'], e:'File System Tunneling.' },
+  { s:'s1', d:2, t:TW, q:'탐색기 폴더 보기 설정을 저장해 폴더 접근 흔적이 되는 레지스트리 아티팩트의 이름은?', a:'Shellbags', k:['shellbags'], e:'BagMRU·Bags 키 · UsrClass.dat.' },
+  { s:'s1', d:2, t:TW, q:'파일의 MACB 시간을 조작하는 안티포렌식 기법은?', a:'타임스톰핑', k:['타임스톰핑'], e:'Timestomping — $SI·$FN 비교로 탐지.' },
+  { s:'s1', d:3, t:TW, q:'MACB 의 네 가지 시간을 영문으로 쓰시오.', a:'Modified, Accessed, Changed, Born', k:['modified','accessed','changed','born'], e:'Changed 는 MFT 레코드 변경, Born 은 생성.' },
+  { s:'s1', d:2, t:TL, q:'파일에 capability 를 부여하는 명령은?', a:'setcap', k:['setcap'], e:'조회 getcap · 제거 setcap -r.' },
+  { s:'s1', d:2, t:TL, q:'1024 미만 포트에 바인딩할 수 있게 하는 capability 는?', a:'CAP_NET_BIND_SERVICE', k:['cap_net_bind_service'], e:'웹 서버를 root 없이 80·443 에.' },
+  { s:'s2', d:2, t:TN, q:'Snort 에서 연결이 성립된 세션의 서버 방향 패킷만 검사하는 옵션을 쓰시오.', a:'flow:to_server,established', k:['flow','to_server','established'], e:'오탐 감소.' },
+  { s:'s2', d:2, t:TN, q:'Snort 사용자 정의(로컬) 룰의 sid 는 몇 이상을 쓰는가?', a:'1,000,000', k:['1000000'], e:'100~999,999 는 배포 룰.' }
+);
+
+CPPG.order.push(
+  { s:'s2', d:2, t:TN, q:'Snort 룰 헤더의 구성 요소를 순서대로 나열하시오.', steps:['action (alert 등)','프로토콜 (tcp 등)','출발지 IP','출발지 포트','방향 연산자 (-> 또는 <>)','목적지 IP','목적지 포트'], e:'헤더 뒤 괄호 안에 옵션이 세미콜론으로 이어진다.' }
+);
+})();
+
+/* ═══════════════════════════════════════════════════════════
    99. ✅ 단답형 채점 키워드 정리 — ★반드시 파일 맨 끝에 둔다★
    엔진은 k 의 ★모든★ 키워드가 답에 들어 있어야 정답으로 본다(isRight: k.every).
    k 를 '대안 표기 목록'처럼 쓴 문항은 정답(a)을 그대로 써도 오답이 되므로,
