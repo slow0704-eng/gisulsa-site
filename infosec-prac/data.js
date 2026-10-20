@@ -9810,8 +9810,7 @@ CPPG.fill = [
   "a": "SYN, SYN+ACK, ACK",
   "k": [
    "syn",
-   "syn+ack",
-   "syn/ack"
+   "syn+ack"
   ],
   "e": "ack = 상대 seq + 1."
  },
@@ -9822,8 +9821,7 @@ CPPG.fill = [
   "q": "연결을 강제로 끊거나 Closed 포트가 응답할 때 쓰는 TCP 플래그는?",
   "a": "RST",
   "k": [
-   "rst",
-   "reset"
+   "rst"
   ],
   "e": "Closed 포트 + SYN → RST."
  },
@@ -9834,9 +9832,7 @@ CPPG.fill = [
   "q": "4-way 종료에서 마지막 ACK를 보낸 능동 종료 측이 2MSL 동안 머무는 상태는?",
   "a": "TIME_WAIT",
   "k": [
-   "time_wait",
-   "timewait",
-   "time wait"
+   "time_wait"
   ],
   "e": "지연 패킷 소멸·ACK 재전송 보장."
  },
@@ -9848,8 +9844,6 @@ CPPG.fill = [
   "a": "Type 3 Code 3",
   "k": [
    "type 3 code 3",
-   "3/3",
-   "port unreachable",
    "type3 code3"
   ],
   "e": "Port Unreachable."
@@ -9873,8 +9867,7 @@ CPPG.fill = [
   "a": "TCP 53",
   "k": [
    "tcp 53",
-   "tcp/53",
-   "53/tcp"
+   "tcp/53"
   ],
   "e": "일반 질의는 UDP 53."
  },
@@ -9885,8 +9878,7 @@ CPPG.fill = [
   "q": "traceroute가 경로 추적에 이용하는 ICMP Type 번호는?",
   "a": "11",
   "k": [
-   "11",
-   "type 11"
+   "11"
   ],
   "e": "Time Exceeded."
  },
@@ -9897,10 +9889,7 @@ CPPG.fill = [
   "q": "3-way를 완성하지 않아 '스텔스 스캔'으로 불리는 스캔은?",
   "a": "SYN 스캔",
   "k": [
-   "syn",
-   "half-open",
-   "하프오픈",
-   "-ss"
+   "syn"
   ],
   "e": "SYN+ACK 받으면 RST."
  },
@@ -9911,9 +9900,7 @@ CPPG.fill = [
   "q": "FIN·PSH·URG 세 플래그를 켠 패킷을 이용하는 스캔은?",
   "a": "XMAS 스캔",
   "k": [
-   "xmas",
-   "크리스마스",
-   "-sx"
+   "xmas"
   ],
   "e": "무응답=Open, RST=Closed."
  },
@@ -9924,8 +9911,7 @@ CPPG.fill = [
   "q": "모든 TCP 플래그를 0으로 둔 패킷을 이용하는 스캔은?",
   "a": "NULL 스캔",
   "k": [
-   "null",
-   "-sn"
+   "null"
   ],
   "e": "Snort에서는 flags:0 으로 탐지."
  },
@@ -9936,8 +9922,7 @@ CPPG.fill = [
   "q": "포트 개방 여부가 아니라 방화벽의 필터링 여부를 파악하는 스캔은?",
   "a": "ACK 스캔",
   "k": [
-   "ack",
-   "-sa"
+   "ack"
   ],
   "e": "RST=unfiltered."
  },
@@ -9948,9 +9933,7 @@ CPPG.fill = [
   "q": "제3의 유휴 호스트(좀비)의 IPID 증가를 이용해 실제 출발지를 숨기는 스캔은?",
   "a": "Idle 스캔",
   "k": [
-   "idle",
-   "-si",
-   "아이들"
+   "idle"
   ],
   "e": "좀비 IPID 관찰."
  },
@@ -9985,9 +9968,7 @@ CPPG.fill = [
   "a": "SYN Cookie",
   "k": [
    "syn cookie",
-   "syncookie",
-   "syn 쿠키",
-   "syncookies"
+   "syncookie"
   ],
   "e": "Linux tcp_syncookies=1."
  },
@@ -10010,8 +9991,7 @@ CPPG.fill = [
   "q": "SYN Flood가 고갈시키는 반연결 대기 큐의 이름은?",
   "a": "Backlog 큐",
   "k": [
-   "backlog",
-   "백로그"
+   "backlog"
   ],
   "e": "SYN_RECV 상태 누적."
  },
@@ -10022,8 +10002,7 @@ CPPG.fill = [
   "q": "ICMP Echo + 출발지 위조 + 브로드캐스트로 응답을 증폭시키는 공격은?",
   "a": "Smurf",
   "k": [
-   "smurf",
-   "스머프"
+   "smurf"
   ],
   "e": "대응: Directed Broadcast 차단."
  },
@@ -10034,8 +10013,7 @@ CPPG.fill = [
   "q": "HTTP 헤더를 완료하지 않고 연결을 오래 유지해 웹서버 연결 슬롯을 고갈시키는 공격은?",
   "a": "Slowloris",
   "k": [
-   "slowloris",
-   "슬로로리스"
+   "slowloris"
   ],
   "e": "헤더 타임아웃으로 대응."
  },
@@ -10058,8 +10036,7 @@ CPPG.fill = [
   "q": "출발지 IP와 목적지 IP를 같게 만든 패킷을 이용하는 DoS는?",
   "a": "Land 공격",
   "k": [
-   "land",
-   "랜드"
+   "land"
   ],
   "e": "Ingress Filtering."
  },
@@ -10070,8 +10047,7 @@ CPPG.fill = [
   "q": "IP Fragment Offset을 서로 겹치게 조작해 재조립 오류를 유발하는 공격은?",
   "a": "Teardrop",
   "k": [
-   "teardrop",
-   "티어드롭"
+   "teardrop"
   ],
   "e": "패치·재조립 검증."
  },
@@ -10082,10 +10058,7 @@ CPPG.fill = [
   "q": "DDoS 3분류 중 HTTP Flood·Slowloris가 속하는 계층 유형은?",
   "a": "Application",
   "k": [
-   "application",
-   "애플리케이션",
-   "l7",
-   "응용"
+   "application"
   ],
   "e": "Volume·Protocol·Application."
  },
@@ -10096,9 +10069,7 @@ CPPG.fill = [
   "q": "NIC가 자기 MAC이 아닌 프레임도 수신하도록 하는 모드는?",
   "a": "Promiscuous Mode",
   "k": [
-   "promiscuous",
-   "무차별",
-   "프러미스큐어스"
+   "promiscuous"
   ],
   "e": "스니핑 전제."
  },
@@ -10109,10 +10080,7 @@ CPPG.fill = [
   "q": "위조 ARP Reply로 게이트웨이 MAC을 바꿔 트래픽을 가로채는 공격은?",
   "a": "ARP 스푸핑",
   "k": [
-   "arp spoofing",
-   "arp 스푸핑",
-   "arp 포이즈닝",
-   "arp poisoning"
+   "arp 스푸핑"
   ],
   "e": "MITM 진입 수단."
  },
@@ -10123,8 +10091,7 @@ CPPG.fill = [
   "q": "DHCP Snooping 바인딩 테이블로 위조 ARP를 차단하는 스위치 기능의 약어는?",
   "a": "DAI",
   "k": [
-   "dai",
-   "dynamic arp inspection"
+   "dai"
   ],
   "e": "Dynamic ARP Inspection."
  },
@@ -10146,10 +10113,7 @@ CPPG.fill = [
   "q": "위조 MAC을 대량으로 보내 스위치 CAM 테이블을 고갈시키는 공격은?",
   "a": "MAC Flooding",
   "k": [
-   "mac flooding",
-   "mac 플러딩",
-   "switch jamming",
-   "스위치 재밍"
+   "mac flooding"
   ],
   "e": "Port Security로 대응."
  },
@@ -10171,8 +10135,7 @@ CPPG.fill = [
   "q": "브라우저가 HTTPS로만 접속하도록 강제해 SSL Strip을 막는 응답 헤더는?",
   "a": "HSTS",
   "k": [
-   "hsts",
-   "strict-transport-security"
+   "hsts"
   ],
   "e": "Strict-Transport-Security."
  },
@@ -10275,8 +10238,7 @@ CPPG.fill = [
   "q": "iptables에서 룰을 체인 맨 끝에 추가하는 옵션은?",
   "a": "-A",
   "k": [
-   "-a",
-   "append"
+   "-a"
   ],
   "e": "맨 앞 삽입은 -I."
  },
@@ -10323,8 +10285,7 @@ CPPG.fill = [
   "q": "현재 iptables 룰을 파일로 내보내 영구 저장할 때 쓰는 명령은?",
   "a": "iptables-save",
   "k": [
-   "iptables-save",
-   "service iptables save"
+   "iptables-save"
   ],
   "e": "iptables-restore로 복원."
  },
@@ -10347,8 +10308,7 @@ CPPG.fill = [
   "q": "iptables에서 IP당 동시 연결 수를 제한하는 매치 모듈은?",
   "a": "connlimit",
   "k": [
-   "connlimit",
-   "-m connlimit"
+   "connlimit"
   ],
   "e": "--connlimit-above N."
  },
@@ -10359,8 +10319,7 @@ CPPG.fill = [
   "q": "iptables에서 80과 443을 한 룰로 지정할 때 쓰는 모듈은?",
   "a": "multiport",
   "k": [
-   "multiport",
-   "-m multiport"
+   "multiport"
   ],
   "e": "--dports 80,443."
  },
@@ -10371,8 +10330,7 @@ CPPG.fill = [
   "q": "탐지·경보만 하는 IDS와 달리 inline으로 차단까지 하는 장비는?",
   "a": "IPS",
   "k": [
-   "ips",
-   "침입방지시스템"
+   "ips"
   ],
   "e": "Intrusion Prevention System."
  },
@@ -10417,8 +10375,7 @@ CPPG.fill = [
   "q": "Snort에서 '출발지별 60초에 5회 초과' 같은 임계치 탐지를 지정하는 옵션은?",
   "a": "detection_filter",
   "k": [
-   "detection_filter",
-   "threshold"
+   "detection_filter"
   ],
   "e": "track by_src, count, seconds."
  },
@@ -10442,8 +10399,7 @@ CPPG.fill = [
   "a": "flow:to_server,established",
   "k": [
    "flow:to_server,established",
-   "to_server,established",
-   "flow:established,to_server"
+   "to_server,established"
   ],
   "e": "세션 방향·상태 지정."
  },
@@ -10465,9 +10421,7 @@ CPPG.fill = [
   "q": "802.1X 구성에서 RADIUS 서버의 역할 명칭은?",
   "a": "Authentication Server",
   "k": [
-   "authentication server",
-   "인증 서버",
-   "인증서버"
+   "authentication server"
   ],
   "e": "Supplicant–Authenticator–Authentication Server."
  },
@@ -10500,8 +10454,7 @@ CPPG.fill = [
   "q": "브라우저가 HTTPS 로만 접속하도록 강제하는 응답 헤더의 약어는?",
   "a": "HSTS",
   "k": [
-   "hsts",
-   "strict-transport-security"
+   "hsts"
   ],
   "e": "HTTP Strict Transport Security."
  },
@@ -10512,8 +10465,7 @@ CPPG.fill = [
   "q": "다른 사이트의 프레임 삽입을 차단해 클릭재킹을 막는 응답 헤더는?",
   "a": "X-Frame-Options",
   "k": [
-   "x-frame-options",
-   "frame-ancestors"
+   "x-frame-options"
   ],
   "e": "값: DENY / SAMEORIGIN."
  },
@@ -10572,11 +10524,7 @@ CPPG.fill = [
   "a": "출력 인코딩",
   "k": [
    "출력 인코딩",
-   "출력인코딩",
-   "html 인코딩",
-   "html인코딩",
-   "output encoding",
-   "이스케이프"
+   "출력인코딩"
   ],
   "e": "컨텍스트별(HTML·속성·JS·URL) 적용."
  },
@@ -10587,9 +10535,7 @@ CPPG.fill = [
   "q": "게시판 등 서버에 저장된 입력이 열람자 브라우저에서 실행되는 XSS 유형은?",
   "a": "Stored XSS",
   "k": [
-   "stored",
-   "저장형",
-   "persistent"
+   "stored"
   ],
   "e": "Reflected 는 즉시 반사, DOM 은 클라이언트 처리."
  },
@@ -10600,8 +10546,7 @@ CPPG.fill = [
   "q": "요청 파라미터가 응답에 즉시 반사되어 실행되는 XSS 유형은?",
   "a": "Reflected XSS",
   "k": [
-   "reflected",
-   "반사형"
+   "reflected"
   ],
   "e": "주로 링크 클릭을 유도해 발생."
  },
@@ -10612,8 +10557,7 @@ CPPG.fill = [
   "q": "서버가 사용자가 지정한 URL 로 요청을 보내는 기능을 악용해 내부 자원에 접근하는 취약점의 약어는?",
   "a": "SSRF",
   "k": [
-   "ssrf",
-   "server-side request forgery"
+   "ssrf"
   ],
   "e": "Server-Side Request Forgery."
  },
@@ -10693,10 +10637,7 @@ CPPG.fill = [
   "a": "CSRF 토큰",
   "k": [
    "csrf 토큰",
-   "csrf토큰",
-   "csrf token",
-   "anti-csrf",
-   "synchronizer token"
+   "csrf토큰"
   ],
   "e": "Synchronizer Token Pattern."
  },
@@ -10708,8 +10649,7 @@ CPPG.fill = [
   "a": "세션 고정",
   "k": [
    "세션 고정",
-   "세션고정",
-   "session fixation"
+   "세션고정"
   ],
   "e": "로그인 시 세션 ID 재발급."
  },
@@ -10743,10 +10683,7 @@ CPPG.fill = [
   "q": "업로드 확장자 검증에서 허용할 것만 정하는 방식은?",
   "a": "화이트리스트",
   "k": [
-   "화이트리스트",
-   "허용목록",
-   "whitelist",
-   "allowlist"
+   "화이트리스트"
   ],
   "e": "차단목록보다 안전."
  },
@@ -10758,10 +10695,7 @@ CPPG.fill = [
   "a": "매직넘버",
   "k": [
    "매직넘버",
-   "매직 넘버",
-   "magic number",
-   "파일 시그니처",
-   "시그니처"
+   "매직 넘버"
   ],
   "e": "MIME 타입 + 시그니처 검증."
  },
@@ -10772,8 +10706,7 @@ CPPG.fill = [
   "q": "업로드 파일명을 충돌 없이 예측 불가하게 바꾸는 데 쓰는 128비트 식별자는?",
   "a": "UUID",
   "k": [
-   "uuid",
-   "guid"
+   "uuid"
   ],
   "e": "원본 파일명은 DB 에만 저장."
  },
@@ -10808,9 +10741,7 @@ CPPG.fill = [
   "a": "간접 참조",
   "k": [
    "간접 참조",
-   "간접참조",
-   "indirect reference",
-   "id 매핑"
+   "간접참조"
   ],
   "e": "사용자 입력이 경로를 직접 구성하지 못하게 한다."
  },
@@ -10843,8 +10774,7 @@ CPPG.fill = [
   "q": "Apache 기본 로그 형식 중 Referer 와 User-Agent 를 포함하는 형식의 이름은?",
   "a": "Combined",
   "k": [
-   "combined",
-   "combined log format"
+   "combined"
   ],
   "e": "Common 형식에는 두 필드가 없다."
  },
@@ -10856,10 +10786,7 @@ CPPG.fill = [
   "a": "응답 크기",
   "k": [
    "응답 크기",
-   "응답크기",
-   "%b",
-   "response size",
-   "바이트"
+   "응답크기"
   ],
   "e": "급증은 데이터 노출 정황."
  },
@@ -10881,8 +10808,7 @@ CPPG.fill = [
   "q": "브라우저가 실행할 수 있는 스크립트 출처를 서버가 지정하는 응답 헤더의 약어는?",
   "a": "CSP",
   "k": [
-   "csp",
-   "content-security-policy"
+   "csp"
   ],
   "e": "Content-Security-Policy."
  },
@@ -10894,7 +10820,6 @@ CPPG.fill = [
   "a": "default-src 'self'",
   "k": [
    "default-src 'self'",
-   "default-src self",
    "'self'",
    "self"
   ],
@@ -10907,9 +10832,7 @@ CPPG.fill = [
   "q": "행정안전부 SW 개발보안 가이드의 보안약점 분류 개수는?",
   "a": "7",
   "k": [
-   "7",
-   "7개",
-   "일곱"
+   "7"
   ],
   "e": "입력검증·보안기능·시간및상태·에러처리·코드오류·캡슐화·API오용."
  },
@@ -10920,8 +10843,7 @@ CPPG.fill = [
   "q": "Apache 에서 디렉터리 목록 노출을 차단하는 Options 설정은?",
   "a": "-Indexes",
   "k": [
-   "-indexes",
-   "options -indexes"
+   "-indexes"
   ],
   "e": "Nginx: autoindex off."
  },
