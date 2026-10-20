@@ -13596,3 +13596,19 @@ CPPG.examples = [
   ]
  }
 ];
+
+/* ═══════════════════════════════════════════════════════════
+   ✅ 단답형 채점 키워드 정리 — ★반드시 파일 맨 끝에 둔다★
+   엔진은 k 의 ★모든★ 키워드가 답에 들어 있어야 정답으로 본다(isRight: k.every).
+   k 를 '대안 표기 목록'처럼 쓴 문항은 정답(a)을 그대로 써도 오답이 되므로,
+   정답에 포함된 키워드만 남긴다(없으면 정답 자체를 키워드로).
+   ═══════════════════════════════════════════════════════════ */
+(function () {
+const norm = s => String(s).toLowerCase().replace(/[\s·,./\-()]/g, '');
+(CPPG.fill || []).forEach(q => {
+  const A = norm(q.a);
+  if ((q.k || []).every(k => A.includes(norm(k)))) return;
+  const k = (q.k || []).filter(k => A.includes(norm(k)));
+  q.k = k.length ? k : [q.a];
+});
+})();
