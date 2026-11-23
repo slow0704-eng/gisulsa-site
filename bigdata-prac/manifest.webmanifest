@@ -1,0 +1,30 @@
+{
+ "name": "빅데이터분석기사 실기",
+ "short_name": "빅분기 실기",
+ "description": "빅데이터분석기사 실기 = 제1유형 전처리 + 제2유형 머신러닝 + 제3유형 통계검정 (Python · KDATA)",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait-primary",
+ "background_color": "#0f1420",
+ "theme_color": "#1d4ed8",
+ "lang": "ko",
+ "dir": "ltr",
+ "categories": [
+  "education"
+ ],
+ "icons": [
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "any"
+  },
+  {
+   "src": "icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml",
+   "purpose": "maskable"
+  }
+ ]
+}
